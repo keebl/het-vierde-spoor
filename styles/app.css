@@ -741,14 +741,18 @@ table.latin td.cell { width: 78px; height: 46px; }
 .kamermuur { stroke: #4a3b2c; stroke-width: 6; stroke-linecap: round; }
 .buitenmuur-kamer { fill: none; stroke: #3a2e22; stroke-width: 8; rx: 3; }
 
-.meubelblok {
-  fill: #7a5c3e;
-  stroke: #543f2a;
-  stroke-width: 2;
+/* De meubels staan als getekende voorwerpen op de vloer, niet als pictogram
+   in een blokje. Een dunne donkere omlijning houdt ze leesbaar op elke vloer. */
+.meubelkunst path {
+  stroke: rgba(44, 32, 18, 0.5);
+  stroke-width: 0.8;
+  stroke-linejoin: round;
 }
+.meubelschaduw { fill: rgba(60, 45, 25, 0.16); }
+
 .meubelglyph path {
   fill: none;
-  stroke: #f0e2c8;
+  stroke: #4a3b2c;
   stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;

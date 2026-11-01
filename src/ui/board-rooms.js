@@ -9,6 +9,7 @@
 // op tafel ligt.
 
 import { tekenIcoon } from './icons.js';
+import { tekenMeubel } from './meubelkunst.js';
 import { icoonVan } from '../content/iconen.js';
 import { soortVan, VLOER_VAN } from '../content/kamersoorten.js';
 
@@ -117,13 +118,20 @@ export function renderKamerbord(puzzle, state, acties) {
     const m = puzzle.meubelOp[i];
     if (m == null) continue;
     const naam = puzzle.meubelNamen[m];
-    spullen.append(el('rect', {
-      x: x(kol(i)) + 9, y: y(rij(i)) + 9, width: CEL - 18, height: CEL - 18,
-      rx: 7, class: 'meubelblok',
+    // Een schaduwtje onder het meubel, anders zweeft het boven de vloer.
+    spullen.append(el('ellipse', {
+      cx: x(kol(i)) + CEL / 2, cy: y(rij(i)) + CEL - 13,
+      rx: CEL * 0.3, ry: 5, class: 'meubelschaduw',
     }));
-    tekenIcoon(spullen, puzzle.meubelIconen?.[m] ?? icoonVan(naam), {
-      x: x(kol(i)) + CEL / 2 - 16, y: y(rij(i)) + CEL / 2 - 18, grootte: 32, klasse: 'meubelglyph',
+    const kunst = tekenMeubel(spullen, puzzle.meubelIconen?.[m], {
+      x: x(kol(i)) + 7, y: y(rij(i)) + 6, grootte: CEL - 14,
     });
+    // Valt er geen tekening te maken, dan liever het lijnicoon dan niets.
+    if (!kunst) {
+      tekenIcoon(spullen, icoonVan(naam) ?? 'deur', {
+        x: x(kol(i)) + CEL / 2 - 16, y: y(rij(i)) + CEL / 2 - 18, grootte: 32, klasse: 'meubelglyph',
+      });
+    }
   }
   svg.append(spullen);
 
