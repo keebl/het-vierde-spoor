@@ -7,6 +7,7 @@
 // nooit in de frontend.
 
 import { createServer } from 'node:http';
+import { networkInterfaces } from 'node:os';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -44,18 +45,47 @@ const server = createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`Het Vierde Spoor staat op http://localhost:${PORT}`);
   console.log(hasKey() ? `AI-teksten beschikbaar via ${MODEL}` : 'AI-teksten uit (geen ANTHROPIC_API_KEY gevonden)');
+  if (hasKey()) {
+    console.log(LAN_AI
+      ? 'AI-teksten ook vanaf andere apparaten in je netwerk (VIERDESPOOR_AI_LAN=1)'
+      : 'AI-teksten alleen vanaf deze computer; zet VIERDESPOOR_AI_LAN=1 om dat open te zetten');
+  }
+  for (const adres of lanAdressen()) console.log(`In je netwerk bereikbaar op http://${adres}:${PORT}`);
 });
 
+// Welke adressen heeft deze computer in het huisnetwerk? Puur om ze te
+// kunnen tonen; de server luistert sowieso op alle netwerkkaarten.
+function lanAdressen() {
+  const uit = [];
+  for (const kaarten of Object.values(networkInterfaces())) {
+    for (const k of kaarten ?? []) {
+      if (k.family === 'IPv4' && !k.internal) uit.push(k.address);
+    }
+  }
+  return uit;
+}
+
 // ------------------------------------------------------------- statisch
+
+// Wat de buitenwereld mag zien. Een witte lijst, geen zwarte: de projectmap
+// bevat ook .env, .git en de serverbron, en die horen nooit over de lijn te
+// gaan. Zeker niet als je de site op het huisnetwerk openzet.
+const PUBLIEK = new Set(['index.html', 'styles', 'src']);
 
 async function serveStatic(req, res) {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   let path = decodeURIComponent(url.pathname);
   if (path === '/' || path === '') path = '/index.html';
 
-  // Nooit buiten de projectmap kijken.
-  const target = join(ROOT, normalize(path).replace(/^(\.\.[/\\])+/, ''));
-  if (!target.startsWith(ROOT)) return send(res, 403, 'Niet toegestaan');
+  const delen = normalize(path).split('/').filter(Boolean);
+  // Geen verborgen bestanden of mappen (.env, .git, ...), geen uitstapjes
+  // naar boven, en alleen vanuit de vrijgegeven ingangen.
+  if (!delen.length || delen.some((d) => d.startsWith('.'))) return send(res, 404, 'Niet gevonden');
+  if (!PUBLIEK.has(delen[0])) return send(res, 404, 'Niet gevonden');
+  if (!TYPES[extname(delen[delen.length - 1])]) return send(res, 404, 'Niet gevonden');
+
+  const target = join(ROOT, ...delen);
+  if (!target.startsWith(ROOT + '/')) return send(res, 403, 'Niet toegestaan');
 
   try {
     const info = await stat(target);
@@ -94,7 +124,23 @@ Harde regels:
 Antwoord uitsluitend met JSON, zonder uitleg eromheen:
 {"intro": "...", "aanwijzingen": [{"n": 1, "tekst": "..."}]}`;
 
+const LAN_AI = process.env.VIERDESPOOR_AI_LAN === '1';
+
+// Is dit verzoek van deze computer zelf?
+const isLokaal = (req) => {
+  const adres = req.socket.remoteAddress ?? '';
+  return adres === '127.0.0.1' || adres === '::1' || adres === '::ffff:127.0.0.1';
+};
+
 async function flavour(req, res) {
+  // Achter deze route hangt je API-key. Vanaf een ander apparaat in huis is
+  // hij daarom dicht, tenzij je dat uitdrukkelijk aanzet met
+  // VIERDESPOOR_AI_LAN=1. De site blijft het gewoon doen: de browser valt
+  // dan terug op de eigen teksten.
+  if (!isLokaal(req) && !LAN_AI) {
+    res.writeHead(403, { 'content-type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'AI-teksten alleen vanaf deze computer' }));
+  }
   if (!hasKey()) {
     res.writeHead(503, { 'content-type': 'application/json' });
     return res.end(JSON.stringify({ error: 'geen API-key ingesteld' }));

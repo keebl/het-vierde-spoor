@@ -21,6 +21,35 @@ ES-modules die de browser rechtstreeks laadt. De map is daarmee ook direct te
 hosten als statische site (GitHub Pages, Netlify, Vercel) — alleen de
 optionele AI-laag heeft de meegeleverde Node-server nodig.
 
+## Op je telefoon, binnen hetzelfde netwerk
+
+De server luistert op alle netwerkkaarten en toont bij het opstarten zelf het
+adres, bijvoorbeeld:
+
+```
+In je netwerk bereikbaar op http://10.0.0.11:4173
+```
+
+Typ dat adres in de browser van je telefoon, mits die op dezelfde wifi zit.
+Blijft het hangen, dan houdt de macOS-firewall de verbinding tegen: sta
+binnenkomende verbindingen voor `node` toe in Systeeminstellingen, of zet de
+firewall even uit.
+
+Twee dingen zijn hiervoor bewust dichtgezet:
+
+- **De server geeft alleen `index.html`, `styles/` en `src/` vrij.** Een witte
+  lijst, geen zwarte. Daarvoor serveerde hij alles in de projectmap, dus ook
+  `.env` met je API-key en de inhoud van `.git`. Op alleen localhost was dat al
+  onwenselijk; op het huisnetwerk is het een lek.
+- **De AI-teksten werken alleen vanaf deze computer.** Achter die route hangt
+  je API-key, en iedereen op je wifi zou er anders op kunnen stoken. Andere
+  apparaten krijgen gewoon de eigen templateteksten te zien, zonder foutmelding.
+  Wil je het toch openzetten binnen je eigen netwerk:
+
+```bash
+VIERDESPOOR_AI_LAN=1 npm start
+```
+
 ## Keuren
 
 ```bash
