@@ -114,40 +114,38 @@ export function renderPlayer(puzzle, mount) {
 
 function head(puzzle) {
   const mech = MECHANIC_BY_ID.get(puzzle.mechaniek);
+  const deel = (tekst) => el('span', { text: tekst });
+  const sep = () => el('span', { class: 'sep', text: '·' });
+
   const crumbs = el('div', { class: 'crumbs' }, [
-    el('a', { href: '#/', text: 'Bibliotheek' }),
-    el('span', { text: '/' }),
-    el('span', { text: `${puzzle.world.icon} ${puzzle.world.name}` }),
-    el('span', { text: '/' }),
-    el('span', { text: mech?.name ?? puzzle.mechaniek }),
-    el('span', { text: '/' }),
-    el('span', { text: `niveau ${puzzle.niveau} - ${puzzle.niveauLabel}` }),
-    el('span', { text: '/' }),
-    el('span', { text: puzzle.depth === 1 ? 'doorstrepen volstaat' : 'aanname nodig' }),
+    el('a', { href: `#/puzzels?wereld=${puzzle.world.id}`, text: `${puzzle.world.icon} ${puzzle.world.name}` }),
+    sep(),
+    deel(mech?.name ?? puzzle.mechaniek),
+    sep(),
+    deel(`${puzzle.niveauLabel} (${puzzle.niveau}/5)`),
+    sep(),
+    deel(puzzle.depth === 1 ? 'doorstrepen volstaat' : 'aanname nodig'),
   ]);
 
-  const wrap = el('div', { class: 'puzzle-head' }, [
+  return el('div', { class: 'puzzle-head' }, [
     crumbs,
     el('h1', { text: puzzle.title }),
     el('p', { class: 'intro', text: puzzle.intro }),
     el('div', { class: 'question' }, [
-      el('span', { class: 'card-world', text: 'De vraag' }),
+      el('span', { class: 'label', text: 'De vraag' }),
       el('b', { text: puzzle.question.text }),
     ]),
   ]);
-  wrap.style.setProperty('--accent', puzzle.world.accent);
-  return wrap;
 }
 
 function cluePanel(puzzle, state, draw, persist) {
   if (puzzle.kind === 'latin') {
     return el('div', {}, [
-      el('h3', { text: 'Hoe dit werkt' }),
-      el('p', { class: 'prose' }, [
-        el('span', {
-          text: 'Elke naam komt in elke rij precies een keer voor, en in elke kolom precies een keer. De grijze vakjes staan vast. Klik een leeg vakje om er namen door te lopen.',
-        }),
-      ]),
+      el('p', { class: 'label', text: 'Hoe dit werkt' }),
+      el('p', {
+        class: 'row-sub',
+        text: 'Elke naam komt in elke rij precies een keer voor, en in elke kolom precies een keer. De grijze vakjes staan vast. Klik een leeg vakje om er namen door te lopen.',
+      }),
       el('p', { class: 'legend', text: 'Het omlijnde vakje is waar de vraag over gaat.' }),
       swatches(puzzle),
     ]);
@@ -174,7 +172,7 @@ function cluePanel(puzzle, state, draw, persist) {
   }
 
   return el('div', {}, [
-    el('h3', { text: `Aanwijzingen (${puzzle.clues.length})` }),
+    el('p', { class: 'label', text: `Aanwijzingen (${puzzle.clues.length})` }),
     list,
     el('p', { class: 'legend', text: 'Klik een aanwijzing weg als je hem hebt gebruikt.' }),
   ]);

@@ -1,6 +1,7 @@
 // Router en opstart. Alles draait in de browser: geen server nodig om te
 // spelen, geen puzzeldata over de lijn.
 
+import { renderHome } from './ui/home.js';
 import { renderLibrary } from './ui/library.js';
 import { renderGenerator } from './ui/generator.js';
 import { renderUitleg } from './ui/uitleg.js';
@@ -24,6 +25,14 @@ function showError(message, hint) {
     el('p', { class: 'lede', text: message }),
     hint ? el('p', {}, [el('a', { class: 'btn', href: '#/', text: 'Terug naar de bibliotheek' })]) : null
   );
+}
+
+// Filters staan in de hash (#/puzzels?wereld=noir) zodat een gefilterde
+// lijst deelbaar en terug-knop-vriendelijk is.
+function leesQuery(path) {
+  const vraag = path.indexOf('?');
+  if (vraag < 0) return {};
+  return Object.fromEntries(new URLSearchParams(path.slice(vraag + 1)));
 }
 
 function route() {
@@ -57,8 +66,13 @@ function route() {
 
   if (path === 'maken') { markNav('maken'); renderGenerator(app); return; }
   if (path === 'uitleg') { markNav('uitleg'); renderUitleg(app); return; }
-  markNav('bibliotheek');
-  renderLibrary(app);
+  if (path.startsWith('puzzels')) {
+    markNav('puzzels');
+    renderLibrary(app, leesQuery(path));
+    return;
+  }
+  markNav(null);
+  renderHome(app);
 }
 
 addEventListener('hashchange', route);

@@ -119,6 +119,23 @@ browser of op een ander apparaat zet je hem opnieuw om. Staat hij aan, dan
 gaat er bij het openen van elke puzzel een verzoek naar de API; de puzzel is
 intussen al speelbaar met de eigen teksten en wordt daarna ververst.
 
+## Over de opmaak
+
+`styles/app.css` is een ontwerpsysteem, geen verzameling losse regels. Drie
+afspraken houden het rustig:
+
+- **Een accentkleur.** Goud, en alleen voor dingen waar je op klikt. Werelden
+  hadden eerst elk hun eigen kleur; zes accenten naast elkaar gaven een
+  regenboog waarin niets meer opviel. Ze hebben nu alleen nog hun pictogram.
+- **Vaste maten.** Ruimte komt uit `--s1` tot `--s8`, letters uit `--t-xs` tot
+  `--t-2xl`. Geen losse pixelwaarden erbij verzinnen.
+- **Serif voor lezen, schreefloos voor bedienen.** Koppen en verhaaltekst in
+  de serif, knoppen en labels schreefloos. Dat scheidt het verhaal van de
+  machinerie.
+
+Puzzels staan in lijstrijen, niet in kaarten: rijen zijn even hoog, je kunt
+de titels onder elkaar lezen, en er passen er meer op een scherm.
+
 ## Over plagiaat
 
 Logische deductiepuzzels op een raster bestaan sinds de jaren zestig en zijn
@@ -134,7 +151,7 @@ index.html              de pagina
 styles/app.css          alle opmaak
 src/engine/             solver, propagator, generatoren, moeilijkheid
 src/content/            werelden, opdrachten, de catalogus
-src/ui/                 bibliotheek, generator, speler, borden
+src/ui/                 landingspagina, bibliotheek, generator, speler, borden
 src/ai/                 de optionele AI-laag (met de keuring)
 server/serve.mjs        lokale server + AI-proxy
 tools/                  keuringsscripts

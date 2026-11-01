@@ -48,7 +48,7 @@ export function renderMatrix(puzzle, cat, marks, onChange, wrong) {
   table.append(body);
 
   return el('div', {}, [
-    el('h3', { text: cat.name }),
+    el('p', { class: 'label', text: cat.name }),
     el('div', { class: 'board-wrap' }, table),
   ]);
 }

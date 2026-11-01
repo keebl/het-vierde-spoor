@@ -1,78 +1,105 @@
-// De bibliotheek: alle kant-en-klare puzzels, met filters op opdracht,
-// wereld, mechaniek en niveau.
+// De bibliotheek. Vier keuzelijsten in plaats van negentien knoppen, en de
+// puzzels gegroepeerd per decor zodat je iets leest in plaats van scant.
 
 import { el } from './boards.js';
+import { puzzelRij } from './home.js';
 import { CATALOG } from '../content/catalog.js';
-import { WORLD_BY_ID } from '../content/worlds.js';
-import { ASSIGNMENT_BY_ID, ASSIGNMENTS, MECHANICS, MECHANIC_BY_ID } from '../content/assignments.js';
+import { WORLDS, WORLD_BY_ID } from '../content/worlds.js';
+import { ASSIGNMENTS, MECHANICS } from '../content/assignments.js';
 import { LEVELS, LEVEL_IDS } from '../engine/difficulty.js';
-import { WORLDS } from '../content/worlds.js';
 import { solvedIds } from './state.js';
-import { puzzleId } from '../puzzle.js';
 
-const filters = { opdracht: null, wereld: null, mechaniek: null, niveau: null };
+const FILTERS = [
+  { key: 'opdracht', label: 'Wat je uitzoekt', opties: () => ASSIGNMENTS.map((a) => [a.id, a.name]) },
+  { key: 'wereld', label: 'Decor', opties: () => WORLDS.map((w) => [w.id, `${w.icon} ${w.name}`]) },
+  { key: 'mechaniek', label: 'Vorm', opties: () => MECHANICS.map((m) => [m.id, m.name]) },
+  { key: 'niveau', label: 'Zwaarte', opties: () => LEVEL_IDS.map((l) => [String(l), `${l} - ${LEVELS[l].label}`]) },
+];
 
-export function renderLibrary(mount) {
+export function renderLibrary(mount, query = {}) {
   const done = solvedIds();
+  const actief = {};
+  for (const f of FILTERS) if (query[f.key]) actief[f.key] = query[f.key];
+
+  const lijst = CATALOG.filter((p) =>
+    FILTERS.every((f) => !actief[f.key] || String(p[f.key]) === String(actief[f.key]))
+  );
+
   mount.replaceChildren();
   mount.append(
-    el('h1', { text: 'Bibliotheek' }),
+    el('p', { class: 'eyebrow', text: 'Bibliotheek' }),
+    el('h1', { text: 'Alle puzzels' }),
     el('p', {
       class: 'lede',
-      text: `${CATALOG.length} puzzels, verdeeld over ${WORLDS.length} werelden, ${ASSIGNMENTS.length} soorten opdracht en ${MECHANICS.length} mechanieken. Nieuw hier? Begin bij de instapreeks onderaan.`,
+      text: 'Veertig zaken, verdeeld over zes decors en vijf zwaartes. Elke puzzel is met logica op te lossen en heeft precies één antwoord.',
     })
   );
 
-  const results = el('div', { class: 'cards' });
-
-  const chip = (label, group, value) => {
-    const active = filters[group] === value;
-    const b = el('button', { class: 'chip', type: 'button', 'aria-pressed': String(active), text: label });
-    b.addEventListener('click', () => {
-      filters[group] = active ? null : value;
-      renderLibrary(mount);
+  // --------------------------------------------------------- keuzelijsten
+  const balk = el('div', { class: 'filters' });
+  for (const f of FILTERS) {
+    const sel = el('select', { 'aria-label': f.label });
+    sel.append(el('option', { value: '', text: f.label }));
+    for (const [waarde, naam] of f.opties()) {
+      const opt = el('option', { value: waarde, text: naam });
+      if (String(actief[f.key] ?? '') === waarde) opt.selected = true;
+      sel.append(opt);
+    }
+    sel.addEventListener('change', () => {
+      const volgende = { ...actief };
+      if (sel.value) volgende[f.key] = sel.value;
+      else delete volgende[f.key];
+      location.hash = `#/puzzels${toQuery(volgende)}`;
     });
-    return b;
-  };
+    balk.append(el('span', { class: 'select-wrap' }, sel));
+  }
 
-  const rows = el('div', { class: 'filters' });
-  const row = (title, kids) => el('div', { class: 'filter-row' }, [el('h3', { text: title }), ...kids]);
-  rows.append(row('Opdracht', ASSIGNMENTS.map((a) => chip(a.short, 'opdracht', a.id))));
-  rows.append(row('Wereld', WORLDS.map((w) => chip(`${w.icon} ${w.name}`, 'wereld', w.id))));
-  rows.append(row('Mechaniek', MECHANICS.map((m) => chip(m.name, 'mechaniek', m.id))));
-  rows.append(row('Niveau', LEVEL_IDS.map((l) => chip(`${l} - ${LEVELS[l].label}`, 'niveau', l))));
-  mount.append(rows);
+  if (Object.keys(actief).length) {
+    const wis = el('button', { class: 'btn btn-sm btn-quiet', type: 'button', text: 'Filters wissen' });
+    wis.addEventListener('click', () => { location.hash = '#/puzzels'; });
+    balk.append(wis);
+  }
 
-  const list = CATALOG.filter((p) =>
-    (!filters.opdracht || p.opdracht === filters.opdracht) &&
-    (!filters.wereld || p.wereld === filters.wereld) &&
-    (!filters.mechaniek || p.mechaniek === filters.mechaniek) &&
-    (!filters.niveau || p.niveau === filters.niveau)
-  );
+  balk.append(el('span', {
+    class: 'filter-count',
+    text: lijst.length === CATALOG.length ? `${lijst.length} puzzels` : `${lijst.length} van ${CATALOG.length}`,
+  }));
+  mount.append(balk);
 
-  if (!list.length) {
-    mount.append(el('p', { class: 'empty', text: 'Geen puzzel met deze combinatie. Maak hem zelf: ga naar Zelf maken.' }));
+  if (!lijst.length) {
+    mount.append(
+      el('div', { class: 'empty' }, [
+        el('p', { text: 'Geen puzzel met deze combinatie.' }),
+        el('a', { class: 'btn', href: '#/maken', text: 'Maak hem zelf' }),
+      ])
+    );
     return;
   }
 
-  for (const entry of list) {
-    const world = WORLD_BY_ID.get(entry.wereld);
-    const id = puzzleId(entry);
-    const card = el('a', { class: 'card', href: `#/puzzel/${id}` }, [
-      el('div', { class: 'card-top' }, [
-        el('span', { class: 'card-world', text: `${world.icon} ${world.name}` }),
-        done.has(id) ? el('span', { class: 'tag', text: 'opgelost' }) : null,
-      ]),
-      el('span', { class: 'card-title', text: entry.titel }),
-      el('span', { class: 'card-sub', text: entry.sub }),
-      el('div', { class: 'card-meta' }, [
-        el('span', { class: 'tag', text: ASSIGNMENT_BY_ID.get(entry.opdracht).short }),
-        el('span', { class: 'tag', text: MECHANIC_BY_ID.get(entry.mechaniek).name }),
-        el('span', { class: 'tag tag-level', text: `niveau ${entry.niveau}` }),
-      ]),
-    ]);
-    card.style.setProperty('--accent', world.accent);
-    results.append(card);
+  // Zonder decorfilter groeperen we per decor: dat geeft de lijst koppen en
+  // leesrust. Met een filter aan is een platte lijst duidelijker.
+  if (actief.wereld) {
+    mount.append(el('div', { class: 'rows' }, lijst.map((e) => puzzelRij(e, done))));
+    return;
   }
-  mount.append(results);
+
+  for (const w of WORLDS) {
+    const vanWereld = lijst.filter((p) => p.wereld === w.id);
+    if (!vanWereld.length) continue;
+    mount.append(
+      el('section', { class: 'section' }, [
+        el('div', { class: 'section-head' }, [
+          el('h2', { text: `${w.icon} ${WORLD_BY_ID.get(w.id).name}` }),
+          el('p', { text: w.blurb }),
+        ]),
+        el('div', { class: 'rows' }, vanWereld.map((e) => puzzelRij(e, done))),
+      ])
+    );
+  }
+}
+
+function toQuery(obj) {
+  const paren = Object.entries(obj).filter(([, v]) => v);
+  if (!paren.length) return '';
+  return '?' + paren.map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
 }

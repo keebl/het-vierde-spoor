@@ -23,7 +23,8 @@ export function renderGenerator(mount) {
 
   mount.replaceChildren();
   mount.append(
-    el('h1', { text: 'Zelf maken' }),
+    el('p', { class: 'eyebrow', text: 'Generator' }),
+    el('h1', { text: 'Maak je eigen puzzel' }),
     el('p', {
       class: 'lede',
       text: 'Kies wat je wilt uitzoeken, waar het speelt, hoe je het oplost en hoe zwaar het mag zijn. De puzzel wordt ter plekke gebouwd en gecontroleerd op precies een oplossing.',
@@ -52,7 +53,7 @@ export function renderGenerator(mount) {
   };
 
   const field = (label, kids, cls = 'options') =>
-    el('div', { class: 'field' }, [el('label', { text: label }), el('div', { class: cls }, kids)]);
+    el('div', { class: 'field' }, [el('span', { class: 'label', text: label }), el('div', { class: cls }, kids)]);
 
   form.append(field('Opdracht', ASSIGNMENTS.map((a) => optButton('opdracht', a.id, a.name, a.blurb))));
   form.append(field('Wereld', WORLDS.map((w) => optButton('wereld', w.id, `${w.icon} ${w.name}`, w.blurb))));
@@ -79,7 +80,7 @@ export function renderGenerator(mount) {
   seedInput.addEventListener('input', () => { keuze.seed = seedInput.value.trim(); });
   const dice = el('button', { class: 'btn', type: 'button', text: 'Nieuwe seed' });
   dice.addEventListener('click', () => { keuze.seed = randomSeed(); renderGenerator(mount); });
-  form.append(field('Seed', [seedInput, dice], 'row'));
+  form.append(field('Seed', [seedInput, dice], 'row-inline'));
 
   // De AI-laag herschrijft alleen de stijl van de teksten. Elke herschreven
   // aanwijzing wordt nagekeken op het behoud van alle eigennamen; faalt dat,
@@ -102,7 +103,7 @@ export function renderGenerator(mount) {
     if (!keuze.seed) keuze.seed = randomSeed();
     location.hash = `#/puzzel/${puzzleId(keuze)}`;
   });
-  form.append(el('div', { class: 'row' }, [go]));
+  form.append(el('div', { class: 'row-inline' }, [go]));
 
   mount.append(form);
 }
