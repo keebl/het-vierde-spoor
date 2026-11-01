@@ -15,6 +15,8 @@ export function renderPlayer(puzzle, mount) {
     // de speler zelf zet om een vakje uit te sluiten.
     plaats: saved.plaats ?? {},
     kruis: new Set(saved.kruis ?? []),
+    schets: saved.schets ?? {},
+    schetsAan: false,
     gekozen: 0,
     plaatsVanCel(cel) {
       for (const [p, c] of Object.entries(this.plaats)) if (c === cel) return Number(p);
@@ -31,6 +33,7 @@ export function renderPlayer(puzzle, mount) {
       marks: state.marks,
       plaats: state.plaats,
       kruis: [...state.kruis],
+      schets: state.schets,
       struck: [...state.struck],
       solved: state.solved,
       titel: puzzle.title,
@@ -104,6 +107,7 @@ export function renderPlayer(puzzle, mount) {
       state.marks = puzzle.kind === 'assign' ? emptyMarks(puzzle) : {};
       state.plaats = {};
       state.kruis = new Set();
+      state.schets = {};
       state.struck = new Set();
       state.wrong = new Set();
       state.solved = false;
@@ -206,7 +210,7 @@ function boardNodes(puzzle, state, onCell) {
       el('div', { class: 'board-wrap' }, renderKamerbord(puzzle, state, { klikCel: onCell })),
       el('p', {
         class: 'legend',
-        text: 'Kies een verdachte en klik een vakje om hem neer te zetten. Er staat precies één verdachte per rij en per kolom, en niemand staat op een meubelstuk. Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan; met Uitsluiten zet je je eigen kruisjes.',
+        text: 'Kies een figuur en klik een vakje om hem neer te zetten. Met Schetsen zet je in plaats daarvan zijn beginletter in het vakje, als notitie van wie daar zou kunnen staan. Er staat precies één verdachte per rij en per kolom, en niemand staat op een meubelstuk. Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan; met Uitsluiten zet je je eigen kruisjes.',
       }),
     ];
   }
@@ -252,6 +256,16 @@ function personenPalet(puzzle, state, onCell) {
   }, [el('span', { class: 'palet-fiche', text: '✕' }), el('span', { text: 'Uitsluiten' })]);
   kruis.addEventListener('click', () => onCell(null, -1));
   balk.append(kruis);
+
+  // Schetsstand: klikken zet dan de beginletter van de gekozen figuur in het
+  // vakje in plaats van de figuur zelf.
+  const schets = el('button', {
+    class: 'palet-knop palet-schets',
+    type: 'button',
+    'aria-pressed': String(state.schetsAan),
+  }, [el('span', { class: 'palet-fiche', text: '✎' }), el('span', { text: 'Schetsen' })]);
+  schets.addEventListener('click', () => onCell(null, -2));
+  balk.append(schets);
 
   return balk;
 }
@@ -311,7 +325,22 @@ function cycleLatin(puzzle, state, r, c) {
 // Klik op een vakje zet die verdachte neer, haalt hem weg, of wisselt.
 function zetNeer(puzzle, state, cel, keuze) {
   if (cel === null) {
+    if (keuze === -2) {
+      state.schetsAan = !state.schetsAan;
+      if (state.schetsAan && state.gekozen === -1) state.gekozen = 0;
+      return;
+    }
     state.gekozen = keuze;
+    if (keuze === -1) state.schetsAan = false;
+    return;
+  }
+  // Schetsen: de letter van de gekozen figuur erbij of eraf.
+  if (state.schetsAan && state.gekozen >= 0) {
+    const lijst = state.schets[cel] ?? [];
+    state.schets[cel] = lijst.includes(state.gekozen)
+      ? lijst.filter((f) => f !== state.gekozen)
+      : [...lijst, state.gekozen].sort((a, b) => a - b);
+    if (!state.schets[cel].length) delete state.schets[cel];
     return;
   }
   if (state.gekozen === -1) {
@@ -327,6 +356,7 @@ function zetNeer(puzzle, state, cel, keuze) {
   if (hier != null) delete state.plaats[hier];
   state.plaats[state.gekozen] = cel;
   state.kruis.delete(cel);
+  delete state.schets[cel];
 }
 
 function fillSolution(puzzle, state) {

@@ -773,6 +773,14 @@ table.latin td.cell { width: 78px; height: 46px; }
 }
 .penningfout { fill: none; stroke: #ff5a5a; stroke-width: 3; }
 
+.schetsletter {
+  fill: #6b533a;
+  font: 600 12px var(--sans);
+  opacity: 0.72;
+}
+
+.palet-schets .palet-fiche { background: var(--surface-3); color: var(--text-2); }
+
 .kruisje { stroke: #6b533a; stroke-width: 3; stroke-linecap: round; opacity: 0.8; }
 /* Kruisjes die het bord zelf zet staan er lichter in dan die van jezelf. */
 .kruisje-vanzelf { opacity: 0.32; stroke-width: 2.5; }

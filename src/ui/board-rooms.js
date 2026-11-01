@@ -226,6 +226,30 @@ export function renderKamerbord(puzzle, state, acties) {
   }
   svg.append(borden);
 
+  // ---------------------------------------------------------- schetsletters
+  // Potloodnotities: de beginletters van iedereen die hier nog zou kunnen
+  // staan. Je legt niets vast, je houdt alleen bij wat je al weet - precies
+  // wat je bij een puzzel op papier in de hoek van een vakje zou krabbelen.
+  const schetsen = el('g');
+  for (const [celTekst, figuren] of Object.entries(state.schets ?? {})) {
+    const cel = Number(celTekst);
+    if (!figuren.length) continue;
+    if (!bruikbaar(cel)) continue;
+    if (state.plaatsVanCel(cel) != null) continue;
+    figuren.forEach((fi, k) => {
+      // Onderin het vakje: het naambordje van de kamer zit bovenin.
+      const t = el('text', {
+        x: x(kol(cel)) + 10 + (k % 4) * 15,
+        y: y(rij(cel)) + CEL - 24 + Math.floor(k / 4) * 14,
+        class: 'schetsletter',
+      });
+      t.textContent = (puzzle.personen[fi] ?? '?').charAt(0).toUpperCase();
+      schetsen.append(t);
+    });
+  }
+  svg.append(schetsen);
+
+
   // ------------------------------------------------------------ klikvlak
   const klik = el('g');
   for (let i = 0; i < n * n; i++) {
