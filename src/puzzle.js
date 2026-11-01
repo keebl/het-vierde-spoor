@@ -149,7 +149,13 @@ function clueNames(clue, spec) {
 function buildKamerPuzzle({ world, settings }) {
   const { seed, niveau } = settings;
   const params = kamerParams(niveau);
-  const gen = genereerKamerpuzzel(seed, params);
+  // De wereld bepaalt hoeveel verschillende meubels en kamers er benoembaar
+  // zijn; meer dan dat kan de motor niet gebruiken.
+  const gen = genereerKamerpuzzel(seed, {
+    ...params,
+    kamers: Math.min(params.kamers, world.places.length),
+    maxMeubels: world.meubels.length,
+  });
   const rng = makeRng(`${seed}:kamerwoorden`);
 
   const personen = rng.sample(world.persons, params.n);

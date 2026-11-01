@@ -55,6 +55,9 @@ export function renderKamerbord(puzzle, state, acties) {
   const rij = (i) => Math.floor(i / n);
   const kol = (i) => i % n;
   const kamer = (i) => puzzle.kamerVan[i];
+  const idx = (r, c) => r * n + c;
+  // Een vakje waar iemand zou kunnen staan: geen meubel, niet het slachtoffer.
+  const bruikbaar = (i) => puzzle.meubelOp[i] == null && i !== puzzle.slachtoffer;
 
   // ---------------------------------------------------------------- vloer
   const vloer = el('g');
@@ -128,6 +131,10 @@ export function renderKamerbord(puzzle, state, acties) {
   svg.append(lijk);
 
   // ------------------------------------------------------------ penningen
+  // Kleur alleen is niet genoeg om twaalf mensen uit elkaar te houden, en op
+  // een afdruk in zwart-wit valt kleur helemaal weg. Daarom staat de
+  // beginletter op de penning - en daarom heeft iedereen in een puzzel een
+  // eigen beginletter.
   const geplaatst = el('g');
   for (const [p, cel] of Object.entries(state.plaats)) {
     const pi = Number(p);
@@ -136,22 +143,45 @@ export function renderKamerbord(puzzle, state, acties) {
     const cx = x(kol(cel)) + CEL / 2;
     const cy = y(rij(cel)) + CEL / 2;
     g.append(el('circle', { cx, cy, r: 27, fill: PENNING[pi % PENNING.length], class: 'penningvlak' }));
-    g.append(el('circle', { cx, cy: cy - 7, r: 7, class: 'penningkop' }));
-    g.append(el('path', { d: `M ${cx - 12} ${cy + 15} a 12 12 0 0 1 24 0 Z`, class: 'penningkop' }));
+    g.append(el('circle', { cx, cy: cy - 11, r: 6, class: 'penningkop' }));
+    g.append(el('path', { d: `M ${cx - 10} ${cy + 1} a 10 10 0 0 1 20 0 Z`, class: 'penningkop' }));
+    const letter = el('text', { x: cx, y: cy + 21, 'text-anchor': 'middle', class: 'penningletter' });
+    letter.textContent = (puzzle.personen[pi] ?? '?').charAt(0).toUpperCase();
+    g.append(letter);
     if (state.fout?.has(cel)) g.append(el('circle', { cx, cy, r: 30, class: 'penningfout' }));
     geplaatst.append(g);
   }
   svg.append(geplaatst);
 
   // ------------------------------------------------------------- kruisjes
+  // Zodra iemand staat, kan er in diezelfde rij en kolom niemand meer bij.
+  // Die kruisjes zet het bord zelf, want ze volgen dwingend uit de regel -
+  // ze met de hand laten zetten is bezigheidstherapie.
+  const vanzelf = new Set();
+  for (const cel of Object.values(state.plaats)) {
+    if (cel == null) continue;
+    const r = rij(cel);
+    const c = kol(cel);
+    for (let i = 0; i < n; i++) {
+      for (const buur of [idx(r, i), idx(i, c)]) {
+        if (buur === cel) continue;
+        if (!bruikbaar(buur)) continue;
+        if (state.plaatsVanCel(buur) != null) continue;
+        vanzelf.add(buur);
+      }
+    }
+  }
+
   const kruisjes = el('g');
-  for (const cel of state.kruis) {
+  const alleKruisjes = new Set([...state.kruis, ...vanzelf]);
+  for (const cel of alleKruisjes) {
     if (state.plaatsVanCel(cel) != null) continue;
+    if (!bruikbaar(cel)) continue;
     const cx = x(kol(cel)) + CEL / 2;
     const cy = y(rij(cel)) + CEL / 2;
     kruisjes.append(el('path', {
       d: `M ${cx - 9} ${cy - 9} l 18 18 M ${cx + 9} ${cy - 9} l -18 18`,
-      class: 'kruisje',
+      class: vanzelf.has(cel) ? 'kruisje kruisje-vanzelf' : 'kruisje',
     }));
   }
   svg.append(kruisjes);

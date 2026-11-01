@@ -57,7 +57,7 @@ export const LEVELS = {
     maxClues: 15,
   },
   5: {
-    label: 'Moordend',
+    label: 'Meesterlijk',
     slots: 6,
     cats: 3,
     ordered: true,
@@ -82,11 +82,14 @@ export const KAMER_LEVELS = {
        gewichten: { kamer: 6, naast: 4, zelfdeKamer: 3, leegKamer: 2, buren: 2, noord: 2, west: 2, opRij: 1, bijSlachtoffer: 1 } },
   2: { n: 4, kamers: 4, meubelDeel: 0.20, style: 'shallow', maxClues: 9,
        gewichten: { kamer: 5, naast: 4, zelfdeKamer: 3, leegKamer: 2, buren: 3, noord: 3, west: 3, opRij: 2, bijSlachtoffer: 1 } },
-  3: { n: 5, kamers: 4, meubelDeel: 0.22, style: 'shallow', maxClues: 12,
+  3: { n: 5, kamers: 5, meubelDeel: 0.22, style: 'shallow', maxClues: 12,
        gewichten: { kamer: 4, naast: 4, zelfdeKamer: 4, leegKamer: 2, buren: 3, noord: 4, west: 4, opRij: 3, bijSlachtoffer: 2 } },
-  4: { n: 5, kamers: 5, meubelDeel: 0.22, style: 'deep', maxClues: 14,
+  4: { n: 6, kamers: 5, meubelDeel: 0.24, style: 'deep', maxClues: 16,
        gewichten: { kamer: 3, naast: 4, zelfdeKamer: 4, leegKamer: 2, buren: 4, noord: 4, west: 4, opRij: 3, bijSlachtoffer: 2 } },
-  5: { n: 6, kamers: 5, meubelDeel: 0.24, style: 'deep', maxClues: 18,
+  // Zeven bij zeven is het zwaarste dat de solver binnen een fractie van een
+  // seconde rondkrijgt. Acht duurt al 2,4 seconde en negen dertig; voor nog
+  // grotere roosters moet de solver eerst slimmer (zie README).
+  5: { n: 7, kamers: 6, meubelDeel: 0.24, style: 'deep', maxClues: 22,
        gewichten: { kamer: 2, naast: 4, zelfdeKamer: 5, leegKamer: 2, buren: 4, noord: 5, west: 5, opRij: 4, bijSlachtoffer: 2 } },
 };
 

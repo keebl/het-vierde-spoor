@@ -9,20 +9,28 @@ import { ASSIGNMENTS, MECHANICS } from '../content/assignments.js';
 import { LEVELS, LEVEL_IDS } from '../engine/difficulty.js';
 import { solvedIds } from './state.js';
 
+// Twee keuzelijsten is genoeg. 'Wat je uitzoekt' en 'Decor' zijn eruit: de
+// puzzels staan al per decor gegroepeerd, en wat je uitzoekt is bijna altijd
+// hetzelfde. Minder knoppen boven de lijst, meer lijst.
 const FILTERS = [
-  { key: 'opdracht', label: 'Wat je uitzoekt', opties: () => ASSIGNMENTS.map((a) => [a.id, a.name]) },
-  { key: 'wereld', label: 'Decor', opties: () => WORLDS.map((w) => [w.id, `${w.icon} ${w.name}`]) },
-  { key: 'mechaniek', label: 'Vorm', opties: () => MECHANICS.map((m) => [m.id, m.name]) },
-  { key: 'niveau', label: 'Zwaarte', opties: () => LEVEL_IDS.map((l) => [String(l), `${l} - ${LEVELS[l].label}`]) },
+  { key: 'mechaniek', label: 'Soort spel', opties: () => MECHANICS.map((m) => [m.id, m.name]) },
+  { key: 'niveau', label: 'Moeilijkheidsgraad', opties: () => LEVEL_IDS.map((l) => [String(l), `${l} - ${LEVELS[l].label}`]) },
 ];
+
+// Het decorfilter blijft wel werken via de link (#/puzzels?wereld=noir), want
+// de tegels op de voorpagina wijzen daarheen.
+const EXTRA_FILTERS = ['wereld', 'opdracht'];
 
 export function renderLibrary(mount, query = {}) {
   const done = solvedIds();
   const actief = {};
   for (const f of FILTERS) if (query[f.key]) actief[f.key] = query[f.key];
 
+  for (const k of EXTRA_FILTERS) if (query[k]) actief[k] = query[k];
+
+  const alleSleutels = [...FILTERS.map((f) => f.key), ...EXTRA_FILTERS];
   const lijst = CATALOG.filter((p) =>
-    FILTERS.every((f) => !actief[f.key] || String(p[f.key]) === String(actief[f.key]))
+    alleSleutels.every((k) => !actief[k] || String(p[k]) === String(actief[k]))
   );
 
   mount.replaceChildren();
@@ -31,7 +39,7 @@ export function renderLibrary(mount, query = {}) {
     el('h1', { text: 'Alle puzzels' }),
     el('p', {
       class: 'lede',
-      text: 'Veertig zaken, verdeeld over zes decors en vijf zwaartes. Elke puzzel is met logica op te lossen en heeft precies één antwoord.',
+      text: `${CATALOG.length} zaken in vier soorten spel en vijf moeilijkheidsgraden. Elke puzzel is met logica op te lossen en heeft precies één antwoord.`,
     })
   );
 

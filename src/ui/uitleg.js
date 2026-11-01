@@ -53,12 +53,12 @@ export function renderUitleg(mount) {
   );
 
   mount.append(
-    sectie('In welke vorm', tabel(MECHANICS.map((m) => [m.name, m.blurb])),
+    sectie('Soorten spel', tabel(MECHANICS.map((m) => [m.name, m.blurb])),
       'Dezelfde logica, drie manieren om hem voor je neus te krijgen.')
   );
 
   mount.append(
-    sectie('Hoe zwaar', [
+    sectie('Moeilijkheidsgraad', [
       tabel(LEVEL_IDS.map((l) => {
         const lv = LEVELS[l];
         return [

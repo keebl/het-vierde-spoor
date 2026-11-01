@@ -87,13 +87,16 @@ function heeftPlaatsing(n, vrij) {
   return zoek(0);
 }
 
-export function bouwRooster(n, rng, { kamers, meubelDeel = 0.22 }) {
+// maxMeubels begrenst hoeveel verschillende meubels er in het rooster komen.
+// De wereld levert de namen, en er mogen er nooit meer gevraagd worden dan er
+// namen zijn - anders staat er "undefined" in een aanwijzing.
+export function bouwRooster(n, rng, { kamers, meubelDeel = 0.22, maxMeubels = Infinity }) {
   for (let poging = 0; poging < 40; poging++) {
     const kamerVan = verdeelKamers(n, kamers, rng);
     const meubelOp = new Array(n * n).fill(null);
     const vrij = new Array(n * n).fill(true);
 
-    const aantalMeubels = Math.max(2, Math.round(n * n * meubelDeel));
+    const aantalMeubels = Math.min(maxMeubels, Math.max(2, Math.round(n * n * meubelDeel)));
     const volgorde = rng.shuffle([...Array(n * n).keys()]);
     let gezet = 0;
     for (const cel of volgorde) {

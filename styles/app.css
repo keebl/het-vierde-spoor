@@ -759,10 +759,19 @@ table.latin td.cell { width: 78px; height: 46px; }
 }
 
 .penningvlak { stroke: rgba(0, 0, 0, 0.35); stroke-width: 2; }
-.penningkop { fill: rgba(255, 255, 255, 0.92); }
+.penningkop { fill: rgba(255, 255, 255, 0.9); }
+.penningletter {
+  fill: #fff;
+  font: 700 17px var(--serif);
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.25);
+  stroke-width: 2px;
+}
 .penningfout { fill: none; stroke: #ff5a5a; stroke-width: 3; }
 
-.kruisje { stroke: #6b533a; stroke-width: 3; stroke-linecap: round; opacity: 0.75; }
+.kruisje { stroke: #6b533a; stroke-width: 3; stroke-linecap: round; opacity: 0.8; }
+/* Kruisjes die het bord zelf zet staan er lichter in dan die van jezelf. */
+.kruisje-vanzelf { opacity: 0.32; stroke-width: 2.5; }
 
 .kamerplaat { fill: rgba(28, 22, 16, 0.82); }
 .kamerplaat-tekst {

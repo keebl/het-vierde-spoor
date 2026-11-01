@@ -121,7 +121,11 @@ function snoei(rooster, aanwijzingen, slachtoffer, stijl, rng) {
 }
 
 function poging(params, rng) {
-  const rooster = bouwRooster(params.n, rng, { kamers: params.kamers, meubelDeel: params.meubelDeel });
+  const rooster = bouwRooster(params.n, rng, {
+    kamers: params.kamers,
+    meubelDeel: params.meubelDeel,
+    maxMeubels: params.maxMeubels,
+  });
   const plaats = tekenPlaatsing(rooster, rng);
   if (!plaats) return null;
 
