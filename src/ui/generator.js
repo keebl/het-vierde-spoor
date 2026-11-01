@@ -101,7 +101,11 @@ export function renderGenerator(mount) {
   const go = el('button', { class: 'btn btn-primary', type: 'button', text: 'Maak de puzzel' });
   go.addEventListener('click', () => {
     if (!keuze.seed) keuze.seed = randomSeed();
-    location.hash = `#/puzzel/${puzzleId(keuze)}`;
+    const heen = puzzleId(keuze);
+    // Een volgende klik hoort een andere puzzel te geven, niet dezelfde.
+    // Wil je er een terug, dan typ je de seed gewoon weer in.
+    keuze.seed = randomSeed();
+    location.hash = `#/puzzel/${heen}`;
   });
   form.append(el('div', { class: 'row-inline' }, [go]));
 

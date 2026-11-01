@@ -57,8 +57,9 @@ function route() {
           });
         }
       } catch (err) {
+        // De technische oorzaak hoort in de console, niet op het scherm.
         console.error(err);
-        showError(`Deze puzzel kon niet worden gebouwd: ${err.message}`, true);
+        showError('Deze link hoort niet bij een bestaande puzzel. Hij is misschien verouderd of verkeerd overgenomen.', true);
       }
     }, 30);
     return;

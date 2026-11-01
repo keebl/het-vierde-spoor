@@ -300,6 +300,7 @@ h2 {
 .dot.on { background: var(--accent); }
 
 .done-mark { color: var(--good); font-size: var(--t-sm); }
+.bekeken-mark { color: var(--text-3); font-size: var(--t-xs); font-style: italic; }
 
 @media (max-width: 640px) {
   /* Titel en zwaarte naast elkaar wordt te krap; de zwaarte zakt eronder. */

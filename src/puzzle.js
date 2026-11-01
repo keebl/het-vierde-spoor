@@ -244,5 +244,7 @@ export function puzzleId(settings) {
 
 export function parsePuzzleId(id) {
   const [opdracht, wereld, mechaniek, niveau, ...rest] = id.split('.');
-  return { opdracht, wereld, mechaniek, niveau: Number(niveau), seed: rest.join('.') };
+  // Een link met niveau 9 moet niet "Meesterlijk (9/5)" opleveren.
+  const begrensd = Math.min(5, Math.max(1, Number(niveau) || 1));
+  return { opdracht, wereld, mechaniek, niveau: begrensd, seed: rest.join('.') };
 }

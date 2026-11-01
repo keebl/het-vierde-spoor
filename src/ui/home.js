@@ -5,7 +5,7 @@ import { el } from './boards.js';
 import { CATALOG } from '../content/catalog.js';
 import { WORLDS } from '../content/worlds.js';
 import { LEVELS } from '../engine/difficulty.js';
-import { solvedIds } from './state.js';
+import { solvedIds, onthuldIds } from './state.js';
 import { puzzleId } from '../puzzle.js';
 import { sceneVoor } from './scenes.js';
 
@@ -26,6 +26,7 @@ const STAPPEN = [
 
 export function renderHome(mount) {
   const done = solvedIds();
+  const bekeken = onthuldIds();
   const instap = CATALOG.filter((p) => p.seed.startsWith('start-'));
 
   mount.replaceChildren();
@@ -79,7 +80,7 @@ export function renderHome(mount) {
         el('h2', { text: 'Begin hier' }),
         el('p', { text: `${instap.length} zaken die stap voor stap zwaarder worden.` }),
       ]),
-      el('div', { class: 'rows' }, instap.map((entry, i) => puzzelRij(entry, done, i + 1))),
+      el('div', { class: 'rows' }, instap.map((entry, i) => puzzelRij(entry, done, i + 1, bekeken))),
     ])
   );
 
@@ -120,7 +121,7 @@ export function renderHome(mount) {
 }
 
 // Een puzzel als rij: nummer, titel met ondertitel, en rechts de zwaarte.
-export function puzzelRij(entry, done, nummer) {
+export function puzzelRij(entry, done, nummer, bekeken = new Set()) {
   const id = puzzleId(entry);
   const niveau = LEVELS[entry.niveau];
 
@@ -137,7 +138,11 @@ export function puzzelRij(entry, done, nummer) {
       el('span', { class: 'row-sub', text: entry.sub }),
     ]),
     el('span', { class: 'row-meta' }, [
-      done.has(id) ? el('span', { class: 'done-mark', text: '✓ opgelost' }) : null,
+      done.has(id)
+        ? el('span', { class: 'done-mark', text: '✓ opgelost' })
+        : bekeken.has(id)
+          ? el('span', { class: 'bekeken-mark', text: 'oplossing bekeken' })
+          : null,
       el('span', { text: niveau.label }),
       bolletjes,
     ]),

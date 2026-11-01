@@ -7,7 +7,8 @@ import { CATALOG } from '../content/catalog.js';
 import { WORLDS, WORLD_BY_ID } from '../content/worlds.js';
 import { ASSIGNMENTS, MECHANICS } from '../content/assignments.js';
 import { LEVELS, LEVEL_IDS } from '../engine/difficulty.js';
-import { solvedIds } from './state.js';
+import { solvedIds, onthuldIds } from './state.js';
+import { puzzleId } from '../puzzle.js';
 
 // Twee keuzelijsten is genoeg. 'Wat je uitzoekt' en 'Decor' zijn eruit: de
 // puzzels staan al per decor gegroepeerd, en wat je uitzoekt is bijna altijd
@@ -24,15 +25,21 @@ const EXTRA_FILTERS = ['opdracht'];
 
 export function renderLibrary(mount, query = {}) {
   const done = solvedIds();
+  const bekeken = onthuldIds();
   const actief = {};
   for (const f of FILTERS) if (query[f.key]) actief[f.key] = query[f.key];
 
   for (const k of EXTRA_FILTERS) if (query[k]) actief[k] = query[k];
+  if (query.open === '1') actief.open = '1';
 
   const alleSleutels = [...FILTERS.map((f) => f.key), ...EXTRA_FILTERS];
-  const lijst = CATALOG.filter((p) =>
-    alleSleutels.every((k) => !actief[k] || String(p[k]) === String(actief[k]))
-  );
+  const alleenOpen = query.open === '1';
+  const lijst = CATALOG
+    .filter((p) => alleSleutels.every((k) => !actief[k] || String(p[k]) === String(actief[k])))
+    .filter((p) => !alleenOpen || !done.has(puzzleId(p)))
+    // Oplopend in moeilijkheid: je wilt niet van Meesterlijk naar Beginner
+    // springen terwijl je een lijst afwerkt.
+    .sort((a, b) => a.niveau - b.niveau || a.titel.localeCompare(b.titel));
 
   mount.replaceChildren();
   mount.append(
@@ -63,15 +70,31 @@ export function renderLibrary(mount, query = {}) {
     balk.append(el('span', { class: 'select-wrap' }, sel));
   }
 
-  if (Object.keys(actief).length) {
+  const openKnop = el('button', {
+    class: 'btn btn-sm',
+    type: 'button',
+    'aria-pressed': String(alleenOpen),
+    text: 'Alleen nog niet opgelost',
+  });
+  openKnop.addEventListener('click', () => {
+    const volgende = { ...actief };
+    if (!alleenOpen) volgende.open = '1';
+    location.hash = `#/puzzels${toQuery(volgende)}`;
+  });
+  balk.append(openKnop);
+
+  if (Object.keys(actief).length || alleenOpen) {
     const wis = el('button', { class: 'btn btn-sm btn-quiet', type: 'button', text: 'Filters wissen' });
     wis.addEventListener('click', () => { location.hash = '#/puzzels'; });
     balk.append(wis);
   }
 
+  const opgelost = CATALOG.filter((p) => done.has(puzzleId(p))).length;
   balk.append(el('span', {
     class: 'filter-count',
-    text: lijst.length === CATALOG.length ? `${lijst.length} puzzels` : `${lijst.length} van ${CATALOG.length}`,
+    text: lijst.length === CATALOG.length
+      ? `${opgelost} van ${CATALOG.length} opgelost`
+      : `${lijst.length} van ${CATALOG.length} puzzels · ${opgelost} opgelost`,
   }));
   mount.append(balk);
 
@@ -88,7 +111,7 @@ export function renderLibrary(mount, query = {}) {
   // Zonder decorfilter groeperen we per decor: dat geeft de lijst koppen en
   // leesrust. Met een filter aan is een platte lijst duidelijker.
   if (actief.wereld) {
-    mount.append(el('div', { class: 'rows' }, lijst.map((e) => puzzelRij(e, done))));
+    mount.append(el('div', { class: 'rows' }, lijst.map((e) => puzzelRij(e, done, null, bekeken))));
     return;
   }
 
@@ -101,7 +124,7 @@ export function renderLibrary(mount, query = {}) {
           el('h2', { text: `${w.icon} ${WORLD_BY_ID.get(w.id).name}` }),
           el('p', { text: w.blurb }),
         ]),
-        el('div', { class: 'rows' }, vanWereld.map((e) => puzzelRij(e, done))),
+        el('div', { class: 'rows' }, vanWereld.map((e) => puzzelRij(e, done, null, bekeken))),
       ])
     );
   }

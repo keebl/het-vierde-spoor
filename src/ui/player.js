@@ -27,6 +27,9 @@ export function renderPlayer(puzzle, mount) {
     note: null,
     wrong: new Set(),
     solved: !!saved.solved,
+    // Wie de oplossing opvraagt heeft hem niet zelf gevonden. Dat houden we
+    // apart bij, zodat de lijst niet doet alsof je hem hebt opgelost.
+    onthuld: !!saved.onthuld,
   };
 
   const persist = () => {
@@ -37,6 +40,7 @@ export function renderPlayer(puzzle, mount) {
       schets: state.schets,
       struck: [...state.struck],
       solved: state.solved,
+      onthuld: state.onthuld,
       titel: puzzle.title,
     });
   };
@@ -97,7 +101,11 @@ export function renderPlayer(puzzle, mount) {
       draw();
     },
     reveal() {
+      // Eén misklik mag een puzzel niet verpesten.
+      const bezig = Object.keys(state.plaats).length || Object.keys(state.marks).length;
+      if (bezig && !window.confirm('De hele oplossing invullen? Daarmee is de puzzel voorbij.')) return;
       fillSolution(puzzle, state);
+      state.onthuld = true;
       state.wrong = new Set();
       state.solved = true;
       state.note = { kind: 'ok', text: `De oplossing staat op het bord. Het antwoord: ${puzzle.question.answer}.` };
@@ -105,6 +113,9 @@ export function renderPlayer(puzzle, mount) {
       draw();
     },
     reset() {
+      const bezig = Object.keys(state.plaats).length || Object.keys(state.marks).length || state.kruis.size;
+      if (bezig && !window.confirm('Alles wissen en opnieuw beginnen?')) return;
+      state.onthuld = false;
       state.marks = puzzle.kind === 'assign' ? emptyMarks(puzzle) : {};
       state.plaats = {};
       state.kruis = new Set();

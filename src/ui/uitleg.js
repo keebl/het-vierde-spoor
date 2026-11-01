@@ -122,6 +122,10 @@ export function renderUitleg(mount) {
           el('span', { text: 'De seed. Dezelfde seed met dezelfde instellingen levert altijd exact dezelfde puzzel op, dus wie je link opent krijgt jouw puzzel en niet een andere.' }),
         ]),
         el('p', {}, [
+          el('b', { text: 'Waarom heet het Het Vierde Spoor? ' }),
+          el('span', { text: 'Bij elke zaak liggen er drie sporen klaar die iedereen ziet: wie er was, wat er lag, waar het gebeurde. Het vierde spoor is het spoor dat niemand heeft opgemerkt, en dat is het spoor dat je hier zoekt. Je vindt het niet door beter te kijken, maar door alles weg te strepen wat het niet kan zijn.' }),
+        ]),
+        el('p', {}, [
           el('b', { text: 'Is dit een kopie van een bestaand puzzelboek? ' }),
           el('span', { text: 'Nee. Logische deductiepuzzels op een raster bestaan sinds de jaren zestig en de techniek erachter is wiskunde, vrij van rechten. Wat beschermd is — merknamen, personages, illustraties, teksten — is hier allemaal eigen werk.' }),
         ]),

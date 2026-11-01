@@ -41,5 +41,12 @@ export function clearProgress(id) {
 
 export function solvedIds() {
   const all = readAll();
-  return new Set(Object.keys(all).filter((k) => all[k]?.solved));
+  return new Set(Object.keys(all).filter((k) => all[k]?.solved && !all[k]?.onthuld));
+}
+
+// Puzzels waarvan je de oplossing hebt opgevraagd. Die tellen niet als
+// opgelost, maar je wilt wel zien dat je er geweest bent.
+export function onthuldIds() {
+  const all = readAll();
+  return new Set(Object.keys(all).filter((k) => all[k]?.onthuld));
 }
