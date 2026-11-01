@@ -7,24 +7,27 @@
    - serif voor koppen en verhalende tekst, schreefloos voor bediening */
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  --bg: #0f1116;
-  --surface: #161920;
-  --surface-2: #1c2029;
-  --surface-3: #232833;
-  --line: #262b36;
-  --line-soft: #1e222b;
+  /* Crème papier in plaats van zwart: een puzzelboek dat open op tafel ligt.
+     De tekeningen draaien mee - silhouetten staan nu tegen een lichte lucht,
+     wat ze eerder helderder maakt dan minder. */
+  --bg: #f7f2e8;
+  --surface: #fffdf7;
+  --surface-2: #f1eade;
+  --surface-3: #e7decd;
+  --line: #dccfb8;
+  --line-soft: #ece4d5;
 
-  --text: #e9ebf0;
-  --text-2: #a8afbe;
-  --text-3: #6d7585;
+  --text: #2b241c;
+  --text-2: #5f5547;
+  --text-3: #8b8070;
 
-  --accent: #d9a94c;
-  --accent-soft: #3a2f16;
-  --accent-ink: #15171d;
-  --good: #7cc08c;
-  --bad: #df8188;
+  --accent: #a3551f;
+  --accent-soft: #f8e8d4;
+  --accent-ink: #fffaf0;
+  --good: #2e7d4f;
+  --bad: #b03a3a;
 
   --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
   --s5: 24px; --s6: 32px; --s7: 48px; --s8: 72px;
@@ -67,7 +70,7 @@ button { font-family: inherit; }
   gap: var(--s4);
   padding: var(--s3) var(--s5);
   border-bottom: 1px solid var(--line);
-  background: color-mix(in oklab, var(--bg) 88%, black);
+  background: color-mix(in oklab, var(--surface) 80%, var(--bg));
   position: sticky;
   top: 0;
   z-index: 20;
@@ -209,7 +212,7 @@ h2 {
   white-space: nowrap;
 }
 
-.btn:hover { border-color: #39404e; background: var(--surface-3); }
+.btn:hover { border-color: #c3b393; background: var(--surface-3); }
 
 .btn-primary {
   background: var(--accent);
@@ -217,7 +220,7 @@ h2 {
   color: var(--accent-ink);
   font-weight: 600;
 }
-.btn-primary:hover { background: #e4b85c; border-color: #e4b85c; }
+.btn-primary:hover { background: #b96327; border-color: #b96327; }
 
 .btn-quiet { background: transparent; }
 .btn[disabled] { opacity: 0.4; cursor: not-allowed; }
@@ -323,7 +326,7 @@ h2 {
   overflow: hidden;
 }
 
-.tile:hover { border-color: #39404e; }
+.tile:hover { border-color: #c3b393; }
 .tile:hover .tile-scene .scene { transform: scale(1.04); }
 
 .tile-scene {
@@ -374,7 +377,7 @@ select {
   cursor: pointer;
 }
 
-select:hover { border-color: #39404e; }
+select:hover { border-color: #c3b393; }
 .select-wrap::after {
   content: "";
   position: absolute;
@@ -416,7 +419,7 @@ select:hover { border-color: #39404e; }
 }
 
 .opt small { color: var(--text-3); font-size: var(--t-xs); line-height: 1.5; }
-.opt:hover { border-color: #39404e; }
+.opt:hover { border-color: #c3b393; }
 .opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
 .opt[disabled] { opacity: 0.35; cursor: not-allowed; }
 .opt-name { font-weight: 600; font-size: var(--t-base); }
@@ -461,24 +464,24 @@ input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: -1p
 
 .scene { width: 100%; height: 150px; display: block; }
 
-.sc-ver { fill: #1b2029; }
-.sc-mid { fill: #141821; }
-.sc-near { fill: #0d1016; }
-.sc-diep { fill: #07090d; }
-.sc-planeet { fill: #171c25; }
-.sc-horizon { fill: none; stroke: #2b3340; stroke-width: 1.5; }
-.sc-lijn { fill: none; stroke: #39414f; stroke-width: 2; }
-.sc-grond { fill: #0b0e13; }
-.sc-deur { fill: #0a0d12; }
-.sc-raam { fill: #39414f; }
-.sc-ster { fill: #7e889c; }
-.sc-maan { fill: #d7dbe4; opacity: 0.75; }
-.sc-mist { fill: #262d3a; opacity: 0.35; }
-.sc-nat { fill: #11151c; }
-.sc-weerschijn { fill: var(--accent); opacity: 0.18; }
-.sc-regenlijn { stroke: #39414f; stroke-width: 1; opacity: 0.4; }
-.sc-licht { fill: var(--accent); }
-.sc-schijn { fill: var(--accent); opacity: 0.12; }
+.sc-ver { fill: #c3cbd9; }
+.sc-mid { fill: #97a1b3; }
+.sc-near { fill: #6a7487; }
+.sc-diep { fill: #4b5365; }
+.sc-planeet { fill: #cfd6e2; }
+.sc-horizon { fill: none; stroke: #aab3c3; stroke-width: 1.5; }
+.sc-lijn { fill: none; stroke: #7b8599; stroke-width: 2; }
+.sc-grond { fill: #5f6879; }
+.sc-deur { fill: #4b5365; }
+.sc-raam { fill: #f3e3bb; }
+.sc-ster { fill: #b7bfcd; }
+.sc-maan { fill: #fff6dd; opacity: 0.95; }
+.sc-mist { fill: #ffffff; opacity: 0.5; }
+.sc-nat { fill: #7b8599; }
+.sc-weerschijn { fill: #d99a28; opacity: 0.35; }
+.sc-regenlijn { stroke: #94a0b2; stroke-width: 1; opacity: 0.5; }
+.sc-licht { fill: #d99a28; }
+.sc-schijn { fill: #d99a28; opacity: 0.3; }
 
 @media (max-width: 640px) {
   .scene-wrap { margin: calc(var(--s5) * -1) calc(var(--s4) * -1) var(--s4); height: 110px; }
@@ -507,7 +510,7 @@ input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: -1p
   font-family: var(--serif);
   font-size: var(--t-md);
   line-height: 1.7;
-  color: #d6d9e1;
+  color: var(--text);
   margin: 0 0 var(--s5);
   padding-left: var(--s4);
   border-left: 2px solid var(--accent);
@@ -620,12 +623,12 @@ table.grid td.cell { width: 42px; height: 40px; text-align: center; }
 }
 .map-figure svg { width: 100%; height: auto; display: block; }
 
-.vloerbasis { fill: #1a1e26; }
-.vloerlijn { fill: none; stroke: #20252f; stroke-width: 1; }
+.vloerbasis { fill: #efe8da; }
+.vloerlijn { fill: none; stroke: #ddd2bf; stroke-width: 1; }
 .vloer { fill: url(#vloertegels); }
 
-.muur { stroke: #5d6575; stroke-width: 3; stroke-linecap: square; }
-.muur-buiten { stroke: #868fa3; stroke-width: 6; }
+.muur { stroke: #6f6454; stroke-width: 3; stroke-linecap: square; }
+.muur-buiten { stroke: #4a4134; stroke-width: 6; }
 
 .deurblad { stroke: var(--accent); stroke-width: 2.5; fill: none; stroke-linecap: round; }
 .deurboog {
@@ -725,8 +728,8 @@ table.latin td.cell { width: 78px; height: 46px; }
   max-width: min(560px, 100%);
   display: block;
   border-radius: var(--r);
-  background: #2a2520;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  background: #3a2e22;
+  box-shadow: 0 8px 24px rgba(70, 52, 28, 0.25);
 }
 
 .dessinlijn { fill: none; stroke: rgba(90, 70, 45, 0.3); stroke-width: 1; }
@@ -801,7 +804,7 @@ table.latin td.cell { width: 78px; height: 46px; }
   cursor: pointer;
 }
 
-.palet-knop:hover { border-color: #39404e; }
+.palet-knop:hover { border-color: #c3b393; }
 .palet-knop[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
 .palet-knop[data-geplaatst="1"] { opacity: 0.55; }
 

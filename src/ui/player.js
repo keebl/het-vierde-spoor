@@ -206,7 +206,7 @@ function boardNodes(puzzle, state, onCell) {
       el('div', { class: 'board-wrap' }, renderKamerbord(puzzle, state, { klikCel: onCell })),
       el('p', {
         class: 'legend',
-        text: 'Kies een verdachte en klik een vakje om hem neer te zetten. Er staat precies een verdachte per rij en per kolom, en niet op een meubelstuk. Met het kruis sluit je een vakje uit.',
+        text: 'Kies een verdachte en klik een vakje om hem neer te zetten. Er staat precies één verdachte per rij en per kolom, en niemand staat op een meubelstuk. Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan; met Uitsluiten zet je je eigen kruisjes.',
       }),
     ];
   }

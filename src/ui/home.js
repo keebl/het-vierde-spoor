@@ -16,7 +16,7 @@ const STAPPEN = [
   },
   {
     kop: 'Sluit uit wat niet kan',
-    tekst: 'Bij het kamerraster zet je de verdachten zelf op de plattegrond, een per rij en een per kolom. Bij het deductieraster zet je kruisjes en vinkjes.',
+    tekst: 'Bij een Huiszoeking zet je de verdachten zelf op de plattegrond, één per rij en één per kolom. Bij een Kruisverhoor zet je kruisjes en vinkjes in een raster.',
   },
   {
     kop: 'Hou over wat moet',
