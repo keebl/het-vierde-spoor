@@ -74,3 +74,22 @@ export const LEVEL_IDS = [1, 2, 3, 4, 5];
 export function levelParams(level) {
   return LEVELS[Math.min(5, Math.max(1, Number(level) || 1))];
 }
+
+// Het kamerraster heeft eigen maten: de omvang zit in het rooster (n bij n)
+// en in het aantal kamers, niet in het aantal categorieen.
+export const KAMER_LEVELS = {
+  1: { n: 4, kamers: 3, meubelDeel: 0.18, style: 'shallow', maxClues: 7,
+       gewichten: { kamer: 6, naast: 4, zelfdeKamer: 3, leegKamer: 2, buren: 2, noord: 2, west: 2, opRij: 1, bijSlachtoffer: 1 } },
+  2: { n: 4, kamers: 4, meubelDeel: 0.20, style: 'shallow', maxClues: 9,
+       gewichten: { kamer: 5, naast: 4, zelfdeKamer: 3, leegKamer: 2, buren: 3, noord: 3, west: 3, opRij: 2, bijSlachtoffer: 1 } },
+  3: { n: 5, kamers: 4, meubelDeel: 0.22, style: 'shallow', maxClues: 12,
+       gewichten: { kamer: 4, naast: 4, zelfdeKamer: 4, leegKamer: 2, buren: 3, noord: 4, west: 4, opRij: 3, bijSlachtoffer: 2 } },
+  4: { n: 5, kamers: 5, meubelDeel: 0.22, style: 'deep', maxClues: 14,
+       gewichten: { kamer: 3, naast: 4, zelfdeKamer: 4, leegKamer: 2, buren: 4, noord: 4, west: 4, opRij: 3, bijSlachtoffer: 2 } },
+  5: { n: 6, kamers: 5, meubelDeel: 0.24, style: 'deep', maxClues: 18,
+       gewichten: { kamer: 2, naast: 4, zelfdeKamer: 5, leegKamer: 2, buren: 4, noord: 5, west: 5, opRij: 4, bijSlachtoffer: 2 } },
+};
+
+export function kamerParams(level) {
+  return KAMER_LEVELS[Math.min(5, Math.max(1, Number(level) || 1))];
+}

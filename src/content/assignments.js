@@ -114,7 +114,7 @@ export const ASSIGNMENTS = [
     name: 'Wie deed het?',
     short: 'Dader',
     blurb: 'Een misdrijf, een handvol verdachten, en genoeg tegenstrijdigheden om er een uit te sluiten.',
-    mechanics: ['grid', 'map'],
+    mechanics: ['kamer', 'grid', 'map'],
     buildSpec(world, params, rng, mechanic) {
       const n = params.slots;
       if (mechanic === 'map') {
@@ -260,6 +260,7 @@ export const ASSIGNMENTS = [
 export const ASSIGNMENT_BY_ID = new Map(ASSIGNMENTS.map((a) => [a.id, a]));
 
 export const MECHANICS = [
+  { id: 'kamer', name: 'Kamerraster', icon: '▣', blurb: 'Zet de verdachten zelf op de plattegrond: een per rij, een per kolom.' },
   { id: 'grid', name: 'Deductieraster', icon: '▦', blurb: 'Kruisjes en vinkjes in een raster. De klassieke vorm.' },
   { id: 'map', name: 'Plattegrond', icon: '🗺', blurb: 'Een kaart met gangen; aanwijzingen gaan over wat waaraan grenst.' },
   { id: 'latin', name: 'Getallenraster', icon: '◧', blurb: 'Rijen zijn plekken, kolommen zijn momenten, elke naam komt er een keer in voor.' },

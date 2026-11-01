@@ -15,8 +15,8 @@ const STAPPEN = [
     tekst: 'Elke aanwijzing is waar. Samen sluiten ze alles uit op één mogelijkheid na.',
   },
   {
-    kop: 'Streep door wat niet kan',
-    tekst: 'Klik in het raster: een kruis voor uitgesloten, een vink voor zeker. Een vink streept de rest van zijn rij en kolom vanzelf door.',
+    kop: 'Sluit uit wat niet kan',
+    tekst: 'Bij het kamerraster zet je de verdachten zelf op de plattegrond, een per rij en een per kolom. Bij het deductieraster zet je kruisjes en vinkjes.',
   },
   {
     kop: 'Hou over wat moet',
@@ -77,7 +77,7 @@ export function renderHome(mount) {
     el('section', { class: 'section' }, [
       el('div', { class: 'section-head' }, [
         el('h2', { text: 'Begin hier' }),
-        el('p', { text: 'Vijf zaken die stap voor stap zwaarder worden.' }),
+        el('p', { text: `${instap.length} zaken die stap voor stap zwaarder worden.` }),
       ]),
       el('div', { class: 'rows' }, instap.map((entry, i) => puzzelRij(entry, done, i + 1))),
     ])

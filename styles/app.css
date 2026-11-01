@@ -714,3 +714,98 @@ table.latin td.cell { width: 78px; height: 46px; }
   .section { margin-top: var(--s6); }
   .hero { padding-bottom: var(--s5); }
 }
+
+/* ======================================================== kamerraster */
+
+/* Een licht speelbord op een donkere pagina: het ligt als het ware voor je
+   op tafel. Dit is bewust het enige lichte vlak in de site. */
+.kamerbord {
+  width: 100%;
+  height: auto;
+  max-width: min(560px, 100%);
+  display: block;
+  border-radius: var(--r);
+  background: #2a2520;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.dessinlijn { fill: none; stroke: rgba(90, 70, 45, 0.3); stroke-width: 1; }
+.dessinvlak { fill: rgba(255, 255, 255, 0.16); }
+
+.naad { stroke: rgba(90, 70, 45, 0.28); stroke-width: 1; }
+.kamermuur { stroke: #4a3b2c; stroke-width: 6; stroke-linecap: round; }
+.buitenmuur-kamer { fill: none; stroke: #3a2e22; stroke-width: 8; rx: 3; }
+
+.meubelblok {
+  fill: #7a5c3e;
+  stroke: #543f2a;
+  stroke-width: 2;
+}
+.meubelglyph path {
+  fill: none;
+  stroke: #f0e2c8;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.krijtlijn {
+  fill: none;
+  stroke: #fbf6ec;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  opacity: 0.85;
+  stroke-dasharray: 7 4;
+}
+
+.penningvlak { stroke: rgba(0, 0, 0, 0.35); stroke-width: 2; }
+.penningkop { fill: rgba(255, 255, 255, 0.92); }
+.penningfout { fill: none; stroke: #ff5a5a; stroke-width: 3; }
+
+.kruisje { stroke: #6b533a; stroke-width: 3; stroke-linecap: round; opacity: 0.75; }
+
+.kamerplaat { fill: rgba(28, 22, 16, 0.82); }
+.kamerplaat-tekst {
+  fill: #f2e6cf;
+  font-family: var(--sans);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.klikvak { fill: transparent; cursor: pointer; }
+.klikvak:hover { fill: rgba(255, 255, 255, 0.14); }
+.klikvak-dicht { cursor: default; pointer-events: none; }
+
+/* het palet met verdachten */
+.palet { display: flex; gap: var(--s2); flex-wrap: wrap; margin-bottom: var(--s4); }
+
+.palet-knop {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 99px;
+  padding: 5px var(--s3) 5px 5px;
+  font-size: var(--t-sm);
+  cursor: pointer;
+}
+
+.palet-knop:hover { border-color: #39404e; }
+.palet-knop[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.palet-knop[data-geplaatst="1"] { opacity: 0.55; }
+
+.palet-fiche {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  color: #fff;
+  background: var(--surface-3);
+  flex: none;
+}
+
+.palet-kruis .palet-fiche { background: var(--surface-3); color: var(--text-2); }

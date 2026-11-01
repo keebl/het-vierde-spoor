@@ -8,6 +8,9 @@ import { generateAssignment } from './engine/generate.js';
 import { makeCtx, emptyCols } from './engine/assign.js';
 import { phraseClue } from './engine/clues.js';
 import { generateLatin, latinDepth } from './engine/latin.js';
+import { genereerKamerpuzzel } from './engine/generate-rooms.js';
+import { kamerParams } from './engine/difficulty.js';
+import { zinVoor, namenIn } from './content/rooms-text.js';
 import { makeRng } from './engine/rng.js';
 
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
@@ -21,6 +24,7 @@ export function buildPuzzle(settings) {
   if (!assignment.mechanics.includes(mechaniek)) {
     throw new Error(`${assignment.name} werkt niet met ${mechaniek}`);
   }
+  if (mechaniek === 'kamer') return buildKamerPuzzle({ world, settings });
   const params = levelParams(niveau);
   return mechaniek === 'latin'
     ? buildLatinPuzzle({ world, params, settings })
@@ -138,6 +142,60 @@ function clueNames(clue, spec) {
     if (ref) out.push(byId.get(ref.c).items[ref.i].name);
   }
   return out;
+}
+
+function buildKamerPuzzle({ world, settings }) {
+  const { seed, niveau } = settings;
+  const params = kamerParams(niveau);
+  const gen = genereerKamerpuzzel(seed, params);
+  const rng = makeRng(`${seed}:kamerwoorden`);
+
+  const personen = rng.sample(world.persons, params.n);
+  const kamerNamen = rng.sample(world.places, gen.rooster.kamers);
+  const meubelNamen = rng.sample(world.meubels, gen.rooster.meubelAantal);
+  const woorden = { personen, kamerNamen, meubelNamen, slachtofferNaam: world.victim };
+
+  const clues = gen.aanwijzingen.map((c, i) => ({
+    n: i + 1,
+    text: zinVoor(c, woorden),
+    kind: c.soort,
+    names: namenIn(c, woorden),
+  }));
+
+  const kamerVanLijk = gen.rooster.kamerVan[gen.slachtoffer];
+  return {
+    kind: 'kamer',
+    id: puzzleId(settings),
+    seed,
+    settings: { ...settings },
+    title: `${world.name}: Wie stond er alleen?`,
+    world: { id: world.id, name: world.name, icon: world.icon, accent: world.accent },
+    opdracht: { id: 'dader', name: 'Wie deed het?' },
+    mechaniek: 'kamer',
+    niveau: Number(niveau),
+    niveauLabel: levelParams(niveau).label,
+    depth: gen.graad.opgelost ? 1 : 2,
+    intro: `${world.lead} Het lichaam lag in ${kamerNamen[kamerVanLijk]}. Van alle aanwezigen stond er precies één met ${world.victim} alleen in die ruimte.`,
+    question: {
+      text: `Wie stond er als enige bij ${world.victim} in ${kamerNamen[kamerVanLijk]}?`,
+      answer: personen[gen.dader],
+    },
+    // het bord
+    n: gen.rooster.n,
+    kamerVan: gen.rooster.kamerVan,
+    kamerNamen,
+    meubelOp: gen.rooster.meubelOp,
+    meubelNamen,
+    vrij: gen.rooster.vrij,
+    slachtoffer: gen.slachtoffer,
+    slachtofferNaam: world.victim,
+    personen,
+    oplossing: gen.plaats,
+    dader: gen.dader,
+    clues,
+    _rooster: gen.rooster,
+    _ruwe: gen.aanwijzingen,
+  };
 }
 
 export function puzzleId(settings) {

@@ -10,6 +10,7 @@ import { ASSIGNMENTS } from '../src/content/assignments.js';
 import { buildPuzzle } from '../src/puzzle.js';
 import { countSolutions } from '../src/engine/assign.js';
 import { countLatinSolutions } from '../src/engine/latin.js';
+import { telPlaatsingen } from '../src/engine/rooms.js';
 import { LEVEL_IDS, levelParams } from '../src/engine/difficulty.js';
 
 const combos = [];
@@ -44,7 +45,20 @@ for (const { a, m, w, l } of combos) {
     built++;
 
     const problems = [];
-    if (p.kind === 'assign') {
+    if (p.kind === 'kamer') {
+      const { count } = telPlaatsingen(p._rooster, p._ruwe, p.slachtoffer, 3);
+      if (count !== 1) problems.push(`${count} oplossingen`);
+      if (p.personen[p.dader] !== p.question.answer) problems.push('antwoord wijkt af');
+      // De dader mag nooit rechtstreeks genoemd worden.
+      const kamerVanLijk = p.kamerVan[p.slachtoffer];
+      for (const c of p._ruwe) {
+        if (c.soort === 'kamer' && c.ja && c.kamerIdx === kamerVanLijk) problems.push('aanwijzing verraadt de dader');
+      }
+      for (const c of p.clues) {
+        if (!c.text || /undefined|NaN/.test(c.text)) problems.push(`rare zin: ${c.text}`);
+      }
+      clueCounts.push(p.clues.length);
+    } else if (p.kind === 'assign') {
       const { count } = countSolutions(p._spec, p._rawClues, 3);
       if (count !== 1) problems.push(`${count} oplossingen`);
 

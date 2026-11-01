@@ -3,6 +3,16 @@
 // Daarom is deze lijst klein en blijft er geen puzzeldata in de repo staan.
 
 export const CATALOG = [
+  // ---- Kamerraster: zet de verdachten zelf neer ---------------------------
+  { seed: 'kamer-1', titel: 'Wie stond er alleen?', sub: 'Vier verdachten op de plattegrond. Begin hier als het kamerraster nieuw voor je is.', opdracht: 'dader', wereld: 'landhuis', mechaniek: 'kamer', niveau: 1 },
+  { seed: 'kamer-2', titel: 'Het natte uur', sub: 'Regenstad bij nacht: vier kamers, vier verdachten, een lichaam.', opdracht: 'dader', wereld: 'noir', mechaniek: 'kamer', niveau: 2 },
+  { seed: 'kamer-3', titel: 'Stilstand in de centrifuge', sub: 'Vijf bemanningsleden, en niemand die twee keer op dezelfde rij staat.', opdracht: 'dader', wereld: 'station', mechaniek: 'kamer', niveau: 3 },
+  { seed: 'kamer-4', titel: 'Onder de wilgen', sub: 'Het woud als rooster. Let op wie waar naast staat.', opdracht: 'dader', wereld: 'woud', mechaniek: 'kamer', niveau: 3 },
+  { seed: 'kamer-5', titel: 'Het gewelf van zes', sub: 'Vijf kamers onder de grond en geen enkele directe aanwijzing.', opdracht: 'dader', wereld: 'catacomben', mechaniek: 'kamer', niveau: 4 },
+  { seed: 'kamer-6', titel: 'Avondgebed', sub: 'Zes bij zes. De zwaarste van het kamerraster.', opdracht: 'dader', wereld: 'academie', mechaniek: 'kamer', niveau: 5 },
+  { seed: 'kamer-7', titel: 'De doorgeknipte lijn', sub: 'Terug naar Valkenhorst, nu met vijf verdachten.', opdracht: 'dader', wereld: 'landhuis', mechaniek: 'kamer', niveau: 4 },
+  { seed: 'kamer-8', titel: 'Laatste wacht', sub: 'Zes modules, zes bemanningsleden, een gesloten sluis.', opdracht: 'dader', wereld: 'station', mechaniek: 'kamer', niveau: 5 },
+
   // ---- Regenstad ---------------------------------------------------------
   { seed: 'kade-1', titel: 'De havenmeester', sub: 'Eén nacht, vier verdachten, en een telefoon die niemand opnam.', opdracht: 'dader', wereld: 'noir', mechaniek: 'grid', niveau: 2 },
   { seed: 'kade-7', titel: 'Natte voeten', sub: 'Iedereen was ergens anders. Eén iemand twee keer.', opdracht: 'dader', wereld: 'noir', mechaniek: 'grid', niveau: 4 },
@@ -51,11 +61,12 @@ export const CATALOG = [
   { seed: 'lesuur-5', titel: 'Het lesrooster van die dag', sub: 'Elke leerling één keer per zaal, één keer per lesuur.', opdracht: 'reconstructie', wereld: 'academie', mechaniek: 'latin', niveau: 5 },
 
   // ---- Instapreeks -------------------------------------------------------
-  { seed: 'start-1', titel: 'Eerste zaak', sub: 'Drie verdachten, twee categorieën. Tien minuten werk.', opdracht: 'dader', wereld: 'noir', mechaniek: 'grid', niveau: 1 },
-  { seed: 'start-2', titel: 'Tweede zaak', sub: 'Nu met vier verdachten.', opdracht: 'dader', wereld: 'landhuis', mechaniek: 'grid', niveau: 2 },
-  { seed: 'start-3', titel: 'Derde zaak', sub: 'Er komt een tijdlijn bij.', opdracht: 'dader', wereld: 'station', mechaniek: 'grid', niveau: 3 },
-  { seed: 'start-4', titel: 'Vierde zaak', sub: 'Hier moet je voor het eerst iets aannemen en weerleggen.', opdracht: 'dader', wereld: 'academie', mechaniek: 'grid', niveau: 4 },
-  { seed: 'start-5', titel: 'Vijfde zaak', sub: 'Zes verdachten. Neem er de tijd voor.', opdracht: 'dader', wereld: 'woud', mechaniek: 'grid', niveau: 5 },
+  { seed: 'start-0', titel: 'Eerste zaak', sub: 'Zet vier verdachten op de plattegrond. Tien minuten werk.', opdracht: 'dader', wereld: 'noir', mechaniek: 'kamer', niveau: 1 },
+  { seed: 'start-1', titel: 'Tweede zaak: het raster', sub: 'Nu met kruisjes en vinkjes in plaats van een plattegrond.', opdracht: 'dader', wereld: 'noir', mechaniek: 'grid', niveau: 1 },
+  { seed: 'start-2', titel: 'Derde zaak', sub: 'Nu met vier verdachten.', opdracht: 'dader', wereld: 'landhuis', mechaniek: 'grid', niveau: 2 },
+  { seed: 'start-3', titel: 'Vierde zaak', sub: 'Er komt een tijdlijn bij.', opdracht: 'dader', wereld: 'station', mechaniek: 'grid', niveau: 3 },
+  { seed: 'start-4', titel: 'Vijfde zaak', sub: 'Hier moet je voor het eerst iets aannemen en weerleggen.', opdracht: 'dader', wereld: 'academie', mechaniek: 'grid', niveau: 4 },
+  { seed: 'start-5', titel: 'Zesde zaak', sub: 'Zes verdachten. Neem er de tijd voor.', opdracht: 'dader', wereld: 'woud', mechaniek: 'grid', niveau: 5 },
 ];
 
 export const catalogSettings = (entry) => ({

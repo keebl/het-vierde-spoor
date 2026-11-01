@@ -5,11 +5,21 @@ import { el, renderMatrix, renderMap, renderLatin, latinLegenda, cellKey } from 
 import { loadProgress, saveProgress, clearProgress } from './state.js';
 import { MECHANIC_BY_ID } from '../content/assignments.js';
 import { sceneVoor } from './scenes.js';
+import { renderKamerbord, PENNING } from './board-rooms.js';
 
 export function renderPlayer(puzzle, mount) {
   const saved = loadProgress(puzzle.id) ?? {};
   const state = {
-    marks: saved.marks ?? (puzzle.kind === 'latin' ? {} : emptyMarks(puzzle)),
+    marks: saved.marks ?? (puzzle.kind === 'assign' ? emptyMarks(puzzle) : {}),
+    // kamerraster: welke persoon staat op welk vakje, plus de kruisjes die
+    // de speler zelf zet om een vakje uit te sluiten.
+    plaats: saved.plaats ?? {},
+    kruis: new Set(saved.kruis ?? []),
+    gekozen: 0,
+    plaatsVanCel(cel) {
+      for (const [p, c] of Object.entries(this.plaats)) if (c === cel) return Number(p);
+      return null;
+    },
     struck: new Set(saved.struck ?? []),
     note: null,
     wrong: new Set(),
@@ -19,6 +29,8 @@ export function renderPlayer(puzzle, mount) {
   const persist = () => {
     saveProgress(puzzle.id, {
       marks: state.marks,
+      plaats: state.plaats,
+      kruis: [...state.kruis],
       struck: [...state.struck],
       solved: state.solved,
       titel: puzzle.title,
@@ -43,6 +55,7 @@ export function renderPlayer(puzzle, mount) {
 
   function onCell(...args) {
     if (puzzle.kind === 'latin') cycleLatin(puzzle, state, ...args);
+    else if (puzzle.kind === 'kamer') zetNeer(puzzle, state, ...args);
     else cycleMark(puzzle, state, ...args);
     state.wrong = new Set();
     state.note = null;
@@ -88,7 +101,9 @@ export function renderPlayer(puzzle, mount) {
       draw();
     },
     reset() {
-      state.marks = puzzle.kind === 'latin' ? {} : emptyMarks(puzzle);
+      state.marks = puzzle.kind === 'assign' ? emptyMarks(puzzle) : {};
+      state.plaats = {};
+      state.kruis = new Set();
       state.struck = new Set();
       state.wrong = new Set();
       state.solved = false;
@@ -185,6 +200,16 @@ function cluePanel(puzzle, state, draw, persist) {
 
 
 function boardNodes(puzzle, state, onCell) {
+  if (puzzle.kind === 'kamer') {
+    return [
+      personenPalet(puzzle, state, onCell),
+      el('div', { class: 'board-wrap' }, renderKamerbord(puzzle, state, { klikCel: onCell })),
+      el('p', {
+        class: 'legend',
+        text: 'Kies een verdachte en klik een vakje om hem neer te zetten. Er staat precies een verdachte per rij en per kolom, en niet op een meubelstuk. Met het kruis sluit je een vakje uit.',
+      }),
+    ];
+  }
   if (puzzle.kind === 'latin') {
     return [renderLatin(puzzle, state.marks, onCell, state.wrong)];
   }
@@ -198,6 +223,36 @@ function boardNodes(puzzle, state, onCell) {
     text: 'Klik een vakje om te wisselen tussen leeg, kruis en vink. Een vink streept de rest van zijn rij en kolom automatisch door.',
   }));
   return nodes;
+}
+
+// De verdachten als penningen om op te pakken. De gekozen penning licht op.
+function personenPalet(puzzle, state, onCell) {
+  const balk = el('div', { class: 'palet' });
+  puzzle.personen.forEach((naam, i) => {
+    const geplaatst = state.plaats[i] != null;
+    const knop = el('button', {
+      class: 'palet-knop',
+      type: 'button',
+      'aria-pressed': String(state.gekozen === i),
+      'data-geplaatst': geplaatst ? '1' : null,
+    }, [
+      el('span', { class: 'palet-fiche' }),
+      el('span', { text: naam }),
+    ]);
+    knop.querySelector('.palet-fiche').style.background = PENNING[i % PENNING.length];
+    knop.addEventListener('click', () => onCell(null, i));
+    balk.append(knop);
+  });
+
+  const kruis = el('button', {
+    class: 'palet-knop palet-kruis',
+    type: 'button',
+    'aria-pressed': String(state.gekozen === -1),
+  }, [el('span', { class: 'palet-fiche', text: '✕' }), el('span', { text: 'Uitsluiten' })]);
+  kruis.addEventListener('click', () => onCell(null, -1));
+  balk.append(kruis);
+
+  return balk;
 }
 
 function toolbar(puzzle, state, actions) {
@@ -251,7 +306,34 @@ function cycleLatin(puzzle, state, r, c) {
   else state.marks[key] = next;
 }
 
+// Klik op het palet (cel === null) kiest een verdachte of het kruis.
+// Klik op een vakje zet die verdachte neer, haalt hem weg, of wisselt.
+function zetNeer(puzzle, state, cel, keuze) {
+  if (cel === null) {
+    state.gekozen = keuze;
+    return;
+  }
+  if (state.gekozen === -1) {
+    if (state.kruis.has(cel)) state.kruis.delete(cel);
+    else state.kruis.add(cel);
+    return;
+  }
+  const hier = state.plaatsVanCel(cel);
+  if (hier === state.gekozen) {
+    delete state.plaats[state.gekozen];
+    return;
+  }
+  if (hier != null) delete state.plaats[hier];
+  state.plaats[state.gekozen] = cel;
+  state.kruis.delete(cel);
+}
+
 function fillSolution(puzzle, state) {
+  if (puzzle.kind === 'kamer') {
+    state.plaats = {};
+    puzzle.oplossing.forEach((cel, p) => { state.plaats[p] = cel; });
+    return;
+  }
   if (puzzle.kind === 'latin') {
     for (let r = 0; r < puzzle.rows.length; r++) {
       for (let c = 0; c < puzzle.rows.length; c++) {
@@ -275,6 +357,16 @@ function inspect(puzzle, state) {
   const wrong = new Set();
   let filled = 0;
   let total = 0;
+  if (puzzle.kind === 'kamer') {
+    total = puzzle.n;
+    for (let p = 0; p < puzzle.n; p++) {
+      const cel = state.plaats[p];
+      if (cel == null) continue;
+      filled++;
+      if (cel !== puzzle.oplossing[p]) wrong.add(cel);
+    }
+    return { wrong, filled, total };
+  }
   if (puzzle.kind === 'latin') {
     const n = puzzle.rows.length;
     for (let r = 0; r < n; r++) {
@@ -316,6 +408,23 @@ function isSolved(puzzle, state) {
 
 // De eerstvolgende stap verklappen, met de aanwijzing die erover gaat.
 function nextHint(puzzle, state) {
+  if (puzzle.kind === 'kamer') {
+    for (let p = 0; p < puzzle.n; p++) {
+      if (state.plaats[p] === puzzle.oplossing[p]) continue;
+      const cel = puzzle.oplossing[p];
+      const bezet = state.plaatsVanCel(cel);
+      if (bezet != null) delete state.plaats[bezet];
+      state.plaats[p] = cel;
+      const i = (puzzle._ruwe ?? []).findIndex((c) => c.p === p || c.q === p);
+      const kamer = puzzle.kamerNamen[puzzle.kamerVan[cel]];
+      return {
+        text: i >= 0
+          ? `${puzzle.personen[p]} stond in ${kamer}. Dat volgt uit aanwijzing ${i + 1}.`
+          : `${puzzle.personen[p]} stond in ${kamer}.`,
+      };
+    }
+    return null;
+  }
   if (puzzle.kind === 'latin') {
     const n = puzzle.rows.length;
     for (let r = 0; r < n; r++) {

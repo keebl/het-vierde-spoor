@@ -41,6 +41,7 @@ export const WORLDS = [
     objects: ['een verzilverde aansteker', 'een natte regenjas', 'een geladen revolver', 'een treinkaartje enkele reis', 'een pakje bankbiljetten', 'een gebroken horloge', 'een flesje chloraal', 'een verfrommelde brief'],
     places: ['de jazzkelder', 'het pandjeshuis', 'de bovenkamer', 'het natte steegje', 'de nachtapotheek', 'de brugwachtershut', 'het hotel aan de kade', 'de verlaten loods'],
     times: ['22:00', '23:00', '00:00', '01:00', '02:00', '03:00'],
+    meubels: ['de jukebox', 'de leren fauteuil', 'de kapstok', 'het biljart', 'de bar', 'de kachel', 'de telefooncel', 'de kaartentafel'],
     hidden: ['het bewijsstuk', 'een valse bodem', 'een dode brievenbus', 'een alarmdraad', 'een lege kluis', 'een afluisterpost', 'een vergeten koffer', 'een bloedspoor'],
   },
   {
@@ -61,6 +62,7 @@ export const WORLDS = [
     objects: ['een zilveren kandelaar', 'een kristallen karaf', 'een paar leren handschoenen', 'een jachtgeweer', 'een doosje slaappoeder', 'een verzegelde envelop', 'een antieke briefopener', 'een vervalste cheque'],
     places: ['de bibliotheek', 'de wintertuin', 'de biljartkamer', 'de dienstgang', 'de wijnkelder', 'het rookkabinet', 'de muziekzaal', 'de koetshuiszolder'],
     times: ['19:00', '20:00', '21:00', '22:00', '23:00', '00:00'],
+    meubels: ['de vleugel', 'de eikenhouten kast', 'de staande klok', 'de haard', 'het borstbeeld', 'de chaise longue', 'de globe', 'het tafelzilver'],
     hidden: ['het testament', 'een geheime deur', 'een leeg kluisje', 'een schuilplaats', 'een vals schilderij', 'een opgebroken vloerplank', 'een vergeten sleutel', 'een dienstbodentrap'],
   },
   {
@@ -89,6 +91,7 @@ export const WORLDS = [
     objects: ['een losgekoppelde zuurstofcel', 'een hoofdsleutel', 'een geleegde spuit', 'een gewiste datadrager', 'een snijbrander', 'een gesmolten zekering', 'een privaat logboek', 'een illegale zender'],
     places: ['de centrifuge', 'de hydrocultuur', 'de machinekamer', 'de observatiekoepel', 'de medische post', 'het vrachtruim', 'de slaapcabines', 'de communicatiekoker'],
     times: ['wacht 1', 'wacht 2', 'wacht 3', 'wacht 4', 'wacht 5', 'wacht 6'],
+    meubels: ['de navigatieconsole', 'de slaapcapsule', 'de kweekbak', 'de gereedschapskist', 'de koffieautomaat', 'het laadrek', 'de noodkast', 'de centrifugebank'],
     hidden: ['het noodbaken', 'een lek in de romp', 'een verborgen voorraad', 'een omgeleide kabel', 'een dode sensor', 'een geblindeerde camera', 'een tweede logboek', 'een los paneel'],
   },
   {
@@ -109,6 +112,7 @@ export const WORLDS = [
     objects: ['een kromme wichelroede', 'een zakje gedroogde maanbloem', 'een ijzeren belletje', 'een afgebroken hoorn', 'een leren veldfles', 'een bundel vogelveren', 'een gebarsten spiegelscherf', 'een handvol zoutkorrels'],
     places: ['de doornenkom', 'het wilgenhoofd', 'de omgevallen toren', 'de dampende poel', 'het hertenpad', 'de steenkring', 'het verzonken bruggetje', 'de holle eik'],
     times: ['eerste klokslag', 'tweede klokslag', 'derde klokslag', 'vierde klokslag', 'vijfde klokslag', 'zesde klokslag'],
+    meubels: ['de omgevallen stam', 'de mosbank', 'de vuurplaats', 'de wilgenmand', 'de drinkbak', 'de offerschaal', 'het vogelnest', 'de houtstapel'],
     hidden: ['de magische bron', 'een valse bron', 'een hertenval', 'een offersteen', 'een slapend wezen', 'een omgekeerd pad', 'een verdronken wagen', 'een nest spiegelkraaien'],
   },
   {
@@ -137,6 +141,7 @@ export const WORLDS = [
     objects: ['een bijna lege carbidlamp', 'een opgerold touw', 'een gestolen relikwie', 'een krijtje', 'een gebroken kompas', 'een veldflesje jenever', 'een losse kaarthoek', 'een zakje botstukken'],
     places: ['het beenderengewelf', 'de verzakte trap', 'de droge put', 'de bidkapel', 'het waterpeilgat', 'de ingestorte nis', 'de smalle schacht', 'het grafvertrek'],
     times: ['eerste kwartier', 'tweede kwartier', 'derde kwartier', 'vierde kwartier', 'vijfde kwartier', 'zesde kwartier'],
+    meubels: ['de stenen sarcofaag', 'de knekelnis', 'het bidbankje', 'de waterbak', 'de ijzeren poort', 'de zuil', 'de kaarsentafel', 'de touwhaspel'],
     hidden: ['de uitgang', 'een vals gat', 'een luchtschacht', 'een ingestorte gang', 'een waterput', 'een dichtgemetselde deur', 'een nest vleermuizen', 'een verzegelde graftombe'],
   },
   {
@@ -157,6 +162,7 @@ export const WORLDS = [
     objects: ['een gebarsten toverstaf', 'een inktvlek die niet weggaat', 'een geleend grimoire', 'een zakje ijzervijlsel', 'een vervalst rapport', 'een stuk steenhuid', 'een stilzwijgtalisman', 'een dode kanarie'],
     places: ['de spiegelzaal', 'het ketelhok', 'de verboden trappenhal', 'het herbarium', 'de studiecel', 'de sterrenkoepel', 'de eetzaal', 'het archief'],
     times: ['eerste lesuur', 'tweede lesuur', 'derde lesuur', 'vierde lesuur', 'vijfde lesuur', 'zesde lesuur'],
+    meubels: ['de lessenaar', 'de hemelbol', 'de boekenkast', 'de ketel', 'het harnas', 'de kruidenkast', 'de spiegelstandaard', 'de strafbank'],
     hidden: ['de verdwenen leerstoel', 'een illusiewand', 'een versteende leerling', 'een gesloten portaal', 'een verboden kast', 'een lekkende banspreuk', 'een tweede spiegel', 'een vergeten strafhok'],
   },
 ];

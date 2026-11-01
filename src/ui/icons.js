@@ -42,12 +42,34 @@ export const ICONS = {
   toren: ['M7 21V8l5-4 5 4v13', 'M10 21v-6h4v6', 'M10 11h.01', 'M14 11h.01'],
   koepel: ['M4 20h16', 'M5 20v-5a7 7 0 0 1 14 0v5', 'M12 8V4', 'M9 20v-4h6v4'],
   buis: ['M4 8h16v8H4Z', 'M8 8v8', 'M16 8v8', 'M2 10v4', 'M22 10v4'],
+  stoel: ['M7 20v-4h10v4', 'M7 16V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v9', 'M5 16h14', 'M9 20v2', 'M15 20v2'],
+  kast: ['M5 3h14v18H5Z', 'M12 3v18', 'M9 11h.01', 'M15 11h.01', 'M5 9h14', 'M5 15h14'],
+  tafel: ['M3 9h18', 'M5 9v11', 'M19 9v11', 'M7 9V6h10v3'],
+  globe: ['M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18Z', 'M3 12h18', 'M12 3c3 3.5 3 14.5 0 18c-3-3.5-3-14.5 0-18Z'],
+  vuur: ['M12 21a6 6 0 0 1-6-6c0-4 4-5 4-9c3 2 4 4 4 6c1-1 1-2 1-3c2 2 3 4 3 6a6 6 0 0 1-6 6Z'],
+  telefoon: ['M7 3h10v18H7Z', 'M10 7h4', 'M12 11h.01', 'M12 15v3'],
 };
 
 // Welk icoon hoort bij deze naam? We kijken naar woorddelen, zodat
 // "de wijnkelder" en "de verzakte trap" allebei iets passends krijgen.
 // Volgorde telt: het eerste rake woord wint.
 const SLEUTELWOORDEN = [
+  // Meubilair eerst: dat is specifieker dan de ruimtewoorden eronder.
+  [['haard', 'kachel', 'vuurplaats', 'oven', 'brander'], 'vuur'],
+  [['zilver', 'bestek', 'schaal'], 'bestek'],
+  [['stoel', 'fauteuil', 'chaise', 'bank', 'zetel'], 'stoel'],
+  [['kast', 'rek', 'nis met', 'knekelnis'], 'kast'],
+  [['tafel', 'lessenaar', 'bureau', 'toonbank', 'werkblad'], 'tafel'],
+  [['globe', 'hemelbol', 'bol'], 'globe'],
+  [['telefoon', 'console', 'automaat', 'zendmast'], 'telefoon'],
+  [['vleugel', 'piano', 'jukebox'], 'noot'],
+  [['sarcofaag', 'tombe', 'knekel'], 'schedel'],
+  [['zuil', 'borstbeeld', 'harnas'], 'persoon'],
+  [['kist', 'haspel', 'mand', 'stapel', 'laadrek'], 'krat'],
+  [['kweekbak', 'kweek', 'stam', 'nest'], 'blad'],
+  [['drinkbak', 'waterbak'], 'druppel'],
+  [['capsule'], 'bed'],
+  [['poort'], 'deur'],
   [['biblio', 'archief', 'grimoire', 'logboek', 'boek', 'studiecel', 'kaart'], 'boek'],
   [['wijn', 'fles', 'karaf', 'veldfles', 'chloraal', 'slaappoeder', 'apothe'], 'fles'],
   [['muziek', 'piano', 'bard'], 'noot'],
