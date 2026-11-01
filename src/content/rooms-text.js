@@ -3,6 +3,9 @@
 
 const hoofdletter = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
+const TELWOORD = ['niemand', 'één', 'twee', 'drie', 'vier', 'vijf', 'zes', 'zeven', 'acht'];
+const telwoord = (n) => TELWOORD[n] ?? String(n);
+
 export function zinVoor(c, w) {
   const P = w.personen[c.p];
   const Q = c.q != null ? w.personen[c.q] : null;
@@ -16,6 +19,26 @@ export function zinVoor(c, w) {
       return hoofdletter(c.ja
         ? `${P} en ${Q} stonden in dezelfde kamer.`
         : `${P} en ${Q} stonden niet in dezelfde kamer.`);
+    case 'aantalKamer': {
+      if (c.aantal === 0) return hoofdletter(`in ${K} stond niemand.`);
+      if (c.aantal === 1) return hoofdletter(`in ${K} stond precies één iemand.`);
+      return hoofdletter(`in ${K} stonden precies ${telwoord(c.aantal)} mensen.`);
+    }
+    case 'aantalNaast': {
+      if (c.aantal === 0) return hoofdletter(`er stond niemand naast ${M}.`);
+      if (c.aantal === 1) return hoofdletter(`precies één iemand stond naast ${M}.`);
+      return hoofdletter(`er stonden ${telwoord(c.aantal)} mensen naast ${M}.`);
+    }
+    case 'rand':
+      return hoofdletter(c.ja
+        ? `${P} stond tegen de buitenmuur.`
+        : `${P} stond niet tegen de buitenmuur.`);
+    case 'hoek':
+      return hoofdletter(c.ja
+        ? `${P} stond in een hoek van het gebouw.`
+        : `${P} stond niet in een hoek.`);
+    case 'opKolom':
+      return hoofdletter(`${P} stond in dezelfde kolom als ${M}.`);
     case 'leegKamer':
       return hoofdletter(`in ${K} stond niemand.`);
     case 'naast':

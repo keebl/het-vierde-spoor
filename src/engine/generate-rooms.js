@@ -79,10 +79,37 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten) {
         zet('buren', { p, q, ja: naastElkaar });
       }
     }
+
+    // Waar stond je ten opzichte van de buitenmuur?
+    const r = rijVan(n, plaats[p]);
+    const k = kolVan(n, plaats[p]);
+    const aanRand = r === 0 || k === 0 || r === n - 1 || k === n - 1;
+    const inHoek = (r === 0 || r === n - 1) && (k === 0 || k === n - 1);
+    zet('rand', { p, ja: aanRand });
+    zet('hoek', { p, ja: inHoek });
+
+    for (let m = 0; m < meubelAantal; m++) {
+      let opKolom = false;
+      for (let q = 0; q < n; q++) if (meubelOp[idx(n, q, k)] === m) opKolom = true;
+      if (opKolom) zet('opKolom', { p, m });
+    }
   }
 
-  const bezet = new Set(plaats.map((cel) => kamerVan[cel]));
-  for (let k = 0; k < kamers; k++) if (!bezet.has(k)) zet('leegKamer', { kamerIdx: k });
+  // Aanwijzingen over iedereen tegelijk: hoeveel mensen stonden er in deze
+  // kamer, hoeveel naast dit meubelstuk. Die zeggen niets over een persoon en
+  // dwingen je juist het geheel te overzien.
+  const perKamer = new Map();
+  plaats.forEach((cel) => {
+    const kk = kamerVan[cel];
+    perKamer.set(kk, (perKamer.get(kk) ?? 0) + 1);
+  });
+  for (let k = 0; k < kamers; k++) zet('aantalKamer', { kamerIdx: k, aantal: perKamer.get(k) ?? 0 });
+
+  for (let m = 0; m < meubelAantal; m++) {
+    let aantal = 0;
+    for (const cel of plaats) if (buren(cel).some((b) => meubelOp[b] === m)) aantal++;
+    zet('aantalNaast', { m, aantal });
+  }
 
   return vijver
     .map((c) => ({ c, s: rng() / c.gewicht }))

@@ -812,6 +812,10 @@ table.latin td.cell { width: 78px; height: 46px; }
 /* Kruisjes die het bord zelf zet staan er lichter in dan die van jezelf. */
 .kruisje-vanzelf { opacity: 0.32; stroke-width: 2.5; }
 
+.randletter { fill: #6b5a42; font: 600 11px var(--sans); }
+.kompasnaald { fill: #a3551f; }
+.kompasletter { fill: #6b5a42; font: 700 8px var(--sans); }
+
 .kamerplaat { fill: rgba(28, 22, 16, 0.82); }
 .kamerplaat-tekst {
   fill: #f2e6cf;
@@ -823,6 +827,23 @@ table.latin td.cell { width: 78px; height: 46px; }
 .klikvak { fill: transparent; cursor: pointer; }
 .klikvak:hover { fill: rgba(255, 255, 255, 0.14); }
 .klikvak-dicht { cursor: default; pointer-events: none; }
+
+.legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2) var(--s4);
+  margin-bottom: var(--s4);
+}
+
+.legenda-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  font-size: var(--t-xs);
+  color: var(--text-2);
+}
+
+.legenda-item svg { flex: none; }
 
 /* het palet met verdachten */
 .palet { display: flex; gap: var(--s2); flex-wrap: wrap; margin-bottom: var(--s4); }

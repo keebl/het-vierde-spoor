@@ -162,6 +162,78 @@ export const SOORTEN = {
       return (ctx.rooster.kamerVan[a] === ctx.rooster.kamerVan[b]) === c.ja;
     },
   },
+  // Hoeveel mensen stonden er in deze kamer? Een aanwijzing over iedereen
+  // tegelijk, in plaats van over een persoon.
+  aantalKamer: {
+    eval(c, ctx) {
+      let zeker = 0;
+      let onbekend = 0;
+      for (let p = 0; p < ctx.plaats.length; p++) {
+        const cel = ctx.plaats[p];
+        if (cel == null) { onbekend++; continue; }
+        if (ctx.rooster.kamerVan[cel] === c.kamerIdx) zeker++;
+      }
+      if (zeker > c.aantal) return false;
+      if (zeker + onbekend < c.aantal) return false;
+      return onbekend === 0 ? zeker === c.aantal : null;
+    },
+  },
+
+  // Hoeveel mensen stonden er naast dit meubelstuk?
+  aantalNaast: {
+    eval(c, ctx) {
+      const n = ctx.rooster.n;
+      let zeker = 0;
+      let onbekend = 0;
+      for (let p = 0; p < ctx.plaats.length; p++) {
+        const cel = ctx.plaats[p];
+        if (cel == null) { onbekend++; continue; }
+        if (burenVan(n, cel).some((b) => ctx.rooster.meubelOp[b] === c.m)) zeker++;
+      }
+      if (zeker > c.aantal) return false;
+      if (zeker + onbekend < c.aantal) return false;
+      return onbekend === 0 ? zeker === c.aantal : null;
+    },
+  },
+
+  // Tegen de buitenmuur, of juist niet.
+  rand: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      const n = ctx.rooster.n;
+      const r = rijVan(n, cel);
+      const k = kolVan(n, cel);
+      const aanRand = r === 0 || k === 0 || r === n - 1 || k === n - 1;
+      return aanRand === c.ja;
+    },
+  },
+
+  // In een hoek van het gebouw.
+  hoek: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      const n = ctx.rooster.n;
+      const r = rijVan(n, cel);
+      const k = kolVan(n, cel);
+      const inHoek = (r === 0 || r === n - 1) && (k === 0 || k === n - 1);
+      return inHoek === c.ja;
+    },
+  },
+
+  // Dezelfde kolom als een meubelstuk (de tegenhanger van opRij).
+  opKolom: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      const n = ctx.rooster.n;
+      const k = kolVan(n, cel);
+      for (let r = 0; r < n; r++) if (ctx.rooster.meubelOp[idx(n, r, k)] === c.m) return true;
+      return false;
+    },
+  },
+
   leegKamer: {
     eval(c, ctx) {
       let onbekend = false;
@@ -336,6 +408,33 @@ function propageerAanwijzing(rooster, dom, c) {
       }
       break;
     }
+    case 'aantalKamer':
+      // Alleen de nul is makkelijk door te rekenen: dan kan niemand daar staan.
+      if (c.aantal === 0) {
+        for (const d of dom) veranderd = filter(d, (cel) => kamerVan[cel] !== c.kamerIdx) || veranderd;
+      }
+      break;
+    case 'rand':
+      veranderd = filter(dom[c.p], (cel) => {
+        const r = rijVan(n, cel);
+        const k = kolVan(n, cel);
+        return (r === 0 || k === 0 || r === n - 1 || k === n - 1) === c.ja;
+      }) || veranderd;
+      break;
+    case 'hoek':
+      veranderd = filter(dom[c.p], (cel) => {
+        const r = rijVan(n, cel);
+        const k = kolVan(n, cel);
+        return ((r === 0 || r === n - 1) && (k === 0 || k === n - 1)) === c.ja;
+      }) || veranderd;
+      break;
+    case 'opKolom':
+      veranderd = filter(dom[c.p], (cel) => {
+        const k = kolVan(n, cel);
+        for (let r = 0; r < n; r++) if (meubelOp[idx(n, r, k)] === c.m) return true;
+        return false;
+      }) || veranderd;
+      break;
     case 'leegKamer':
       for (const d of dom) veranderd = filter(d, (cel) => kamerVan[cel] !== c.kamerIdx) || veranderd;
       break;

@@ -22,7 +22,9 @@ const el = (naam, attrs = {}) => {
 };
 
 const CEL = 76;
-const RAND = 18;
+const RAND = 14;
+// Ruimte voor de rij- en kolomaanduiding en het kompas.
+const BAND = 22;
 const PLAAT = 20;
 // Hoe breed is een hoofdletter ten opzichte van de lettergrootte, inclusief
 // de spatiering uit de stijl. Gemeten, niet gegokt: 0.58 was te krap.
@@ -35,8 +37,8 @@ const PENNING = ['#b8452f', '#2f6ea8', '#3f7d4f', '#8a4f9e', '#c07a1d', '#1f7f85
 
 export function renderKamerbord(puzzle, state, acties) {
   const n = puzzle.n;
-  const breedte = n * CEL + RAND * 2;
-  const hoogte = n * CEL + RAND * 2;
+  const breedte = n * CEL + RAND * 2 + BAND;
+  const hoogte = n * CEL + RAND * 2 + BAND;
 
   const svg = el('svg', {
     viewBox: `0 0 ${breedte} ${hoogte}`,
@@ -46,8 +48,8 @@ export function renderKamerbord(puzzle, state, acties) {
   });
   svg.append(dessins());
 
-  const x = (c) => RAND + c * CEL;
-  const y = (r) => RAND + r * CEL;
+  const x = (c) => RAND + BAND + c * CEL;
+  const y = (r) => RAND + BAND + r * CEL;
   const rij = (i) => Math.floor(i / n);
   const kol = (i) => i % n;
   const kamer = (i) => puzzle.kamerVan[i];
@@ -118,8 +120,27 @@ export function renderKamerbord(puzzle, state, acties) {
   }
   svg.append(muren);
   svg.append(el('rect', {
-    x: RAND, y: RAND, width: n * CEL, height: n * CEL, class: 'buitenmuur-kamer',
+    x: x(0), y: y(0), width: n * CEL, height: n * CEL, class: 'buitenmuur-kamer',
   }));
+
+  // Rij- en kolomaanduiding, plus een kompas: de aanwijzingen spreken over
+  // rijen, kolommen en het noorden, dus dat moet op het bord te zien zijn.
+  const randen = el('g');
+  for (let k = 0; k < n; k++) {
+    const kop = el('text', { x: x(k) + CEL / 2, y: y(0) - 7, 'text-anchor': 'middle', class: 'randletter' });
+    kop.textContent = String(k + 1);
+    randen.append(kop);
+    const zij = el('text', { x: x(0) - 8, y: y(k) + CEL / 2 + 4, 'text-anchor': 'end', class: 'randletter' });
+    zij.textContent = String.fromCharCode(65 + k);
+    randen.append(zij);
+  }
+  const kx = RAND + BAND / 2 - 2;
+  const ky = RAND + BAND / 2 + 2;
+  randen.append(el('path', { d: `M ${kx} ${ky - 9} L ${kx + 4} ${ky + 2} L ${kx} ${ky - 0.5} L ${kx - 4} ${ky + 2} Z`, class: 'kompasnaald' }));
+  const nLetter = el('text', { x: kx, y: ky + 11, 'text-anchor': 'middle', class: 'kompasletter' });
+  nLetter.textContent = 'N';
+  randen.append(nLetter);
+  svg.append(randen);
 
   // ----------------------------------------------------------- meubels
   const spullen = el('g');
@@ -352,3 +373,53 @@ function dessins() {
 }
 
 export { CEL, PENNING };
+
+// De legenda: elk meubelstuk uit deze puzzel met zijn naam erbij. De
+// aanwijzingen noemen die namen, dus je moet altijd kunnen opzoeken welk
+// tekeningetje erbij hoort - zonder te hoeven raden.
+export function renderLegenda(puzzle) {
+  const gebruikt = [];
+  const gezien = new Set();
+  for (let cel = 0; cel < puzzle.n * puzzle.n; cel++) {
+    const m = puzzle.meubelOp[cel];
+    if (m == null || gezien.has(m)) continue;
+    gezien.add(m);
+    gebruikt.push(m);
+  }
+  gebruikt.sort((a, b) => (puzzle.meubelNamen[a] ?? '').localeCompare(puzzle.meubelNamen[b] ?? ''));
+
+  const lijst = document.createElement('div');
+  lijst.className = 'legenda';
+  for (const m of gebruikt) {
+    const item = document.createElement('span');
+    item.className = 'legenda-item';
+    const svg = el('svg', { viewBox: '0 0 48 48', width: 30, height: 30, 'aria-hidden': 'true' });
+    tekenMeubel(svg, puzzle.meubelIconen?.[m], { grootte: 48 });
+    item.append(svg);
+    const naam = document.createElement('span');
+    naam.textContent = puzzle.meubelNamen[m] ?? '';
+    item.append(naam);
+    lijst.append(item);
+  }
+
+  const lijk = document.createElement('span');
+  lijk.className = 'legenda-item';
+  const lijkSvg = el('svg', { viewBox: '0 0 48 48', width: 30, height: 30, 'aria-hidden': 'true' });
+  lijkSvg.append(el('circle', { cx: 24, cy: 24, r: 21, class: 'lijkvlak' }));
+  lijkSvg.append(el('path', {
+    d: 'M24 11a4.5 4.5 0 1 1 0.1 0 Z M22 20l-10 5 M26 20l11 3 M24 19l-2 11l-6 6 M24 19l3 10l8 5',
+    class: 'krijtlijn',
+  }));
+  lijk.append(lijkSvg);
+  const lijkNaam = document.createElement('span');
+  lijkNaam.textContent = `${puzzle.slachtofferNaam} (het lichaam)`;
+  lijk.append(lijkNaam);
+  lijst.append(lijk);
+
+  const blok = document.createElement('div');
+  const kop = document.createElement('p');
+  kop.className = 'label';
+  kop.textContent = 'Wat er op het bord staat';
+  blok.append(kop, lijst);
+  return blok;
+}

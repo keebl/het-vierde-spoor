@@ -5,7 +5,7 @@ import { el, renderMatrix, renderMap, renderLatin, latinLegenda, cellKey } from 
 import { loadProgress, saveProgress, clearProgress } from './state.js';
 import { MECHANIC_BY_ID } from '../content/assignments.js';
 import { sceneVoor } from './scenes.js';
-import { renderKamerbord, PENNING } from './board-rooms.js';
+import { renderKamerbord, renderLegenda, PENNING } from './board-rooms.js';
 import { portretElement } from './personenkunst.js';
 
 export function renderPlayer(puzzle, mount) {
@@ -212,6 +212,7 @@ function boardNodes(puzzle, state, onCell) {
     return [
       personenPalet(puzzle, state, onCell),
       el('div', { class: 'board-wrap' }, renderKamerbord(puzzle, state, { klikCel: onCell })),
+      renderLegenda(puzzle),
       el('p', {
         class: 'legend',
         text: 'Kies een figuur en klik een vakje om hem neer te zetten. Met Schetsen zet je in plaats daarvan zijn beginletter in het vakje, als notitie van wie daar zou kunnen staan. Er staat precies één verdachte per rij en per kolom, en niemand staat op een meubelstuk. Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan; met Uitsluiten zet je je eigen kruisjes.',
