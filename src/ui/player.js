@@ -167,7 +167,7 @@ function cluePanel(puzzle, state, draw, persist) {
       el('p', { class: 'label', text: 'Hoe dit werkt' }),
       el('p', {
         class: 'row-sub',
-        text: 'Elke naam komt in elke rij precies een keer voor, en in elke kolom precies een keer. De grijze vakjes staan vast. Klik een leeg vakje om er namen door te lopen.',
+        text: 'Elke naam komt in elke rij precies één keer voor, en in elke kolom precies één keer. De grijze vakjes staan vast. Klik een leeg vakje om er namen door te lopen.',
       }),
       el('p', { class: 'legend', text: 'Het omlijnde vakje is waar de vraag over gaat.' }),
       latinLegenda(puzzle),

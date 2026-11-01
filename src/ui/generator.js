@@ -27,7 +27,7 @@ export function renderGenerator(mount) {
     el('h1', { text: 'Maak je eigen puzzel' }),
     el('p', {
       class: 'lede',
-      text: 'Kies wat je wilt uitzoeken, waar het speelt, hoe je het oplost en hoe zwaar het mag zijn. De puzzel wordt ter plekke gebouwd en gecontroleerd op precies een oplossing.',
+      text: 'Kies wat je wilt uitzoeken, waar het speelt, in welke vorm en hoe moeilijk. De puzzel wordt ter plekke gebouwd; met dezelfde seed krijg je hem altijd terug.',
     })
   );
 

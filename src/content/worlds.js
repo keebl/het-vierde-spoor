@@ -28,7 +28,7 @@ export const WORLDS = [
     name: 'Regenstad',
     icon: '🌧',
     accent: '#7fb2e5',
-    blurb: 'Natte straten, te veel neon, en niemand die de waarheid in een keer vertelt.',
+    blurb: 'Natte straten, te veel neon, en niemand die de waarheid in één keer vertelt.',
     timeUnit: { one: 'uur', many: 'uur' },
     sameRoom: 'dezelfde gelegenheid als',
     roomWord: 'gelegenheid',

@@ -113,7 +113,7 @@ export const ASSIGNMENTS = [
     id: 'dader',
     name: 'Wie deed het?',
     short: 'Dader',
-    blurb: 'Een misdrijf, een handvol verdachten, en genoeg tegenstrijdigheden om er een uit te sluiten.',
+    blurb: 'Een misdrijf, een handvol verdachten, en genoeg tegenstrijdigheden om ze een voor een af te strepen.',
     mechanics: ['kamer', 'grid', 'map'],
     buildSpec(world, params, rng, mechanic) {
       const n = params.slots;
@@ -207,7 +207,7 @@ export const ASSIGNMENTS = [
     },
     intro(world, spec, sol) {
       const target = spec.cats.find((c) => c.id === 'hidden').items[0].name;
-      return `${world.findLead} Je weet dat ${target} op precies een van deze plekken is. De rest is aftrekken.`;
+      return `${world.findLead} Het is op precies één van deze plekken. Welke, dat volgt uit de aanwijzingen.`;
     },
   },
 
@@ -250,7 +250,7 @@ export const ASSIGNMENTS = [
     id: 'reconstructie',
     name: 'Wie was waar wanneer?',
     short: 'Reconstructie',
-    blurb: 'Een tijdlijn met gaten: iedereen komt op elke plek en op elk moment precies een keer voor.',
+    blurb: 'Een tijdlijn met gaten: iedereen komt op elke plek en op elk moment precies één keer voor.',
     mechanics: ['latin'],
     buildSpec: null,
     forced: null,
@@ -260,10 +260,10 @@ export const ASSIGNMENTS = [
 export const ASSIGNMENT_BY_ID = new Map(ASSIGNMENTS.map((a) => [a.id, a]));
 
 export const MECHANICS = [
-  { id: 'kamer', name: 'Huiszoeking', icon: '▣', blurb: 'Zet de verdachten zelf op de plattegrond: een per rij, een per kolom.' },
+  { id: 'kamer', name: 'Huiszoeking', icon: '▣', blurb: 'Zet de figuren zelf op de plattegrond: één per rij, één per kolom.' },
   { id: 'grid', name: 'Kruisverhoor', icon: '▦', blurb: 'Kruisjes en vinkjes in een raster tot er een naam overblijft.' },
   { id: 'map', name: 'Rondgang', icon: '🗺', blurb: 'Een kaart met deuren; de aanwijzingen gaan over wat waaraan grenst.' },
-  { id: 'latin', name: 'Dienstrooster', icon: '◧', blurb: 'Rijen zijn plekken, kolommen zijn momenten, en iedereen komt er een keer in voor.' },
+  { id: 'latin', name: 'Dienstrooster', icon: '◧', blurb: 'Rijen zijn plekken, kolommen zijn momenten, en iedereen komt er één keer in voor.' },
 ];
 
 export const MECHANIC_BY_ID = new Map(MECHANICS.map((m) => [m.id, m]));

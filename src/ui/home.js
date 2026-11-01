@@ -12,7 +12,7 @@ import { sceneVoor } from './scenes.js';
 const STAPPEN = [
   {
     kop: 'Lees de aanwijzingen',
-    tekst: 'Elke aanwijzing is waar. Samen sluiten ze alles uit op één mogelijkheid na.',
+    tekst: 'Elke aanwijzing is waar. Los van elkaar zeggen ze weinig; samen sluiten ze alles uit op één mogelijkheid na.',
   },
   {
     kop: 'Sluit uit wat niet kan',
@@ -20,7 +20,7 @@ const STAPPEN = [
   },
   {
     kop: 'Hou over wat moet',
-    tekst: 'Wat overblijft is het antwoord. Vastgelopen? De hint wijst de aanwijzing aan die je over het hoofd ziet.',
+    tekst: 'Wat overblijft is het antwoord. Vastgelopen? De hint vult één vakje in en zegt erbij uit welke aanwijzing dat volgde.',
   },
 ];
 
@@ -35,10 +35,10 @@ export function renderHome(mount) {
     el('section', { class: 'hero' }, [
       el('div', {}, [
         el('p', { class: 'eyebrow', text: 'Deductiepuzzels' }),
-        el('h1', { text: 'Puzzels waar je je weg naartoe redeneert' }),
+        el('h1', { text: 'Puzzels die je uitredeneert' }),
         el('p', {
           class: 'lede',
-          text: 'Een handvol verdachten, een paar aanwijzingen, en precies één antwoord dat klopt. Je lost ze op door uit te sluiten wat niet kan, nooit door te gokken: elke puzzel is vooraf nagerekend op precies één oplossing.',
+          text: 'Een handvol verdachten, een paar aanwijzingen, en één antwoord dat past. Je komt er door te schrappen wat niet kan. Gokken hoeft nooit, ook niet bij de moeilijkste.',
         }),
       ]),
       el('div', { class: 'hero-actions' }, [
@@ -112,7 +112,7 @@ export function renderHome(mount) {
       el('div', { class: 'section-head' }, [el('h2', { text: 'Of maak er zelf een' })]),
       el('p', {
         class: 'lede',
-        text: 'Kies wat je uitzoekt, waar het speelt, hoe je het oplost en hoe zwaar het mag zijn. De puzzel wordt ter plekke gebouwd en nagerekend, en je kunt hem delen met een link.',
+        text: 'Kies wat je uitzoekt, waar het speelt, in welke vorm en hoe moeilijk. De puzzel wordt ter plekke gebouwd, en je kunt hem met een link delen.',
       }),
       el('a', { class: 'btn', href: '#/maken', text: 'Zelf een puzzel maken' }),
     ])

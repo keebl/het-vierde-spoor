@@ -39,7 +39,7 @@ export function renderLibrary(mount, query = {}) {
     el('h1', { text: 'Alle puzzels' }),
     el('p', {
       class: 'lede',
-      text: `${CATALOG.length} zaken in vier soorten spel en vijf moeilijkheidsgraden. Elke puzzel is met logica op te lossen en heeft precies één antwoord.`,
+      text: `${CATALOG.length} zaken in vier soorten spel en vijf moeilijkheidsgraden. Hoe hoger het niveau, hoe verder je moet doorredeneren voordat er iets vastligt.`,
     })
   );
 
