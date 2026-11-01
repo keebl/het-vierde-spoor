@@ -19,6 +19,10 @@ if (p.kind === 'latin') {
         p.givens[r].map((v) => (v == null ? '  ·  ' : ` ${v + 1}   `)).join('')
     );
   }
+  if (p.clues.length) {
+    console.log('\nAanwijzingen:');
+    for (const c of p.clues) console.log(`  ${String(c.n).padStart(2)}. ${c.text}`);
+  }
 } else {
   console.log(`${p.anchor.name}: ${p.anchor.items.join(' | ')}`);
   for (const c of p.cats) console.log(`${c.name}: ${c.items.join(' | ')}`);

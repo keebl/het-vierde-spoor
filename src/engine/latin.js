@@ -13,7 +13,26 @@ export function makeLatinSquare(n, rng) {
   return rowOrder.map((r) => colOrder.map((c) => symOrder[base[r][c]]));
 }
 
-export function countLatinSolutions(grid, n, cap = 2) {
+// Aanwijzingen over het rooster. Rijen zijn plekken, kolommen zijn momenten.
+//   voor   - in deze plek was X eerder dan Y
+//   naast  - in deze plek kwamen X en Y direct na elkaar
+//   niet   - X was op dat moment niet op die plek
+export function evalLatin(c, grid, n) {
+  if (c.soort === 'niet') {
+    const v = grid[c.r][c.c];
+    return v == null ? null : v !== c.s;
+  }
+  let ca = null;
+  let cb = null;
+  for (let k = 0; k < n; k++) {
+    if (grid[c.r][k] === c.a) ca = k;
+    if (grid[c.r][k] === c.b) cb = k;
+  }
+  if (ca == null || cb == null) return null;
+  return c.soort === 'voor' ? ca < cb : Math.abs(ca - cb) === 1;
+}
+
+export function countLatinSolutions(grid, n, cap = 2, aanwijzingen = []) {
   const g = grid.map((row) => row.slice());
   const rowUsed = Array.from({ length: n }, () => new Set());
   const colUsed = Array.from({ length: n }, () => new Set());
@@ -28,6 +47,7 @@ export function countLatinSolutions(grid, n, cap = 2) {
   let first = null;
   const rec = (k) => {
     if (k === blanks.length) {
+      for (const cl of aanwijzingen) if (evalLatin(cl, g, n) !== true) return;
       found++;
       if (!first) first = g.map((row) => row.slice());
       return;
@@ -46,7 +66,9 @@ export function countLatinSolutions(grid, n, cap = 2) {
     const [r, c] = blanks[k];
     for (const v of bCands) {
       g[r][c] = v; rowUsed[r].add(v); colUsed[c].add(v);
-      rec(k + 1);
+      // Alleen de aanwijzingen over deze rij kunnen nu iets zeggen.
+      const botst = aanwijzingen.some((cl) => cl.r === r && evalLatin(cl, g, n) === false);
+      if (!botst) rec(k + 1);
       g[r][c] = null; rowUsed[r].delete(v); colUsed[c].delete(v);
       if (found >= cap) break;
     }
@@ -105,9 +127,30 @@ export function latinDepth(grid, n) {
   return 1;
 }
 
+// Bouwt een vijver van aanwijzingen die waar zijn in dit rooster.
+function latinVijver(full, n, rng) {
+  const vijver = [];
+  for (let r = 0; r < n; r++) {
+    const kolomVan = new Array(n);
+    for (let k = 0; k < n; k++) kolomVan[full[r][k]] = k;
+    for (let a = 0; a < n; a++) {
+      for (let b = 0; b < n; b++) {
+        if (a === b) continue;
+        if (kolomVan[a] < kolomVan[b]) vijver.push({ soort: 'voor', a, b, r });
+        if (Math.abs(kolomVan[a] - kolomVan[b]) === 1 && a < b) vijver.push({ soort: 'naast', a, b, r });
+      }
+    }
+    for (let k = 0; k < n; k++) {
+      for (let s = 0; s < n; s++) if (full[r][k] !== s) vijver.push({ soort: 'niet', s, r, c: k });
+    }
+  }
+  return rng.shuffle(vijver);
+}
+
 export function generateLatin(n, rng, params) {
   const full = makeLatinSquare(n, rng);
   const grid = full.map((row) => row.slice());
+  // Eerst zoveel mogelijk weghalen op het rooster alleen...
   const cells = rng.shuffle(
     Array.from({ length: n * n }, (_, i) => [Math.floor(i / n), i % n])
   );
@@ -121,10 +164,38 @@ export function generateLatin(n, rng, params) {
       grid[r][c] = keep;
     }
   }
+
+  // ...en daarna nog verder, met aanwijzingen erbij. Zo wordt het een
+  // deductiepuzzel in plaats van een kaal latijns vierkant: je hebt de
+  // zinnen nodig om de rest van het rooster rond te krijgen.
+  const aanwijzingen = [];
+  const vijver = latinVijver(full, n, rng);
+  const nogOver = rng.shuffle(cells.filter(([r, c]) => grid[r][c] != null));
+  let bron = 0;
+  for (const [r, c] of nogOver) {
+    const bewaar = grid[r][c];
+    grid[r][c] = null;
+    // Voeg aanwijzingen toe tot het weer vastligt, of zet de cel terug.
+    let rond = countLatinSolutions(grid, n, 2, aanwijzingen).count === 1;
+    while (!rond && bron < vijver.length && aanwijzingen.length < n * 2) {
+      aanwijzingen.push(vijver[bron++]);
+      rond = countLatinSolutions(grid, n, 2, aanwijzingen).count === 1;
+    }
+    // Lukt het niet met deze cel, dan zetten we hem terug en gaan verder.
+    if (!rond) { grid[r][c] = bewaar; continue; }
+    removed.push([r, c]);
+  }
+
+  // Aanwijzingen die je kunt missen gaan eruit.
+  const gesnoeid = [];
+  for (let i = 0; i < aanwijzingen.length; i++) {
+    const proef = [...gesnoeid, ...aanwijzingen.slice(i + 1)];
+    if (countLatinSolutions(grid, n, 2, proef).count !== 1) gesnoeid.push(aanwijzingen[i]);
+  }
   // Lage niveaus: een paar cellen weer prijsgeven als extra houvast.
   if (params.redundancy > 0 && removed.length) {
     const back = rng.sample(removed, Math.round(removed.length * params.redundancy * 0.5));
     for (const [r, c] of back) grid[r][c] = full[r][c];
   }
-  return { full, givens: grid, depth: latinDepth(grid, n) };
+  return { full, givens: grid, aanwijzingen: gesnoeid, depth: latinDepth(grid, n) };
 }

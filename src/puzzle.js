@@ -102,7 +102,16 @@ function buildLatinPuzzle({ world, params, settings }) {
   const rows = rng.sample(world.places, n);
   const cols = world.times.slice(0, n);
   const symbols = rng.sample(world.persons, n);
-  const { full, givens, depth } = generateLatin(n, rng, params);
+  const { full, givens, aanwijzingen, depth } = generateLatin(n, rng, params);
+
+  const zin = (c) => {
+    if (c.soort === 'niet') return `${symbols[c.s]} was om ${cols[c.c]} niet in ${rows[c.r]}.`;
+    if (c.soort === 'voor') return `In ${rows[c.r]} was ${symbols[c.a]} er eerder dan ${symbols[c.b]}.`;
+    return `In ${rows[c.r]} volgden ${symbols[c.a]} en ${symbols[c.b]} elkaar direct op.`;
+  };
+  const namenVan = (c) => (c.soort === 'niet'
+    ? [symbols[c.s], rows[c.r], cols[c.c]]
+    : [symbols[c.a], symbols[c.b], rows[c.r]]);
 
   const open = [];
   for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (givens[r][c] == null) open.push([r, c]);
@@ -131,7 +140,15 @@ function buildLatinPuzzle({ world, params, settings }) {
     symbols,
     givens,
     full,
-    clues: [],
+    // De ruwe aanwijzingen, zodat de keuring de uniciteit mét aanwijzingen
+    // kan narekenen in plaats van alleen met de gegeven vakjes.
+    _ruweLatin: aanwijzingen,
+    clues: aanwijzingen.map((c, i) => ({
+      n: i + 1,
+      text: zin(c),
+      kind: c.soort,
+      names: namenVan(c),
+    })),
   };
 }
 

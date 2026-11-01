@@ -33,7 +33,7 @@ for (const entry of CATALOG) {
   } else if (p.kind === 'assign') {
     if (countSolutions(p._spec, p._rawClues, 3).count !== 1) problems.push('niet uniek');
     for (const c of p.clues) if (/undefined|\bis is\b|  /.test(c.text)) problems.push(`rare zin: ${c.text}`);
-  } else if (countLatinSolutions(p.givens, p.rows.length, 3).count !== 1) {
+  } else if (countLatinSolutions(p.givens, p.rows.length, 3, p._ruweLatin ?? []).count !== 1) {
     problems.push('niet uniek');
   }
   // Het getallenraster heeft een eigen moeilijkheidsmaat (rastergrootte en

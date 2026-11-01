@@ -79,7 +79,7 @@ for (const { a, m, w, l } of combos) {
       if (/undefined/.test(p.intro)) problems.push('rare inleiding');
       clueCounts.push(p.clues.length);
     } else {
-      const { count } = countLatinSolutions(p.givens, p.rows.length, 3);
+      const { count } = countLatinSolutions(p.givens, p.rows.length, 3, p._ruweLatin ?? []);
       if (count !== 1) problems.push(`${count} oplossingen`);
       const [r, c] = p.question.cell;
       if (p.symbols[p.full[r][c]] !== p.question.answer) problems.push('antwoord wijkt af');

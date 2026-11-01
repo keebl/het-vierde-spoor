@@ -177,7 +177,7 @@ function head(puzzle) {
 }
 
 function cluePanel(puzzle, state, draw, persist) {
-  if (puzzle.kind === 'latin') {
+  if (puzzle.kind === 'latin' && !puzzle.clues.length) {
     return el('div', {}, [
       el('p', { class: 'label', text: 'Hoe dit werkt' }),
       el('p', {
