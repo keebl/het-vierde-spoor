@@ -11,6 +11,7 @@ import { generateLatin, latinDepth } from './engine/latin.js';
 import { genereerKamerpuzzel } from './engine/generate-rooms.js';
 import { kamerParams } from './engine/difficulty.js';
 import { zinVoor, namenIn } from './content/rooms-text.js';
+import { soortVan, MEUBELS_VAN } from './content/kamersoorten.js';
 import { makeRng } from './engine/rng.js';
 
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
@@ -154,7 +155,7 @@ function buildKamerPuzzle({ world, settings }) {
   const gen = genereerKamerpuzzel(seed, {
     ...params,
     kamers: Math.min(params.kamers, world.places.length),
-    maxMeubels: world.meubels.length,
+    maxMeubels: 20,
   });
   const rng = makeRng(`${seed}:kamerwoorden`);
 
@@ -167,7 +168,30 @@ function buildKamerPuzzle({ world, settings }) {
   namen[gen.slachtofferIdx] = slachtofferNaam;
 
   const kamerNamen = rng.sample(world.places, gen.rooster.kamers);
-  const meubelNamen = rng.sample(world.meubels, gen.rooster.meubelAantal);
+  // Een meubelstuk krijgt zijn naam van de kamer waarin het staat: in de
+  // keuken een koelkast, in het grafvertrek een sarcofaag. Namen blijven
+  // binnen een puzzel uniek, want de aanwijzingen verwijzen ernaar.
+  const meubelNamen = [];
+  const meubelIconen = [];
+  const gebruikt = new Set();
+  const voorraad = new Map();
+  for (let cel = 0; cel < gen.rooster.n * gen.rooster.n; cel++) {
+    const mi = gen.rooster.meubelOp[cel];
+    if (mi == null) continue;
+    const soort = soortVan(kamerNamen[gen.rooster.kamerVan[cel]]);
+    if (!voorraad.has(soort)) voorraad.set(soort, rng.shuffle(MEUBELS_VAN[soort] ?? MEUBELS_VAN.zaal));
+    let keuze = voorraad.get(soort).find(([naam]) => !gebruikt.has(naam));
+    if (!keuze) {
+      // Deze kamersoort is op: wijk uit naar wat er nog over is.
+      for (const lijst of Object.values(MEUBELS_VAN)) {
+        keuze = lijst.find(([naam]) => !gebruikt.has(naam));
+        if (keuze) break;
+      }
+    }
+    gebruikt.add(keuze[0]);
+    meubelNamen[mi] = keuze[0];
+    meubelIconen[mi] = keuze[1];
+  }
   const woorden = { personen: namen, kamerNamen, meubelNamen, slachtofferNaam };
 
   const clues = gen.aanwijzingen.map((c, i) => ({
@@ -200,6 +224,7 @@ function buildKamerPuzzle({ world, settings }) {
     kamerNamen,
     meubelOp: gen.rooster.meubelOp,
     meubelNamen,
+    meubelIconen,
     vrij: gen.rooster.vrij,
     personen: namen,
     slachtofferIdx: gen.slachtofferIdx,

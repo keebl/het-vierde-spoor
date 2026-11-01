@@ -7,6 +7,9 @@
 // hier niet staat, of naar een icoon wijst dat niet bestaat.
 
 export const ICOON_VAN = {
+  "de bedrijfskeuken": "fornuis",
+  "de keuken": "fornuis",
+  "de kombuis": "fornuis",
   "de sigarettenautomaat": "automaat",
   "de pooltafel": "biljarttafel",
   "de garderobekast": "kast",

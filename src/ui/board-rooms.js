@@ -10,6 +10,7 @@
 
 import { tekenIcoon } from './icons.js';
 import { icoonVan } from '../content/iconen.js';
+import { soortVan, VLOER_VAN } from '../content/kamersoorten.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const el = (naam, attrs = {}) => {
@@ -25,15 +26,8 @@ const PLAAT = 20;
 // de spatiering uit de stijl. Gemeten, niet gegokt: 0.58 was te krap.
 const BREED = 0.68;
 
-// Vijf vloeren, elk met een eigen kleur en dessin. Meer dan vijf kamers
-// komt niet voor, dus dit is genoeg om ze uit elkaar te houden.
-const VLOEREN = [
-  { vul: '#d8c29b', lijn: '#c2a87e', dessin: 'planken' },
-  { vul: '#b9ccb4', lijn: '#a1b89b', dessin: 'tegels' },
-  { vul: '#dba98f', lijn: '#c68d72', dessin: 'ruiten' },
-  { vul: '#aec1d1', lijn: '#93a9bd', dessin: 'planken-dwars' },
-  { vul: '#e2d6b4', lijn: '#ccbd93', dessin: 'tegels' },
-];
+// De vloer volgt het soort ruimte, niet het kamernummer: tegels in de keuken,
+// parket in de bibliotheek, gras buiten. Zie src/content/kamersoorten.js.
 
 const PENNING = ['#b8452f', '#2f6ea8', '#3f7d4f', '#8a4f9e', '#c07a1d', '#1f7f85'];
 
@@ -60,15 +54,30 @@ export function renderKamerbord(puzzle, state, acties) {
   const bruikbaar = (i) => puzzle.meubelOp[i] == null;
 
   // ---------------------------------------------------------------- vloer
+  const vloerVan = (i) => VLOER_VAN[soortVan(puzzle.kamerNamen[kamer(i)])] ?? VLOER_VAN.zaal;
+
   const vloer = el('g');
   for (let i = 0; i < n * n; i++) {
-    const v = VLOEREN[kamer(i) % VLOEREN.length];
+    const v = vloerVan(i);
     vloer.append(el('rect', {
       x: x(kol(i)), y: y(rij(i)), width: CEL, height: CEL, fill: v.vul,
     }));
     vloer.append(el('rect', {
       x: x(kol(i)), y: y(rij(i)), width: CEL, height: CEL,
       fill: `url(#dessin-${v.dessin})`, opacity: 0.5,
+    }));
+  }
+
+  // Sleetplekken en vlekken. Vast per vakje, dus ze springen niet rond bij
+  // elke klik - en ze blijven schaars, anders wordt het rommelig.
+  for (let i = 0; i < n * n; i++) {
+    const ruis = (i * 2654435761) % 1000;
+    if (ruis > 240) continue;
+    const vx = x(kol(i)) + 14 + (ruis % 40);
+    const vy = y(rij(i)) + 16 + ((ruis * 7) % 40);
+    vloer.append(el('ellipse', {
+      cx: vx, cy: vy, rx: 6 + (ruis % 7), ry: 4 + (ruis % 5),
+      class: 'vloervlek',
     }));
   }
   svg.append(vloer);
@@ -112,7 +121,7 @@ export function renderKamerbord(puzzle, state, acties) {
       x: x(kol(i)) + 9, y: y(rij(i)) + 9, width: CEL - 18, height: CEL - 18,
       rx: 7, class: 'meubelblok',
     }));
-    tekenIcoon(spullen, icoonVan(naam), {
+    tekenIcoon(spullen, puzzle.meubelIconen?.[m] ?? icoonVan(naam), {
       x: x(kol(i)) + CEL / 2 - 16, y: y(rij(i)) + CEL / 2 - 18, grootte: 32, klasse: 'meubelglyph',
     });
   }

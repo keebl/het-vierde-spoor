@@ -735,6 +735,8 @@ table.latin td.cell { width: 78px; height: 46px; }
 .dessinlijn { fill: none; stroke: rgba(90, 70, 45, 0.3); stroke-width: 1; }
 .dessinvlak { fill: rgba(255, 255, 255, 0.16); }
 
+.vloervlek { fill: rgba(90, 70, 45, 0.09); }
+
 .naad { stroke: rgba(90, 70, 45, 0.28); stroke-width: 1; }
 .kamermuur { stroke: #4a3b2c; stroke-width: 6; stroke-linecap: round; }
 .buitenmuur-kamer { fill: none; stroke: #3a2e22; stroke-width: 8; rx: 3; }
