@@ -33,7 +33,7 @@ function allCats(spec) {
 }
 
 // Alle aanwijzingen die waar zijn in deze oplossing, per type.
-function buildPool(spec, sol, rng, weights) {
+function buildPool(spec, sol, rng, weights, verboden = new Set()) {
   const n = spec.anchor.items.length;
   const cats = allCats(spec);
   const ordered = cats.filter((c) => c.ordered);
@@ -45,11 +45,22 @@ function buildPool(spec, sol, rng, weights) {
 
   const ref = (cid, slot) => ({ c: cid, i: itemAtSlot(spec, sol, cid, slot) });
 
+  // Het voorwerp en de plek uit de inleiding horen bij de dader. Koppel je
+  // daar rechtstreeks een persoon aan, dan heb je het antwoord gegeven en is
+  // de rest van het raster overbodig. Dat soort aanwijzingen laten we niet
+  // toe - zie de keuring, die hierop test.
+  const sleutelVan = (r) => `${r.c}:${r.i}`;
+  const geeftWeg = (a, b) =>
+    (verboden.has(sleutelVan(a)) && b.c === 'person') ||
+    (verboden.has(sleutelVan(b)) && a.c === 'person');
+
   for (let x = 0; x < cats.length; x++) {
     for (let y = x + 1; y < cats.length; y++) {
       const A = cats[x].id, B = cats[y].id;
       for (let s = 0; s < n; s++) {
-        push('same', { a: ref(A, s), b: ref(B, s) });
+        const pa = ref(A, s);
+        const pb = ref(B, s);
+        if (!geeftWeg(pa, pb)) push('same', { a: pa, b: pb });
         for (let t = 0; t < n; t++) {
           if (s === t) continue;
           push('diff', { a: ref(A, s), b: ref(B, t) });
@@ -211,7 +222,14 @@ function attempt(spec, rng, params, forced) {
   // Verplichte feiten (bv. wat op de plaats van het misdrijf lag) gelden
   // als aanwijzing: ze beperken net zo goed, ze staan alleen in de inleiding.
   const fixedClues = forced ? forced(spec, sol, rng) : [];
-  const pool = buildPool(spec, sol, rng, params.weights);
+  // Wat de inleiding al verklapt, mag geen aanwijzing meer worden.
+  const verboden = new Set();
+  for (const c of fixedClues) {
+    for (const key of ['a', 'b']) {
+      if (c[key]) verboden.add(`${c[key].c}:${c[key].i}`);
+    }
+  }
+  const pool = buildPool(spec, sol, rng, params.weights, verboden);
 
   const grown = params.style === 'shallow'
     ? growSolvable(spec, pool, fixedClues)

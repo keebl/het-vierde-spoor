@@ -50,9 +50,11 @@ function buildAssignPuzzle({ world, assignment, params, settings }) {
       names: clueNames(c, spec),
     }));
 
+  const sRng = makeRng(`${seed}:slachtoffer`);
+  const slachtoffer = sRng.pick(world.victims);
   const qRng = makeRng(`${seed}:vraag`);
   const question = assignment.question(spec, gen.solution, introClues, world, qRng);
-  const intro = assignment.intro(world, spec, gen.solution, introClues);
+  const intro = assignment.intro(world, spec, gen.solution, introClues, slachtoffer);
 
   return {
     kind: 'assign',
@@ -117,7 +119,7 @@ function buildLatinPuzzle({ world, params, settings }) {
     niveau: Number(settings.niveau),
     niveauLabel: params.label,
     depth,
-    intro: `${world.assignLead} Van die periode is alleen een half ingevuld schema over. Iedereen was precies een keer op elke plek, en op elk moment op precies een plek.`,
+    intro: `${world.reconLead} Iedereen was precies één keer op elke plek, en op elk moment op precies één plek.`,
     question: {
       text: `Wie was er in ${rows[qr]} tijdens ${cols[qc]}?`,
       answer: symbols[full[qr][qc]],
@@ -153,7 +155,8 @@ function buildKamerPuzzle({ world, settings }) {
   const personen = rng.sample(world.persons, params.n);
   const kamerNamen = rng.sample(world.places, gen.rooster.kamers);
   const meubelNamen = rng.sample(world.meubels, gen.rooster.meubelAantal);
-  const woorden = { personen, kamerNamen, meubelNamen, slachtofferNaam: world.victim };
+  const slachtofferNaam = makeRng(`${seed}:slachtoffer`).pick(world.victims);
+  const woorden = { personen, kamerNamen, meubelNamen, slachtofferNaam };
 
   const clues = gen.aanwijzingen.map((c, i) => ({
     n: i + 1,
@@ -175,9 +178,9 @@ function buildKamerPuzzle({ world, settings }) {
     niveau: Number(niveau),
     niveauLabel: levelParams(niveau).label,
     depth: gen.graad.opgelost ? 1 : 2,
-    intro: `${world.lead} Het lichaam lag in ${kamerNamen[kamerVanLijk]}. Van alle aanwezigen stond er precies één met ${world.victim} alleen in die ruimte.`,
+    intro: `${world.lead} Het lichaam lag in ${kamerNamen[kamerVanLijk]}. Van alle aanwezigen stond er precies één met ${slachtofferNaam} alleen in die ruimte.`,
     question: {
-      text: `Wie stond er als enige bij ${world.victim} in ${kamerNamen[kamerVanLijk]}?`,
+      text: `Wie stond er als enige bij ${slachtofferNaam} in ${kamerNamen[kamerVanLijk]}?`,
       answer: personen[gen.dader],
     },
     // het bord
@@ -188,7 +191,7 @@ function buildKamerPuzzle({ world, settings }) {
     meubelNamen,
     vrij: gen.rooster.vrij,
     slachtoffer: gen.slachtoffer,
-    slachtofferNaam: world.victim,
+    slachtofferNaam,
     personen,
     oplossing: gen.plaats,
     dader: gen.dader,

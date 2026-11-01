@@ -167,12 +167,12 @@ export const ASSIGNMENTS = [
         answer: cat.items[idx].name,
       };
     },
-    intro(world, spec, sol, forced) {
+    intro(world, spec, sol, forced, slachtoffer) {
       const f = forced[0];
       const objName = spec.cats.find((c) => c.id === 'object').items[f.a.i].name;
       const placeCat = spec.anchor.id === 'place' ? spec.anchor : spec.cats.find((c) => c.id === 'place');
       const placeName = placeCat.items[f.b.i].name;
-      return `${world.lead} Het slachtoffer, ${world.victim}, werd aangetroffen in ${placeName}, met ${objName} ernaast. Wie daar toen was, is de dader.`;
+      return `${world.lead} ${slachtoffer.charAt(0).toUpperCase()}${slachtoffer.slice(1)} werd aangetroffen in ${placeName}, met ${objName} ernaast. Wie daar toen was, is de dader.`;
     },
   },
 
