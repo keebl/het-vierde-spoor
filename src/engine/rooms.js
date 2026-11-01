@@ -3,9 +3,10 @@
 // Regels:
 //   - een rooster van n bij n vakjes, verdeeld in kamers
 //   - op sommige vakjes staat een meubelstuk; daar kan niemand staan
-//   - er staat precies een persoon per rij en precies een persoon per kolom
-//   - het slachtoffer ligt op een vast vakje; de dader is degene die als
-//     enige in diezelfde kamer stond
+//   - er staat precies een figuur per rij en precies een figuur per kolom
+//   - het slachtoffer is zelf een van die figuren: waar het lichaam ligt moet
+//     je dus net zo goed uitpuzzelen. De dader is de enige verdachte die
+//     uiteindelijk bij het slachtoffer in de kamer blijkt te staan.
 //
 // De oplossing is dus een plaatsing: welke persoon staat op welk vakje. Dat
 // is een ander probleem dan de toewijzingspuzzels in assign.js, vandaar een
@@ -217,13 +218,6 @@ export const SOORTEN = {
       return (afstand === 1) === c.ja;
     },
   },
-  bijSlachtoffer: {
-    eval(c, ctx) {
-      const cel = ctx.plaats[c.p];
-      if (cel == null) return null;
-      return burenVan(ctx.rooster.n, cel).includes(ctx.slachtoffer) === c.ja;
-    },
-  },
 };
 
 export const evalAanwijzing = (c, ctx) => SOORTEN[c.soort].eval(c, ctx);
@@ -240,10 +234,10 @@ function personenIn(c) {
 
 // Telt plaatsingen tot aan cap. Rij voor rij: wie staat hier, en in welke
 // kolom? Rijen zijn daarmee automatisch allemaal verschillend.
-export function telPlaatsingen(rooster, aanwijzingen, slachtoffer, cap = 2) {
+export function telPlaatsingen(rooster, aanwijzingen, cap = 2) {
   const { n, vrij } = rooster;
   const plaats = new Array(n).fill(null);
-  const ctx = { rooster, plaats, slachtoffer };
+  const ctx = { rooster, plaats };
 
   const perPersoon = new Map();
   const altijd = [];
@@ -279,7 +273,7 @@ export function telPlaatsingen(rooster, aanwijzingen, slachtoffer, cap = 2) {
       for (let c = 0; c < n; c++) {
         if (!kolVrij[c]) continue;
         const cel = idx(n, r, c);
-        if (!vrij[cel] || cel === slachtoffer) continue;
+        if (!vrij[cel]) continue;
         plaats[p] = cel;
         persoonVrij[p] = false;
         kolVrij[c] = false;
@@ -300,12 +294,12 @@ export function telPlaatsingen(rooster, aanwijzingen, slachtoffer, cap = 2) {
 
 // Mogelijkhedenraster: per persoon de vakjes waar die nog kan staan. Alleen
 // wegstrepen wat aantoonbaar onmogelijk is, net als bij de andere puzzels.
-function beginDomeinen(rooster, slachtoffer) {
+function beginDomeinen(rooster) {
   const { n, vrij } = rooster;
   const dom = [];
   for (let p = 0; p < n; p++) {
     const s = new Set();
-    for (let i = 0; i < n * n; i++) if (vrij[i] && i !== slachtoffer) s.add(i);
+    for (let i = 0; i < n * n; i++) if (vrij[i]) s.add(i);
     dom.push(s);
   }
   return dom;
@@ -317,7 +311,7 @@ function filter(set, test) {
   return veranderd;
 }
 
-function propageerAanwijzing(rooster, dom, c, slachtoffer) {
+function propageerAanwijzing(rooster, dom, c) {
   const { n, kamerVan, meubelOp } = rooster;
   let veranderd = false;
   switch (c.soort) {
@@ -377,9 +371,6 @@ function propageerAanwijzing(rooster, dom, c, slachtoffer) {
       }
       break;
     }
-    case 'bijSlachtoffer':
-      veranderd = filter(dom[c.p], (cel) => burenVan(n, cel).includes(slachtoffer) === c.ja) || veranderd;
-      break;
   }
   return veranderd;
 }
@@ -420,15 +411,15 @@ function propageerRijenKolommen(rooster, dom) {
   return veranderd;
 }
 
-export function graad(rooster, aanwijzingen, slachtoffer) {
-  const dom = beginDomeinen(rooster, slachtoffer);
+export function graad(rooster, aanwijzingen) {
+  const dom = beginDomeinen(rooster);
   let rondes = 0;
   let veranderd = true;
   const kapot = () => dom.some((d) => d.size === 0);
 
   while (veranderd && !kapot()) {
     veranderd = false;
-    for (const c of aanwijzingen) veranderd = propageerAanwijzing(rooster, dom, c, slachtoffer) || veranderd;
+    for (const c of aanwijzingen) veranderd = propageerAanwijzing(rooster, dom, c) || veranderd;
     veranderd = propageerRijenKolommen(rooster, dom) || veranderd;
     if (veranderd) rondes++;
   }

@@ -230,16 +230,17 @@ function personenPalet(puzzle, state, onCell) {
   const balk = el('div', { class: 'palet' });
   puzzle.personen.forEach((naam, i) => {
     const geplaatst = state.plaats[i] != null;
+    const isLijk = i === puzzle.slachtofferIdx;
     const knop = el('button', {
-      class: 'palet-knop',
+      class: isLijk ? 'palet-knop palet-lijk' : 'palet-knop',
       type: 'button',
       'aria-pressed': String(state.gekozen === i),
       'data-geplaatst': geplaatst ? '1' : null,
     }, [
-      el('span', { class: 'palet-fiche' }),
-      el('span', { text: naam }),
+      el('span', { class: 'palet-fiche', text: isLijk ? '✝' : '' }),
+      el('span', { text: isLijk ? `${naam} (het lichaam)` : naam }),
     ]);
-    knop.querySelector('.palet-fiche').style.background = PENNING[i % PENNING.length];
+    if (!isLijk) knop.querySelector('.palet-fiche').style.background = PENNING[i % PENNING.length];
     knop.addEventListener('click', () => onCell(null, i));
     balk.append(knop);
   });

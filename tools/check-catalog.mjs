@@ -28,7 +28,7 @@ for (const entry of CATALOG) {
 
   const problems = [];
   if (p.kind === 'kamer') {
-    if (telPlaatsingen(p._rooster, p._ruwe, p.slachtoffer, 3).count !== 1) problems.push('niet uniek');
+    if (telPlaatsingen(p._rooster, p._ruwe, 3).count !== 1) problems.push('niet uniek');
     if (p.personen[p.dader] !== p.question.answer) problems.push('antwoord wijkt af');
   } else if (p.kind === 'assign') {
     if (countSolutions(p._spec, p._rawClues, 3).count !== 1) problems.push('niet uniek');

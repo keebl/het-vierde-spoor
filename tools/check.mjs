@@ -46,13 +46,17 @@ for (const { a, m, w, l } of combos) {
 
     const problems = [];
     if (p.kind === 'kamer') {
-      const { count } = telPlaatsingen(p._rooster, p._ruwe, p.slachtoffer, 3);
+      const { count } = telPlaatsingen(p._rooster, p._ruwe, 3);
       if (count !== 1) problems.push(`${count} oplossingen`);
       if (p.personen[p.dader] !== p.question.answer) problems.push('antwoord wijkt af');
-      // De dader mag nooit rechtstreeks genoemd worden.
-      const kamerVanLijk = p.kamerVan[p.slachtoffer];
+      // Waar het lichaam ligt moet je uitpuzzelen: geen aanwijzing mag de
+      // kamer van het slachtoffer rechtstreeks noemen, en geen aanwijzing mag
+      // zeggen wie er bij hem stond.
       for (const c of p._ruwe) {
-        if (c.soort === 'kamer' && c.ja && c.kamerIdx === kamerVanLijk) problems.push('aanwijzing verraadt de dader');
+        if (c.soort === 'kamer' && c.ja && c.p === p.slachtofferIdx) problems.push('verraadt waar het lichaam ligt');
+        if (c.soort === 'zelfdeKamer' && c.ja && (c.p === p.slachtofferIdx || c.q === p.slachtofferIdx)) {
+          problems.push('verraadt de dader');
+        }
       }
       for (const c of p.clues) {
         if (!c.text || /undefined|NaN/.test(c.text)) problems.push(`rare zin: ${c.text}`);

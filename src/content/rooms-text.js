@@ -30,10 +30,6 @@ export function zinVoor(c, w) {
       return hoofdletter(c.ja
         ? `${P} en ${Q} stonden pal naast elkaar.`
         : `${P} en ${Q} stonden niet pal naast elkaar.`);
-    case 'bijSlachtoffer':
-      return hoofdletter(c.ja
-        ? `${P} stond pal naast ${w.slachtofferNaam}.`
-        : `${P} stond niet pal naast ${w.slachtofferNaam}.`);
     default:
       return '';
   }
@@ -47,6 +43,5 @@ export function namenIn(c, w) {
   if (c.q != null) uit.push(w.personen[c.q]);
   if (c.kamerIdx != null) uit.push(w.kamerNamen[c.kamerIdx]);
   if (c.m != null) uit.push(w.meubelNamen[c.m]);
-  if (c.soort === 'bijSlachtoffer') uit.push(w.slachtofferNaam);
   return uit;
 }

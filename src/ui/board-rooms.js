@@ -56,8 +56,8 @@ export function renderKamerbord(puzzle, state, acties) {
   const kol = (i) => i % n;
   const kamer = (i) => puzzle.kamerVan[i];
   const idx = (r, c) => r * n + c;
-  // Een vakje waar iemand zou kunnen staan: geen meubel, niet het slachtoffer.
-  const bruikbaar = (i) => puzzle.meubelOp[i] == null && i !== puzzle.slachtoffer;
+  // Een vakje waar een figuur zou kunnen staan: alles behalve een meubelstuk.
+  const bruikbaar = (i) => puzzle.meubelOp[i] == null;
 
   // ---------------------------------------------------------------- vloer
   const vloer = el('g');
@@ -118,18 +118,6 @@ export function renderKamerbord(puzzle, state, acties) {
   }
   svg.append(spullen);
 
-  // -------------------------------------------------------- slachtoffer
-  const lijk = el('g', { class: 'slachtoffer' });
-  const sx = x(kol(puzzle.slachtoffer)) + CEL / 2;
-  const sy = y(rij(puzzle.slachtoffer)) + CEL / 2;
-  lijk.append(el('path', {
-    d: `M ${sx} ${sy - 19} a 6 6 0 1 1 0.1 0 Z
-        M ${sx - 2} ${sy - 8} l -14 7 M ${sx + 2} ${sy - 8} l 15 4
-        M ${sx} ${sy - 9} l -3 16 l -9 9 M ${sx} ${sy - 9} l 4 15 l 11 6`,
-    class: 'krijtlijn',
-  }));
-  svg.append(lijk);
-
   // ------------------------------------------------------------ penningen
   // Kleur alleen is niet genoeg om twaalf mensen uit elkaar te houden, en op
   // een afdruk in zwart-wit valt kleur helemaal weg. Daarom staat de
@@ -142,12 +130,25 @@ export function renderKamerbord(puzzle, state, acties) {
     const g = el('g', { class: 'penning' });
     const cx = x(kol(cel)) + CEL / 2;
     const cy = y(rij(cel)) + CEL / 2;
-    g.append(el('circle', { cx, cy, r: 27, fill: PENNING[pi % PENNING.length], class: 'penningvlak' }));
-    g.append(el('circle', { cx, cy: cy - 11, r: 6, class: 'penningkop' }));
-    g.append(el('path', { d: `M ${cx - 10} ${cy + 1} a 10 10 0 0 1 20 0 Z`, class: 'penningkop' }));
-    const letter = el('text', { x: cx, y: cy + 21, 'text-anchor': 'middle', class: 'penningletter' });
-    letter.textContent = (puzzle.personen[pi] ?? '?').charAt(0).toUpperCase();
-    g.append(letter);
+
+    if (pi === puzzle.slachtofferIdx) {
+      // Het slachtoffer is geen penning maar een krijtcontour: je ziet meteen
+      // dat dat het lichaam is, en in welke kamer het dus ligt.
+      g.append(el('circle', { cx, cy, r: 27, class: 'lijkvlak' }));
+      g.append(el('path', {
+        d: `M ${cx} ${cy - 17} a 5.5 5.5 0 1 1 0.1 0 Z
+            M ${cx - 2} ${cy - 7} l -13 6 M ${cx + 2} ${cy - 7} l 14 4
+            M ${cx} ${cy - 8} l -3 14 l -8 8 M ${cx} ${cy - 8} l 4 13 l 10 6`,
+        class: 'krijtlijn',
+      }));
+    } else {
+      g.append(el('circle', { cx, cy, r: 27, fill: PENNING[pi % PENNING.length], class: 'penningvlak' }));
+      g.append(el('circle', { cx, cy: cy - 11, r: 6, class: 'penningkop' }));
+      g.append(el('path', { d: `M ${cx - 10} ${cy + 1} a 10 10 0 0 1 20 0 Z`, class: 'penningkop' }));
+      const letter = el('text', { x: cx, y: cy + 21, 'text-anchor': 'middle', class: 'penningletter' });
+      letter.textContent = (puzzle.personen[pi] ?? '?').charAt(0).toUpperCase();
+      g.append(letter);
+    }
     if (state.fout?.has(cel)) g.append(el('circle', { cx, cy, r: 30, class: 'penningfout' }));
     geplaatst.append(g);
   }
@@ -232,7 +233,7 @@ export function renderKamerbord(puzzle, state, acties) {
       x: x(kol(i)), y: y(rij(i)), width: CEL, height: CEL,
       class: 'klikvak', 'data-cel': i,
     });
-    if (i === puzzle.slachtoffer || puzzle.meubelOp[i] != null) vak.classList.add('klikvak-dicht');
+    if (puzzle.meubelOp[i] != null) vak.classList.add('klikvak-dicht');
     else vak.addEventListener('click', () => acties.klikCel(i));
     klik.append(vak);
   }

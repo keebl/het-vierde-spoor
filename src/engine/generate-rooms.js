@@ -4,18 +4,21 @@
 // vijver van aanwijzingen die daarin waar zijn, voeg toe tot het vastligt,
 // snoei alles weg wat je kunt missen.
 //
-// Een extra regel hier: geen enkele aanwijzing mag de dader rechtstreeks
-// noemen. "X stond in de keuken" is verboden als het slachtoffer in de keuken
-// ligt - dan is de puzzel in een zin voorbij.
+// Het slachtoffer is zelf een van de figuren op het bord. Waar het lichaam
+// ligt moet je dus net zo goed uitpuzzelen, en pas als alles staat zie je wie
+// er als enige bij in de kamer stond.
+//
+// Een extra regel: geen enkele aanwijzing mag de dader rechtstreeks noemen.
+// "X stond in dezelfde kamer als het slachtoffer" is daarom verboden - dat is
+// letterlijk de vraag.
 
 import { bouwRooster, tekenPlaatsing, telPlaatsingen, graad, idx, rijVan, kolVan } from './rooms.js';
 import { makeRng } from './rng.js';
 
 const sleutel = (c) => JSON.stringify([c.soort, c.p, c.q, c.kamerIdx, c.m, c.ja]);
 
-function bouwVijver(rooster, plaats, slachtoffer, rng, gewichten) {
+function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten) {
   const { n, kamerVan, meubelOp, meubelAantal, kamers } = rooster;
-  const slachtofferKamer = kamerVan[slachtoffer];
   const vijver = [];
   const zet = (soort, c) => {
     if (!gewichten[soort]) return;
@@ -37,8 +40,10 @@ function bouwVijver(rooster, plaats, slachtoffer, rng, gewichten) {
   for (let p = 0; p < n; p++) {
     const mijnKamer = kamerVanPersoon(p);
 
-    // Rechtstreekse weggever: dit is precies de vraag.
-    if (mijnKamer !== slachtofferKamer) zet('kamer', { p, kamerIdx: mijnKamer, ja: true });
+    // Waar het lichaam ligt moet je uitpuzzelen, dus van het slachtoffer
+    // mag niet rechtstreeks gezegd worden in welke kamer het lag. Ontkenningen
+    // ("niet in de bibliotheek") mogen wel: die helpen zonder te verklappen.
+    if (p !== slachtofferIdx) zet('kamer', { p, kamerIdx: mijnKamer, ja: true });
     for (let k = 0; k < kamers; k++) {
       if (k !== mijnKamer) zet('kamer', { p, kamerIdx: k, ja: false });
     }
@@ -55,16 +60,12 @@ function bouwVijver(rooster, plaats, slachtoffer, rng, gewichten) {
       if (opRij) zet('opRij', { p, m });
     }
 
-    const bijLijk = buren(plaats[p]).includes(slachtoffer);
-    // Grenzen aan het slachtoffer verraadt de dader niet, maar wel bijna.
-    // Alleen als ontkenning toestaan.
-    if (!bijLijk) zet('bijSlachtoffer', { p, ja: false });
-
     for (let q = 0; q < n; q++) {
       if (q === p) continue;
       const zelfde = kamerVanPersoon(p) === kamerVanPersoon(q);
-      // Ook hier: "samen in de kamer van het slachtoffer" zegt het antwoord.
-      if (!(zelfde && mijnKamer === slachtofferKamer)) {
+      // "X stond in dezelfde kamer als het slachtoffer" is de vraag zelf.
+      const raaktLijk = p === slachtofferIdx || q === slachtofferIdx;
+      if (!(zelfde && raaktLijk)) {
         zet('zelfdeKamer', { p, q, ja: zelfde });
       }
       if (p < q) {
@@ -89,13 +90,13 @@ function bouwVijver(rooster, plaats, slachtoffer, rng, gewichten) {
     .map((e) => e.c);
 }
 
-function groeiTotVast(rooster, vijver, slachtoffer, stijl) {
+function groeiTotVast(rooster, vijver, stijl) {
   const gekozen = [];
   const gezien = new Set();
   const klaar = () =>
     stijl === 'shallow'
-      ? graad(rooster, gekozen, slachtoffer).opgelost
-      : telPlaatsingen(rooster, gekozen, slachtoffer).count === 1;
+      ? graad(rooster, gekozen).opgelost
+      : telPlaatsingen(rooster, gekozen).count === 1;
 
   for (const c of vijver) {
     if (klaar()) break;
@@ -107,14 +108,14 @@ function groeiTotVast(rooster, vijver, slachtoffer, stijl) {
   return klaar() ? gekozen : null;
 }
 
-function snoei(rooster, aanwijzingen, slachtoffer, stijl, rng) {
+function snoei(rooster, aanwijzingen, stijl, rng) {
   const houd = aanwijzingen.slice();
   for (const i of rng.shuffle(houd.map((_, j) => j))) {
     if (!houd[i]) continue;
     const proef = houd.filter((c, j) => c && j !== i);
     const ok = stijl === 'shallow'
-      ? graad(rooster, proef, slachtoffer).opgelost
-      : telPlaatsingen(rooster, proef, slachtoffer).count === 1;
+      ? graad(rooster, proef).opgelost
+      : telPlaatsingen(rooster, proef).count === 1;
     if (ok) houd[i] = null;
   }
   return houd.filter(Boolean);
@@ -129,36 +130,30 @@ function poging(params, rng) {
   const plaats = tekenPlaatsing(rooster, rng);
   if (!plaats) return null;
 
-  // Het slachtoffer ligt in een kamer waar precies een persoon staat: die is
-  // de dader. Zonder zo'n kamer heeft de vraag geen eenduidig antwoord.
+  // Welke figuur is het slachtoffer? Eentje die uiteindelijk met precies een
+  // ander in dezelfde kamer blijkt te staan - die ander is de dader. Zonder
+  // zo'n paar heeft de vraag geen eenduidig antwoord.
   const perKamer = new Map();
   plaats.forEach((cel, p) => {
     const k = rooster.kamerVan[cel];
     if (!perKamer.has(k)) perKamer.set(k, []);
     perKamer.get(k).push(p);
   });
-  const alleen = [...perKamer.entries()].filter(([, lijst]) => lijst.length === 1);
-  if (!alleen.length) return null;
+  const paren = [...perKamer.entries()].filter(([, lijst]) => lijst.length === 2);
+  if (!paren.length) return null;
 
-  const [kamerIdx, [dader]] = rng.pick(alleen);
-  const vrijeCellen = [];
-  for (let i = 0; i < rooster.n * rooster.n; i++) {
-    if (rooster.kamerVan[i] !== kamerIdx) continue;
-    if (!rooster.vrij[i]) continue;
-    if (plaats.includes(i)) continue;
-    vrijeCellen.push(i);
-  }
-  if (!vrijeCellen.length) return null;
-  const slachtoffer = rng.pick(vrijeCellen);
+  const [kamerIdx, paar] = rng.pick(paren);
+  const slachtofferIdx = rng.pick(paar);
+  const dader = paar.find((p) => p !== slachtofferIdx);
 
-  const vijver = bouwVijver(rooster, plaats, slachtoffer, rng, params.gewichten);
-  const gegroeid = groeiTotVast(rooster, vijver, slachtoffer, params.style);
+  const vijver = bouwVijver(rooster, plaats, slachtofferIdx, rng, params.gewichten);
+  const gegroeid = groeiTotVast(rooster, vijver, params.style);
   if (!gegroeid) return null;
-  if (telPlaatsingen(rooster, gegroeid, slachtoffer).count !== 1) return null;
+  if (telPlaatsingen(rooster, gegroeid).count !== 1) return null;
 
-  const aanwijzingen = snoei(rooster, gegroeid, slachtoffer, params.style, rng);
-  const g = graad(rooster, aanwijzingen, slachtoffer);
-  return { rooster, plaats, slachtoffer, dader, kamerIdx, aanwijzingen, graad: g };
+  const aanwijzingen = snoei(rooster, gegroeid, params.style, rng);
+  const g = graad(rooster, aanwijzingen);
+  return { rooster, plaats, slachtofferIdx, dader, kamerIdx, aanwijzingen, graad: g };
 }
 
 export function genereerKamerpuzzel(seed, params, pogingen = 10) {

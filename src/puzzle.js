@@ -158,11 +158,17 @@ function buildKamerPuzzle({ world, settings }) {
   });
   const rng = makeRng(`${seed}:kamerwoorden`);
 
-  const personen = rng.sample(world.persons, params.n);
+  // Elke figuur op het bord krijgt een naam. Een van hen is het slachtoffer:
+  // die staat niet in de verdachtenlijst, maar wel op het bord - want waar
+  // het lichaam ligt moet je zelf uitpuzzelen.
+  const aantal = gen.rooster.n;
+  const namen = rng.sample(world.persons, aantal);
+  const slachtofferNaam = rng.pick(world.victims);
+  namen[gen.slachtofferIdx] = slachtofferNaam;
+
   const kamerNamen = rng.sample(world.places, gen.rooster.kamers);
   const meubelNamen = rng.sample(world.meubels, gen.rooster.meubelAantal);
-  const slachtofferNaam = makeRng(`${seed}:slachtoffer`).pick(world.victims);
-  const woorden = { personen, kamerNamen, meubelNamen, slachtofferNaam };
+  const woorden = { personen: namen, kamerNamen, meubelNamen, slachtofferNaam };
 
   const clues = gen.aanwijzingen.map((c, i) => ({
     n: i + 1,
@@ -171,7 +177,6 @@ function buildKamerPuzzle({ world, settings }) {
     names: namenIn(c, woorden),
   }));
 
-  const kamerVanLijk = gen.rooster.kamerVan[gen.slachtoffer];
   return {
     kind: 'kamer',
     id: puzzleId(settings),
@@ -184,10 +189,10 @@ function buildKamerPuzzle({ world, settings }) {
     niveau: Number(niveau),
     niveauLabel: levelParams(niveau).label,
     depth: gen.graad.opgelost ? 1 : 2,
-    intro: `${world.lead} Het lichaam lag in ${kamerNamen[kamerVanLijk]}. Van alle aanwezigen stond er precies één met ${slachtofferNaam} alleen in die ruimte.`,
+    intro: `${world.lead} Niemand weet meer wie waar stond, en zelfs waar ${slachtofferNaam} lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij ${slachtofferNaam} in de kamer blijkt te staan, is de dader.`,
     question: {
-      text: `Wie stond er als enige bij ${slachtofferNaam} in ${kamerNamen[kamerVanLijk]}?`,
-      answer: personen[gen.dader],
+      text: `Wie stond er als enige bij ${slachtofferNaam} in dezelfde kamer?`,
+      answer: namen[gen.dader],
     },
     // het bord
     n: gen.rooster.n,
@@ -196,9 +201,9 @@ function buildKamerPuzzle({ world, settings }) {
     meubelOp: gen.rooster.meubelOp,
     meubelNamen,
     vrij: gen.rooster.vrij,
-    slachtoffer: gen.slachtoffer,
+    personen: namen,
+    slachtofferIdx: gen.slachtofferIdx,
     slachtofferNaam,
-    personen,
     oplossing: gen.plaats,
     dader: gen.dader,
     clues,
