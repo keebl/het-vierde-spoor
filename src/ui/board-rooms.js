@@ -10,6 +10,7 @@
 
 import { tekenIcoon } from './icons.js';
 import { tekenMeubel } from './meubelkunst.js';
+import { tekenPersoon } from './personenkunst.js';
 import { icoonVan } from '../content/iconen.js';
 import { soortVan, VLOER_VAN } from '../content/kamersoorten.js';
 
@@ -159,12 +160,14 @@ export function renderKamerbord(puzzle, state, acties) {
         class: 'krijtlijn',
       }));
     } else {
-      g.append(el('circle', { cx, cy, r: 27, fill: PENNING[pi % PENNING.length], class: 'penningvlak' }));
-      g.append(el('circle', { cx, cy: cy - 11, r: 6, class: 'penningkop' }));
-      g.append(el('path', { d: `M ${cx - 10} ${cy + 1} a 10 10 0 0 1 20 0 Z`, class: 'penningkop' }));
-      const letter = el('text', { x: cx, y: cy + 21, 'text-anchor': 'middle', class: 'penningletter' });
-      letter.textContent = (puzzle.personen[pi] ?? '?').charAt(0).toUpperCase();
-      g.append(letter);
+      const maat = CEL - 16;
+      tekenPersoon(g, {
+        index: pi,
+        letter: (puzzle.personen[pi] ?? '?').charAt(0).toUpperCase(),
+        x: cx - maat / 2,
+        y: cy - maat / 2,
+        grootte: maat,
+      });
     }
     if (state.fout?.has(cel)) g.append(el('circle', { cx, cy, r: 30, class: 'penningfout' }));
     geplaatst.append(g);

@@ -767,6 +767,23 @@ table.latin td.cell { width: 78px; height: 46px; }
   stroke-dasharray: 7 4;
 }
 
+/* De verdachten zijn portretjes in dezelfde stijl als het meubilair. */
+.persoonkunst path, .persoonkunst rect, .persoonkunst circle {
+  stroke: rgba(30, 22, 12, 0.45);
+  stroke-width: 0.8;
+  stroke-linejoin: round;
+}
+.portretvlak { stroke-width: 1.2; }
+.portretletter {
+  fill: #2b241c;
+  font: 700 10px var(--sans);
+  stroke: none;
+}
+.letterbadge { stroke-width: 1; }
+
+.palet-portret { display: inline-flex; flex: none; }
+.palet-portret svg { display: block; border-radius: 50%; }
+
 .penningvlak { stroke: rgba(0, 0, 0, 0.35); stroke-width: 2; }
 .lijkvlak { fill: rgba(40, 30, 18, 0.72); stroke: rgba(255, 255, 255, 0.35); stroke-width: 2; }
 .penningkop { fill: rgba(255, 255, 255, 0.9); }

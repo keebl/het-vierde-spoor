@@ -25,12 +25,65 @@
   import { WORLDS } from './src/content/worlds.js';
   import { ICOON_VAN } from './src/content/iconen.js';
   import { icoonElement } from './src/ui/icons.js';
+  import { portretElement } from './src/ui/personenkunst.js';
+  import { MEUBELKUNST, tekenMeubel } from './src/ui/meubelkunst.js';
+  import { MEUBELS_VAN } from './src/content/kamersoorten.js';
 
   const VELDEN = [
     ['persons', 'Personen'], ['objects', 'Voorwerpen'], ['places', 'Plekken'],
     ['meubels', 'Meubels'], ['hidden', 'Het verborgene'], ['times', 'Tijdstippen'],
   ];
   const blad = document.getElementById('blad');
+
+  // De twaalf portretvarianten naast elkaar: zijn ze uit elkaar te houden?
+  const pKop = document.createElement('h2');
+  pKop.textContent = 'Verdachten (12 varianten)';
+  blad.append(pKop);
+  const pRij = document.createElement('div');
+  pRij.className = 'blad';
+  for (let i = 0; i < 12; i++) {
+    const kaart = document.createElement('div');
+    kaart.className = 'kaartje';
+    kaart.append(portretElement(i, String.fromCharCode(65 + i), 40));
+    const t = document.createElement('span');
+    t.textContent = `verdachte ${i + 1}`;
+    kaart.append(t);
+    pRij.append(kaart);
+  }
+  blad.append(pRij);
+
+  // Het meubilair per soort ruimte, zoals het op het bord staat.
+  const mKop = document.createElement('h2');
+  mKop.textContent = 'Meubels per soort ruimte';
+  mKop.style.marginTop = '32px';
+  blad.append(mKop);
+  for (const [soort, lijst] of Object.entries(MEUBELS_VAN)) {
+    const sub = document.createElement('p');
+    sub.className = 'label';
+    sub.textContent = soort;
+    sub.style.marginTop = '20px';
+    blad.append(sub);
+    const rij = document.createElement('div');
+    rij.className = 'blad';
+    for (const [naam, sleutel] of lijst) {
+      const kaart = document.createElement('div');
+      kaart.className = 'kaartje';
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 48 48');
+      svg.setAttribute('width', 40);
+      svg.setAttribute('height', 40);
+      tekenMeubel(svg, sleutel, { grootte: 48 });
+      kaart.append(svg);
+      const t = document.createElement('span');
+      t.textContent = naam;
+      const code = document.createElement('code');
+      code.textContent = MEUBELKUNST[sleutel] ? sleutel : 'GEEN TEKENING';
+      t.append(code);
+      kaart.append(t);
+      rij.append(kaart);
+    }
+    blad.append(rij);
+  }
   for (const [veld, kop] of VELDEN) {
     const woorden = [...new Set(WORLDS.flatMap((w) => w[veld] ?? []))];
     const h = document.createElement('h2');

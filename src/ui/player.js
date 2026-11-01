@@ -6,6 +6,7 @@ import { loadProgress, saveProgress, clearProgress } from './state.js';
 import { MECHANIC_BY_ID } from '../content/assignments.js';
 import { sceneVoor } from './scenes.js';
 import { renderKamerbord, PENNING } from './board-rooms.js';
+import { portretElement } from './personenkunst.js';
 
 export function renderPlayer(puzzle, mount) {
   const saved = loadProgress(puzzle.id) ?? {};
@@ -241,10 +242,11 @@ function personenPalet(puzzle, state, onCell) {
       'aria-pressed': String(state.gekozen === i),
       'data-geplaatst': geplaatst ? '1' : null,
     }, [
-      el('span', { class: 'palet-fiche', text: isLijk ? '✝' : '' }),
+      isLijk
+        ? el('span', { class: 'palet-fiche', text: '✝' })
+        : el('span', { class: 'palet-portret' }, portretElement(i, naam.charAt(0).toUpperCase(), 26)),
       el('span', { text: isLijk ? `${naam} (het lichaam)` : naam }),
     ]);
-    if (!isLijk) knop.querySelector('.palet-fiche').style.background = PENNING[i % PENNING.length];
     knop.addEventListener('click', () => onCell(null, i));
     balk.append(knop);
   });
