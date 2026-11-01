@@ -88,6 +88,8 @@ Harde regels:
 3. Je voegt geen feiten toe en laat geen feiten weg. Geen enkele hint erbij.
 4. Je levert exact evenveel aanwijzingen als je krijgt, in dezelfde volgorde, met hetzelfde nummer.
 5. Je houdt het kort: een aanwijzing is een zin, maximaal twee.
+6. De inleiding eindigt NIET met de vraag aan de speler. Die vraag staat
+   elders op de pagina; herhaal hem niet.
 
 Antwoord uitsluitend met JSON, zonder uitleg eromheen:
 {"intro": "...", "aanwijzingen": [{"n": 1, "tekst": "..."}]}`;

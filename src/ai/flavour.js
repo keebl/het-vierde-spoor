@@ -28,9 +28,24 @@ export const setAiEnabled = (on) => {
   }
 };
 
-function keepsNames(original, rewritten, names) {
+// De dragende delen van een aanwijzing, los van de stijl:
+//   - de eigennamen            (wie en wat er genoemd wordt)
+//   - de ontkenning            ("niet"/"geen" omdraaien keert de betekenis om)
+//   - de getallen              ("precies 3 uur" mag geen 2 worden)
+//   - het of-of                (een keuze mag geen bewering worden)
+// Blijft een van die vier niet staan, dan is het geen herschrijving meer
+// maar een andere aanwijzing, en gebruiken we het origineel.
+const heeftOntkenning = (t) => /\b(niet|geen|nooit)\b/i.test(t);
+const getallen = (t) => (t.match(/\d+/g) ?? []).sort().join(',');
+const heeftKeuze = (t) => /\bof\b/i.test(t);
+
+export function keepsNames(original, rewritten, names) {
   if (typeof rewritten !== 'string' || rewritten.length < 4) return false;
-  return names.every((name) => rewritten.includes(name));
+  if (!names.every((name) => rewritten.includes(name))) return false;
+  if (heeftOntkenning(original) !== heeftOntkenning(rewritten)) return false;
+  if (getallen(original) !== getallen(rewritten)) return false;
+  if (heeftKeuze(original) !== heeftKeuze(rewritten)) return false;
+  return true;
 }
 
 export async function dressUp(puzzle) {
