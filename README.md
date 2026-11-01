@@ -114,6 +114,11 @@ npm start
 Daarna op "Zelf maken" de knop *AI-teksten* omzetten. Zonder key werkt alles
 gewoon door met de eigen templateteksten.
 
+Die knop wordt per browser onthouden (`localStorage`), dus in een andere
+browser of op een ander apparaat zet je hem opnieuw om. Staat hij aan, dan
+gaat er bij het openen van elke puzzel een verzoek naar de API; de puzzel is
+intussen al speelbaar met de eigen teksten en wordt daarna ververst.
+
 ## Over plagiaat
 
 Logische deductiepuzzels op een raster bestaan sinds de jaren zestig en zijn
