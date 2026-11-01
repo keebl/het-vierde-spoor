@@ -1,0 +1,65 @@
+// Router en opstart. Alles draait in de browser: geen server nodig om te
+// spelen, geen puzzeldata over de lijn.
+
+import { renderLibrary } from './ui/library.js';
+import { renderGenerator } from './ui/generator.js';
+import { renderUitleg } from './ui/uitleg.js';
+import { renderPlayer } from './ui/player.js';
+import { buildPuzzle, parsePuzzleId } from './puzzle.js';
+import { el } from './ui/boards.js';
+import { dressUp, aiEnabled } from './ai/flavour.js';
+
+const app = document.getElementById('app');
+
+function markNav(route) {
+  for (const a of document.querySelectorAll('.nav a')) {
+    if (a.dataset.route === route) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  }
+}
+
+function showError(message, hint) {
+  app.replaceChildren(
+    el('h1', { text: 'Dat lukt niet' }),
+    el('p', { class: 'lede', text: message }),
+    hint ? el('p', {}, [el('a', { class: 'btn', href: '#/', text: 'Terug naar de bibliotheek' })]) : null
+  );
+}
+
+function route() {
+  const hash = location.hash || '#/';
+  const path = hash.slice(2);
+  window.scrollTo(0, 0);
+
+  if (path.startsWith('puzzel/')) {
+    markNav(null);
+    const id = decodeURIComponent(path.slice('puzzel/'.length));
+    // Even laten tekenen voordat we gaan rekenen: bouwen kan een seconde duren.
+    app.replaceChildren(el('p', { class: 'spinner', text: 'De puzzel wordt gebouwd en nagerekend...' }));
+    setTimeout(() => {
+      try {
+        const puzzle = buildPuzzle(parsePuzzleId(id));
+        renderPlayer(puzzle, app);
+        // Staat de AI-laag aan, dan wordt de tekst daarna nog een keer
+        // opgefrist. De puzzel is dan al speelbaar; de logica verandert niet.
+        if (aiEnabled()) {
+          dressUp(puzzle).then((dressed) => {
+            if (dressed.aiUsed && location.hash.includes(id)) renderPlayer(dressed, app);
+          });
+        }
+      } catch (err) {
+        console.error(err);
+        showError(`Deze puzzel kon niet worden gebouwd: ${err.message}`, true);
+      }
+    }, 30);
+    return;
+  }
+
+  if (path === 'maken') { markNav('maken'); renderGenerator(app); return; }
+  if (path === 'uitleg') { markNav('uitleg'); renderUitleg(app); return; }
+  markNav('bibliotheek');
+  renderLibrary(app);
+}
+
+addEventListener('hashchange', route);
+route();
