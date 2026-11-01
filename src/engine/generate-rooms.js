@@ -15,6 +15,9 @@
 import { bouwRooster, tekenPlaatsing, telPlaatsingen, graad, idx, rijVan, kolVan } from './rooms.js';
 import { makeRng } from './rng.js';
 
+// Een poging die de solver niet binnen zijn budget rond krijgt, gooien we weg.
+class TeZwaar extends Error {}
+
 const sleutel = (c) => JSON.stringify([c.soort, c.p, c.q, c.kamerIdx, c.m, c.ja]);
 
 function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten) {
@@ -120,10 +123,14 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten) {
 function groeiTotVast(rooster, vijver, stijl) {
   const gekozen = [];
   const gezien = new Set();
-  const klaar = () =>
-    stijl === 'shallow'
-      ? graad(rooster, gekozen).opgelost
-      : telPlaatsingen(rooster, gekozen).count === 1;
+  const klaar = () => {
+    if (stijl === 'shallow') return graad(rooster, gekozen).opgelost;
+    const uit = telPlaatsingen(rooster, gekozen);
+    // Weet de solver het niet binnen zijn budget, dan is deze poging niets
+    // waard: we kunnen niet bewijzen dat de oplossing uniek is.
+    if (uit.opgegeven) throw new TeZwaar();
+    return uit.count === 1;
+  };
 
   for (const c of vijver) {
     if (klaar()) break;
@@ -140,9 +147,14 @@ function snoei(rooster, aanwijzingen, stijl, rng) {
   for (const i of rng.shuffle(houd.map((_, j) => j))) {
     if (!houd[i]) continue;
     const proef = houd.filter((c, j) => c && j !== i);
-    const ok = stijl === 'shallow'
-      ? graad(rooster, proef).opgelost
-      : telPlaatsingen(rooster, proef).count === 1;
+    let ok;
+    if (stijl === 'shallow') {
+      ok = graad(rooster, proef).opgelost;
+    } else {
+      const uit = telPlaatsingen(rooster, proef);
+      if (uit.opgegeven) throw new TeZwaar();
+      ok = uit.count === 1;
+    }
     if (ok) houd[i] = null;
   }
   return houd.filter(Boolean);
@@ -176,7 +188,8 @@ function poging(params, rng) {
   const vijver = bouwVijver(rooster, plaats, slachtofferIdx, rng, params.gewichten);
   const gegroeid = groeiTotVast(rooster, vijver, params.style);
   if (!gegroeid) return null;
-  if (telPlaatsingen(rooster, gegroeid).count !== 1) return null;
+  const controle = telPlaatsingen(rooster, gegroeid);
+  if (controle.opgegeven || controle.count !== 1) return null;
 
   const aanwijzingen = snoei(rooster, gegroeid, params.style, rng);
   const g = graad(rooster, aanwijzingen);
@@ -190,7 +203,8 @@ export function genereerKamerpuzzel(seed, params, pogingen = 10) {
     let kandidaat;
     try {
       kandidaat = poging(params, rng);
-    } catch {
+    } catch (e) {
+      // TeZwaar of een onbruikbaar rooster: volgende poging.
       continue;
     }
     if (!kandidaat) continue;

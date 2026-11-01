@@ -75,9 +75,29 @@ wat je ziet; de motor eronder is voor alles hetzelfde.
 | As | Wat het bepaalt | Waar het staat |
 |---|---|---|
 | **Opdracht** | wat je uitzoekt (dader, vinden, toewijzing, reconstructie) | `src/content/assignments.js` |
-| **Wereld** | het decor en alle woorden | `src/content/worlds.js` |
-| **Mechaniek** | hoe je oplost (raster, plattegrond, getallenraster) | `src/ui/boards.js` |
-| **Niveau** | omvang, soort aanwijzingen, redeneerdiepte | `src/engine/difficulty.js` |
+| **Genre** | het decor en alle woorden | `src/content/worlds.js` |
+| **Soort spel** | Speurdoku, Kruisverhoor, Rondgang, Dienstrooster | `src/ui/board-rooms.js`, `src/ui/boards.js` |
+| **Moeilijkheidsgraad** | omvang, soort aanwijzingen, redeneerdiepte | `src/engine/difficulty.js` |
+
+### De Speurdoku
+
+Het hoofdspel. Je zet figuren op een plattegrond: één per rij, één per kolom,
+nooit op een meubelstuk. Het slachtoffer is zelf een van die figuren, dus waar
+het lichaam ligt moet je ook uitpuzzelen; wie er als enige bij in de kamer
+blijkt te staan is de dader.
+
+De motor staat in `src/engine/rooms.js` (rooster, kamers, meubels, solver,
+propagator) en `src/engine/generate-rooms.js` (de puzzel zelf). Twee dingen
+maken grote roosters haalbaar:
+
+- de solver streept eerst door wat aantoonbaar onmogelijk is en kiest daarna
+  steeds de figuur met de minste mogelijkheden. Blind rij voor rij zoeken liep
+  boven 8x8 vast (9x9 kostte dertig seconden).
+- de solver heeft een werkbudget. Loopt hij eruit, dan zegt hij "ik weet het
+  niet" en gooit de generator die poging weg. Zonder die grens kon een
+  ongelukkige combinatie minutenlang doorrekenen.
+
+Samen maakt dat 12x12 mogelijk in ongeveer een halve seconde.
 
 De motor kent geen moorden. Hij lost toewijzingsproblemen op: een
 ankercategorie levert N rijen, elke andere categorie verdeelt haar N items

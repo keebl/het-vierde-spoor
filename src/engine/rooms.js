@@ -306,10 +306,22 @@ function personenIn(c) {
 
 // Telt plaatsingen tot aan cap. Rij voor rij: wie staat hier, en in welke
 // kolom? Rijen zijn daarmee automatisch allemaal verschillend.
-export function telPlaatsingen(rooster, aanwijzingen, cap = 2) {
-  const { n, vrij } = rooster;
+// budget begrenst hoeveel stappen de solver mag doen. Zonder zo'n grens kan
+// een ongelukkige combinatie van rooster en aanwijzingen minutenlang doorgaan,
+// en dan staat iemand te wachten op een puzzel. Loopt hij eruit, dan zegt hij
+// eerlijk "ik weet het niet" (opgegeven) en gooit de generator die poging weg.
+export function telPlaatsingen(rooster, aanwijzingen, cap = 2, budget = 120000) {
+  const { n } = rooster;
   const plaats = new Array(n).fill(null);
   const ctx = { rooster, plaats };
+
+  // Eerst doorstrepen wat aantoonbaar onmogelijk is. Dat maakt de lijst
+  // kandidaten per figuur meestal klein, en daarmee de zoektocht kort. Blind
+  // rij voor rij zoeken liep boven acht bij acht vast: negen bij negen kostte
+  // dertig seconden.
+  const { dom, kapot } = domeinenVan(rooster, aanwijzingen);
+  if (kapot) return { count: 0, plaatsing: null };
+  const kandidaten = dom.map((d) => [...d]);
 
   const perPersoon = new Map();
   const altijd = [];
@@ -322,10 +334,12 @@ export function telPlaatsingen(rooster, aanwijzingen, cap = 2) {
     }
   }
 
-  const persoonVrij = new Array(n).fill(true);
+  const rijVrij = new Array(n).fill(true);
   const kolVrij = new Array(n).fill(true);
   let gevonden = 0;
   let eerste = null;
+  let stappen = 0;
+  let opgegeven = false;
 
   const magNog = (p) => {
     for (const c of perPersoon.get(p) ?? []) if (evalAanwijzing(c, ctx) === false) return false;
@@ -333,33 +347,49 @@ export function telPlaatsingen(rooster, aanwijzingen, cap = 2) {
     return true;
   };
 
-  const zoek = (r) => {
-    if (r === n) {
+  const zoek = (gedaan) => {
+    if (opgegeven) return;
+    if (++stappen > budget) { opgegeven = true; return; }
+    if (gedaan === n) {
       for (const c of aanwijzingen) if (evalAanwijzing(c, ctx) !== true) return;
       gevonden++;
       if (!eerste) eerste = plaats.slice();
       return;
     }
+
+    // Pak de figuur met de minste mogelijkheden: die kapt de boom het snelst.
+    let beste = -1;
+    let besteOpties = null;
     for (let p = 0; p < n; p++) {
-      if (!persoonVrij[p]) continue;
-      for (let c = 0; c < n; c++) {
-        if (!kolVrij[c]) continue;
-        const cel = idx(n, r, c);
-        if (!vrij[cel]) continue;
-        plaats[p] = cel;
-        persoonVrij[p] = false;
-        kolVrij[c] = false;
-        if (magNog(p)) zoek(r + 1);
-        plaats[p] = null;
-        persoonVrij[p] = true;
-        kolVrij[c] = true;
-        if (gevonden >= cap) return;
+      if (plaats[p] != null) continue;
+      const opties = [];
+      for (const cel of kandidaten[p]) {
+        if (rijVrij[rijVan(n, cel)] && kolVrij[kolVan(n, cel)]) opties.push(cel);
       }
+      if (!opties.length) return;
+      if (beste === -1 || opties.length < besteOpties.length) {
+        beste = p;
+        besteOpties = opties;
+      }
+      if (opties.length === 1) break;
+    }
+
+    for (const cel of besteOpties) {
+      const r = rijVan(n, cel);
+      const k = kolVan(n, cel);
+      plaats[beste] = cel;
+      rijVrij[r] = false;
+      kolVrij[k] = false;
+      if (magNog(beste)) zoek(gedaan + 1);
+      plaats[beste] = null;
+      rijVrij[r] = true;
+      kolVrij[k] = true;
+      if (gevonden >= cap) return;
     }
   };
 
   zoek(0);
-  return { count: gevonden, plaatsing: eerste };
+  return { count: gevonden, plaatsing: eerste, opgegeven };
 }
 
 // ------------------------------------------------- menselijk doorredeneren
@@ -508,6 +538,25 @@ function propageerRijenKolommen(rooster, dom) {
     }
   }
   return veranderd;
+}
+
+// De mogelijkhedenlijst per figuur na alles wat je puur doorstrepend kunt
+// afleiden. De solver gebruikt hem om niet blind te hoeven zoeken.
+export function domeinenVan(rooster, aanwijzingen) {
+  const dom = beginDomeinen(rooster);
+  let veranderd = true;
+  while (veranderd && !isKapot(rooster, dom)) {
+    veranderd = false;
+    for (const c of aanwijzingen) veranderd = propageerAanwijzing(rooster, dom, c) || veranderd;
+    veranderd = propageerRijenKolommen(rooster, dom) || veranderd;
+  }
+  return { dom, kapot: isKapot(rooster, dom) };
+}
+
+function isKapot(rooster, dom) {
+  const n = rooster.n;
+  for (let p = 0; p < n; p++) if (dom[p].size === 0) return true;
+  return false;
 }
 
 export function graad(rooster, aanwijzingen) {

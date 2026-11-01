@@ -80,16 +80,17 @@ export function levelParams(level) {
 export const KAMER_LEVELS = {
   1: { n: 5, kamers: 4, meubelDeel: 0.18, style: 'shallow', maxClues: 7,
        gewichten: { kamer: 6, naast: 4, zelfdeKamer: 3, aantalKamer: 3, buren: 2, noord: 1, west: 1, opRij: 2, opKolom: 2, rand: 2, hoek: 2, aantalNaast: 2 } },
-  2: { n: 5, kamers: 4, meubelDeel: 0.20, style: 'shallow', maxClues: 9,
+  2: { n: 6, kamers: 5, meubelDeel: 0.20, style: 'shallow', maxClues: 9,
        gewichten: { kamer: 5, naast: 4, zelfdeKamer: 3, aantalKamer: 3, buren: 3, noord: 2, west: 2, opRij: 3, opKolom: 3, rand: 3, hoek: 3, aantalNaast: 3 } },
-  3: { n: 6, kamers: 5, meubelDeel: 0.22, style: 'shallow', maxClues: 12,
+  3: { n: 7, kamers: 6, meubelDeel: 0.22, style: 'shallow', maxClues: 12,
        gewichten: { kamer: 4, naast: 4, zelfdeKamer: 4, aantalKamer: 3, buren: 3, noord: 2, west: 2, opRij: 3, opKolom: 3, rand: 3, hoek: 3, aantalNaast: 3 } },
-  4: { n: 6, kamers: 5, meubelDeel: 0.24, style: 'deep', maxClues: 16,
+  4: { n: 9, kamers: 7, meubelDeel: 0.24, style: 'deep', maxClues: 16,
        gewichten: { kamer: 3, naast: 4, zelfdeKamer: 4, aantalKamer: 3, buren: 4, noord: 2, west: 2, opRij: 3, opKolom: 3, rand: 3, hoek: 3, aantalNaast: 4 } },
-  // Zeven bij zeven is het zwaarste dat de solver binnen een fractie van een
-  // seconde rondkrijgt. Acht duurt al 2,4 seconde en negen dertig; voor nog
-  // grotere roosters moet de solver eerst slimmer (zie README).
-  5: { n: 7, kamers: 6, meubelDeel: 0.24, style: 'deep', maxClues: 22,
+  // Twaalf bij twaalf, zoals in de dikke puzzelboeken. Dat kan sinds de
+  // solver eerst doorstreept en daarna de meest beperkte figuur kiest, en een
+  // werkbudget heeft zodat een pechgeval wordt weggegooid in plaats van
+  // minuten door te rekenen. Gemeten: ongeveer 0,6 seconde.
+  5: { n: 12, kamers: 8, meubelDeel: 0.24, style: 'deep', maxClues: 22,
        gewichten: { kamer: 2, naast: 4, zelfdeKamer: 5, aantalKamer: 3, buren: 4, noord: 2, west: 2, opRij: 4, opKolom: 4, rand: 3, hoek: 3, aantalNaast: 4 } },
 };
 
