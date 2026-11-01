@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iconen · Het Vierde Spoor</title>
+<link rel="stylesheet" href="styles/app.css">
+<style>
+  .blad { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(188px, 1fr)); }
+  .kaartje { display: flex; gap: 10px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 8px 10px; }
+  .kaartje svg { color: var(--accent); flex: none; }
+  .kaartje span { font-size: 0.8rem; line-height: 1.3; }
+  .kaartje code { color: var(--text-3); font-size: 0.68rem; display: block; }
+</style>
+</head>
+<body>
+<header class="top"><a class="brand" href="#/"><span class="brand-mark">⁂</span><span>Het Vierde Spoor</span></a></header>
+<main>
+  <p class="eyebrow">Controlepagina</p>
+  <h1>Alle iconen</h1>
+  <p class="lede">Elk woord uit de content met het icoon dat eraan gekoppeld is. Klopt er iets niet, dan hoef je alleen dit ene overzicht na te lopen in plaats van elke puzzel apart.</p>
+  <div id="blad"></div>
+</main>
+<script type="module">
+  import { WORLDS } from './src/content/worlds.js';
+  import { ICOON_VAN } from './src/content/iconen.js';
+  import { icoonElement } from './src/ui/icons.js';
+
+  const VELDEN = [
+    ['persons', 'Personen'], ['objects', 'Voorwerpen'], ['places', 'Plekken'],
+    ['meubels', 'Meubels'], ['hidden', 'Het verborgene'], ['times', 'Tijdstippen'],
+  ];
+  const blad = document.getElementById('blad');
+  for (const [veld, kop] of VELDEN) {
+    const woorden = [...new Set(WORLDS.flatMap((w) => w[veld] ?? []))];
+    const h = document.createElement('h2');
+    h.textContent = `${kop} (${woorden.length})`;
+    h.style.marginTop = '32px';
+    blad.append(h);
+    const raster = document.createElement('div');
+    raster.className = 'blad';
+    for (const woord of woorden) {
+      const kaart = document.createElement('div');
+      kaart.className = 'kaartje';
+      kaart.append(icoonElement(woord, 26));
+      const tekst = document.createElement('span');
+      tekst.textContent = woord;
+      const code = document.createElement('code');
+      code.textContent = ICOON_VAN[woord] ?? 'GEEN';
+      tekst.append(code);
+      kaart.append(tekst);
+      raster.append(kaart);
+    }
+    blad.append(raster);
+  }
+</script>
+</body>
+</html>

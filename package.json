@@ -8,9 +8,10 @@
     "start": "node server/serve.mjs",
     "check": "node tools/check.mjs",
     "check:catalog": "node tools/check-catalog.mjs",
-    "check:all": "node tools/check.mjs 2 && node tools/check-catalog.mjs && node tools/check-ai-guard.mjs && node tools/check-weggevers.mjs",
+    "check:all": "node tools/check.mjs 2 && node tools/check-catalog.mjs && node tools/check-ai-guard.mjs && node tools/check-weggevers.mjs && node tools/check-iconen.mjs",
     "check:ai": "node tools/check-ai-guard.mjs",
-    "check:weggevers": "node tools/check-weggevers.mjs"
+    "check:weggevers": "node tools/check-weggevers.mjs",
+    "check:iconen": "node tools/check-iconen.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.3.0"

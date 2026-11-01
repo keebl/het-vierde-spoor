@@ -8,7 +8,8 @@
 // Licht bord op een donkere pagina: dat leest als een speelbord dat voor je
 // op tafel ligt.
 
-import { tekenIcoon, iconNaam } from './icons.js';
+import { tekenIcoon } from './icons.js';
+import { icoonVan } from '../content/iconen.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const el = (naam, attrs = {}) => {
@@ -108,7 +109,7 @@ export function renderKamerbord(puzzle, state, acties) {
       x: x(kol(i)) + 9, y: y(rij(i)) + 9, width: CEL - 18, height: CEL - 18,
       rx: 7, class: 'meubelblok',
     }));
-    tekenIcoon(spullen, iconNaam(naam), {
+    tekenIcoon(spullen, icoonVan(naam), {
       x: x(kol(i)) + CEL / 2 - 16, y: y(rij(i)) + CEL / 2 - 18, grootte: 32, klasse: 'meubelglyph',
     });
   }

@@ -1,7 +1,8 @@
 // De speelborden. Drie varianten, een gedeelde afspraak: een bord krijgt de
 // puzzel plus de markeringen van de speler, en meldt elke wijziging terug.
 
-import { tekenIcoon, iconNaam, icoonElement } from './icons.js';
+import { tekenIcoon, icoonElement } from './icons.js';
+import { icoonVan } from '../content/iconen.js';
 
 const el = (tag, attrs = {}, kids = []) => {
   const node = document.createElement(tag);
@@ -144,7 +145,7 @@ export function renderMap(puzzle) {
     const cy = y(pos.row) + KAMER_H / 2;
     const naam = puzzle.anchor.items[i];
 
-    tekenIcoon(groep, iconNaam(naam), { x: cx - 29, y: cy - 40, grootte: 58, klasse: 'kamer-glyph' });
+    tekenIcoon(groep, icoonVan(naam), { x: cx - 29, y: cy - 40, grootte: 58, klasse: 'kamer-glyph' });
 
     groep.append(svgEl('circle', { cx: x(pos.col) + 22, cy: y(pos.row) + 22, r: 11, class: 'kamer-bol' }));
     const nr = svgEl('text', { x: x(pos.col) + 22, y: y(pos.row) + 26, class: 'kamer-nr', 'text-anchor': 'middle' });
