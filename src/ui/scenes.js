@@ -186,6 +186,65 @@ const SCENES = {
     ramen(g, 444, 82, 3, 2, 14, 2);
     g.append(pad('M 310 150 L 310 132 a 8 8 0 0 1 16 0 L 326 150 Z', 'sc-deur'));
   },
+
+  // Sneeuw, verlichte ramen en een boom met een ster.
+  kerst(g) {
+    sterren(g, 12, 23);
+    const huisjes = maak('g');
+    [[70, 96, 90, 34], [210, 104, 120, 28], [470, 100, 110, 30], [630, 92, 100, 36]].forEach(([x, y, b, dak]) => {
+      huisjes.append(pad(`M ${x} ${y} L ${x + b / 2} ${y - dak} L ${x + b} ${y} Z`, 'sc-mid'));
+      huisjes.append(rechthoek(x + 6, y, b - 12, H - y, 'sc-near'));
+      huisjes.append(rechthoek(x - 2, y - 2, b + 4, 5, 'sc-sneeuw'));
+    });
+    g.append(huisjes);
+    ramen(g, 86, 112, 3, 2, 12, 2);
+    ramen(g, 228, 118, 4, 1, 12, 1);
+    ramen(g, 486, 116, 3, 2, 12, 4);
+
+    // De boom met zijn ster.
+    const bx = 380;
+    g.append(pad(`M ${bx} 132 L ${bx - 34} 132 L ${bx} 72 L ${bx + 34} 132 Z`, 'sc-boom'));
+    g.append(pad(`M ${bx} 104 L ${bx - 24} 104 L ${bx} 56 L ${bx + 24} 104 Z`, 'sc-boom'));
+    g.append(rechthoek(bx - 5, 132, 10, 12, 'sc-near'));
+    g.append(cirkel(bx, 52, 4, 'sc-licht'));
+    g.append(cirkel(bx, 52, 14, 'sc-schijn'));
+
+    // Sneeuwvlokken.
+    for (let i = 0; i < 60; i++) {
+      g.append(cirkel((i * 131) % B, (i * 47) % 130, 1.6, 'sc-sneeuw'));
+    }
+    g.append(rechthoek(0, 142, B, 8, 'sc-sneeuw'));
+  },
+
+  // Kale bomen, een volle maan en pompoenen die van binnen branden.
+  halloween(g) {
+    g.append(cirkel(640, 44, 26, 'sc-maan'));
+    sterren(g, 16, 31);
+
+    const tak = (x, basis, hoogte) => {
+      const grp = maak('g');
+      grp.append(pad(`M ${x} ${basis} L ${x} ${basis - hoogte}`, 'sc-takken'));
+      grp.append(pad(`M ${x} ${basis - hoogte * 0.6} L ${x - 22} ${basis - hoogte * 0.95}`, 'sc-takken'));
+      grp.append(pad(`M ${x} ${basis - hoogte * 0.75} L ${x + 24} ${basis - hoogte}`, 'sc-takken'));
+      grp.append(pad(`M ${x} ${basis - hoogte * 0.4} L ${x - 18} ${basis - hoogte * 0.65}`, 'sc-takken'));
+      return grp;
+    };
+    g.append(tak(120, 140, 86), tak(300, 140, 64), tak(520, 140, 78), tak(720, 140, 58));
+    g.append(rechthoek(0, 136, B, 14, 'sc-near'));
+
+    // Een hek.
+    for (let x = 20; x < B; x += 26) {
+      g.append(pad(`M ${x} 140 L ${x} 112 L ${x + 5} 106 L ${x + 10} 112 L ${x + 10} 140 Z`, 'sc-mid'));
+    }
+
+    // Pompoenen met licht erin.
+    [[220, 134, 16], [410, 136, 13], [600, 133, 18]].forEach(([x, y, r], i) => {
+      g.append(pad(`M ${x} ${y} m -${r} 0 a ${r} ${r * 0.8} 0 1 1 ${r * 2} 0 a ${r} ${r * 0.8} 0 1 1 -${r * 2} 0 Z`, 'sc-pompoen'));
+      g.append(pad(`M ${x - 5} ${y - 3} l 4 5 l -8 0 Z`, 'sc-licht'));
+      g.append(pad(`M ${x + 5} ${y - 3} l 4 5 l -8 0 Z`, 'sc-licht'));
+      if (i === 2) g.append(cirkel(x, y, r + 8, 'sc-schijn'));
+    });
+  },
 };
 
 export function sceneVoor(wereldId, accent) {

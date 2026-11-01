@@ -480,6 +480,10 @@ input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: -1p
 .sc-nat { fill: #7b8599; }
 .sc-weerschijn { fill: #d99a28; opacity: 0.35; }
 .sc-regenlijn { stroke: #94a0b2; stroke-width: 1; opacity: 0.5; }
+.sc-sneeuw { fill: #ffffff; opacity: 0.85; }
+.sc-boom { fill: #4a6b4a; }
+.sc-takken { stroke: #5b5146; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+.sc-pompoen { fill: #c9731f; }
 .sc-licht { fill: #d99a28; }
 .sc-schijn { fill: #d99a28; opacity: 0.3; }
 

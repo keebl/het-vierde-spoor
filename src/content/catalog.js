@@ -3,6 +3,16 @@
 // Daarom is deze lijst klein en blijft er geen puzzeldata in de repo staan.
 
 export const CATALOG = [
+  // ---- Kerstavond en Halloweennacht --------------------------------------
+  { seed: 'kerst-1', titel: 'Wie at de laatste kerststol?', sub: 'Vijf familieleden, een donker moment en een cadeau dat niemand gaf.', opdracht: 'dader', wereld: 'kerst', mechaniek: 'kamer', niveau: 2 },
+  { seed: 'kerst-2', titel: 'Stroomstoring op kerstavond', sub: 'Zes mensen in een huis vol kaarsen. Eentje stond er alleen.', opdracht: 'dader', wereld: 'kerst', mechaniek: 'kamer', niveau: 4 },
+  { seed: 'kerst-3', titel: 'Het verdwenen cadeau', sub: 'Het lag onder de boom. Nu niet meer.', opdracht: 'vinden', wereld: 'kerst', mechaniek: 'map', niveau: 3 },
+  { seed: 'kerst-4', titel: 'Wie bracht wat mee', sub: 'De naamkaartjes zijn van de pakjes gevallen.', opdracht: 'toewijzing', wereld: 'kerst', mechaniek: 'grid', niveau: 2 },
+  { seed: 'hall-1', titel: 'Het echte masker', sub: 'Iedereen kwam verkleed. Eentje deed zijn kostuum nooit meer uit.', opdracht: 'dader', wereld: 'halloween', mechaniek: 'kamer', niveau: 3 },
+  { seed: 'hall-2', titel: 'Middernacht', sub: 'Het zwaarste van de nacht: zeven bij zeven in het donker.', opdracht: 'dader', wereld: 'halloween', mechaniek: 'kamer', niveau: 5 },
+  { seed: 'hall-3', titel: 'Achter welke deur', sub: 'Het masker hangt ergens in huis, en het is geen kostuum.', opdracht: 'vinden', wereld: 'halloween', mechaniek: 'map', niveau: 3 },
+  { seed: 'hall-4', titel: 'Het rondje langs de deuren', sub: 'Wie stond waar, en wanneer?', opdracht: 'reconstructie', wereld: 'halloween', mechaniek: 'latin', niveau: 3 },
+
   // ---- Kamerraster: zet de verdachten zelf neer ---------------------------
   { seed: 'kamer-1', titel: 'Wie stond er alleen?', sub: 'Vier verdachten op de plattegrond. Begin hier als het kamerraster nieuw voor je is.', opdracht: 'dader', wereld: 'landhuis', mechaniek: 'kamer', niveau: 1 },
   { seed: 'kamer-2', titel: 'Het natte uur', sub: 'Regenstad bij nacht: vier kamers, vier verdachten, een lichaam.', opdracht: 'dader', wereld: 'noir', mechaniek: 'kamer', niveau: 2 },

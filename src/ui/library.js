@@ -14,12 +14,13 @@ import { solvedIds } from './state.js';
 // hetzelfde. Minder knoppen boven de lijst, meer lijst.
 const FILTERS = [
   { key: 'mechaniek', label: 'Soort spel', opties: () => MECHANICS.map((m) => [m.id, m.name]) },
+  { key: 'wereld', label: 'Genre', opties: () => WORLDS.map((w) => [w.id, `${w.icon} ${w.name}`]) },
   { key: 'niveau', label: 'Moeilijkheidsgraad', opties: () => LEVEL_IDS.map((l) => [String(l), `${l} - ${LEVELS[l].label}`]) },
 ];
 
 // Het decorfilter blijft wel werken via de link (#/puzzels?wereld=noir), want
 // de tegels op de voorpagina wijzen daarheen.
-const EXTRA_FILTERS = ['wereld', 'opdracht'];
+const EXTRA_FILTERS = ['opdracht'];
 
 export function renderLibrary(mount, query = {}) {
   const done = solvedIds();

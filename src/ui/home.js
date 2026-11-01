@@ -16,7 +16,7 @@ const STAPPEN = [
   },
   {
     kop: 'Sluit uit wat niet kan',
-    tekst: 'Bij een Huiszoeking zet je de verdachten zelf op de plattegrond, één per rij en één per kolom. Bij een Kruisverhoor zet je kruisjes en vinkjes in een raster.',
+    tekst: 'Bij een Speurdoku zet je de verdachten zelf op de plattegrond, één per rij en één per kolom. Bij een Kruisverhoor zet je kruisjes en vinkjes in een raster.',
   },
   {
     kop: 'Hou over wat moet',
@@ -87,7 +87,7 @@ export function renderHome(mount) {
   mount.append(
     el('section', { class: 'section' }, [
       el('div', { class: 'section-head' }, [
-        el('h2', { text: 'Of kies een decor' }),
+        el('h2', { text: 'Of kies een genre' }),
         el('a', { class: 'link-more', href: '#/puzzels', text: 'Alle puzzels bekijken' }),
       ]),
       el('div', { class: 'tiles' },

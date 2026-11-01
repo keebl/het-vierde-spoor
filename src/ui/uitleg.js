@@ -35,7 +35,7 @@ export function renderUitleg(mount) {
   );
 
   mount.append(
-    sectie('Een Huiszoeking', [
+    sectie('Een Speurdoku', [
       el('div', { class: 'prose' }, [
         el('p', { text: 'Je ziet een plattegrond met kamers en meubels. Daar zet je de figuren op: één per rij en één per kolom, en nooit op een meubelstuk. Een van de figuren is het slachtoffer; waar dat lichaam ligt moet je dus net zo goed uitzoeken.' }),
         el('p', {}, [
@@ -44,7 +44,7 @@ export function renderUitleg(mount) {
         ]),
         el('p', { text: 'Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan: de rest van die rij en kolom. Weet je het nog niet zeker, zet dan met Schetsen de beginletters van de kandidaten in een vakje. Met Uitsluiten zet je je eigen kruisjes.' }),
       ]),
-    ], 'Het hoofdspel: figuren op een plattegrond.')
+    ], 'Het hoofdspel: figuren op een plattegrond, een per rij en een per kolom.')
   );
 
   mount.append(
@@ -83,7 +83,7 @@ export function renderUitleg(mount) {
       tabel(LEVEL_IDS.map((l) => {
         const lv = LEVELS[l];
         const k = KAMER_LEVELS[l];
-        const omvang = `${k.n} bij ${k.n} vakjes in een Huiszoeking, ${lv.slots} rijen in een raster.`;
+        const omvang = `${k.n} bij ${k.n} vakjes in een Speurdoku, ${lv.slots} rijen in een raster.`;
         return [
           `${l}. ${lv.label}`,
           lv.style === 'shallow'
@@ -99,7 +99,7 @@ export function renderUitleg(mount) {
   );
 
   mount.append(
-    sectie('Waar het speelt', tabel(WORLDS.map((w) => [`${w.icon} ${w.name}`, w.blurb])))
+    sectie('Genres', tabel(WORLDS.map((w) => [`${w.icon} ${w.name}`, w.blurb])), 'Dezelfde spellen, een ander decor en een ander verhaal.')
   );
 
   mount.append(

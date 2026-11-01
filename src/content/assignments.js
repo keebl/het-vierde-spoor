@@ -260,7 +260,7 @@ export const ASSIGNMENTS = [
 export const ASSIGNMENT_BY_ID = new Map(ASSIGNMENTS.map((a) => [a.id, a]));
 
 export const MECHANICS = [
-  { id: 'kamer', name: 'Huiszoeking', icon: '▣', blurb: 'Zet de figuren zelf op de plattegrond: één per rij, één per kolom.' },
+  { id: 'kamer', name: 'Speurdoku', icon: '▣', blurb: 'Zet de figuren zelf op de plattegrond: één per rij, één per kolom, zoals bij sudoku.' },
   { id: 'grid', name: 'Kruisverhoor', icon: '▦', blurb: 'Kruisjes en vinkjes in een raster tot er een naam overblijft.' },
   { id: 'map', name: 'Rondgang', icon: '🗺', blurb: 'Een kaart met deuren; de aanwijzingen gaan over wat waaraan grenst.' },
   { id: 'latin', name: 'Dienstrooster', icon: '◧', blurb: 'Rijen zijn plekken, kolommen zijn momenten, en iedereen komt er één keer in voor.' },

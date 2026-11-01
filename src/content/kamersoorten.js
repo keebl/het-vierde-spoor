@@ -68,6 +68,25 @@ export const SOORT_VAN = {
   'de sterrenkoepel': 'sterrenwacht',
   'de eetzaal': 'keuken',
   'het archief': 'bibliotheek',
+  // Kerstavond en Halloweennacht
+  'de eetkamer': 'zaal',
+  'de serre': 'buiten',
+  'de bijkeuken': 'keuken',
+  'de logeerkamer': 'slaapkamer',
+  'de hal met de boom': 'gang',
+  'de kelderkast': 'kelder',
+  'de besneeuwde tuin': 'buiten',
+  'de zolderkamer': 'slaapkamer',
+  'de kerstkeuken': 'keuken',
+  'de donkere veranda': 'buiten',
+  'de pompoenkamer': 'zaal',
+  'de spinnenwebzolder': 'kelder',
+  'de kaarsengang': 'gang',
+  'de kelder met het luik': 'kelder',
+  'de achtertuin bij het hek': 'buiten',
+  'de garage': 'werkplaats',
+  'de slaapkamer boven': 'slaapkamer',
+  'de griezelkeuken': 'keuken',
 };
 
 // De vloer per soort. dessin verwijst naar een patroon in board-rooms.js.
