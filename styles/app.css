@@ -858,3 +858,75 @@ table.latin td.cell { width: 78px; height: 46px; }
 
 .palet-kruis .palet-fiche { background: var(--surface-3); color: var(--text-2); }
 .palet-lijk .palet-fiche { background: #3a2e22; color: #f6efe2; }
+
+/* ============================================================== afdrukken */
+
+/* Een puzzel hoort ook op papier te kunnen. Wat op het scherm hoort maar niet
+   op papier gaat eruit: de navigatie, de sfeertekening, de knoppen. Wat
+   blijft is wat je nodig hebt om hem met een potlood te maken: de inleiding,
+   de vraag, de aanwijzingen en het bord. */
+@media print {
+  :root {
+    --bg: #fff;
+    --surface: #fff;
+    --surface-2: #fff;
+    --surface-3: #f2f2f2;
+    --line: #999;
+    --line-soft: #ccc;
+    --text: #000;
+    --text-2: #333;
+    --text-3: #555;
+    --accent: #000;
+    --accent-soft: #fff;
+  }
+
+  @page { margin: 14mm; }
+
+  body { background: #fff; color: #000; }
+
+  .top,
+  .foot,
+  .scene-wrap,
+  .toolbar,
+  .note,
+  .crumbs a,
+  .legend,
+  .palet-kruis,
+  .palet-schets { display: none !important; }
+
+  main { max-width: none; padding: 0; }
+
+  /* Aanwijzingen naast het bord in plaats van eronder: scheelt een vel. */
+  .play { grid-template-columns: 1fr 1fr; gap: 10mm; }
+  .play > * { break-inside: avoid; }
+
+  .puzzle-head { max-width: none; }
+  .puzzle-head h1 { font-size: 16pt; margin-bottom: 4mm; }
+  .intro { font-size: 10pt; border-left: 2px solid #000; }
+  .question { border: 1px solid #000; }
+  .question b { font-size: 11pt; }
+
+  .clue { font-size: 9.5pt; padding: 1.5mm 0; border-bottom: 1px solid #ddd; }
+  .clue[aria-pressed="true"] { color: #000; }
+  .clue[aria-pressed="true"] .clue-text { text-decoration: none; }
+
+  .kamerbord {
+    max-width: 100%;
+    box-shadow: none;
+    background: #fff;
+    border: 1px solid #000;
+  }
+
+  .palet { gap: 2mm; }
+  .palet-knop { border-color: #000; font-size: 9pt; }
+  .palet-knop[aria-pressed="true"] { background: #fff; }
+
+  table.grid th, table.grid td, table.latin th, table.latin td { border-color: #000; }
+  .map-figure { border: 1px solid #000; background: #fff; }
+
+  /* Kruisjes en vinkjes die je zelf hebt gezet horen niet op een lege
+     afdruk, maar als je halverwege bent wil je ze juist wel. Ze blijven dus
+     staan; alleen de kruisjes die het bord zelf zet gaan eruit, want die
+     zet je op papier zelf. */
+  .kruisje-vanzelf { display: none; }
+}

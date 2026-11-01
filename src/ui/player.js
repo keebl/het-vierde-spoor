@@ -116,6 +116,9 @@ export function renderPlayer(puzzle, mount) {
       clearProgress(puzzle.id);
       draw();
     },
+    print() {
+      window.print();
+    },
     async share() {
       const url = location.href;
       try {
@@ -283,7 +286,8 @@ function toolbar(puzzle, state, actions) {
   add('Hint', actions.hint);
   add('Oplossing', actions.reveal);
   add('Opnieuw', actions.reset);
-  add('Link kopieren', actions.share);
+  add('Printen', actions.print);
+  add('Link kopiëren', actions.share);
   return bar;
 }
 
