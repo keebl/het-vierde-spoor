@@ -165,6 +165,26 @@ afspraken houden het rustig:
 Puzzels staan in lijstrijen, niet in kaarten: rijen zijn even hoog, je kunt
 de titels onder elkaar lezen, en er passen er meer op een scherm.
 
+## Over de tekeningen
+
+Alles wat je ziet is in code getekend: er zit geen enkel plaatjesbestand in
+het project. Dat houdt het scherp op elk scherm, laat het meebewegen met het
+thema, laadt direct, en er kleeft geen licentie aan.
+
+- `src/ui/icons.js` - een set van 36 lijniconen plus een woordenlijst die een
+  naam aan een icoon koppelt. "de wijnkelder" krijgt een fles, "de verzakte
+  trap" een trap. Staat er niets passends bij, dan valt hij terug op een deur.
+- `src/ui/scenes.js` - een sfeertekening per wereld, opgebouwd uit drie
+  dieptelagen die naar voren toe donkerder worden, wat atmosfeer (regen,
+  sterren, mist) en precies een goudkleurig lichtpunt. Dat ene lichtje doet
+  het meeste werk: het geeft je oog een plek om naartoe te gaan. De
+  wereldkleur zit alleen hier, in de lucht van de tekening.
+- De plattegrond in `src/ui/boards.js` is een echte bouwtekening: ruimtes
+  delen hun muren, buitenmuren zijn dikker, en een doorgang is een gat in de
+  muur met een deurblad en een draaicirkel. Daardoor zie je in een oogopslag
+  waar je wel en niet langs kunt, en dat is precies waar de aanwijzingen over
+  gaan.
+
 ## Over plagiaat
 
 Logische deductiepuzzels op een raster bestaan sinds de jaren zestig en zijn

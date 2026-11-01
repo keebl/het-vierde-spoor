@@ -1,9 +1,10 @@
 // De speler. Houdt de markeringen van de speler bij, tekent het bord dat bij
 // de mechaniek hoort, en kan controleren, hinten en de oplossing geven.
 
-import { el, renderMatrix, renderMap, renderLatin, cellKey } from './boards.js';
+import { el, renderMatrix, renderMap, renderLatin, latinLegenda, cellKey } from './boards.js';
 import { loadProgress, saveProgress, clearProgress } from './state.js';
 import { MECHANIC_BY_ID } from '../content/assignments.js';
+import { sceneVoor } from './scenes.js';
 
 export function renderPlayer(puzzle, mount) {
   const saved = loadProgress(puzzle.id) ?? {};
@@ -127,13 +128,16 @@ function head(puzzle) {
     deel(puzzle.depth === 1 ? 'doorstrepen volstaat' : 'aanname nodig'),
   ]);
 
-  return el('div', { class: 'puzzle-head' }, [
-    crumbs,
-    el('h1', { text: puzzle.title }),
-    el('p', { class: 'intro', text: puzzle.intro }),
-    el('div', { class: 'question' }, [
-      el('span', { class: 'label', text: 'De vraag' }),
-      el('b', { text: puzzle.question.text }),
+  return el('div', {}, [
+    el('div', { class: 'scene-wrap' }, sceneVoor(puzzle.world.id, puzzle.world.accent)),
+    el('div', { class: 'puzzle-head' }, [
+      crumbs,
+      el('h1', { text: puzzle.title }),
+      el('p', { class: 'intro', text: puzzle.intro }),
+      el('div', { class: 'question' }, [
+        el('span', { class: 'label', text: 'De vraag' }),
+        el('b', { text: puzzle.question.text }),
+      ]),
     ]),
   ]);
 }
@@ -147,7 +151,7 @@ function cluePanel(puzzle, state, draw, persist) {
         text: 'Elke naam komt in elke rij precies een keer voor, en in elke kolom precies een keer. De grijze vakjes staan vast. Klik een leeg vakje om er namen door te lopen.',
       }),
       el('p', { class: 'legend', text: 'Het omlijnde vakje is waar de vraag over gaat.' }),
-      swatches(puzzle),
+      latinLegenda(puzzle),
     ]);
   }
 
@@ -178,11 +182,7 @@ function cluePanel(puzzle, state, draw, persist) {
   ]);
 }
 
-function swatches(puzzle) {
-  const box = el('div', { class: 'swatches' });
-  puzzle.symbols.forEach((s) => box.append(el('span', { class: 'swatch', text: s })));
-  return box;
-}
+
 
 function boardNodes(puzzle, state, onCell) {
   if (puzzle.kind === 'latin') {

@@ -310,20 +310,40 @@ h2 {
 
 .tiles { display: grid; gap: var(--s3); grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
 
+/* Elke wereld krijgt zijn eigen sfeertekening als kop van de tegel. Dat is
+   wat een decor tot de verbeelding laat spreken; een pictogram alleen niet. */
 .tile {
   display: grid;
-  gap: var(--s2);
   align-content: start;
-  padding: var(--s4);
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--r);
   text-decoration: none;
   color: inherit;
+  overflow: hidden;
 }
 
-.tile:hover { border-color: #39404e; background: var(--surface-2); }
-.tile-icon { font-size: var(--t-lg); line-height: 1; }
+.tile:hover { border-color: #39404e; }
+.tile:hover .tile-scene .scene { transform: scale(1.04); }
+
+.tile-scene {
+  display: block;
+  height: 96px;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg);
+}
+
+.tile-scene .scene { height: 96px; transition: transform 0.25s ease; }
+
+.tile-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, var(--surface) 100%);
+}
+
+.tile-body { display: grid; gap: var(--s2); padding: var(--s4); }
 .tile-name { font-family: var(--serif); font-size: var(--t-md); }
 .tile-sub { color: var(--text-2); font-size: var(--t-sm); line-height: 1.5; }
 .tile-count { color: var(--text-3); font-size: var(--t-xs); }
@@ -421,6 +441,49 @@ input[type="text"] {
 input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
 
 /* =============================================================== speler */
+
+/* De sfeertekening loopt van rand tot rand en vervaagt naar de paginakleur,
+   zodat hij een decor is en geen plaatje in een lijstje. */
+.scene-wrap {
+  margin: calc(var(--s7) * -1) calc(var(--s5) * -1) var(--s5);
+  position: relative;
+  overflow: hidden;
+  height: 150px;
+}
+
+.scene-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 45%, var(--bg) 100%);
+  pointer-events: none;
+}
+
+.scene { width: 100%; height: 150px; display: block; }
+
+.sc-ver { fill: #1b2029; }
+.sc-mid { fill: #141821; }
+.sc-near { fill: #0d1016; }
+.sc-diep { fill: #07090d; }
+.sc-planeet { fill: #171c25; }
+.sc-horizon { fill: none; stroke: #2b3340; stroke-width: 1.5; }
+.sc-lijn { fill: none; stroke: #39414f; stroke-width: 2; }
+.sc-grond { fill: #0b0e13; }
+.sc-deur { fill: #0a0d12; }
+.sc-raam { fill: #39414f; }
+.sc-ster { fill: #7e889c; }
+.sc-maan { fill: #d7dbe4; opacity: 0.75; }
+.sc-mist { fill: #262d3a; opacity: 0.35; }
+.sc-nat { fill: #11151c; }
+.sc-weerschijn { fill: var(--accent); opacity: 0.18; }
+.sc-regenlijn { stroke: #39414f; stroke-width: 1; opacity: 0.4; }
+.sc-licht { fill: var(--accent); }
+.sc-schijn { fill: var(--accent); opacity: 0.12; }
+
+@media (max-width: 640px) {
+  .scene-wrap { margin: calc(var(--s5) * -1) calc(var(--s4) * -1) var(--s4); height: 110px; }
+  .scene { height: 110px; }
+}
 
 .puzzle-head { max-width: var(--prose); }
 
@@ -523,7 +586,11 @@ table.grid th {
   font-size: var(--t-xs);
 }
 table.grid th.corner { background: transparent; border: 0; }
-table.grid th.col-head { vertical-align: bottom; text-align: center; max-width: 88px; white-space: normal; line-height: 1.3; }
+table.grid th.col-head { vertical-align: bottom; text-align: center; max-width: 92px; white-space: normal; line-height: 1.3; padding-top: var(--s3); }
+
+.kop-staand { display: flex; flex-direction: column; align-items: center; gap: var(--s2); color: var(--text-2); }
+.kop-liggend { display: flex; align-items: center; gap: var(--s2); color: var(--text-2); }
+.kop-staand .glyph, .kop-liggend .glyph { color: var(--accent); opacity: 0.75; }
 table.grid td.cell { width: 42px; height: 40px; text-align: center; }
 
 .mark {
@@ -541,12 +608,61 @@ table.grid td.cell { width: 42px; height: 40px; text-align: center; }
 .mark[data-state="no"] { color: var(--bad); opacity: 0.7; }
 .mark[data-wrong="1"] { outline: 2px solid var(--bad); outline-offset: -2px; }
 
-.map-figure { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: var(--s4); margin: 0; }
+/* De plattegrond. Muren hebben dikte, buitenmuren meer dan binnenmuren, en
+   een doorgang is een gat in de muur met een deurblad en een draaicirkel -
+   precies zoals op een bouwtekening. */
+.map-figure {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: var(--s4);
+  margin: 0;
+}
 .map-figure svg { width: 100%; height: auto; display: block; }
-.room-box { fill: var(--surface-2); stroke: var(--line); stroke-width: 1.5; }
-.room-label { fill: var(--text-2); font: 500 11px var(--sans); }
-.room-index { fill: var(--accent); font: 700 12px var(--serif); }
-.door { stroke: color-mix(in oklab, var(--accent) 55%, var(--line)); stroke-width: 3; stroke-linecap: round; }
+
+.vloerbasis { fill: #1a1e26; }
+.vloerlijn { fill: none; stroke: #20252f; stroke-width: 1; }
+.vloer { fill: url(#vloertegels); }
+
+.muur { stroke: #5d6575; stroke-width: 3; stroke-linecap: square; }
+.muur-buiten { stroke: #868fa3; stroke-width: 6; }
+
+.deurblad { stroke: var(--accent); stroke-width: 2.5; fill: none; stroke-linecap: round; }
+.deurboog {
+  stroke: color-mix(in oklab, var(--accent) 40%, transparent);
+  stroke-width: 1.2;
+  fill: none;
+  stroke-dasharray: 3 3;
+}
+
+.kamer-glyph path {
+  fill: none;
+  stroke: var(--text-2);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.38;
+}
+.kamer-bol { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1; }
+.kamer-nr { fill: var(--accent); font: 700 12px var(--serif); }
+.kamer-naam { fill: var(--text); font: 500 12.5px var(--sans); }
+
+.kompas circle { fill: none; stroke: var(--line); stroke-width: 1; }
+.kompas-naald { fill: var(--accent); }
+.kompas-n { fill: var(--text-3); font: 600 8px var(--sans); }
+
+.plan-titel { fill: var(--text-3); font: 600 10px var(--sans); letter-spacing: 0.14em; }
+.plan-legenda { fill: var(--text-3); font: 400 10px var(--sans); }
+
+/* Losse iconen naast tekst (kolomkoppen, rijlabels). */
+.glyph { flex: none; }
+.glyph path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
 table.latin { border-collapse: collapse; }
 table.latin th {
@@ -567,7 +683,8 @@ table.latin td.cell { width: 78px; height: 46px; }
 .latin-cell[data-wrong="1"] { outline: 2px solid var(--bad); outline-offset: -2px; }
 
 .swatches { display: flex; gap: var(--s2); flex-wrap: wrap; margin-top: var(--s3); font-size: var(--t-xs); color: var(--text-2); }
-.swatch { border: 1px solid var(--line); border-radius: 99px; padding: 3px var(--s3); }
+.swatch { display: inline-flex; align-items: center; gap: var(--s2); border: 1px solid var(--line); border-radius: 99px; padding: 4px var(--s3); }
+.swatch .glyph { color: var(--accent); opacity: 0.8; }
 
 .spinner { color: var(--text-3); padding: var(--s7) 0; }
 

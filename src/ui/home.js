@@ -7,6 +7,7 @@ import { WORLDS } from '../content/worlds.js';
 import { LEVELS } from '../engine/difficulty.js';
 import { solvedIds } from './state.js';
 import { puzzleId } from '../puzzle.js';
+import { sceneVoor } from './scenes.js';
 
 const STAPPEN = [
   {
@@ -93,10 +94,12 @@ export function renderHome(mount) {
         WORLDS.map((w) => {
           const aantal = CATALOG.filter((p) => p.wereld === w.id).length;
           return el('a', { class: 'tile', href: `#/puzzels?wereld=${w.id}` }, [
-            el('span', { class: 'tile-icon', text: w.icon }),
-            el('span', { class: 'tile-name', text: w.name }),
-            el('span', { class: 'tile-sub', text: w.blurb }),
-            el('span', { class: 'tile-count', text: `${aantal} puzzels` }),
+            el('span', { class: 'tile-scene' }, sceneVoor(w.id, w.accent)),
+            el('span', { class: 'tile-body' }, [
+              el('span', { class: 'tile-name', text: `${w.icon} ${w.name}` }),
+              el('span', { class: 'tile-sub', text: w.blurb }),
+              el('span', { class: 'tile-count', text: `${aantal} puzzels` }),
+            ]),
           ]);
         })
       ),
