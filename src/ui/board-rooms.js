@@ -66,7 +66,7 @@ export function renderKamerbord(puzzle, state, acties) {
     }));
     vloer.append(el('rect', {
       x: x(kol(i)), y: y(rij(i)), width: CEL, height: CEL,
-      fill: `url(#dessin-${v.dessin})`, opacity: 0.5,
+      fill: `url(#dessin-${v.dessin})`, opacity: 0.32,
     }));
   }
 
@@ -86,6 +86,16 @@ export function renderKamerbord(puzzle, state, acties) {
 
   // -------------------------------------------------------------- naden
   // Dunne naad binnen een kamer, dikke muur tussen kamers.
+  // Eerst een volledig vakjesraster: elke vakjesgrens krijgt een lijn, ook
+  // midden in een kamer. Anders moet je uit het vloerpatroon afleiden waar
+  // een vakje ophoudt, en dat lukt niet.
+  const raster = el('g');
+  for (let k = 1; k < n; k++) {
+    raster.append(el('line', { x1: x(k), y1: y(0), x2: x(k), y2: y(n), class: 'vakjeslijn' }));
+    raster.append(el('line', { x1: x(0), y1: y(k), x2: x(n), y2: y(k), class: 'vakjeslijn' }));
+  }
+  svg.append(raster);
+
   const naden = el('g');
   const muren = el('g');
   for (let i = 0; i < n * n; i++) {
@@ -95,20 +105,18 @@ export function renderKamerbord(puzzle, state, acties) {
     const onder = r < n - 1 ? i + n : null;
     if (rechts != null) {
       const zelfde = kamer(i) === kamer(rechts);
-      (zelfde ? naden : muren).append(el('line', {
-        x1: x(c + 1), y1: y(r), x2: x(c + 1), y2: y(r + 1),
-        class: zelfde ? 'naad' : 'kamermuur',
-      }));
+      if (!zelfde) {
+        muren.append(el('line', { x1: x(c + 1), y1: y(r), x2: x(c + 1), y2: y(r + 1), class: 'kamermuur' }));
+      }
     }
     if (onder != null) {
       const zelfde = kamer(i) === kamer(onder);
-      (zelfde ? naden : muren).append(el('line', {
-        x1: x(c), y1: y(r + 1), x2: x(c + 1), y2: y(r + 1),
-        class: zelfde ? 'naad' : 'kamermuur',
-      }));
+      if (!zelfde) {
+        muren.append(el('line', { x1: x(c), y1: y(r + 1), x2: x(c + 1), y2: y(r + 1), class: 'kamermuur' }));
+      }
     }
   }
-  svg.append(naden, muren);
+  svg.append(muren);
   svg.append(el('rect', {
     x: RAND, y: RAND, width: n * CEL, height: n * CEL, class: 'buitenmuur-kamer',
   }));
@@ -319,23 +327,25 @@ function splits(naam) {
 function dessins() {
   const defs = el('defs');
 
-  const planken = el('pattern', { id: 'dessin-planken', width: 76, height: 19, patternUnits: 'userSpaceOnUse' });
-  planken.append(el('path', { d: 'M0 0.5 H76 M0 18.5 H76', class: 'dessinlijn' }));
-  planken.append(el('path', { d: 'M38 0 V19', class: 'dessinlijn' }));
+  const planken = el('pattern', { id: 'dessin-planken', width: CEL, height: CEL / 4, patternUnits: 'userSpaceOnUse' });
+  planken.append(el('path', { d: `M0 ${CEL / 4 - 0.5} H${CEL}`, class: 'dessinlijn' }));
+  planken.append(el('path', { d: `M${CEL / 2} 0 V${CEL / 4}`, class: 'dessinlijn' }));
   defs.append(planken);
 
-  const dwars = el('pattern', { id: 'dessin-planken-dwars', width: 19, height: 76, patternUnits: 'userSpaceOnUse' });
-  dwars.append(el('path', { d: 'M0.5 0 V76 M18.5 0 V76', class: 'dessinlijn' }));
-  dwars.append(el('path', { d: 'M0 38 H19', class: 'dessinlijn' }));
+  const dwars = el('pattern', { id: 'dessin-planken-dwars', width: CEL / 4, height: CEL, patternUnits: 'userSpaceOnUse' });
+  dwars.append(el('path', { d: `M${CEL / 4 - 0.5} 0 V${CEL}`, class: 'dessinlijn' }));
+  dwars.append(el('path', { d: `M0 ${CEL / 2} H${CEL / 4}`, class: 'dessinlijn' }));
   defs.append(dwars);
 
-  const tegels = el('pattern', { id: 'dessin-tegels', width: 38, height: 38, patternUnits: 'userSpaceOnUse' });
-  tegels.append(el('rect', { x: 0, y: 0, width: 19, height: 19, class: 'dessinvlak' }));
-  tegels.append(el('rect', { x: 19, y: 19, width: 19, height: 19, class: 'dessinvlak' }));
+  const h = CEL / 2;
+  const q = CEL / 4;
+  const tegels = el('pattern', { id: 'dessin-tegels', width: h, height: h, patternUnits: 'userSpaceOnUse' });
+  tegels.append(el('rect', { x: 0, y: 0, width: q, height: q, class: 'dessinvlak' }));
+  tegels.append(el('rect', { x: q, y: q, width: q, height: q, class: 'dessinvlak' }));
   defs.append(tegels);
 
-  const ruiten = el('pattern', { id: 'dessin-ruiten', width: 26, height: 26, patternUnits: 'userSpaceOnUse' });
-  ruiten.append(el('path', { d: 'M13 0 L26 13 L13 26 L0 13 Z', class: 'dessinlijn' }));
+  const ruiten = el('pattern', { id: 'dessin-ruiten', width: h, height: h, patternUnits: 'userSpaceOnUse' });
+  ruiten.append(el('path', { d: `M${q} 0 L${h} ${q} L${q} ${h} L0 ${q} Z`, class: 'dessinlijn' }));
   defs.append(ruiten);
 
   return defs;

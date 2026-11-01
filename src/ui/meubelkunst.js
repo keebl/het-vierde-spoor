@@ -40,7 +40,7 @@ export const MEUBELKUNST = {
   ],
   kast: [
     ['M11 7h26v34H11Z', '#8a6134'],
-    ['M24 7v34', '#6b4824'],
+    ['M24 7v34', '#6b4824', 'lijn'],
     ['M11 7h26v3H11Z', '#a87c4a'],
     ['M21 23a1.6 1.6 0 1 0 .1 0', '#d9a235'],
     ['M26 23a1.6 1.6 0 1 0 .1 0', '#d9a235'],
@@ -71,19 +71,19 @@ export const MEUBELKUNST = {
     ['M16 5h16v36H16Z', '#8a6134'],
     ['M16 5h16v4H16Z', '#a87c4a'],
     ['M24 11a7 7 0 1 0 .1 0', '#ece7dd'],
-    ['M24 14v4.5l3 2', '#3b4650'],
+    ['M24 14v4.5l3 2', '#3b4650', 'lijn'],
     ['M22 27h4v11h-4Z', '#d9a235'],
   ],
   vleugel: [
     ['M9 24c0-8 10-12 24-12c6 0 8 2 8 5c0 6-8 8-14 8Z', '#3b4650'],
     ['M9 24h18v5H9Z', '#ece7dd'],
-    ['M12 29v9', '#3b4650'],
-    ['M36 17v10', '#3b4650'],
+    ['M12 29v9', '#3b4650', 'lijn'],
+    ['M36 17v10', '#3b4650', 'lijn'],
   ],
   spiegelstandaard: [
     ['M24 6a9 13 0 1 1 .1 0', '#8a6134'],
     ['M24 9a7 11 0 1 1 .1 0', '#ece7dd'],
-    ['M24 32v6', '#8a6134'],
+    ['M24 32v6', '#8a6134', 'lijn'],
     ['M17 41h14v2H17Z', '#8a6134'],
   ],
   buste: [
@@ -109,7 +109,7 @@ export const MEUBELKUNST = {
   ],
   globe: [
     ['M24 10a13 13 0 1 0 .1 0', '#6f9a5a'],
-    ['M11 23h26', '#3b4650'],
+    ['M11 23h26', '#3b4650', 'lijn'],
     ['M24 10c5 6 5 20 0 26c-5-6-5-20 0-26Z', '#3b4650'],
     ['M22 36h4v4h-4Z', '#8a6134'],
     ['M16 40h16v2H16Z', '#8a6134'],
@@ -125,8 +125,8 @@ export const MEUBELKUNST = {
     ['M11 24h3v17h-3Z', '#8a6134'],
     ['M34 24h3v17h-3Z', '#8a6134'],
     ['M14 12h20v8H14Z', '#ece7dd'],
-    ['M17 15h14', '#737c86'],
-    ['M17 18h9', '#737c86'],
+    ['M17 15h14', '#737c86', 'lijn'],
+    ['M17 18h9', '#737c86', 'lijn'],
   ],
   vat: [
     ['M13 8h22c2 7 2 25 0 32H13c-2-7-2-25 0-32Z', '#8a6134'],
@@ -152,11 +152,13 @@ export const MEUBELKUNST = {
     ['M22 14h3v26h-3Z', '#6b4824'],
   ],
   bed: [
-    ['M7 22h34v12H7Z', '#ece7dd'],
-    ['M7 28h34v6H7Z', '#a8543c'],
-    ['M5 14h6v20H5Z', '#8a6134'],
-    ['M39 20h4v14h-4Z', '#8a6134'],
-    ['M12 23h9v5h-9Z', '#ece7dd'],
+    ['M6 11h6v27H6Z', '#8a6134'],
+    ['M36 19h6v19h-6Z', '#8a6134'],
+    ['M9 24h30v11H9Z', '#ece7dd'],
+    ['M9 29h30v6H9Z', '#a8543c'],
+    ['M12 25h9v4h-9Z', '#fffdf7'],
+    ['M7 35h4v7H7Z', '#6b4824'],
+    ['M37 35h4v7h-4Z', '#6b4824'],
   ],
   mosbank: [
     ['M9 26h30v6H9Z', '#ada69a'],
@@ -167,20 +169,20 @@ export const MEUBELKUNST = {
   kapstok: [
     ['M22 8h4v31h-4Z', '#8a6134'],
     ['M14 39h20v3H14Z', '#8a6134'],
-    ['M24 12l-9 6', '#8a6134'],
-    ['M24 12l9 6', '#8a6134'],
+    ['M24 12l-9 6', '#8a6134', 'lijn'],
+    ['M24 12l9 6', '#8a6134', 'lijn'],
     ['M28 17c5 1 6 6 5 12h-9c-1-6 0-11 4-12Z', '#a8543c'],
   ],
   mand: [
     ['M10 18h28l-3 22H13Z', '#a87c4a'],
-    ['M12 25h24', '#6b4824'],
-    ['M12 32h23', '#6b4824'],
+    ['M12 25h24', '#6b4824', 'lijn'],
+    ['M12 32h23', '#6b4824', 'lijn'],
     ['M13 18a11 11 0 0 1 22 0Z', '#8a6134'],
   ],
   harnas: [
     ['M24 6l12 5v12c0 10-6 16-12 18c-6-2-12-8-12-18V11Z', '#9aa3ac'],
     ['M18 20h12v3H18Z', '#737c86'],
-    ['M24 23v14', '#737c86'],
+    ['M24 23v14', '#737c86', 'lijn'],
     ['M19 11h10v5H19Z', '#3b4650'],
   ],
   ketel: [
@@ -220,11 +222,11 @@ export const MEUBELKUNST = {
     ['M6 20h32v12H6Z', '#8a6134'],
     ['M38 20a5 6 0 1 1 .1 0', '#a87c4a'],
     ['M38 24a2 2.5 0 1 1 .1 0', '#6b4824'],
-    ['M12 32l-3 8', '#8a6134'],
+    ['M12 32l-3 8', '#8a6134', 'lijn'],
   ],
   put: [
     ['M12 20h24l-2 21H14Z', '#ada69a'],
-    ['M8 20l16-11l16 11', '#8a6134'],
+    ['M8 20l16-11l16 11', '#8a6134', 'lijn'],
     ['M22 11h4v9h-4Z', '#8a6134'],
     ['M20 24h8v7h-8Z', '#a87c4a'],
   ],
@@ -232,7 +234,7 @@ export const MEUBELKUNST = {
     ['M12 14h24l3 8v19H9V22Z', '#ada69a'],
     ['M9 22h30v3H9Z', '#737c86'],
     ['M20 28h8v10h-8Z', '#737c86'],
-    ['M24 29v8', '#ada69a'],
+    ['M24 29v8', '#ada69a', 'lijn'],
   ],
   knekelnis: [
     ['M10 41V20a14 14 0 0 1 28 0v21Z', '#ada69a'],
@@ -245,8 +247,8 @@ export const MEUBELKUNST = {
     ['M19 11h10v26H19Z', '#ada69a'],
     ['M14 6h20v5H14Z', '#ece7dd'],
     ['M14 37h20v5H14Z', '#ece7dd'],
-    ['M22 11v26', '#737c86'],
-    ['M26 11v26', '#737c86'],
+    ['M22 11v26', '#737c86', 'lijn'],
+    ['M26 11v26', '#737c86', 'lijn'],
   ],
   bidbank: [
     ['M12 26h24v4H12Z', '#8a6134'],
@@ -269,13 +271,13 @@ export const MEUBELKUNST = {
     ['M9 26h30l-3 15H12Z', '#8a6134'],
     ['M24 26c0-8-4-12-7-14c0 6 2 10 7 14Z', '#6f9a5a'],
     ['M24 26c0-8 4-12 7-14c0 6-2 10-7 14Z', '#6f9a5a'],
-    ['M24 26V14', '#6f9a5a'],
+    ['M24 26V14', '#6f9a5a', 'lijn'],
   ],
   kruidenkast: [
     ['M10 7h28v34H10Z', '#8a6134'],
     ['M10 18h28v2H10Z', '#6b4824'],
     ['M10 29h28v2H10Z', '#6b4824'],
-    ['M24 7v34', '#6b4824'],
+    ['M24 7v34', '#6b4824', 'lijn'],
     ['M16 12.5a1.5 1.5 0 1 0 .1 0', '#d9a235'],
     ['M32 12.5a1.5 1.5 0 1 0 .1 0', '#d9a235'],
     ['M16 24a1.5 1.5 0 1 0 .1 0', '#d9a235'],
@@ -292,17 +294,17 @@ export const MEUBELKUNST = {
     ['M24 6a3 3 0 1 0 .1 0', '#d9a235'],
   ],
   telescoop: [
-    ['M8 32l22-13', '#737c86'],
+    ['M8 32l22-13', '#737c86', 'lijn'],
     ['M26 13l10 5l-4 9l-10-5Z', '#3b4650'],
     ['M33 15l5 2l-2 5l-5-2Z', '#9aa3ac'],
-    ['M24 24l-6 17', '#9aa3ac'],
-    ['M30 27l4 14', '#9aa3ac'],
+    ['M24 24l-6 17', '#9aa3ac', 'lijn'],
+    ['M30 27l4 14', '#9aa3ac', 'lijn'],
     ['M14 41h20v2H14Z', '#737c86'],
   ],
   hemelbol: [
     ['M24 10a15 15 0 1 1-.1 0', '#737c86'],
     ['M24 14a11 15 0 1 1-.1 0', '#9aa3ac'],
-    ['M9 24h30', '#737c86'],
+    ['M9 24h30', '#737c86', 'lijn'],
     ['M24 20a4 4 0 1 0 .1 0', '#d9a235'],
     ['M22 39h4v4h-4Z', '#8a6134'],
     ['M16 43h16v2H16Z', '#8a6134'],
@@ -310,9 +312,9 @@ export const MEUBELKUNST = {
   kaarthoek: [
     ['M8 12h32v26H8Z', '#ece7dd'],
     ['M8 12l10 4l12-4l10 4v22l-10-4l-12 4l-10-4Z', '#ece7dd'],
-    ['M18 16v22', '#737c86'],
-    ['M30 12v22', '#737c86'],
-    ['M13 22l6-3l7 6', '#737c86'],
+    ['M18 16v22', '#737c86', 'lijn'],
+    ['M30 12v22', '#737c86', 'lijn'],
+    ['M13 22l6-3l7 6', '#737c86', 'lijn'],
   ],
 };
 
@@ -325,10 +327,19 @@ export function tekenMeubel(ouder, naam, { x = 0, y = 0, grootte = 48 } = {}) {
   const g = document.createElementNS(NS, 'g');
   g.setAttribute('transform', `translate(${x} ${y}) scale(${grootte / 48})`);
   g.setAttribute('class', 'meubelkunst');
-  for (const [d, kleur] of delen) {
+  for (const [d, kleur, soort] of delen) {
     const pad = document.createElementNS(NS, 'path');
     pad.setAttribute('d', d);
-    pad.setAttribute('fill', kleur);
+    if (soort === 'lijn') {
+      // Een open pad omsluit geen vlak: met een vulling zie je er niets van.
+      pad.setAttribute('fill', 'none');
+      pad.setAttribute('stroke', kleur);
+      pad.setAttribute('stroke-width', '2');
+      pad.setAttribute('stroke-linecap', 'round');
+      pad.setAttribute('class', 'meubellijn');
+    } else {
+      pad.setAttribute('fill', kleur);
+    }
     g.append(pad);
   }
   ouder.append(g);

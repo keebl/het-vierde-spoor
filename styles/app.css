@@ -732,12 +732,14 @@ table.latin td.cell { width: 78px; height: 46px; }
   box-shadow: 0 8px 24px rgba(70, 52, 28, 0.25);
 }
 
-.dessinlijn { fill: none; stroke: rgba(90, 70, 45, 0.3); stroke-width: 1; }
-.dessinvlak { fill: rgba(255, 255, 255, 0.16); }
+.dessinlijn { fill: none; stroke: rgba(90, 70, 45, 0.22); stroke-width: 1; }
+.dessinvlak { fill: rgba(255, 255, 255, 0.2); }
 
 .vloervlek { fill: rgba(90, 70, 45, 0.09); }
 
-.naad { stroke: rgba(90, 70, 45, 0.28); stroke-width: 1; }
+/* Het vakjesraster is de belangrijkste lijn op het bord: zonder dat weet je
+   niet waar je mag klikken. Het vloerpatroon moet daar dus onder blijven. */
+.vakjeslijn { stroke: rgba(70, 52, 30, 0.42); stroke-width: 1.4; }
 .kamermuur { stroke: #4a3b2c; stroke-width: 6; stroke-linecap: round; }
 .buitenmuur-kamer { fill: none; stroke: #3a2e22; stroke-width: 8; rx: 3; }
 
@@ -748,6 +750,8 @@ table.latin td.cell { width: 78px; height: 46px; }
   stroke-width: 0.8;
   stroke-linejoin: round;
 }
+/* Onderdelen die als lijn getekend zijn houden hun eigen kleur en dikte. */
+.meubelkunst path.meubellijn { stroke-width: 2; }
 .meubelschaduw { fill: rgba(60, 45, 25, 0.16); }
 
 .meubelglyph path {
