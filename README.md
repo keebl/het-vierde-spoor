@@ -228,10 +228,12 @@ tools/                  keuringsscripts
 
 ## Wat er nog niet is
 
-- Inloggen en voortgang over apparaten heen. Voortgang staat nu in
+- Inloggen en voortgang over apparaten heen. Voortgang staat in
   `localStorage`, dus per browser.
+- Ongedaan maken, en bediening met het toetsenbord.
+- Het Kruisverhoor mist het blok voorwerp x plek: een aanwijzing als "degene
+  met de bankbiljetten was in het hotel" kun je nergens noteren.
 - Een dagelijkse puzzel.
-- De oplossing zit in de pagina: wie de ontwikkelaarsconsole opent, kan hem
+- De oplossing zit in de pagina: wie de ontwikkelaarsconsole opent kan hem
   lezen. Voor een wedstrijdvorm moet dat naar een server.
-- Het getallenraster heeft nog geen getuigenverklaringen in tekst; de
-  gegeven cellen staan direct in het raster.
+- Meer feestdaggenres dan kerst en halloween.
