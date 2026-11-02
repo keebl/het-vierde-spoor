@@ -33,6 +33,19 @@ const wrangler = (args) =>
 
 const stap = (tekst) => console.log(`\n→ ${tekst}`);
 
+console.log(`
+Let op, lees dit eerst.
+
+Een puzzel narekenen kost rekentijd: bij twaalf bij twaalf tot drie seconden.
+Het GRATIS plan van Cloudflare geeft een Worker 10 milliseconden per verzoek,
+en daar past dat niet in. Zonder het betaalde plan (vijf dollar per maand)
+krijgt elke aanvraag een foutmelding, en valt de site terug op de eigen
+teksten - dus kapot gaat er niets, maar werken doet het ook niet.
+
+Het betaalde plan zet je aan in het Cloudflare-dashboard onder Workers &
+Pages. Je kunt dit script ook gewoon nu draaien en het plan daarna omzetten.
+`);
+
 // ---------------------------------------------------------------- 1. login
 
 stap('Ben je ingelogd bij Cloudflare?');
@@ -94,14 +107,23 @@ console.log(`
 De Worker staat op ${adres}
 en src/ai/endpoint.js wijst er nu naar.
 
-Nog twee dingen, en dan werkt het:
+Nog drie dingen, en dan werkt het:
 
   1. Je API-key erbij zetten. Dit vraagt erom en je plakt hem in; hij komt
      niet in de repo en niet in beeld:
 
        cd worker && npx wrangler secret put ANTHROPIC_API_KEY
 
-  2. De site bijwerken:
+  2. Kijken of hij antwoordt. Dit hoort een herschreven tekst terug te geven;
+     krijg je een foutmelding over rekentijd, dan staat het betaalde plan nog
+     niet aan:
+
+       curl -s -X POST ${adres}/ \\
+         -H 'origin: https://keebl.github.io' \\
+         -H 'content-type: application/json' \\
+         -d '{"id":"dader.noir.grid.2.kade-1"}'
+
+  3. De site bijwerken:
 
        git add -A && git commit -m "AI-teksten op de live site" && git push
 

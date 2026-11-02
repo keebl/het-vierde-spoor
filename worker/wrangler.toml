@@ -3,6 +3,13 @@ name = "vierdespoor-ai"
 main = "index.js"
 compatibility_date = "2026-10-01"
 
+# Een puzzel narekenen kost rekentijd: bij twaalf bij twaalf tot drie
+# seconden. Tien seconden is ruim genoeg en voorkomt dat een ongelukkig geval
+# eindeloos doorrekent. Let op: het GRATIS plan geeft maar 10 milliseconden,
+# en daar past dit niet in - zie README.md onder "En live?".
+[limits]
+cpu_ms = 10000
+
 [vars]
 # Alleen verzoeken van deze adressen komen erdoor.
 TOEGESTANE_HERKOMST = "https://keebl.github.io"

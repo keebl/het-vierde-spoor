@@ -47,12 +47,14 @@ export default {
     if (request.method !== 'POST') return antwoord({ error: 'alleen POST' }, 405, herkomst, mag);
     if (!mag) return antwoord({ error: 'niet van deze site' }, 403, herkomst, false);
 
-    const lengte = Number(request.headers.get('content-length') ?? 0);
-    if (lengte > MAX_BODY) return antwoord({ error: 'verzoek te groot' }, 413, herkomst, mag);
+    // Niet op de content-length-kop vertrouwen: die mag ontbreken. We lezen
+    // de body als tekst en kijken zelf hoe lang hij is.
+    const ruw = await request.text();
+    if (ruw.length > MAX_BODY) return antwoord({ error: 'verzoek te groot' }, 413, herkomst, mag);
 
     let body;
     try {
-      body = await request.json();
+      body = JSON.parse(ruw);
     } catch {
       return antwoord({ error: 'geen geldige json' }, 400, herkomst, mag);
     }

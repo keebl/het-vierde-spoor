@@ -8,6 +8,7 @@ import { LEVELS, LEVEL_IDS } from '../engine/difficulty.js';
 import { randomSeed } from '../engine/rng.js';
 import { puzzleId } from '../puzzle.js';
 import { aiEnabled, setAiEnabled } from '../ai/flavour.js';
+import { aiEndpoint } from '../ai/endpoint.js';
 
 const keuze = {
   opdracht: 'dader',
@@ -85,17 +86,29 @@ export function renderGenerator(mount) {
   // De AI-laag herschrijft alleen de stijl van de teksten. Elke herschreven
   // aanwijzing wordt nagekeken op het behoud van alle eigennamen; faalt dat,
   // dan blijft de originele zin staan.
+  // Zonder eindpunt valt er niets te herschrijven: dan staat de site ergens
+  // waar geen server bij hoort. De knop daar laten staan alsof hij iets doet,
+  // is misleidend.
+  const kan = !!aiEndpoint();
   const aiBtn = el('button', {
     class: 'opt',
     type: 'button',
-    'aria-pressed': String(aiEnabled()),
+    'aria-pressed': String(kan && aiEnabled()),
+    disabled: kan ? null : 'disabled',
   }, [
-    el('span', { class: 'opt-name', text: aiEnabled() ? 'AI-teksten: aan' : 'AI-teksten: uit' }),
+    el('span', {
+      class: 'opt-name',
+      text: kan ? (aiEnabled() ? 'AI-teksten: aan' : 'AI-teksten: uit') : 'AI-teksten: niet beschikbaar',
+    }),
     el('small', {
-      text: 'Laat de verhaalteksten herschrijven. Vereist dat je de site via de meegeleverde server draait met een API-key in .env. De logica blijft altijd die van de generator.',
+      text: kan
+        ? 'Laat de verhaalteksten herschrijven door Claude. De logica blijft altijd die van de generator: een herschrijving die een naam, een ontkenning, een getal of een keuze aantast, wordt niet gebruikt.'
+        : 'De puzzels uit de bibliotheek hebben hun herschreven tekst al bij zich. Voor een zelfgemaakte puzzel is er een server met een API-key nodig, en die hoort niet bij deze site. Draai hem lokaal met npm start, dan kan het wel.',
     }),
   ]);
-  aiBtn.addEventListener('click', () => { setAiEnabled(!aiEnabled()); renderGenerator(mount); });
+  if (kan) {
+    aiBtn.addEventListener('click', () => { setAiEnabled(!aiEnabled()); renderGenerator(mount); });
+  }
   form.append(field('Verhaalteksten', [aiBtn]));
 
   const go = el('button', { class: 'btn btn-primary', type: 'button', text: 'Maak de puzzel' });
