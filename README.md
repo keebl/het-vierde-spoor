@@ -61,6 +61,18 @@ controleert per puzzel of de oplossing uniek is, of het antwoord op de vraag
 klopt, of elke aanwijzing een leesbare Nederlandse zin oplevert en of de
 moeilijkheid bij het gevraagde niveau past.
 
+De zwaarste van die keuringen is `tools/check-regels.mjs`: daar staan de
+spelregels van alle vier de speltypen als narekenbare eisen, en elke puzzel
+moet er zonder uitzondering aan voldoen. Hij keurt de hele bibliotheek plus
+een veegronde over elke combinatie van opdracht, wereld, speltype en niveau -
+dus ook de puzzels die nog niet bestaan maar straks gegenereerd worden. Zesenvijftig
+regels, van "precies één figuur per rij" tot "wie naast een meubelstuk staat,
+staat in dezelfde kamer" en "geen woord dat zichzelf herhaalt".
+
+```bash
+node tools/check-regels.mjs 4    # vier seeds per combinatie
+```
+
 Een losse puzzel bekijken als tekst:
 
 ```bash
@@ -85,6 +97,15 @@ Het hoofdspel. Je zet figuren op een plattegrond: één per rij, één per kolom
 nooit op een meubelstuk. Het slachtoffer is zelf een van die figuren, dus waar
 het lichaam ligt moet je ook uitpuzzelen; wie er als enige bij in de kamer
 blijkt te staan is de dader.
+
+**Naast betekent naast.** Pal erboven, eronder, links of rechts, én in
+dezelfde kamer: door een muur heen sta je niet naast iets, en schuin telt
+nooit. Dat geldt voor iemand naast een meubelstuk, voor twee mensen naast
+elkaar en voor het tellen van hoeveel mensen er naast iets stonden. Rij,
+kolom, noord, west, buitenmuur en hoek gaan juist over de plattegrond als
+geheel en lopen dus wél door muren heen. De regels staan voluit boven in
+`src/engine/rooms.js` en staan ook bij elke puzzel op het scherm
+(`src/content/spelregels.js`).
 
 De motor staat in `src/engine/rooms.js` (rooster, kamers, meubels, solver,
 propagator) en `src/engine/generate-rooms.js` (de puzzel zelf). Twee dingen
@@ -191,9 +212,18 @@ Alles wat je ziet is in code getekend: er zit geen enkel plaatjesbestand in
 het project. Dat houdt het scherp op elk scherm, laat het meebewegen met het
 thema, laadt direct, en er kleeft geen licentie aan.
 
-- `src/ui/icons.js` - een set van 36 lijniconen plus een woordenlijst die een
-  naam aan een icoon koppelt. "de wijnkelder" krijgt een fles, "de verzakte
-  trap" een trap. Staat er niets passends bij, dan valt hij terug op een deur.
+- `src/ui/icons.js` - ruim tweehonderd lijniconen, met in
+  `src/content/iconen.js` een met de hand gemaakte koppeling van elk woord uit
+  de content aan precies één icoon. Er wordt niets geraden en niets geleend:
+  `tools/check-iconen.mjs` faalt zodra er een woord bijkomt zonder eigen
+  icoon.
+- `src/ui/meubelkunst.js` - zeventig gevulde meubeltekeningen voor het
+  speurdokubord, elk meubelstuk met zijn eigen plaatje. Eerder leenden
+  meerdere namen hetzelfde plaatje, en dan ziet een aanrecht eruit als een
+  tafel. `tools/check-kamers.mjs` faalt nu op een geleende tekening, op een
+  gevuld pad dat geen vlak omsluit (dat tekent niets), op een meubelstuk dat
+  zweeft in plaats van op de vloer te staan, en op een cirkel waarvan uit de
+  code niet te zien is naar welke kant hij valt.
 - `src/ui/scenes.js` - een sfeertekening per wereld, opgebouwd uit drie
   dieptelagen die naar voren toe donkerder worden, wat atmosfeer (regen,
   sterren, mist) en precies een goudkleurig lichtpunt. Dat ene lichtje doet
@@ -237,3 +267,5 @@ tools/                  keuringsscripts
 - De oplossing zit in de pagina: wie de ontwikkelaarsconsole opent kan hem
   lezen. Voor een wedstrijdvorm moet dat naar een server.
 - Meer feestdaggenres dan kerst en halloween.
+- Een laadmelding terwijl een twaalf-bij-twaalf wordt gebouwd. Dat duurt
+  ongeveer een seconde, en in die seconde staat het scherm stil.
