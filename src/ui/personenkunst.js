@@ -22,20 +22,26 @@ const el = (naam, attrs = {}) => {
 
 // Kapsels. Elk is een vorm die over de bovenkant van het hoofd valt.
 function haar(g, stijl, kleur) {
+  const lijn = (node) => {
+    node.setAttribute('stroke', '#3f3228');
+    node.setAttribute('stroke-width', '1.4');
+    node.setAttribute('stroke-linejoin', 'round');
+    return node;
+  };
   if (stijl === 0) {
     // kort
-    g.append(el('path', { d: 'M14 22a10 10 0 0 1 20 0v-3a10 10 0 0 0-20 0Z', fill: kleur }));
+    g.append(lijn(el('path', { d: 'M14 22a10 10 0 0 1 20 0v-3a10 10 0 0 0-20 0Z', fill: kleur })));
   } else if (stijl === 1) {
     // lang
-    g.append(el('path', { d: 'M13 21a11 11 0 0 1 22 0v14h-4V22a7 7 0 0 0-14 0v13h-4Z', fill: kleur }));
+    g.append(lijn(el('path', { d: 'M13 21a11 11 0 0 1 22 0v14h-4V22a7 7 0 0 0-14 0v13h-4Z', fill: kleur })));
   } else if (stijl === 2) {
     // opgestoken
-    g.append(el('path', { d: 'M14 22a10 10 0 0 1 20 0v-3a10 10 0 0 0-20 0Z', fill: kleur }));
-    g.append(el('circle', { cx: 24, cy: 8, r: 5, fill: kleur }));
+    g.append(lijn(el('path', { d: 'M14 22a10 10 0 0 1 20 0v-3a10 10 0 0 0-20 0Z', fill: kleur })));
+    g.append(lijn(el('circle', { cx: 24, cy: 8, r: 5, fill: kleur })));
   } else {
     // pet
-    g.append(el('path', { d: 'M14 20a10 10 0 0 1 20 0Z', fill: kleur }));
-    g.append(el('path', { d: 'M11 20h26v3H11Z', fill: kleur }));
+    g.append(lijn(el('path', { d: 'M14 20a10 10 0 0 1 20 0Z', fill: kleur })));
+    g.append(lijn(el('path', { d: 'M11 20h26v3H11Z', fill: kleur })));
   }
 }
 
@@ -50,19 +56,34 @@ export function tekenPersoon(ouder, { index = 0, letter = '', x = 0, y = 0, groo
   const g = el('g', { class: 'persoonkunst' });
   g.setAttribute('transform', `translate(${x} ${y}) scale(${grootte / 48})`);
 
-  g.append(el('rect', { x: 2, y: 2, width: 44, height: 44, rx: 9, fill: kleding, class: 'portretvlak' }));
+  // Dezelfde contour als het meubilair: dat houdt het bord één tekening in
+  // plaats van losse plaatjes.
+  const lijn = (node) => {
+    node.setAttribute('stroke', '#3f3228');
+    node.setAttribute('stroke-width', '1.4');
+    node.setAttribute('stroke-linejoin', 'round');
+    return node;
+  };
+
+  g.append(lijn(el('rect', { x: 2, y: 2, width: 44, height: 44, rx: 9, fill: kleding, class: 'portretvlak' })));
   // schouders
-  g.append(el('path', { d: 'M8 46a16 16 0 0 1 32 0Z', fill: kledingDonker }));
+  g.append(lijn(el('path', { d: 'M8 46a16 16 0 0 1 32 0Z', fill: kledingDonker })));
   // hals en hoofd
   g.append(el('rect', { x: 21, y: 28, width: 6, height: 6, fill: huid }));
-  g.append(el('circle', { cx: 24, cy: 22, r: 10, fill: huid }));
+  g.append(lijn(el('circle', { cx: 24, cy: 22, r: 10, fill: huid })));
   haar(g, kapsel, haarkleur);
-  // ogen
-  g.append(el('circle', { cx: 20.5, cy: 23, r: 1.3, fill: '#2b241c' }));
-  g.append(el('circle', { cx: 27.5, cy: 23, r: 1.3, fill: '#2b241c' }));
+  // ogen, met wat meer leven erin: een wit vlekje maakt een oog een oog
+  g.append(el('circle', { cx: 20.5, cy: 23, r: 1.6, fill: '#2b241c' }));
+  g.append(el('circle', { cx: 27.5, cy: 23, r: 1.6, fill: '#2b241c' }));
+  g.append(el('circle', { cx: 21, cy: 22.5, r: 0.5, fill: '#fffdf7' }));
+  g.append(el('circle', { cx: 28, cy: 22.5, r: 0.5, fill: '#fffdf7' }));
+  // een mond, en blosjes
+  g.append(el('path', { d: 'M21.5 27q2.5 2 5 0', fill: 'none', stroke: '#8a5a44', 'stroke-width': 1.2, 'stroke-linecap': 'round' }));
+  g.append(el('circle', { cx: 17.5, cy: 25.5, r: 2, fill: '#d98f7a', opacity: 0.45 }));
+  g.append(el('circle', { cx: 30.5, cy: 25.5, r: 2, fill: '#d98f7a', opacity: 0.45 }));
 
   if (metLetter && letter) {
-    g.append(el('circle', { cx: 39, cy: 39, r: 8, fill: '#fffdf7', class: 'letterbadge' }));
+    g.append(lijn(el('circle', { cx: 39, cy: 39, r: 8, fill: '#fffdf7', class: 'letterbadge' })));
     const t = el('text', { x: 39, y: 42.5, 'text-anchor': 'middle', class: 'portretletter' });
     t.textContent = letter;
     g.append(t);

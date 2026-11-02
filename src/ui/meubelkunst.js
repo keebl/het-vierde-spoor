@@ -728,7 +728,13 @@ export const MEUBELKUNST = {
 const NS = 'http://www.w3.org/2000/svg';
 
 // Zet een meubelstuk neer, passend in een vierkant van `grootte` bij `grootte`.
-export function tekenMeubel(ouder, naam, { x = 0, y = 0, grootte = 48 } = {}) {
+// De omlijning. Dit is wat een tekening een tekening maakt in plaats van een
+// pictogram: elk vlak krijgt dezelfde donkere contour, zoals in een
+// stripverhaal. Zonder die lijn vallen vlakken van dezelfde kleurfamilie in
+// elkaar en ziet een kamer er vlak en koud uit.
+const CONTOUR = '#3f3228';
+
+export function tekenMeubel(ouder, naam, { x = 0, y = 0, grootte = 48, contour = true } = {}) {
   const delen = MEUBELKUNST[naam];
   if (!delen) return null;
   const g = document.createElementNS(NS, 'g');
@@ -741,11 +747,16 @@ export function tekenMeubel(ouder, naam, { x = 0, y = 0, grootte = 48 } = {}) {
       // Een open pad omsluit geen vlak: met een vulling zie je er niets van.
       pad.setAttribute('fill', 'none');
       pad.setAttribute('stroke', kleur);
-      pad.setAttribute('stroke-width', '2');
+      pad.setAttribute('stroke-width', '2.4');
       pad.setAttribute('stroke-linecap', 'round');
       pad.setAttribute('class', 'meubellijn');
     } else {
       pad.setAttribute('fill', kleur);
+      if (contour) {
+        pad.setAttribute('stroke', CONTOUR);
+        pad.setAttribute('stroke-width', '1.4');
+        pad.setAttribute('stroke-linejoin', 'round');
+      }
     }
     g.append(pad);
   }

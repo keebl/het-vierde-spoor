@@ -90,18 +90,23 @@ export const SOORT_VAN = {
 };
 
 // De vloer per soort. dessin verwijst naar een patroon in board-rooms.js.
+//
+// Deze kleuren zijn met opzet verzadigd en warm. De eerste versie was een
+// rij pastels, en dan ziet een plattegrond eruit als een bouwtekening: kaal
+// en kil. Een keuken hoort warm te zijn, een grafkelder koud, een bos groen.
+// Dat verschil tussen de kamers is wat een bord sfeer geeft.
 export const VLOER_VAN = {
-  keuken:       { vul: '#cfd8d6', lijn: '#b0bdba', dessin: 'tegels' },
-  zaal:         { vul: '#d8c29b', lijn: '#bfa478', dessin: 'planken' },
-  bibliotheek:  { vul: '#c9ab7b', lijn: '#ad8e5c', dessin: 'planken-dwars' },
-  kelder:       { vul: '#c0b7a6', lijn: '#a69b88', dessin: 'ruiten' },
-  slaapkamer:   { vul: '#ddc9a6', lijn: '#c4ae86', dessin: 'planken' },
-  gang:         { vul: '#d2a894', lijn: '#b98a74', dessin: 'planken-dwars' },
-  werkplaats:   { vul: '#c3c7cc', lijn: '#a7acb3', dessin: 'tegels' },
-  buiten:       { vul: '#bed0a8', lijn: '#a1b88a', dessin: 'ruiten' },
-  grafkelder:   { vul: '#b9b3a8', lijn: '#9d968a', dessin: 'tegels' },
-  laboratorium: { vul: '#c3d6c0', lijn: '#a5bfa2', dessin: 'tegels' },
-  sterrenwacht: { vul: '#c9b48f', lijn: '#ad9870', dessin: 'ruiten' },
+  keuken:       { vul: '#d9c091', lijn: '#b39a6a', dessin: 'tegels' },
+  zaal:         { vul: '#cb9f62', lijn: '#a67c41', dessin: 'planken' },
+  bibliotheek:  { vul: '#b5884f', lijn: '#8f6835', dessin: 'planken-dwars' },
+  kelder:       { vul: '#a89878', lijn: '#86795c', dessin: 'steen' },
+  slaapkamer:   { vul: '#c99183', lijn: '#a26f62', dessin: 'tapijt' },
+  gang:         { vul: '#c6b291', lijn: '#9c8a70', dessin: 'ruiten' },
+  werkplaats:   { vul: '#a2abb4', lijn: '#808a94', dessin: 'beton' },
+  buiten:       { vul: '#9bc174', lijn: '#79a052', dessin: 'gras' },
+  grafkelder:   { vul: '#95978b', lijn: '#74766a', dessin: 'steen' },
+  laboratorium: { vul: '#9cc4b8', lijn: '#77a295', dessin: 'tegels' },
+  sterrenwacht: { vul: '#a8865c', lijn: '#836742', dessin: 'planken' },
 };
 
 // Wat staat er in zo'n ruimte? Naam plus de tekening die erbij hoort.

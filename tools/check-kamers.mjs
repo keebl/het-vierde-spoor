@@ -10,6 +10,8 @@
 import { WORLDS } from '../src/content/worlds.js';
 import { SOORT_VAN, VLOER_VAN, MEUBELS_VAN } from '../src/content/kamersoorten.js';
 import { MEUBELKUNST } from '../src/ui/meubelkunst.js';
+import { DESSINS } from '../src/ui/board-rooms.js';
+import { motievenVoor } from '../src/ui/aankleding.js';
 
 const fouten = [];
 const meld = (soort, wat) => fouten.push(`${soort.padEnd(20)}${wat}`);
@@ -22,6 +24,11 @@ for (const p of Object.keys(SOORT_VAN)) if (!plekken.has(p)) meld('OVERBODIG', p
 const soorten = new Set(Object.values(SOORT_VAN));
 for (const s of soorten) {
   if (!VLOER_VAN[s]) meld('GEEN VLOER', s);
+  const dessin = VLOER_VAN[s]?.dessin;
+  if (dessin && !DESSINS.includes(dessin)) meld('DESSIN BESTAAT NIET', `${s} -> ${dessin}`);
+  // Een ruimte zonder aankleding ziet er kaal uit; dat is precies de klacht
+  // waar de motieven voor zijn.
+  if (!motievenVoor(s).length) meld('GEEN AANKLEDING', s);
   if (!MEUBELS_VAN[s]?.length) meld('GEEN MEUBELS', s);
   if (MEUBELS_VAN[s] && MEUBELS_VAN[s].length < 4) meld('TE WEINIG MEUBELS', s);
 }
