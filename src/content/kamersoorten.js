@@ -142,6 +142,8 @@ export const MEUBELS_VAN = {
   buiten: [
     ['de houtstapel', 'houtstapel'], ['de drinkbak', 'drinkbak'], ['de vuurplaats', 'vuur'],
     ['de omgevallen stam', 'stam'], ['de waterput', 'put'], ['de mosbank', 'mosbank'],
+    ['de regenton', 'regenton'], ['de kruiwagen', 'kruiwagen'],
+    ['de boomstronk', 'boomstronk'], ['de vogelverschrikker', 'vogelverschrikker'],
   ],
   grafkelder: [
     ['de stenen sarcofaag', 'sarcofaag'], ['de knekelnis', 'knekelnis'], ['de zuil', 'zuil'],
@@ -160,6 +162,30 @@ export const MEUBELS_VAN = {
 };
 
 export const soortVan = (plek) => SOORT_VAN[plek] ?? 'zaal';
+
+// Raakt het meubilair van een soort ruimte op, dan wijken we uit naar een
+// soort die ernaast ligt - niet naar het eerste het beste. Anders staat er
+// een koelkast in het bos, en dat is precies wat er gebeurde.
+export const VERWANTE_SOORTEN = {
+  keuken: ['kelder', 'zaal'],
+  zaal: ['bibliotheek', 'gang'],
+  bibliotheek: ['zaal', 'sterrenwacht'],
+  kelder: ['werkplaats', 'keuken'],
+  slaapkamer: ['zaal', 'gang'],
+  gang: ['zaal', 'slaapkamer'],
+  werkplaats: ['kelder', 'buiten'],
+  buiten: ['werkplaats', 'kelder'],
+  grafkelder: ['kelder', 'buiten'],
+  laboratorium: ['werkplaats', 'bibliotheek'],
+  sterrenwacht: ['bibliotheek', 'zaal'],
+};
+
+// De namen die in deze soort ruimte mogen staan, in volgorde van voorkeur.
+export function meubelsVoor(soort) {
+  const eigen = MEUBELS_VAN[soort] ?? MEUBELS_VAN.zaal;
+  const verwant = (VERWANTE_SOORTEN[soort] ?? []).flatMap((s) => MEUBELS_VAN[s] ?? []);
+  return [eigen, verwant];
+}
 
 // Je staat niet IN een bruggetje en niet IN een zolder. De meeste plekken
 // krijgen "in"; hier staan de uitzonderingen. Zonder dit leest een aanwijzing

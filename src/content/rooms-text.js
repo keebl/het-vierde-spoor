@@ -15,6 +15,10 @@ export function zinVoor(c, w) {
   // "dezelfde kamer", of wat de wereld een ruimte noemt: in het woud is het
   // geen kamer maar een plek, op het station een module.
   const ZELFDE = w.zelfde ?? 'in dezelfde kamer';
+  // De buitenrand van het bord heet niet overal hetzelfde: een bos heeft
+  // geen buitenmuur.
+  const RAND = w.randZin ?? 'tegen de buitenmuur';
+  const HOEK = w.hoekZin ?? 'in een hoek van het gebouw';
 
   switch (c.soort) {
     case 'kamer':
@@ -34,13 +38,9 @@ export function zinVoor(c, w) {
       return hoofdletter(`er stonden ${telwoord(c.aantal)} mensen naast ${M}.`);
     }
     case 'rand':
-      return hoofdletter(c.ja
-        ? `${P} stond tegen de buitenmuur.`
-        : `${P} stond niet tegen de buitenmuur.`);
+      return hoofdletter(c.ja ? `${P} stond ${RAND}.` : `${P} stond niet ${RAND}.`);
     case 'hoek':
-      return hoofdletter(c.ja
-        ? `${P} stond in een hoek van het gebouw.`
-        : `${P} stond niet in een hoek van het gebouw.`);
+      return hoofdletter(c.ja ? `${P} stond ${HOEK}.` : `${P} stond niet ${HOEK}.`);
     case 'opKolom':
       return hoofdletter(`${P} stond in dezelfde kolom als ${M}.`);
     case 'naast':

@@ -25,6 +25,7 @@ import {
   telPlaatsingen, evalAanwijzing, graad, idx, rijVan, kolVan, kamerBuren, naastMeubel,
 } from '../src/engine/rooms.js';
 import { levelParams, kamerParams } from '../src/engine/difficulty.js';
+import { soortVan, meubelsVoor } from '../src/content/kamersoorten.js';
 
 const seedsPerCombinatie = Number(process.argv[2] ?? 2);
 
@@ -215,6 +216,19 @@ function keurKamer(p, waar) {
   eis('alle meubelstukken hebben een eigen naam', uniek(meubels), waar, meubels.join(', '));
   eis('elk meubelstuk op het bord heeft een naam en een tekening',
     p.meubelOp.every((m) => m == null || (p.meubelNamen[m] && p.meubelIconen[m])), waar);
+
+  // Regel 9b: het meubilair past bij de ruimte. Een koelkast hoort niet in
+  // een bos, en dat is precies wat er gebeurde toen het meubilair van een
+  // soort ruimte opraakte en de code het eerste het beste pakte.
+  for (let cel = 0; cel < n * n; cel++) {
+    const m = p.meubelOp[cel];
+    if (m == null) continue;
+    const soort = soortVan(p.kamerNamen[kamerVan[cel]]);
+    const mag = meubelsVoor(soort).flat().map(([naam]) => naam);
+    eis('het meubilair past bij de soort ruimte',
+      mag.includes(p.meubelNamen[m]), waar,
+      `${p.meubelNamen[m]} in ${p.kamerNamen[kamerVan[cel]]} (${soort})`);
+  }
 
   // Regel 10: de belofte van de moeilijkheidsgraad.
   const params = kamerParams(p.niveau);

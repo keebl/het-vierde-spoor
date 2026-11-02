@@ -42,7 +42,12 @@ export function renderUitleg(mount) {
           el('b', { text: 'Wie als enige bij het slachtoffer in de kamer blijkt te staan, is de dader. ' }),
           el('span', { text: 'Dat weet je pas als alles op zijn plek staat, en daarom moet je eerst de hele plattegrond rondkrijgen.' }),
         ]),
+        el('p', {}, [
+          el('b', { text: 'Naast is naast. ' }),
+          el('span', { text: 'Staat er dat iemand naast de werkbank stond, dan bedoelen we pal ernaast — erboven, eronder, links of rechts — én in dezelfde kamer. Door een muur heen sta je niet naast iets, en schuin telt nooit. Zinnen over rijen, kolommen, het noorden en de buitenmuur gaan juist wél over de hele plattegrond; daarvoor staat er een kompas naast het bord.' }),
+        ]),
         el('p', { text: 'Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan: de rest van die rij en kolom. Weet je het nog niet zeker, zet dan met Schetsen de beginletters van de kandidaten in een vakje. Met Uitsluiten zet je je eigen kruisjes.' }),
+        el('p', { class: 'legend', text: 'Bij elke puzzel staan de regels van dat speltype nog eens op een rij, onder de vraag, zodat je ze nooit hoeft te zoeken.' }),
       ]),
     ], 'Het hoofdspel: figuren op een plattegrond, een per rij en een per kolom.')
   );

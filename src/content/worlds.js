@@ -36,6 +36,8 @@ const paden = {
 // sameRoom - hoe je zegt dat twee dingen bij elkaar zijn, mét voorzetsel:
 //               "in dezelfde kamer als", maar "op dezelfde plek als" in het
 //               woud. Zonder dat werd het "in dezelfde plek".
+// randZin / hoekZin - de buitenrand van het speurdokubord in woorden. Een
+//               bos heeft geen buitenmuur, een grafkelder geen gevel.
 // tijdVoorzetsel - hoe een tijdstip in een zin staat: "om 22:00", maar
 //               "tijdens de tweede wacht" en "in het derde kwartier".
 // plekWoord - hoe je in een zin naar een ruimte verwijst: "de kamer van
@@ -58,6 +60,8 @@ export const WORLDS = [
     timeUnit: { one: 'uur', many: 'uur' },
     tijdVoorzetsel: 'om',
     sameRoom: 'in dezelfde ruimte als',
+    randZin: 'tegen de buitenmuur',
+    hoekZin: 'in een hoek van het gebouw',
     roomWord: 'gelegenheid',
     plekWoord: 'plek',
     map: deuren,
@@ -82,6 +86,8 @@ export const WORLDS = [
     timeUnit: { one: 'uur', many: 'uur' },
     tijdVoorzetsel: 'om',
     sameRoom: 'in dezelfde kamer als',
+    randZin: 'tegen de buitenmuur',
+    hoekZin: 'in een hoek van het huis',
     roomWord: 'kamer',
     plekWoord: 'kamer',
     map: deuren,
@@ -106,6 +112,8 @@ export const WORLDS = [
     timeUnit: { one: 'wacht', many: 'wachten' },
     tijdVoorzetsel: 'tijdens',
     sameRoom: 'in dezelfde module als',
+    randZin: 'tegen de buitenwand',
+    hoekZin: 'in een hoek van het station',
     roomWord: 'module',
     plekWoord: 'module',
     map: {
@@ -139,7 +147,9 @@ export const WORLDS = [
     blurb: 'Het bos verplaatst zijn paden als niemand kijkt. De bron ook, zeggen ze.',
     timeUnit: { one: 'klokslag', many: 'klokslagen' },
     tijdVoorzetsel: 'bij',
-    sameRoom: 'op dezelfde plek als',
+    sameRoom: 'in hetzelfde stuk bos als',
+    randZin: 'aan de rand van het woud',
+    hoekZin: 'in een uiterste hoek van het terrein',
     roomWord: 'open plek',
     plekWoord: 'plek',
     map: paden,
@@ -164,6 +174,8 @@ export const WORLDS = [
     timeUnit: { one: 'kwartier', many: 'kwartier' },
     tijdVoorzetsel: 'in',
     sameRoom: 'in hetzelfde gewelf als',
+    randZin: 'tegen de rotswand',
+    hoekZin: 'in een uiterste hoek van de kelders',
     roomWord: 'gewelf',
     plekWoord: 'ruimte',
     map: {
@@ -198,6 +210,8 @@ export const WORLDS = [
     timeUnit: { one: 'lesuur', many: 'lesuren' },
     tijdVoorzetsel: 'in',
     sameRoom: 'in dezelfde zaal als',
+    randZin: 'tegen de buitenmuur',
+    hoekZin: 'in een hoek van de school',
     roomWord: 'zaal',
     plekWoord: 'zaal',
     map: deuren,
@@ -222,6 +236,8 @@ export const WORLDS = [
     timeUnit: { one: 'uur', many: 'uur' },
     tijdVoorzetsel: 'om',
     sameRoom: 'in dezelfde kamer als',
+    randZin: 'tegen de buitenmuur',
+    hoekZin: 'in een hoek van het huis',
     roomWord: 'kamer',
     plekWoord: 'kamer',
     map: deuren,
@@ -246,6 +262,8 @@ export const WORLDS = [
     timeUnit: { one: 'uur', many: 'uur' },
     tijdVoorzetsel: 'om',
     sameRoom: 'in dezelfde kamer als',
+    randZin: 'tegen de buitenmuur',
+    hoekZin: 'in een hoek van het huis',
     roomWord: 'kamer',
     plekWoord: 'kamer',
     map: deuren,

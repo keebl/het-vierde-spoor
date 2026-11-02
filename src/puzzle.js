@@ -11,7 +11,7 @@ import { generateLatin, latinDepth } from './engine/latin.js';
 import { genereerKamerpuzzel } from './engine/generate-rooms.js';
 import { kamerParams } from './engine/difficulty.js';
 import { zinVoor, namenIn } from './content/rooms-text.js';
-import { soortVan, MEUBELS_VAN } from './content/kamersoorten.js';
+import { soortVan, meubelsVoor } from './content/kamersoorten.js';
 import { makeRng } from './engine/rng.js';
 
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
@@ -217,15 +217,14 @@ function buildKamerPuzzle({ world, settings }) {
     const mi = gen.rooster.meubelOp[cel];
     if (mi == null) continue;
     const soort = soortVan(kamerNamen[gen.rooster.kamerVan[cel]]);
-    if (!voorraad.has(soort)) voorraad.set(soort, rng.shuffle(MEUBELS_VAN[soort] ?? MEUBELS_VAN.zaal));
-    let keuze = voorraad.get(soort).find(([naam]) => !gebruikt.has(naam));
-    if (!keuze) {
-      // Deze kamersoort is op: wijk uit naar wat er nog over is.
-      for (const lijst of Object.values(MEUBELS_VAN)) {
-        keuze = lijst.find(([naam]) => !gebruikt.has(naam));
-        if (keuze) break;
-      }
+    if (!voorraad.has(soort)) {
+      const [eigen, verwant] = meubelsVoor(soort);
+      // Eerst alles wat in deze soort ruimte hoort, daarna pas wat in een
+      // verwante ruimte past. Een keuken levert nooit meubilair voor een bos.
+      voorraad.set(soort, [...rng.shuffle(eigen), ...rng.shuffle(verwant)]);
     }
+    const keuze = voorraad.get(soort).find(([naam]) => !gebruikt.has(naam));
+    if (!keuze) throw new Error(`geen meubilair meer voor ${soort}`);
     gebruikt.add(keuze[0]);
     meubelNamen[mi] = keuze[0];
     meubelIconen[mi] = keuze[1];
@@ -234,7 +233,15 @@ function buildKamerPuzzle({ world, settings }) {
   // kamer", "op dezelfde plek", "in hetzelfde gewelf".
   const zelfde = (world.sameRoom ?? 'in dezelfde kamer als').replace(/ als$/, '');
 
-  const woorden = { personen: namen, kamerNamen, meubelNamen, slachtofferNaam, zelfde };
+  const woorden = {
+    personen: namen,
+    kamerNamen,
+    meubelNamen,
+    slachtofferNaam,
+    zelfde,
+    randZin: world.randZin,
+    hoekZin: world.hoekZin,
+  };
 
   const clues = gen.aanwijzingen.map((c, i) => ({
     n: i + 1,
