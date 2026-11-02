@@ -63,7 +63,11 @@ moeilijkheid bij het gevraagde niveau past.
 
 De zwaarste van die keuringen is `tools/check-regels.mjs`: daar staan de
 spelregels van alle vier de speltypen als narekenbare eisen, en elke puzzel
-moet er zonder uitzondering aan voldoen. Hij keurt de hele bibliotheek plus
+moet er zonder uitzondering aan voldoen. Ook de vooraf herschreven teksten
+gaan erdoorheen: elke herschreven zin moet zijn namen, ontkenning, getallen
+en keuze intact houden, de taalregels halen, en het gratis feit uit de
+inleiding laten staan. Verandert de generator, dan kloppen die teksten niet
+meer bij hun puzzel - en dan valt de keuring erover. Hij keurt de hele bibliotheek plus
 een veegronde over elke combinatie van opdracht, wereld, speltype en niveau -
 dus ook de puzzels die nog niet bestaan maar straks gegenereerd worden. Zesenvijftig
 regels, van "precies één figuur per rij" tot "wie naast een meubelstuk staat,
@@ -166,28 +170,77 @@ Let op: verandert de generator, dan geven oude seeds andere puzzels. Zolang
 de catalogus alleen seeds bewaart, is dat geen probleem voor de
 correctheid — `npm run check:catalog` bouwt en keurt ze allemaal opnieuw.
 
-## De AI-laag (optioneel, standaard uit)
+## Online
 
-Zet je hem aan, dan laat de site de verhaalteksten herschrijven door Claude.
-De **logica komt nooit van de AI**: die blijft van de generator. Elke
-herschreven aanwijzing wordt nagekeken op het woordelijk behoud van alle
-eigennamen; faalt dat, dan blijft de originele zin staan. Een slechte
-herschrijving kan een puzzel dus niet onoplosbaar of dubbelzinnig maken.
+De site staat op **https://keebl.github.io/het-vierde-spoor/**, via GitHub
+Pages vanaf de `main`-branch. Elke push werkt hem binnen een minuut bij; er
+is geen bouwstap, want de site is gewone HTML, CSS en ES-modules.
 
-Aanzetten:
+Dat betekent ook: op de live site draait geen server. Alles wat je daar ziet
+wordt in de browser van de bezoeker uitgerekend - de puzzel, de plattegrond,
+de tekeningen. Dat is precies waarom er geen API-key online hoeft te staan.
+
+## De AI-laag
+
+Claude mag de verhaalteksten herschrijven. De **logica komt nooit van de AI**:
+die blijft van de generator. Elke herschreven aanwijzing wordt nagekeken op
+het woordelijk behoud van alle eigennamen, de ontkenning, de getallen en het
+of-of; faalt een van die vier, dan blijft de originele zin staan. Een slechte
+herschrijving kan een puzzel dus niet onoplosbaar of dubbelzinnig maken. Dat
+vangnet staat in `src/ai/opdracht.js` en wordt aan beide kanten toegepast.
+
+### De bibliotheek: vooraf herschreven
+
+De catalogus ligt vast - dezelfde instellingen geven altijd dezelfde puzzel -
+dus die teksten worden één keer herschreven en in de repo gezet:
+
+```bash
+node tools/ai-vooraf.mjs
+```
+
+Het resultaat staat in `src/content/ai-teksten.json` en gaat gewoon mee in
+git. Voordelen, op volgorde van belang:
+
+1. **Er staat niets online dat te kapen valt.** Geen API, geen sleutel, geen
+   eindpunt. Dat is de stevigste vorm van "geen misbruik mogelijk" die er is.
+2. Je kunt de teksten nalezen vóór ze online staan: ze staan in een diff.
+3. Het kost één keer wat, niet per bezoeker.
+
+### Zelf gemaakte puzzels: alleen lokaal
+
+Voor een puzzel die iemand ter plekke genereert ligt er niets klaar, en dan
+is er wél een server nodig. Lokaal is dat `server/serve.mjs`: die houdt je
+key bij zich en geeft `/api/flavour`.
 
 ```bash
 cp .env.example .env    # vul je ANTHROPIC_API_KEY in
 npm start
 ```
 
-Daarna op "Zelf maken" de knop *AI-teksten* omzetten. Zonder key werkt alles
-gewoon door met de eigen templateteksten.
+Daarna op "Zelf maken" de knop *AI-teksten* omzetten.
 
-Die knop wordt per browser onthouden (`localStorage`), dus in een andere
-browser of op een ander apparaat zet je hem opnieuw om. Staat hij aan, dan
-gaat er bij het openen van elke puzzel een verzoek naar de API; de puzzel is
-intussen al speelbaar met de eigen teksten en wordt daarna ververst.
+Dat eindpunt is met opzet bot: het accepteert **alleen een puzzel-id**, zoals
+`dader.noir.grid.3.kade-1`. Geen teksten, geen prompt. De server rekent de
+puzzel zelf uit en bouwt de vraag aan het model daaruit op. Er is dus geen
+weg waarlangs iemand er zijn eigen tekst doorheen praat - het ergste wat
+iemand kan doen is een puzzeltekst laten herschrijven die wij toch al hadden
+kunnen maken.
+
+### En live?
+
+In `worker/` staat een Cloudflare Worker die hetzelfde doet voor de live
+site: alleen een puzzel-id, zelf narekenen, antwoord door het vangnet, per
+puzzel bewaren zodat hij nooit twee keer kost, een Origin-controle en een
+teller per IP per uur plus een dagtotaal.
+
+Hij staat er, maar hij draait nog niet, en daar is een harde reden voor: het
+gratis plan van Cloudflare geeft een Worker **10 milliseconden rekentijd per
+verzoek**, en een puzzel narekenen kost tot drie seconden. Dat past niet.
+Het kan wel op het betaalde plan (vijf dollar per maand), of bij een host
+waar die grens hoger ligt.
+
+Wil je dat: `node tools/ai-online.mjs` doet de uitrol en vertelt je welke
+twee commando's je daarna zelf nog draait (je key erin zetten, en pushen).
 
 ## Over de opmaak
 

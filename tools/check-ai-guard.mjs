@@ -15,6 +15,10 @@ const gevallen = [
   ['voorwerp ingekort', 'Mevrouw Dufour had de aansteker bij zich.', false],
   ['leeg antwoord', '', false],
   ['geen string', null, false],
+  // Een naam vooraan in de zin krijgt een hoofdletter. Dat is dezelfde naam,
+  // en het vangnet hoort er niet over te struikelen - het deed dat wel, en
+  // keurde daardoor acht procent van alle goede herschrijvingen af.
+  ['naam met een hoofdletter vooraan', 'Een verzilverde aansteker zat in de zak van Mevrouw Dufour.', true],
   ['ontkenning toegevoegd', 'Mevrouw Dufour had een verzilverde aansteker niet bij zich.', false],
 ];
 

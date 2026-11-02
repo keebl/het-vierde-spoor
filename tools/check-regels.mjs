@@ -17,7 +17,7 @@
 import { CATALOG, catalogSettings } from '../src/content/catalog.js';
 import { WORLDS } from '../src/content/worlds.js';
 import { ASSIGNMENTS, MECHANICS } from '../src/content/assignments.js';
-import { buildPuzzle, parsePuzzleId } from '../src/puzzle.js';
+import { buildPuzzle, parsePuzzleId, puzzleId } from '../src/puzzle.js';
 import { countSolutions, makeCtx } from '../src/engine/assign.js';
 import { evalClue, catsTouched } from '../src/engine/clues.js';
 import { blokkenVan } from '../src/ui/blokken.js';
@@ -26,6 +26,8 @@ import {
   telPlaatsingen, evalAanwijzing, graad, idx, rijVan, kolVan, kamerBuren, naastMeubel,
 } from '../src/engine/rooms.js';
 import { levelParams, kamerParams } from '../src/engine/difficulty.js';
+import { keepsNames } from '../src/ai/opdracht.js';
+import { readFileSync } from 'node:fs';
 import { soortVan, meubelsVoor } from '../src/content/kamersoorten.js';
 
 const seedsPerCombinatie = Number(process.argv[2] ?? 2);
@@ -43,6 +45,22 @@ function eis(naam, goed, waar, detail = '') {
 
 // ---------------------------------------------------------------- algemeen
 
+// De taalregels voor een zin die een puzzelaar te zien krijgt. Ze gelden
+// voor onze eigen zinnen en net zo goed voor een herschrijving die we
+// publiceren.
+function keurZin(t, waar, namen = []) {
+  eis('geen gat in een zin', !/undefined|null|NaN|\[object/.test(t), waar, t);
+  eis('elke zin begint met een hoofdletter', /^[A-ZÀ-Þ]/.test(t), waar, t);
+  eis('elke zin eindigt met een punt', /[.!?]$/.test(t), waar, t);
+  eis('geen dubbele spaties of dubbele punten', !/ {2}|\.\./.test(t), waar, t);
+  eis('geen woord dat zichzelf herhaalt', !/\b([a-zà-ÿ]+) \1\b/i.test(t), waar, t);
+  eis('getallen staan uitgeschreven',
+    !/(^|[^\d:])\d+(?![\d:])/.test(t.replace(/\d{1,2}:\d{2}/g, '')), waar, t);
+  const klein = t.toLowerCase();
+  eis('elke naam in een aanwijzing staat ook in de zin',
+    namen.every((x) => klein.includes(x.toLowerCase())), waar, t);
+}
+
 function keurAlgemeen(p, waar) {
   eis('elke puzzel heeft een vraag met een antwoord',
     !!p.question?.text && !!p.question?.answer, waar);
@@ -52,23 +70,12 @@ function keurAlgemeen(p, waar) {
   const gezien = new Set();
   for (const c of p.clues) {
     const t = c.text ?? '';
-    eis('geen gat in een zin', !/undefined|null|NaN|\[object/.test(t), waar, t);
-    eis('elke zin begint met een hoofdletter', /^[A-ZÀ-Þ]/.test(t), waar, t);
-    eis('elke zin eindigt met een punt', /[.!?]$/.test(t), waar, t);
-    eis('geen dubbele spaties of dubbele punten', !/ {2}|\.\./.test(t), waar, t);
     // "waar de envelop ligt ligt precies twee deuren van" - een zin waarin
     // hetzelfde woord twee keer achter elkaar staat, is bijna altijd een
-    // sjabloon dat tegen een ander sjabloon aan botst.
-    eis('geen woord dat zichzelf herhaalt',
-      !/\b([a-zà-ÿ]+) \1\b/i.test(t), waar, t);
-    // Getallen in een zin schrijf je uit; cijfers horen alleen bij een tijd.
-    eis('getallen staan uitgeschreven',
-      !/(^|[^\d:])\d+(?![\d:])/.test(t.replace(/\d{1,2}:\d{2}/g, '')), waar, t);
-    // Een naam vooraan in de zin krijgt een hoofdletter, dus vergelijken we
-    // zonder op hoofdletters te letten.
-    const klein = t.toLowerCase();
-    eis('elke naam in een aanwijzing staat ook in de zin',
-      (c.names ?? []).every((x) => klein.includes(x.toLowerCase())), waar, t);
+    // sjabloon dat tegen een ander sjabloon aan botst. Een naam vooraan in
+    // de zin krijgt een hoofdletter, dus namen vergelijken we zonder op
+    // hoofdletters te letten.
+    keurZin(t, waar, c.names ?? []);
     eis('geen twee aanwijzingen met dezelfde zin', !gezien.has(t), waar, t);
     gezien.add(t);
   }
@@ -398,7 +405,70 @@ function keur(settings, waar) {
     && nogmaals.question.answer === p.question.answer, waar);
 }
 
-console.log('De werelden');
+// ------------------------------------- de vooraf herschreven teksten
+
+// Wat op de live site staat, is net zo goed inhoud als onze eigen zinnen.
+// Dus geldt hetzelfde: de logica mag er niet door veranderen, en de taal
+// moet kloppen.
+console.log('De vooraf herschreven teksten');
+let aiTeksten = {};
+try {
+  aiTeksten = JSON.parse(readFileSync(new URL('../src/content/ai-teksten.json', import.meta.url), 'utf8'));
+} catch {
+  console.log('  (nog geen ai-teksten.json; overgeslagen)');
+}
+const catalogusIds = new Map(CATALOG.map((e) => [puzzleId(catalogSettings(e)), e]));
+let herschreven = 0;
+for (const [id, tekst] of Object.entries(aiTeksten)) {
+  const entry = catalogusIds.get(id);
+  const waar = `  ${entry?.titel ?? id}`;
+  if (!eis('een herschreven tekst hoort bij een puzzel uit de bibliotheek', !!entry, waar, id)) continue;
+
+  const p = buildPuzzle(catalogSettings(entry));
+  herschreven++;
+  keurZin(tekst.intro ?? '', waar);
+  eis('de herschreven inleiding verklapt het antwoord niet',
+    !(tekst.intro ?? '').includes(p.question.answer), waar);
+  // De inleiding van een moordzaak geeft een feit weg dat je nodig hebt:
+  // waar het gebeurde en wat er lag. Laat de herschrijving dat vallen, dan
+  // is de puzzel niet meer op te lossen. Dit is de enige plek waar de AI de
+  // logica zou kunnen raken, dus hier wordt hij nagerekend.
+  const klein = (tekst.intro ?? '').toLowerCase();
+  for (const c of (p._rawClues ?? []).filter((x) => x.intro)) {
+    for (const key of ['a', 'b']) {
+      const ref = c[key];
+      if (!ref) continue;
+      const cat = ref.c === p._spec.anchor.id
+        ? p._spec.anchor
+        : p._spec.cats.find((x) => x.id === ref.c);
+      const naam = cat.items[ref.i].name;
+      eis('het gratis feit staat ook in de herschreven inleiding',
+        klein.includes(naam.toLowerCase()), waar, `${naam} ontbreekt`);
+    }
+  }
+  // Het slachtoffer moet er ook in blijven staan: de vraag gaat over hem.
+  if (p.kind === 'kamer') {
+    eis('het slachtoffer staat ook in de herschreven inleiding',
+      klein.includes(p.slachtofferNaam.toLowerCase()), waar, p.slachtofferNaam);
+  }
+  eis('er zijn evenveel herschreven aanwijzingen als aanwijzingen',
+    (tekst.aanwijzingen ?? []).length === p.clues.length, waar,
+    `${(tekst.aanwijzingen ?? []).length} tegen ${p.clues.length}`);
+
+  const perNummer = new Map((tekst.aanwijzingen ?? []).map((a) => [Number(a.n), a.tekst]));
+  for (const c of p.clues) {
+    const zin = perNummer.get(c.n);
+    if (!eis('elke aanwijzing heeft een herschrijving met hetzelfde nummer', typeof zin === 'string', waar, `nummer ${c.n}`)) continue;
+    keurZin(zin, waar, c.names ?? []);
+    // Dit is de regel waar alles aan hangt: een herschrijving mag de logica
+    // niet aanraken. Komt hij er niet door, dan hoort hij niet gepubliceerd.
+    eis('een herschreven aanwijzing houdt namen, ontkenning, getallen en keuze intact',
+      keepsNames(c.text, zin, c.names ?? []), waar, `${c.text}  ->  ${zin}`);
+  }
+}
+console.log(`  ${herschreven} puzzels met een herschreven tekst`);
+
+console.log('\nDe werelden');
 for (const w of WORLDS) {
   const waar = `  ${w.name}`;
   const letters = [...w.persons, ...w.slachtoffers].map((x) => x.charAt(0).toUpperCase());

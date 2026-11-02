@@ -8,7 +8,7 @@ import { renderUitleg } from './ui/uitleg.js';
 import { renderPlayer } from './ui/player.js';
 import { buildPuzzle, parsePuzzleId } from './puzzle.js';
 import { el } from './ui/boards.js';
-import { dressUp, aiEnabled } from './ai/flavour.js';
+import { dressUp } from './ai/flavour.js';
 
 const app = document.getElementById('app');
 
@@ -49,13 +49,14 @@ function route() {
       try {
         const puzzle = buildPuzzle(parsePuzzleId(id));
         renderPlayer(puzzle, app);
-        // Staat de AI-laag aan, dan wordt de tekst daarna nog een keer
-        // opgefrist. De puzzel is dan al speelbaar; de logica verandert niet.
-        if (aiEnabled()) {
-          dressUp(puzzle).then((dressed) => {
-            if (dressed.aiUsed && location.hash.includes(id)) renderPlayer(dressed, app);
-          });
-        }
+        // De puzzel staat er al en is speelbaar. Daarna kijken we nog of er
+        // een mooiere tekst voor is: voor de bibliotheek ligt die klaar in
+        // de repo, en staat de AI-laag aan, dan kan hij er een maken. De
+        // logica verandert er nooit door - het vangnet laat niets door dat
+        // een naam, een ontkenning, een getal of een keuze aantast.
+        dressUp(puzzle).then((dressed) => {
+          if (dressed.aiUsed && location.hash.includes(id)) renderPlayer(dressed, app);
+        });
       } catch (err) {
         // De technische oorzaak hoort in de console, niet op het scherm.
         console.error(err);

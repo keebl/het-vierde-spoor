@@ -11,6 +11,8 @@ import { networkInterfaces } from 'node:os';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { buildPuzzle, parsePuzzleId } from '../src/puzzle.js';
+import { SYSTEEM, bouwVraag, leesAntwoord } from '../src/ai/opdracht.js';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const ROOT = resolve(here, '..');
@@ -110,21 +112,10 @@ function send(res, code, text) {
 
 const hasKey = () => Boolean(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN);
 
-const SYSTEEM = `Je herschrijft de stijl van Nederlandse deductiepuzzels. Je verandert NOOIT de logica.
-
-Harde regels:
-1. Elke eigennaam uit het origineel komt woordelijk terug in je herschrijving. Niet verbuigen, niet afkorten, niet vervangen door een voornaamwoord.
-2. Je verandert geen enkele logische relatie: wat samengaat blijft samengaan, een ontkenning blijft een ontkenning, een tijdsorde blijft dezelfde kant op, een aantal blijft hetzelfde getal.
-3. Je voegt geen feiten toe en laat geen feiten weg. Geen enkele hint erbij.
-4. Je levert exact evenveel aanwijzingen als je krijgt, in dezelfde volgorde, met hetzelfde nummer.
-5. Je houdt het kort: een aanwijzing is een zin, maximaal twee.
-6. De inleiding eindigt NIET met de vraag aan de speler. Die vraag staat
-   elders op de pagina; herhaal hem niet.
-
-Antwoord uitsluitend met JSON, zonder uitleg eromheen:
-{"intro": "...", "aanwijzingen": [{"n": 1, "tekst": "..."}]}`;
-
 const LAN_AI = process.env.VIERDESPOOR_AI_LAN === '1';
+
+// Een puzzel-id en niets anders: opdracht.wereld.speltype.niveau.seed
+const ID_PATROON = /^[a-z]+\.[a-z]+\.[a-z]+\.[1-5]\.[A-Za-z0-9_-]{1,40}$/;
 
 // Is dit verzoek van deze computer zelf?
 const isLokaal = (req) => {
@@ -146,24 +137,26 @@ async function flavour(req, res) {
     return res.end(JSON.stringify({ error: 'geen API-key ingesteld' }));
   }
 
+  // Van buiten komt alleen een puzzel-id binnen. De puzzel rekenen we hier
+  // zelf uit en de vraag aan het model bouwen we daaruit op - zie de uitleg
+  // boven src/ai/opdracht.js. Zo is er geen weg waarlangs iemand eigen tekst
+  // het model in praat, ook niet vanaf een ander apparaat in huis.
   const payload = await readJson(req);
-  if (!payload?.aanwijzingen?.length) return send(res, 400, 'Niets te herschrijven');
+  const id = typeof payload?.id === 'string' ? payload.id : '';
+  if (!ID_PATROON.test(id)) return send(res, 400, 'Geen geldig puzzel-id');
+
+  let puzzle;
+  try {
+    puzzle = buildPuzzle(parsePuzzleId(id));
+  } catch {
+    return send(res, 400, 'Deze puzzel bestaat niet');
+  }
+  if (puzzle.kind === 'latin' || !puzzle.clues.length) {
+    return send(res, 400, 'Niets te herschrijven');
+  }
 
   const { default: Anthropic } = await import('@anthropic-ai/sdk');
   const client = new Anthropic();
-
-  const vraag = [
-    `Wereld: ${payload.wereld}`,
-    `Opdracht: ${payload.opdracht}`,
-    `Vraag aan de speler: ${payload.vraag}`,
-    '',
-    `Inleiding:\n${payload.intro}`,
-    '',
-    'Aanwijzingen (de namen tussen rechte haken moeten woordelijk terugkomen):',
-    ...payload.aanwijzingen.map(
-      (c) => `${c.n}. ${c.tekst}   [${(c.namen ?? []).join(' | ')}]`
-    ),
-  ].join('\n');
 
   try {
     const response = await client.messages.create({
@@ -171,7 +164,7 @@ async function flavour(req, res) {
       max_tokens: 4000,
       output_config: { effort: 'low' },
       system: SYSTEEM,
-      messages: [{ role: 'user', content: vraag }],
+      messages: [{ role: 'user', content: bouwVraag(puzzle) }],
     });
 
     if (response.stop_reason === 'refusal') {
@@ -185,9 +178,13 @@ async function flavour(req, res) {
       .join('')
       .trim();
 
-    const json = text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1);
+    const uit = leesAntwoord(puzzle, text);
+    if (!uit) {
+      res.writeHead(502, { 'content-type': 'application/json' });
+      return res.end(JSON.stringify({ error: 'onleesbaar antwoord' }));
+    }
     res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
-    res.end(json);
+    res.end(JSON.stringify({ intro: uit.intro, aanwijzingen: uit.aanwijzingen }));
   } catch (err) {
     const Anthropic2 = (await import('@anthropic-ai/sdk')).default;
     let code = 502;

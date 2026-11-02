@@ -13,7 +13,9 @@
     "check:weggevers": "node tools/check-weggevers.mjs",
     "check:iconen": "node tools/check-iconen.mjs",
     "check:kamers": "node tools/check-kamers.mjs",
-    "check:regels": "node tools/check-regels.mjs"
+    "check:regels": "node tools/check-regels.mjs",
+    "ai:vooraf": "node tools/ai-vooraf.mjs",
+    "ai:online": "node tools/ai-online.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.3.0"

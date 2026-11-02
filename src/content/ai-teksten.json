@@ -1,0 +1,2092 @@
+{
+ "dader.kerst.kamer.2.kerst-1": {
+  "intro": "Midden in het kerstdiner viel de stroom uit, en toen de kaarsen weer brandden klopte er iets niet. Niemand weet meer wie waar stond, en zelfs waar Nicolaas lag is onduidelijk. Zet iedereen op zijn plek: wie als enige bij Nicolaas in dezelfde kamer blijkt te staan, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Chris stond naast het aanrecht."
+   },
+   {
+    "n": 2,
+    "tekst": "Nicolaas stond op dezelfde rij als het harnas."
+   },
+   {
+    "n": 3,
+    "tekst": "Gerrit stond naast de wandtafel."
+   },
+   {
+    "n": 4,
+    "tekst": "Lieve stond in een hoek van het huis."
+   },
+   {
+    "n": 5,
+    "tekst": "Lieve stond in de zolderkamer."
+   },
+   {
+    "n": 6,
+    "tekst": "Ivo stond in de logeerkamer."
+   }
+  ]
+ },
+ "dader.kerst.kamer.4.kerst-2": {
+  "intro": "Midden in het kerstdiner ging het licht uit, en toen de kaarsen weer brandden klopte er iets niet. Niemand weet nog wie waar stond, en zelfs waar Marieke lag is onduidelijk. Zet iedereen op zijn plek: wie als enige bij Marieke in dezelfde kamer staat, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Gerrit stond ten westen van Koen."
+   },
+   {
+    "n": 2,
+    "tekst": "Naast het harnas stond niemand."
+   },
+   {
+    "n": 3,
+    "tekst": "Marieke stond ten westen van Bram."
+   },
+   {
+    "n": 4,
+    "tekst": "Koen stond naast de kapstok."
+   },
+   {
+    "n": 5,
+    "tekst": "Elsa stond naast de kolenkist."
+   },
+   {
+    "n": 6,
+    "tekst": "Anna stond in dezelfde kolom als de kapstok."
+   },
+   {
+    "n": 7,
+    "tekst": "Gerrit stond niet naast de waterput."
+   },
+   {
+    "n": 8,
+    "tekst": "Marieke stond op dezelfde rij als de kolenkist."
+   },
+   {
+    "n": 9,
+    "tekst": "Chris stond tegen de buitenmuur."
+   },
+   {
+    "n": 10,
+    "tekst": "Er stond niemand in de bijkeuken."
+   },
+   {
+    "n": 11,
+    "tekst": "Koen en Hanna stonden in dezelfde kamer."
+   },
+   {
+    "n": 12,
+    "tekst": "Anna en Bram stonden in dezelfde kamer."
+   },
+   {
+    "n": 13,
+    "tekst": "Chris stond in dezelfde kolom als de leren fauteuil."
+   }
+  ]
+ },
+ "vinden.kerst.map.3.kerst-3": {
+  "intro": "Er is een cadeau verdwenen voordat het onder de boom lag. Het ligt op precies één van deze plekken, en welke dat is, volgt uit de aanwijzingen.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Een lege doos bevindt zich in de eetkamer."
+   },
+   {
+    "n": 2,
+    "tekst": "Een rode kaars bevindt zich in de eetkamer."
+   },
+   {
+    "n": 3,
+    "tekst": "Een half opgegeten kerststol bevindt zich in de bijkeuken of de eetkamer."
+   },
+   {
+    "n": 4,
+    "tekst": "De kamer met een doorgeknipte slinger grenst niet aan de kamer met een gescheurd inpakpapier."
+   },
+   {
+    "n": 5,
+    "tekst": "Een tweede sleutel bevindt zich niet in de logeerkamer."
+   },
+   {
+    "n": 6,
+    "tekst": "De kamer van Anna grenst niet aan de kamer met een doorgeknipte slinger."
+   },
+   {
+    "n": 7,
+    "tekst": "De kamer van Koen grenst aan de kamer met een lege doos."
+   },
+   {
+    "n": 8,
+    "tekst": "De kamer met een rode kaars grenst niet aan de kamer van Daan."
+   }
+  ]
+ },
+ "toewijzing.kerst.grid.2.kerst-4": {
+  "intro": "Het is Kerstavond en iedereen bracht iets mee. De naamkaartjes zijn van de pakjes gevallen. Los het raster op en de rest volgt.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Hanna bevond zich in de bijkeuken."
+   },
+   {
+    "n": 2,
+    "tekst": "Hanna had een flesje gluhwein bij zich."
+   },
+   {
+    "n": 3,
+    "tekst": "Daan had een kaartje zonder naam bij zich."
+   },
+   {
+    "n": 4,
+    "tekst": "Floris had een gescheurd inpakpapier niet bij zich."
+   },
+   {
+    "n": 5,
+    "tekst": "Degene die een zilveren kerstbal bij zich had, bevond zich in de hal met de boom of in de bijkeuken."
+   },
+   {
+    "n": 6,
+    "tekst": "Daan bevond zich in de eetkamer."
+   }
+  ]
+ },
+ "dader.halloween.kamer.3.hall-1": {
+  "intro": "Om middernacht viel het licht uit, en toen de lampionnen weer brandden lag er iemand stil. Niemand weet nog wie waar stond, en zelfs de plek waar Mila lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige in dezelfde kamer als Mila blijkt te staan, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Finn stond in dezelfde kolom als het laadrek."
+   },
+   {
+    "n": 2,
+    "tekst": "Mila stond op dezelfde rij als de koelkast."
+   },
+   {
+    "n": 3,
+    "tekst": "Iris stond ten westen van Hugo."
+   },
+   {
+    "n": 4,
+    "tekst": "Iris stond op dezelfde rij als de kapstok."
+   },
+   {
+    "n": 5,
+    "tekst": "Dries stond naast de kapstok."
+   },
+   {
+    "n": 6,
+    "tekst": "Esther stond niet in de garage."
+   },
+   {
+    "n": 7,
+    "tekst": "Jet stond ten westen van Dries."
+   },
+   {
+    "n": 8,
+    "tekst": "Hugo stond naast de touwhaspel."
+   },
+   {
+    "n": 9,
+    "tekst": "Dries stond op dezelfde rij als de touwhaspel."
+   }
+  ]
+ },
+ "dader.halloween.kamer.5.hall-2": {
+  "intro": "Om middernacht viel het licht uit, en toen de lampionnen weer brandden lag er iemand stil. Niemand weet nog wie waar stond, en zelfs de plek waar Oskar lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige in dezelfde kamer als Oskar blijkt te staan, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Oskar stond in dezelfde kolom als de wandspiegel."
+   },
+   {
+    "n": 2,
+    "tekst": "Lotte stond ten noorden van Esther."
+   },
+   {
+    "n": 3,
+    "tekst": "Lotte stond ten westen van Oskar."
+   },
+   {
+    "n": 4,
+    "tekst": "Hugo stond in dezelfde kolom als de leren fauteuil."
+   },
+   {
+    "n": 5,
+    "tekst": "Cleo stond niet in de kelder met het luik."
+   },
+   {
+    "n": 6,
+    "tekst": "Iris en Esther stonden in dezelfde kamer."
+   },
+   {
+    "n": 7,
+    "tekst": "Cleo stond op dezelfde rij als het eikenhouten vat."
+   },
+   {
+    "n": 8,
+    "tekst": "Jet en Cleo stonden niet in dezelfde kamer."
+   },
+   {
+    "n": 9,
+    "tekst": "Finn stond naast de kolenkist."
+   },
+   {
+    "n": 10,
+    "tekst": "Esther stond in dezelfde kolom als de werkbank."
+   },
+   {
+    "n": 11,
+    "tekst": "Iris stond op dezelfde rij als de drinkbak."
+   },
+   {
+    "n": 12,
+    "tekst": "Boris stond op dezelfde rij als het wijnrek."
+   },
+   {
+    "n": 13,
+    "tekst": "Ada stond in dezelfde kolom als de slijpsteen."
+   },
+   {
+    "n": 14,
+    "tekst": "Jet stond ten westen van Esther."
+   },
+   {
+    "n": 15,
+    "tekst": "Iris stond in dezelfde kolom als het eikenhouten vat."
+   },
+   {
+    "n": 16,
+    "tekst": "Kiki stond niet naast de koelkast."
+   },
+   {
+    "n": 17,
+    "tekst": "Oskar stond ten noorden van Hugo."
+   },
+   {
+    "n": 18,
+    "tekst": "Er stond niemand naast het aanrecht."
+   },
+   {
+    "n": 19,
+    "tekst": "Boris stond in dezelfde kolom als het borstbeeld."
+   },
+   {
+    "n": 20,
+    "tekst": "Jet stond ten noorden van Cleo."
+   },
+   {
+    "n": 21,
+    "tekst": "Hugo stond op dezelfde rij als de werkbank."
+   },
+   {
+    "n": 22,
+    "tekst": "Dries stond op dezelfde rij als de staande klok."
+   },
+   {
+    "n": 23,
+    "tekst": "Kiki stond ten noorden van Hugo."
+   }
+  ]
+ },
+ "vinden.halloween.map.3.hall-3": {
+  "intro": "Achter een van de deuren hangt het echte masker, en dat is geen kostuum. Het zit op precies één van deze plekken, en de aanwijzingen wijzen aan welke.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Tussen de griezelkeuken en de kamer met een valse muur zitten precies twee deuren."
+   },
+   {
+    "n": 2,
+    "tekst": "Tussen de griezelkeuken en de kamer van Kiki zitten precies twee deuren."
+   },
+   {
+    "n": 3,
+    "tekst": "De griezelkeuken grenst niet aan de kamer met een handvol pompoenpitten."
+   },
+   {
+    "n": 4,
+    "tekst": "Tussen de achtertuin bij het hek en de kamer met het echte masker zitten precies twee deuren."
+   },
+   {
+    "n": 5,
+    "tekst": "Een blusdeken bevindt zich niet in de achtertuin bij het hek."
+   },
+   {
+    "n": 6,
+    "tekst": "Het echte masker bevindt zich in dezelfde kamer als een gebarsten masker of een handvol pompoenpitten."
+   },
+   {
+    "n": 7,
+    "tekst": "Tussen de kamer met een gebarsten masker en de kamer van Hugo zitten precies twee deuren."
+   },
+   {
+    "n": 8,
+    "tekst": "De kamer van Finn grenst aan de kamer met een handvol pompoenpitten."
+   },
+   {
+    "n": 9,
+    "tekst": "Hugo bevindt zich niet in dezelfde kamer als een zaklamp zonder batterij."
+   }
+  ]
+ },
+ "dader.landhuis.kamer.1.kamer-1": {
+  "intro": "Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat. Niemand weet meer wie waar stond, en zelfs waar Mathilde lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij Mathilde in dezelfde kamer blijkt te staan, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Katrien stond naast de slijpsteen."
+   },
+   {
+    "n": 2,
+    "tekst": "Katrien en Mathilde stonden niet in dezelfde kamer."
+   },
+   {
+    "n": 3,
+    "tekst": "Joachim en Mathilde stonden niet in dezelfde kamer."
+   },
+   {
+    "n": 4,
+    "tekst": "Clara stond niet in de wintertuin."
+   },
+   {
+    "n": 5,
+    "tekst": "Clara stond ten westen van Mathilde."
+   },
+   {
+    "n": 6,
+    "tekst": "Clara stond op dezelfde rij als de regenton."
+   }
+  ]
+ },
+ "dader.noir.kamer.2.kamer-2": {
+  "intro": "De regen kwam die nacht met bakken naar beneden, en niemand hoorde iets boven het water uit. Niemand weet meer wie waar stond, en zelfs waar Nora lag is onduidelijk. Zet iedereen op zijn plek: degene die dan als enige bij Nora in dezelfde ruimte blijkt te staan, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Leni stond niet in de brugwachtershut."
+   },
+   {
+    "n": 2,
+    "tekst": "Koos stond in dezelfde kolom als het laadrek."
+   },
+   {
+    "n": 3,
+    "tekst": "Fien stond ten noorden van Koos."
+   },
+   {
+    "n": 4,
+    "tekst": "Leni stond op dezelfde rij als de schakelkast."
+   },
+   {
+    "n": 5,
+    "tekst": "Fien stond in dezelfde kolom als de schakelkast."
+   },
+   {
+    "n": 6,
+    "tekst": "In de bedrijfskeuken stond niemand."
+   },
+   {
+    "n": 7,
+    "tekst": "Albert stond op dezelfde rij als het laadrek."
+   },
+   {
+    "n": 8,
+    "tekst": "Fien stond in dezelfde ruimte als Cor."
+   },
+   {
+    "n": 9,
+    "tekst": "Nora stond niet in een hoek van het gebouw."
+   }
+  ]
+ },
+ "dader.station.kamer.3.kamer-3": {
+  "intro": "De koeling viel uit en het alarm werd pas veel later gehoord. Niemand weet meer wie waar stond, en zelfs waar Mira lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij Mira in dezelfde module blijkt te staan, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Kaya stond op dezelfde rij als de kruidenkast."
+   },
+   {
+    "n": 2,
+    "tekst": "Jonas stond in dezelfde kolom als de hemelbol."
+   },
+   {
+    "n": 3,
+    "tekst": "Dmitri stond in de medische post."
+   },
+   {
+    "n": 4,
+    "tekst": "Hiro stond niet in de kombuis."
+   },
+   {
+    "n": 5,
+    "tekst": "Dmitri en Kaya stonden niet in dezelfde module."
+   },
+   {
+    "n": 6,
+    "tekst": "Carmen stond naast de touwhaspel."
+   },
+   {
+    "n": 7,
+    "tekst": "Mira stond in dezelfde kolom als de sterrenkaart."
+   },
+   {
+    "n": 8,
+    "tekst": "Dmitri stond niet tegen de buitenwand."
+   },
+   {
+    "n": 9,
+    "tekst": "Mira stond tegen de buitenwand."
+   },
+   {
+    "n": 10,
+    "tekst": "Hiro stond in dezelfde kolom als de touwhaspel."
+   }
+  ]
+ },
+ "dader.woud.kamer.3.kamer-4": {
+  "intro": "Er werd iemand gevonden met zijn hand om iets wat er niet meer is. Niemand weet nog wie waar stond, en zelfs waar Olle lag is onduidelijk. Zet iedereen op zijn plek: wie als enige bij Olle in hetzelfde stuk bos blijkt te staan, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Gwen stond op dezelfde rij als de drinkbak."
+   },
+   {
+    "n": 2,
+    "tekst": "Dries stond op dezelfde rij als de grafzerk."
+   },
+   {
+    "n": 3,
+    "tekst": "Joris stond niet in de steenkring."
+   },
+   {
+    "n": 4,
+    "tekst": "Imke stond op dezelfde rij als de omgevallen stam."
+   },
+   {
+    "n": 5,
+    "tekst": "Joris stond niet op het verzonken bruggetje."
+   },
+   {
+    "n": 6,
+    "tekst": "Eline stond in dezelfde kolom als de kruiwagen."
+   },
+   {
+    "n": 7,
+    "tekst": "Imke stond in dezelfde kolom als de mosbank."
+   },
+   {
+    "n": 8,
+    "tekst": "Olle stond op dezelfde rij als de waterput."
+   },
+   {
+    "n": 9,
+    "tekst": "Gwen en Dries stonden in hetzelfde stuk bos."
+   },
+   {
+    "n": 10,
+    "tekst": "Dries stond aan de rand van het woud."
+   },
+   {
+    "n": 11,
+    "tekst": "Joris stond niet naast de boomstronk."
+   }
+  ]
+ },
+ "dader.catacomben.kamer.4.kamer-5": {
+  "intro": "Iemand liep vooruit met de enige kaart, en de kaart kwam terug. Niemand weet meer wie waar stond, en zelfs waar Olaf lag is onduidelijk. Zet iedereen op zijn plek: wie als enige bij Olaf in hetzelfde gewelf blijkt te staan, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Karel stond in dezelfde kolom als de werkbank."
+   },
+   {
+    "n": 2,
+    "tekst": "Olaf stond ten noorden van Jet."
+   },
+   {
+    "n": 3,
+    "tekst": "Karel en Emma stonden in hetzelfde gewelf."
+   },
+   {
+    "n": 4,
+    "tekst": "Emma stond in dezelfde kolom als de vaatkast."
+   },
+   {
+    "n": 5,
+    "tekst": "Jet stond op dezelfde rij als de werkbank."
+   },
+   {
+    "n": 6,
+    "tekst": "Cecile en Jet stonden niet in hetzelfde gewelf."
+   },
+   {
+    "n": 7,
+    "tekst": "Floris stond tegen de rotswand."
+   },
+   {
+    "n": 8,
+    "tekst": "Precies één iemand stond naast het bidbankje."
+   },
+   {
+    "n": 9,
+    "tekst": "Emma stond ten noorden van Karel."
+   },
+   {
+    "n": 10,
+    "tekst": "Karel stond niet naast het wijnrek."
+   },
+   {
+    "n": 11,
+    "tekst": "Cecile stond op dezelfde rij als de waterput."
+   },
+   {
+    "n": 12,
+    "tekst": "Hanna stond in het grafvertrek."
+   },
+   {
+    "n": 13,
+    "tekst": "Anton stond naast de zuil."
+   },
+   {
+    "n": 14,
+    "tekst": "Floris stond in dezelfde kolom als de kapstok."
+   },
+   {
+    "n": 15,
+    "tekst": "Daan stond niet in de bidkapel."
+   },
+   {
+    "n": 16,
+    "tekst": "Emma stond ten noorden van Olaf."
+   },
+   {
+    "n": 17,
+    "tekst": "Olaf stond niet naast het bidbankje."
+   },
+   {
+    "n": 18,
+    "tekst": "Daan stond niet naast de kapstok."
+   }
+  ]
+ },
+ "dader.academie.kamer.5.kamer-6": {
+  "intro": "Tijdens het avondgebed op Academie Morgenstond is iemand in steen veranderd. Niemand van de aanwezigen geeft iets toe, niemand weet meer wie waar stond, en zelfs de plek waar Melchior lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij Melchior in dezelfde zaal blijkt te staan, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Douwe stond niet in een hoek van de school."
+   },
+   {
+    "n": 2,
+    "tekst": "Melchior stond in dezelfde kolom als het aanrecht."
+   },
+   {
+    "n": 3,
+    "tekst": "Loek stond op dezelfde rij als het aanrecht."
+   },
+   {
+    "n": 4,
+    "tekst": "Loek en Hugo stonden niet in dezelfde zaal."
+   },
+   {
+    "n": 5,
+    "tekst": "Bruno stond niet in het archief."
+   },
+   {
+    "n": 6,
+    "tekst": "Hugo stond in dezelfde kolom als de wandspiegel."
+   },
+   {
+    "n": 7,
+    "tekst": "Hugo stond ten noorden van Felix."
+   },
+   {
+    "n": 8,
+    "tekst": "Gideon stond tegen de buitenmuur."
+   },
+   {
+    "n": 9,
+    "tekst": "Cleo stond op dezelfde rij als de haard."
+   },
+   {
+    "n": 10,
+    "tekst": "Esra stond op dezelfde rij als de leren fauteuil."
+   },
+   {
+    "n": 11,
+    "tekst": "Douwe en Bruno stonden niet in dezelfde zaal."
+   },
+   {
+    "n": 12,
+    "tekst": "Amira stond op dezelfde rij als de wandtafel."
+   },
+   {
+    "n": 13,
+    "tekst": "Iris stond in dezelfde kolom als het laadrek."
+   },
+   {
+    "n": 14,
+    "tekst": "Douwe stond niet in de eetzaal."
+   },
+   {
+    "n": 15,
+    "tekst": "Amira stond ten westen van Loek."
+   },
+   {
+    "n": 16,
+    "tekst": "Jasper en Cleo stonden in dezelfde zaal."
+   },
+   {
+    "n": 17,
+    "tekst": "Jasper en Esra stonden in dezelfde zaal."
+   },
+   {
+    "n": 18,
+    "tekst": "Amira stond in dezelfde kolom als de ladekast."
+   },
+   {
+    "n": 19,
+    "tekst": "Esra stond in dezelfde kolom als de kaartentafel."
+   },
+   {
+    "n": 20,
+    "tekst": "Gideon stond op dezelfde rij als de distilleerketel."
+   },
+   {
+    "n": 21,
+    "tekst": "Er stond niemand naast het aanrecht."
+   },
+   {
+    "n": 22,
+    "tekst": "Hugo en Gideon stonden niet in dezelfde zaal."
+   },
+   {
+    "n": 23,
+    "tekst": "Douwe stond in dezelfde kolom als het fornuis."
+   },
+   {
+    "n": 24,
+    "tekst": "Bruno stond op dezelfde rij als de wandspiegel."
+   }
+  ]
+ },
+ "dader.landhuis.kamer.4.kamer-7": {
+  "intro": "Na het dessert viel in Huize Valkenhorst de stroom uit, en toen het licht terugkwam was het al te laat. Niemand weet nog wie waar stond, en zelfs waar Norbert lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij Norbert in dezelfde kamer blijkt te staan, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Bertram stond naast de kolenkist."
+   },
+   {
+    "n": 2,
+    "tekst": "Bertram en Eleonora stonden in dezelfde kamer."
+   },
+   {
+    "n": 3,
+    "tekst": "Precies één iemand stond naast de wandspiegel."
+   },
+   {
+    "n": 4,
+    "tekst": "Norbert en Hendrik stonden niet in dezelfde kamer."
+   },
+   {
+    "n": 5,
+    "tekst": "Clara stond tegen de buitenmuur."
+   },
+   {
+    "n": 6,
+    "tekst": "Clara stond op dezelfde rij als het laadrek."
+   },
+   {
+    "n": 7,
+    "tekst": "Norbert stond op dezelfde rij als de stapel kratten."
+   },
+   {
+    "n": 8,
+    "tekst": "Joachim stond in dezelfde kolom als het borstbeeld."
+   },
+   {
+    "n": 9,
+    "tekst": "Diederik stond in dezelfde kolom als het laadrek."
+   },
+   {
+    "n": 10,
+    "tekst": "Clara en Agnes stonden in dezelfde kamer."
+   },
+   {
+    "n": 11,
+    "tekst": "Norbert stond in dezelfde kolom als de staande klok."
+   },
+   {
+    "n": 12,
+    "tekst": "Isabel stond op dezelfde rij als de werkbank."
+   },
+   {
+    "n": 13,
+    "tekst": "Eleonora stond niet naast de stapel kratten."
+   }
+  ]
+ },
+ "dader.station.kamer.5.kamer-8": {
+  "intro": "De koeling viel uit en het alarm werd pas veel later gehoord. Niemand weet meer wie waar stond, en zelfs waar Nuru lag is onduidelijk. Zet iedereen op zijn plek: wie als enige bij Nuru in dezelfde module blijkt te staan, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Jonas stond niet naast het fornuis."
+   },
+   {
+    "n": 2,
+    "tekst": "Hiro stond niet in de medische post."
+   },
+   {
+    "n": 3,
+    "tekst": "Precies één iemand stond naast het nachtkastje."
+   },
+   {
+    "n": 4,
+    "tekst": "Kaya stond niet naast de schakelkast."
+   },
+   {
+    "n": 5,
+    "tekst": "Kaya stond ten noorden van Hiro."
+   },
+   {
+    "n": 6,
+    "tekst": "Boris stond in dezelfde kolom als de gootsteen."
+   },
+   {
+    "n": 7,
+    "tekst": "Carmen stond in dezelfde kolom als de wandtafel."
+   },
+   {
+    "n": 8,
+    "tekst": "Hiro stond ten westen van Luuk."
+   },
+   {
+    "n": 9,
+    "tekst": "Luuk en Carmen stonden niet in dezelfde module."
+   },
+   {
+    "n": 10,
+    "tekst": "Finn stond naast het aanrecht."
+   },
+   {
+    "n": 11,
+    "tekst": "Dmitri stond op dezelfde rij als de kweekbak."
+   },
+   {
+    "n": 12,
+    "tekst": "Gaia stond in de medische post."
+   },
+   {
+    "n": 13,
+    "tekst": "Ines stond in dezelfde kolom als de kweekbak."
+   },
+   {
+    "n": 14,
+    "tekst": "Luuk en Dmitri stonden niet in dezelfde module."
+   },
+   {
+    "n": 15,
+    "tekst": "Carmen stond ten noorden van Gaia."
+   },
+   {
+    "n": 16,
+    "tekst": "Kaya stond in dezelfde kolom als de schakelkast."
+   },
+   {
+    "n": 17,
+    "tekst": "Ines stond op dezelfde rij als de schakelkast."
+   },
+   {
+    "n": 18,
+    "tekst": "Kaya stond ten noorden van Ada."
+   },
+   {
+    "n": 19,
+    "tekst": "Jonas stond ten westen van Boris."
+   },
+   {
+    "n": 20,
+    "tekst": "Dmitri stond ten westen van Nuru."
+   },
+   {
+    "n": 21,
+    "tekst": "Finn stond ten westen van Gaia."
+   },
+   {
+    "n": 22,
+    "tekst": "Ada stond ten westen van Carmen."
+   },
+   {
+    "n": 23,
+    "tekst": "Nuru stond ten westen van Ada."
+   },
+   {
+    "n": 24,
+    "tekst": "Ines stond ten noorden van Kaya."
+   },
+   {
+    "n": 25,
+    "tekst": "Kaya stond ten noorden van Carmen."
+   }
+  ]
+ },
+ "dader.noir.grid.2.kade-1": {
+  "intro": "Het goot die nacht van de regen en boven het kletterende water uit hoorde niemand iets. In het hotel aan de kade lag de kroegbaas, met een pakje bankbiljetten naast zich. Wie daar was, heeft het gedaan.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Hilde had een treinkaartje enkele reis bij zich."
+   },
+   {
+    "n": 2,
+    "tekst": "Cor bevond zich in de brugwachtershut."
+   },
+   {
+    "n": 3,
+    "tekst": "Joop had een flesje chloraal of een treinkaartje enkele reis bij zich."
+   },
+   {
+    "n": 4,
+    "tekst": "Degene die een flesje chloraal bij zich had, bevond zich niet in de jazzkelder."
+   }
+  ]
+ },
+ "dader.noir.grid.4.kade-7": {
+  "intro": "De regen kwam die nacht met bakken naar beneden, en niemand hoorde iets boven het water uit. De nachtportier werd aangetroffen in de nachtapotheek, met een verzilverde aansteker ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Tussen wie zich in het pandjeshuis bevond en degene die een geladen revolver bij zich had zit precies één uur."
+   },
+   {
+    "n": 2,
+    "tekst": "Degene die een gebroken horloge bij zich had was er eerder dan Gerard."
+   },
+   {
+    "n": 3,
+    "tekst": "Wie zich in de nachtapotheek bevond was er eerder dan Fien."
+   },
+   {
+    "n": 4,
+    "tekst": "Albert had een geladen revolver niet bij zich."
+   },
+   {
+    "n": 5,
+    "tekst": "Tussen degene die een verzilverde aansteker bij zich had en wie zich in de jazzkelder bevond zit precies één uur."
+   },
+   {
+    "n": 6,
+    "tekst": "Leni had een verzilverde aansteker of een pakje bankbiljetten bij zich."
+   },
+   {
+    "n": 7,
+    "tekst": "Tussen degene die een pakje bankbiljetten bij zich had en Leni zitten precies drie uur."
+   },
+   {
+    "n": 8,
+    "tekst": "Bep bevond zich in het natte steegje of het pandjeshuis."
+   },
+   {
+    "n": 9,
+    "tekst": "Degene die een treinkaartje enkele reis bij zich had was er eerder dan wie zich in het pandjeshuis bevond."
+   },
+   {
+    "n": 10,
+    "tekst": "Bep was er eerder dan degene die een verzilverde aansteker bij zich had."
+   },
+   {
+    "n": 11,
+    "tekst": "Tussen degene die een verzilverde aansteker bij zich had en Gerard zit precies één uur."
+   }
+  ]
+ },
+ "dader.noir.map.3.neon-3": {
+  "intro": "De regen kwam die nacht met bakken naar beneden, en niemand hoorde iets boven het water uit. De kroegbaas werd aangetroffen in de jazzkelder, met een flesje chloraal ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Degene die een pakje bankbiljetten bij zich had, bevindt zich in de nachtapotheek."
+   },
+   {
+    "n": 2,
+    "tekst": "Degene die een natte regenjas bij zich had, bevindt zich in het hotel aan de kade of de jazzkelder."
+   },
+   {
+    "n": 3,
+    "tekst": "Ida had een verzilverde aansteker bij zich."
+   },
+   {
+    "n": 4,
+    "tekst": "De plek met een pakje bankbiljetten grenst niet aan de plek van Bep."
+   },
+   {
+    "n": 5,
+    "tekst": "Leni bevindt zich niet in de nachtapotheek."
+   }
+  ]
+ },
+ "vinden.noir.map.2.bewijs-2": {
+  "intro": "Ergens in dit blok ligt het bewijs dat de hele zaak omgooit, en je hebt maar één nacht om het te vinden. Het ligt op precies één van deze plekken, en de aanwijzingen laten zien welke.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Het pandjeshuis grenst niet aan de plek met een flesje chloraal."
+   },
+   {
+    "n": 2,
+    "tekst": "Een gebroken horloge bevindt zich in het hotel aan de kade."
+   },
+   {
+    "n": 3,
+    "tekst": "Een natte regenjas bevindt zich in het pandjeshuis of in het hotel aan de kade."
+   },
+   {
+    "n": 4,
+    "tekst": "De plek met een verfrommelde brief grenst niet aan de plek met een alarmdraad."
+   },
+   {
+    "n": 5,
+    "tekst": "Een valse bodem bevindt zich in de verlaten loods of in het hotel aan de kade."
+   },
+   {
+    "n": 6,
+    "tekst": "Het natte steegje grenst aan de plek met een dode brievenbus."
+   }
+  ]
+ },
+ "toewijzing.noir.grid.2.bureau-5": {
+  "intro": "Getuigen, halve verhalen en een bureau vol spullen waarvan niemand meer weet van wie ze zijn. Los het raster op en de rest volgt vanzelf.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Gerard had een natte regenjas bij zich."
+   },
+   {
+    "n": 2,
+    "tekst": "Dora had een flesje chloraal of een natte regenjas bij zich."
+   },
+   {
+    "n": 3,
+    "tekst": "Fien had een pakje bankbiljetten niet bij zich."
+   },
+   {
+    "n": 4,
+    "tekst": "Degene die een gebroken horloge bij zich had, bevond zich in de bovenkamer."
+   },
+   {
+    "n": 5,
+    "tekst": "Degene die een natte regenjas bij zich had, bevond zich in het hotel aan de kade of de bovenkamer."
+   },
+   {
+    "n": 6,
+    "tekst": "Degene die een pakje bankbiljetten bij zich had, bevond zich niet in de bedrijfskeuken."
+   }
+  ]
+ },
+ "dader.landhuis.grid.1.erfenis-1": {
+  "intro": "Het toetje was nog niet afgeruimd toen de stroom uitviel, en bij het terugkomen van het licht was het al te laat. Grootvader Valkenhorst lag in de dienstgang, naast hem een paar leren handschoenen. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Diederik had een zilveren kandelaar bij zich."
+   },
+   {
+    "n": 2,
+    "tekst": "Ferdinand had een verzegelde envelop niet bij zich."
+   },
+   {
+    "n": 3,
+    "tekst": "Bertram bevond zich niet in de wintertuin."
+   }
+  ]
+ },
+ "dader.landhuis.grid.3.erfenis-4": {
+  "intro": "Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat. De rentmeester werd aangetroffen in de bibliotheek, met een antieke briefopener ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Lodewijk was er om 19:00."
+   },
+   {
+    "n": 2,
+    "tekst": "Agnes was er om 21:00 of om 19:00."
+   },
+   {
+    "n": 3,
+    "tekst": "Godelieve was er niet om 20:00."
+   },
+   {
+    "n": 4,
+    "tekst": "Tussen degene die zich in de bibliotheek bevond en Godelieve zitten precies drie uur."
+   },
+   {
+    "n": 5,
+    "tekst": "Degene die een paar leren handschoenen bij zich had, was er eerder dan Agnes."
+   },
+   {
+    "n": 6,
+    "tekst": "Degene die een paar leren handschoenen bij zich had, bevond zich in het rookkabinet of in de bibliotheek."
+   },
+   {
+    "n": 7,
+    "tekst": "Degene die een vervalste cheque bij zich had, was er eerder dan degene die zich in de wintertuin bevond."
+   }
+  ]
+ },
+ "dader.landhuis.grid.5.erfenis-8": {
+  "intro": "Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat. De rentmeester werd aangetroffen in de keuken, met een jachtgeweer ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Hendrik was er eerder dan Bertram."
+   },
+   {
+    "n": 2,
+    "tekst": "Agnes bevond zich in de wijnkelder of de muziekzaal."
+   },
+   {
+    "n": 3,
+    "tekst": "Degene die een paar leren handschoenen bij zich had bevond zich in de wijnkelder of de bibliotheek."
+   },
+   {
+    "n": 4,
+    "tekst": "Degene die een doosje slaappoeder bij zich had bevond zich in de biljartkamer of de bibliotheek."
+   },
+   {
+    "n": 5,
+    "tekst": "Joachim was er eerder dan degene die een doosje slaappoeder bij zich had."
+   },
+   {
+    "n": 6,
+    "tekst": "Tussen wie zich in de muziekzaal bevond en Diederik zit precies één uur."
+   },
+   {
+    "n": 7,
+    "tekst": "Diederik bevond zich niet in de bibliotheek."
+   },
+   {
+    "n": 8,
+    "tekst": "Degene die een jachtgeweer bij zich had was er eerder dan Katrien."
+   },
+   {
+    "n": 9,
+    "tekst": "Tussen wie zich in de biljartkamer bevond en degene die een vervalste cheque bij zich had zitten precies vier uur."
+   },
+   {
+    "n": 10,
+    "tekst": "Degene die een vervalste cheque bij zich had bevond zich in de bibliotheek of de muziekzaal."
+   },
+   {
+    "n": 11,
+    "tekst": "Tussen degene die een jachtgeweer bij zich had en Hendrik zitten precies drie uur."
+   },
+   {
+    "n": 12,
+    "tekst": "Katrien had een zilveren kandelaar of een paar leren handschoenen bij zich."
+   },
+   {
+    "n": 13,
+    "tekst": "Wie zich in de biljartkamer bevond was er om 00:00 of 21:00."
+   },
+   {
+    "n": 14,
+    "tekst": "Bertram was er eerder dan wie zich in de wijnkelder bevond."
+   }
+  ]
+ },
+ "dader.landhuis.map.4.dienstgang-2": {
+  "intro": "Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat. Grootvader Valkenhorst werd aangetroffen in de biljartkamer, met een vervalste cheque ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Hendrik bevindt zich in de wijnkelder of de muziekzaal."
+   },
+   {
+    "n": 2,
+    "tekst": "De bibliotheek grenst aan de kamer van Agnes."
+   },
+   {
+    "n": 3,
+    "tekst": "Godelieve had een doosje slaappoeder of een vervalste cheque bij zich."
+   },
+   {
+    "n": 4,
+    "tekst": "De bibliotheek grenst aan de kamer van Ferdinand."
+   },
+   {
+    "n": 5,
+    "tekst": "Diederik bevindt zich niet in de wijnkelder."
+   },
+   {
+    "n": 6,
+    "tekst": "Agnes had een jachtgeweer niet bij zich."
+   },
+   {
+    "n": 7,
+    "tekst": "Degene die een antieke briefopener bij zich had, bevindt zich niet in de bibliotheek."
+   },
+   {
+    "n": 8,
+    "tekst": "Diederik had een antieke briefopener of een doosje slaappoeder bij zich."
+   },
+   {
+    "n": 9,
+    "tekst": "Hendrik had een jachtgeweer niet bij zich."
+   }
+  ]
+ },
+ "vinden.landhuis.map.3.kluis-3": {
+  "intro": "Het testament lag gisteren nog in de kluis, maar nu is het weg. Huize Valkenhorst is groot, en het testament ligt op precies één van de plekken in het huis. Welke dat is, volgt uit de aanwijzingen.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "De biljartkamer grenst niet aan de kamer van Hendrik."
+   },
+   {
+    "n": 2,
+    "tekst": "De kamer van Katrien grenst niet aan de kamer met een kristallen karaf."
+   },
+   {
+    "n": 3,
+    "tekst": "De wijnkelder grenst niet aan de kamer van Ferdinand."
+   },
+   {
+    "n": 4,
+    "tekst": "De kamer met een leeg kluisje grenst niet aan de kamer van Bertram."
+   },
+   {
+    "n": 5,
+    "tekst": "Bertram bevindt zich in dezelfde kamer als een schuilplaats of een leeg kluisje."
+   },
+   {
+    "n": 6,
+    "tekst": "Tussen de kamer met een verzegelde envelop en de kamer van Ferdinand zitten precies twee deuren."
+   },
+   {
+    "n": 7,
+    "tekst": "De kamer van Hendrik grenst niet aan de kamer met een paar leren handschoenen."
+   },
+   {
+    "n": 8,
+    "tekst": "Tussen de bibliotheek en de kamer met het testament zitten precies twee deuren."
+   }
+  ]
+ },
+ "toewijzing.landhuis.grid.1.cadeau-1": {
+  "intro": "In Huize Valkenhorst bracht iedereen iets mee voor de gastheer, maar niemand geeft toe wat. Los het raster op en de rest volgt vanzelf.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Bertram bevond zich in de bibliotheek."
+   },
+   {
+    "n": 2,
+    "tekst": "Lodewijk bevond zich in de wijnkelder."
+   },
+   {
+    "n": 3,
+    "tekst": "Degene met een zilveren kandelaar bevond zich in de bibliotheek."
+   },
+   {
+    "n": 4,
+    "tekst": "Degene met een kristallen karaf bevond zich niet in de wijnkelder."
+   }
+  ]
+ },
+ "dader.station.grid.3.koeling-2": {
+  "intro": "De koeling viel uit op Ruimtestation Meridiaan en het alarm werd pas veel later gehoord. Commandant Ngoie werd aangetroffen in de centrifuge, met een gesmolten zekering ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Kaya was er tijdens de eerste wacht."
+   },
+   {
+    "n": 2,
+    "tekst": "Finn was er tijdens de tweede wacht of de eerste wacht."
+   },
+   {
+    "n": 3,
+    "tekst": "Tussen degene die een gesmolten zekering bij zich had en Kaya zit precies één wacht."
+   },
+   {
+    "n": 4,
+    "tekst": "Dmitri was er eerder dan wie zich in het vrachtruim bevond."
+   },
+   {
+    "n": 5,
+    "tekst": "Wie zich in de kombuis bevond, was er niet tijdens de eerste wacht."
+   },
+   {
+    "n": 6,
+    "tekst": "Degene die een privaat logboek bij zich had, bevond zich in de kombuis of de centrifuge."
+   },
+   {
+    "n": 7,
+    "tekst": "Degene die een hoofdsleutel bij zich had, was er tijdens de vierde wacht of de derde wacht."
+   },
+   {
+    "n": 8,
+    "tekst": "Degene die een privaat logboek bij zich had, was er tijdens de derde wacht of de eerste wacht."
+   }
+  ]
+ },
+ "dader.station.map.4.sluis-5": {
+  "intro": "De koeling viel uit op Ruimtestation Meridiaan en het alarm werd pas veel later gehoord. De ladingmeester werd aangetroffen in de hydrocultuur, met een hoofdsleutel ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Tussen de module van Gaia en de module met een geleegde spuit zitten precies twee sluizen."
+   },
+   {
+    "n": 2,
+    "tekst": "Kaya had een illegale zender of een gewiste datadrager bij zich."
+   },
+   {
+    "n": 3,
+    "tekst": "Kaya bevindt zich in de communicatiekoker of de observatiekoepel."
+   },
+   {
+    "n": 4,
+    "tekst": "Jonas bevindt zich niet in de communicatiekoker."
+   },
+   {
+    "n": 5,
+    "tekst": "De hydrocultuur heeft geen luchtsluis naar de module van Dmitri."
+   },
+   {
+    "n": 6,
+    "tekst": "Elif had een geleegde spuit niet bij zich."
+   },
+   {
+    "n": 7,
+    "tekst": "Jonas had een gewiste datadrager of een hoofdsleutel bij zich."
+   },
+   {
+    "n": 8,
+    "tekst": "Tussen het vrachtruim en de module met een gewiste datadrager zitten precies twee sluizen."
+   }
+  ]
+ },
+ "vinden.station.map.2.baken-1": {
+  "intro": "Iemand heeft het noodbaken uitgezet. Het hangt nog ergens aan boord, op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "De centrifuge heeft geen luchtsluis naar de module met een lek in de romp."
+   },
+   {
+    "n": 2,
+    "tekst": "Een omgeleide kabel bevindt zich in de centrifuge of de machinekamer."
+   },
+   {
+    "n": 3,
+    "tekst": "Tussen de communicatiekoker en de module met een verborgen voorraad zitten precies twee sluizen."
+   },
+   {
+    "n": 4,
+    "tekst": "De centrifuge heeft geen luchtsluis naar de module met een hoofdsleutel."
+   },
+   {
+    "n": 5,
+    "tekst": "Tussen de module met een verborgen voorraad en de module met een geleegde spuit zitten precies twee sluizen."
+   },
+   {
+    "n": 6,
+    "tekst": "De machinekamer heeft een luchtsluis naar de module met een snijbrander."
+   }
+  ]
+ },
+ "vinden.station.map.5.baken-9": {
+  "intro": "Iemand heeft het noodbaken uitgezet. Het hangt nog ergens aan boord van Meridiaan, op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Tussen de slaapcabines en de module met een verborgen voorraad zitten precies twee sluizen."
+   },
+   {
+    "n": 2,
+    "tekst": "De module van Ada heeft geen luchtsluis naar de module met een geleegde spuit."
+   },
+   {
+    "n": 3,
+    "tekst": "Finn bevindt zich niet in dezelfde module als een dode sensor."
+   },
+   {
+    "n": 4,
+    "tekst": "Tussen de module met een lek in de romp en de module van Jonas zitten precies twee sluizen."
+   },
+   {
+    "n": 5,
+    "tekst": "De module met een geblindeerde camera heeft een luchtsluis naar de module van Gaia."
+   },
+   {
+    "n": 6,
+    "tekst": "Finn bevindt zich niet in dezelfde module als een geblindeerde camera."
+   },
+   {
+    "n": 7,
+    "tekst": "Een geleegde spuit bevindt zich in de machinekamer of de hydrocultuur."
+   },
+   {
+    "n": 8,
+    "tekst": "Tussen de module met een omgeleide kabel en de module met een snijbrander zitten precies twee sluizen."
+   },
+   {
+    "n": 9,
+    "tekst": "Een dode sensor bevindt zich niet in dezelfde module als een gewiste datadrager."
+   },
+   {
+    "n": 10,
+    "tekst": "Tussen de module met een snijbrander en de module met een dode sensor zitten precies drie sluizen."
+   },
+   {
+    "n": 11,
+    "tekst": "Tussen de module met een omgeleide kabel en de module met een gesmolten zekering zitten precies twee sluizen."
+   },
+   {
+    "n": 12,
+    "tekst": "Een geblindeerde camera bevindt zich in dezelfde module als een gewiste datadrager of een losgekoppelde zuurstofcel."
+   },
+   {
+    "n": 13,
+    "tekst": "Finn bevindt zich in de machinekamer of de hydrocultuur."
+   },
+   {
+    "n": 14,
+    "tekst": "De module met een omgeleide kabel heeft geen luchtsluis naar de module van Carmen."
+   },
+   {
+    "n": 15,
+    "tekst": "Het noodbaken bevindt zich in de kombuis of de hydrocultuur."
+   },
+   {
+    "n": 16,
+    "tekst": "De module met een dode sensor heeft geen luchtsluis naar de module met een illegale zender."
+   },
+   {
+    "n": 17,
+    "tekst": "Een gewiste datadrager bevindt zich in de hydrocultuur of de observatiekoepel."
+   },
+   {
+    "n": 18,
+    "tekst": "Tussen de kombuis en de module van Carmen zitten precies twee sluizen."
+   }
+  ]
+ },
+ "toewijzing.station.grid.3.manifest-3": {
+  "intro": "Bij de laatste bevoorrading nam iedereen een persoonlijk pakket aan. De manifesten zijn gewist. Los het raster op en de rest volgt.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Jonas was er tijdens de vierde wacht."
+   },
+   {
+    "n": 2,
+    "tekst": "Tussen wie zich in de observatiekoepel bevond en Finn zitten precies drie wachten."
+   },
+   {
+    "n": 3,
+    "tekst": "Finn was er tijdens de eerste wacht."
+   },
+   {
+    "n": 4,
+    "tekst": "Dmitri was er niet tijdens de derde wacht."
+   },
+   {
+    "n": 5,
+    "tekst": "Tussen degene die een hoofdsleutel bij zich had en wie zich in de slaapcabines bevond zitten precies drie wachten."
+   },
+   {
+    "n": 6,
+    "tekst": "Tussen wie zich in de hydrocultuur bevond en Dmitri zit precies één wacht."
+   },
+   {
+    "n": 7,
+    "tekst": "Degene die een losgekoppelde zuurstofcel bij zich had bevond zich in de communicatiekoker of de observatiekoepel."
+   },
+   {
+    "n": 8,
+    "tekst": "Degene die een gewiste datadrager bij zich had was er eerder dan Ada."
+   }
+  ]
+ },
+ "vinden.woud.map.1.bron-1": {
+  "intro": "De bron verlegt zich elke eeuw. Deze keer ligt hij ergens tussen de bomen van het Verstilde Woud, op precies één van de plekken. Welke dat is, volgt uit de aanwijzingen.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Het hertenpad ligt aan hetzelfde pad als een hertenval."
+   },
+   {
+    "n": 2,
+    "tekst": "Het hertenpad ligt niet aan hetzelfde pad als een valse bron."
+   },
+   {
+    "n": 3,
+    "tekst": "Een hertenval ligt in hetzelfde stuk bos als een kromme wichelroede."
+   },
+   {
+    "n": 4,
+    "tekst": "Een zakje gedroogde maanbloem ligt niet in de doornenkom."
+   }
+  ]
+ },
+ "vinden.woud.map.4.bron-5": {
+  "intro": "De bron verlegt zich elke eeuw. Nu ligt hij ergens tussen de bomen van het Verstilde Woud, op precies één van deze plekken. Welke, volgt uit de aanwijzingen.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Tussen het hertenpad en Kyra liggen precies twee paden."
+   },
+   {
+    "n": 2,
+    "tekst": "Een zakje gedroogde maanbloem ligt op het hertenpad of de steenkring."
+   },
+   {
+    "n": 3,
+    "tekst": "Tussen een zakje gedroogde maanbloem en Eline liggen precies twee paden."
+   },
+   {
+    "n": 4,
+    "tekst": "Het verzonken bruggetje ligt niet op hetzelfde pad als een slapend wezen."
+   },
+   {
+    "n": 5,
+    "tekst": "Tussen de omgevallen toren en een ijzeren belletje liggen precies twee paden."
+   },
+   {
+    "n": 6,
+    "tekst": "Joris ligt in hetzelfde stuk bos als een offersteen of een hertenval."
+   },
+   {
+    "n": 7,
+    "tekst": "Eline ligt niet in hetzelfde stuk bos als een hertenval."
+   },
+   {
+    "n": 8,
+    "tekst": "De magische bron ligt in hetzelfde stuk bos als een afgebroken hoorn of een gebarsten spiegelscherf."
+   },
+   {
+    "n": 9,
+    "tekst": "Een gebarsten spiegelscherf ligt op hetzelfde pad als een offersteen."
+   },
+   {
+    "n": 10,
+    "tekst": "Tussen een hertenval en Imke liggen precies twee paden."
+   },
+   {
+    "n": 11,
+    "tekst": "Het hertenpad ligt niet op hetzelfde pad als een handvol zoutkorrels."
+   },
+   {
+    "n": 12,
+    "tekst": "Eline ligt niet in hetzelfde stuk bos als een gebarsten spiegelscherf."
+   },
+   {
+    "n": 13,
+    "tekst": "Tussen het verzonken bruggetje en een hertenval liggen precies twee paden."
+   }
+  ]
+ },
+ "dader.woud.grid.3.grenssteen-2": {
+  "intro": "Er werd iemand gevonden met zijn hand om iets wat er niet meer is. De veerman lag in de doornenkom, met een zakje gedroogde maanbloem ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Kyra was er bij de vierde klokslag."
+   },
+   {
+    "n": 2,
+    "tekst": "Tussen wie zich in de doornenkom bevond en Hidde zitten precies drie klokslagen."
+   },
+   {
+    "n": 3,
+    "tekst": "Eline was er bij de tweede klokslag of bij de vierde klokslag."
+   },
+   {
+    "n": 4,
+    "tekst": "Hidde was er bij de eerste klokslag of bij de vierde klokslag."
+   },
+   {
+    "n": 5,
+    "tekst": "Tussen Kyra en degene met een ijzeren belletje zitten precies drie klokslagen."
+   },
+   {
+    "n": 6,
+    "tekst": "Degene met een leren veldfles was er niet bij de tweede klokslag."
+   },
+   {
+    "n": 7,
+    "tekst": "Degene met een leren veldfles bevond zich in de omgevallen toren."
+   },
+   {
+    "n": 8,
+    "tekst": "Eline bevond zich niet in de steenkring."
+   }
+  ]
+ },
+ "toewijzing.woud.grid.2.gave-3": {
+  "intro": "Reizigers kwamen het woud in, elk met een gave. Het woud heeft alles door elkaar gehusseld. Los het raster op en de rest volgt vanzelf.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Gwen bevond zich bij het wilgenhoofd."
+   },
+   {
+    "n": 2,
+    "tekst": "Kyra bevond zich op het hertenpad of het wilgenhoofd."
+   },
+   {
+    "n": 3,
+    "tekst": "Bram bevond zich niet op het verzonken bruggetje."
+   },
+   {
+    "n": 4,
+    "tekst": "Degene die een gebarsten spiegelscherf bij zich had, bevond zich op het hertenpad."
+   },
+   {
+    "n": 5,
+    "tekst": "Bram had een afgebroken hoorn of een gebarsten spiegelscherf bij zich."
+   },
+   {
+    "n": 6,
+    "tekst": "Degene die een bundel vogelveren bij zich had, bevond zich niet op het verzonken bruggetje."
+   }
+  ]
+ },
+ "vinden.catacomben.map.2.uitgang-1": {
+  "intro": "Er is een uitgang. De kaart liegt erover, de luchtstroom niet. Het is op precies één van deze plekken. Welke, dat volgt uit de aanwijzingen.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Tussen de droge put en de ruimte met een luchtschacht loopt geen gang."
+   },
+   {
+    "n": 2,
+    "tekst": "Tussen de droge put en de ruimte met een losse kaarthoek loopt geen gang."
+   },
+   {
+    "n": 3,
+    "tekst": "De uitgang bevindt zich bij de droge put of bij het grafvertrek."
+   },
+   {
+    "n": 4,
+    "tekst": "Op de verzakte trap bevindt zich een vals gat."
+   },
+   {
+    "n": 5,
+    "tekst": "Tussen de verzakte trap en de ruimte met een gebroken kompas loopt geen gang."
+   },
+   {
+    "n": 6,
+    "tekst": "Van de ruimte met de uitgang loopt een gang naar de ruimte met een gestolen relikwie."
+   }
+  ]
+ },
+ "vinden.catacomben.map.5.uitgang-6": {
+  "intro": "Er is een uitgang in de catacomben. De kaart liegt erover, de luchtstroom niet. Het is op precies één van deze plekken, en welke dat is, volgt uit de aanwijzingen.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Tussen de ruimte van Floris en de ruimte met een zakje botstukken liggen precies drie gangen."
+   },
+   {
+    "n": 2,
+    "tekst": "Een dichtgemetselde deur bevindt zich in de bidkapel of het waterpeilgat."
+   },
+   {
+    "n": 3,
+    "tekst": "Tussen de ruimte met een gebroken kompas en de ruimte met een dichtgemetselde deur liggen precies twee gangen."
+   },
+   {
+    "n": 4,
+    "tekst": "Tussen de ruimte van Daan en de ruimte met een vals gat liggen precies twee gangen."
+   },
+   {
+    "n": 5,
+    "tekst": "Ivo bevindt zich niet in hetzelfde gewelf als een gestolen relikwie."
+   },
+   {
+    "n": 6,
+    "tekst": "Tussen de smalle schacht en de ruimte van Hanna liggen precies drie gangen."
+   },
+   {
+    "n": 7,
+    "tekst": "Een luchtschacht bevindt zich in het grafvertrek of het waterpeilgat."
+   },
+   {
+    "n": 8,
+    "tekst": "De uitgang bevindt zich in hetzelfde gewelf als een zakje botstukken of een veldflesje jenever."
+   },
+   {
+    "n": 9,
+    "tekst": "De bidkapel heeft geen gang naar de ruimte van Anton."
+   },
+   {
+    "n": 10,
+    "tekst": "De droge put heeft geen gang naar de ruimte met een gebroken kompas."
+   },
+   {
+    "n": 11,
+    "tekst": "Het waterpeilgat heeft een gang naar de ruimte met een vals gat."
+   },
+   {
+    "n": 12,
+    "tekst": "Floris bevindt zich in hetzelfde gewelf als een veldflesje jenever of een bijna lege carbidlamp."
+   },
+   {
+    "n": 13,
+    "tekst": "De ruimte met een waterput heeft geen gang naar de ruimte van Hanna."
+   },
+   {
+    "n": 14,
+    "tekst": "Lotte bevindt zich in hetzelfde gewelf als een bijna lege carbidlamp of een gebroken kompas."
+   },
+   {
+    "n": 15,
+    "tekst": "De ruimte met een luchtschacht heeft geen gang naar de ruimte met een opgerold touw."
+   }
+  ]
+ },
+ "dader.catacomben.grid.4.gids-2": {
+  "intro": "Iemand liep vooruit met de enige kaart, en de kaart kwam terug. De voorste gids werd aangetroffen in de smalle schacht, met een gebroken kompas ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Tussen Hanna en wie zich bij de droge put bevond zit precies één kwartier."
+   },
+   {
+    "n": 2,
+    "tekst": "Tussen wie zich in het grafvertrek bevond en Hanna zit precies één kwartier."
+   },
+   {
+    "n": 3,
+    "tekst": "Tussen degene die een gebroken kompas bij zich had en wie zich bij het waterpeilgat bevond zitten precies twee kwartier."
+   },
+   {
+    "n": 4,
+    "tekst": "Degene die een losse kaarthoek bij zich had, bevond zich bij de droge put of de smalle schacht."
+   },
+   {
+    "n": 5,
+    "tekst": "Emma was er eerder dan degene die een veldflesje jenever bij zich had."
+   },
+   {
+    "n": 6,
+    "tekst": "Degene die een losse kaarthoek bij zich had, was er eerder dan degene die een veldflesje jenever bij zich had."
+   },
+   {
+    "n": 7,
+    "tekst": "Tussen degene die een gestolen relikwie bij zich had en wie zich in het beenderengewelf bevond zit precies één kwartier."
+   },
+   {
+    "n": 8,
+    "tekst": "Gijs was er in het vijfde kwartier of het eerste kwartier."
+   },
+   {
+    "n": 9,
+    "tekst": "Degene die een veldflesje jenever bij zich had, was er niet in het vijfde kwartier."
+   },
+   {
+    "n": 10,
+    "tekst": "Degene die een gebroken kompas bij zich had, was er niet in het eerste kwartier."
+   },
+   {
+    "n": 11,
+    "tekst": "Karel bevond zich niet in het grafvertrek."
+   }
+  ]
+ },
+ "toewijzing.catacomben.grid.1.rugzak-1": {
+  "intro": "Afdalers, rugzakken, en in het donker raakt alles verwisseld. Los het raster op en de rest volgt.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Emma had een losse kaarthoek bij zich."
+   },
+   {
+    "n": 2,
+    "tekst": "Floris had een bijna lege carbidlamp niet bij zich."
+   },
+   {
+    "n": 3,
+    "tekst": "Degene die een losse kaarthoek bij zich had, bevond zich bij de droge put."
+   },
+   {
+    "n": 4,
+    "tekst": "Degene die een bijna lege carbidlamp bij zich had, bevond zich niet in het beenderengewelf."
+   }
+  ]
+ },
+ "dader.academie.grid.2.rector-1": {
+  "intro": "Tijdens het avondgebed is er iemand in steen veranderd en niemand van de aanwezigen geeft iets toe. De huisbewaarder werd aangetroffen in het ketelhok, met een dode kanarie ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Bruno bevond zich in de verboden trappenhal."
+   },
+   {
+    "n": 2,
+    "tekst": "Bruno had een zakje ijzervijlsel of een dode kanarie bij zich."
+   },
+   {
+    "n": 3,
+    "tekst": "Felix bevond zich in de sterrenkoepel."
+   },
+   {
+    "n": 4,
+    "tekst": "Jasper had een dode kanarie niet bij zich."
+   },
+   {
+    "n": 5,
+    "tekst": "Degene die een inktvlek die niet weggaat bij zich had, bevond zich in de sterrenkoepel."
+   }
+  ]
+ },
+ "dader.academie.grid.5.rector-8": {
+  "intro": "Tijdens het avondgebed is er iemand in steen veranderd, en niemand van de aanwezigen geeft iets toe. De huisbewaarder werd aangetroffen in de verboden trappenhal, met een inktvlek die niet weggaat ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Degene die een stuk steenhuid bij zich had, bevond zich in de eetzaal of het archief."
+   },
+   {
+    "n": 2,
+    "tekst": "Wie zich in de sterrenkoepel bevond, was er niet in het zesde lesuur."
+   },
+   {
+    "n": 3,
+    "tekst": "Wie zich in het herbarium bevond, was er eerder dan wie zich in de studiecel bevond."
+   },
+   {
+    "n": 4,
+    "tekst": "Amira was er eerder dan degene die een dode kanarie bij zich had."
+   },
+   {
+    "n": 5,
+    "tekst": "Tussen Gideon en degene die een inktvlek die niet weggaat bij zich had zit precies één lesuur."
+   },
+   {
+    "n": 6,
+    "tekst": "Wie zich in het archief bevond, was er in het eerste lesuur of het vierde lesuur."
+   },
+   {
+    "n": 7,
+    "tekst": "Wie zich in de verboden trappenhal bevond, was er niet in het derde lesuur."
+   },
+   {
+    "n": 8,
+    "tekst": "Amira bevond zich in het archief of de studiecel."
+   },
+   {
+    "n": 9,
+    "tekst": "Degene die een vervalst rapport bij zich had, was er in het derde lesuur of het zesde lesuur."
+   },
+   {
+    "n": 10,
+    "tekst": "Degene die een stilzwijgtalisman bij zich had, was er in het tweede lesuur of het derde lesuur."
+   },
+   {
+    "n": 11,
+    "tekst": "Tussen Jasper en wie zich in het herbarium bevond zit precies één lesuur."
+   },
+   {
+    "n": 12,
+    "tekst": "Tussen degene die een geleend grimoire bij zich had en wie zich in het herbarium bevond zit precies één lesuur."
+   },
+   {
+    "n": 13,
+    "tekst": "Felix was er in het zesde lesuur of het derde lesuur."
+   },
+   {
+    "n": 14,
+    "tekst": "Degene die een stuk steenhuid bij zich had, was er in het zesde lesuur of het vijfde lesuur."
+   },
+   {
+    "n": 15,
+    "tekst": "Tussen wie zich in de eetzaal bevond en Kiki zit precies één lesuur."
+   },
+   {
+    "n": 16,
+    "tekst": "Gideon bevond zich in de studiecel of het herbarium."
+   }
+  ]
+ },
+ "dader.academie.map.3.trappen-3": {
+  "intro": "Tijdens het avondgebed op Academie Morgenstond is iemand in steen veranderd. Niemand van de aanwezigen geeft iets toe. De rector werd aangetroffen in het herbarium, met een gebarsten toverstaf ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Degene met een zakje ijzervijlsel bevindt zich in het archief of het herbarium."
+   },
+   {
+    "n": 2,
+    "tekst": "De zaal met een geleend grimoire grenst niet aan de zaal van Iris."
+   },
+   {
+    "n": 3,
+    "tekst": "Tussen de spiegelzaal en de zaal van Amira zitten precies twee deuren."
+   },
+   {
+    "n": 4,
+    "tekst": "Kiki had een gebarsten toverstaf niet bij zich."
+   }
+  ]
+ },
+ "vinden.academie.map.3.leerstoel-2": {
+  "intro": "Een van de zalen houdt de verdwenen leerstoel verborgen. De school zelf werkt tegen. Het is op precies één van deze plekken, en dat volgt uit de aanwijzingen.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Een gebarsten toverstaf bevindt zich in de eetzaal."
+   },
+   {
+    "n": 2,
+    "tekst": "De sterrenkoepel grenst niet aan de zaal van Bruno."
+   },
+   {
+    "n": 3,
+    "tekst": "Tussen de zaal met een illusiewand en de zaal van Bruno zitten precies twee deuren."
+   },
+   {
+    "n": 4,
+    "tekst": "Tussen het ketelhok en de zaal van Hugo zitten precies twee deuren."
+   },
+   {
+    "n": 5,
+    "tekst": "Tussen de zaal van Kiki en de zaal met een zakje ijzervijlsel zitten precies twee deuren."
+   },
+   {
+    "n": 6,
+    "tekst": "Een illusiewand bevindt zich niet in dezelfde zaal als een inktvlek die niet weggaat."
+   },
+   {
+    "n": 7,
+    "tekst": "De zaal met een gesloten portaal grenst niet aan de zaal met een inktvlek die niet weggaat."
+   },
+   {
+    "n": 8,
+    "tekst": "Een versteende leerling bevindt zich in dezelfde zaal als een inktvlek die niet weggaat of een stuk steenhuid."
+   }
+  ]
+ },
+ "toewijzing.academie.grid.2.proef-1": {
+  "intro": "Leerlingen van Academie Morgenstond leverden een meesterproef in. De naamkaartjes zijn weggebrand. Los het raster op en de rest volgt.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Felix had een zakje ijzervijlsel bij zich."
+   },
+   {
+    "n": 2,
+    "tekst": "Kiki had een stuk steenhuid bij zich."
+   },
+   {
+    "n": 3,
+    "tekst": "Degene die een stuk steenhuid bij zich had, bevond zich in de verboden trappenhal."
+   },
+   {
+    "n": 4,
+    "tekst": "Degene die een geleend grimoire bij zich had, bevond zich in de sterrenkoepel of de verboden trappenhal."
+   },
+   {
+    "n": 5,
+    "tekst": "Esra bevond zich in de eetzaal of de verboden trappenhal."
+   }
+  ]
+ },
+ "dader.noir.kamer.1.start-0": {
+  "intro": "De regen kwam die nacht met bakken naar beneden, en niemand hoorde iets boven het water uit. Niemand weet meer wie waar stond, en zelfs waar Nora lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij Nora in dezelfde ruimte blijkt te staan, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Cor stond in de verlaten loods."
+   },
+   {
+    "n": 2,
+    "tekst": "Joop stond in het natte steegje."
+   },
+   {
+    "n": 3,
+    "tekst": "Ida stond niet naast de hutkoffer."
+   },
+   {
+    "n": 4,
+    "tekst": "Hilde stond in een hoek van het gebouw."
+   },
+   {
+    "n": 5,
+    "tekst": "Nora stond op dezelfde rij als de kleerkast."
+   },
+   {
+    "n": 6,
+    "tekst": "Nora stond ten westen van Joop."
+   }
+  ]
+ },
+ "dader.noir.grid.1.start-1": {
+  "intro": "Die nacht stortte de regen met bakken neer, en boven het water uit hoorde niemand iets. De kroegbaas lag in het pandjeshuis, met een pakje bankbiljetten naast zich. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Bep had een flesje chloraal bij zich."
+   },
+   {
+    "n": 2,
+    "tekst": "Koos bevond zich in het natte steegje."
+   }
+  ]
+ },
+ "dader.landhuis.grid.2.start-2": {
+  "intro": "Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat. Oom Aldert werd aangetroffen op de koetshuiszolder, met een zilveren kandelaar ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Lodewijk bevond zich in het rookkabinet."
+   },
+   {
+    "n": 2,
+    "tekst": "Joachim bevond zich in de wijnkelder of het rookkabinet."
+   },
+   {
+    "n": 3,
+    "tekst": "Agnes bevond zich op de koetshuiszolder of de wijnkelder."
+   },
+   {
+    "n": 4,
+    "tekst": "Degene die een paar leren handschoenen bij zich had, bevond zich in de biljartkamer."
+   },
+   {
+    "n": 5,
+    "tekst": "Degene die een jachtgeweer bij zich had, bevond zich niet in de wijnkelder."
+   }
+  ]
+ },
+ "dader.station.grid.3.start-3": {
+  "intro": "De koeling viel uit en het alarm werd pas veel later gehoord. De ladingmeester werd aangetroffen in de medische post, met een geleegde spuit ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Luuk was er tijdens de vierde wacht."
+   },
+   {
+    "n": 2,
+    "tekst": "Elif had een gewiste datadrager bij zich."
+   },
+   {
+    "n": 3,
+    "tekst": "Tussen degene die een illegale zender bij zich had en wie zich in de machinekamer bevond zitten precies drie wachten."
+   },
+   {
+    "n": 4,
+    "tekst": "Carmen had een gesmolten zekering of een gewiste datadrager bij zich."
+   },
+   {
+    "n": 5,
+    "tekst": "Wie zich in de hydrocultuur bevond was er eerder dan Luuk."
+   },
+   {
+    "n": 6,
+    "tekst": "Carmen was er tijdens de derde wacht."
+   },
+   {
+    "n": 7,
+    "tekst": "Wie zich in de medische post bevond was er tijdens de tweede wacht of de derde wacht."
+   }
+  ]
+ },
+ "dader.academie.grid.4.start-4": {
+  "intro": "Tijdens het avondgebed is er iemand in steen veranderd, en niemand van de aanwezigen geeft iets toe. De rector werd aangetroffen in de studiecel, met een stuk steenhuid ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Wie een stilzwijgtalisman bij zich had, was er in het tweede lesuur of in het vierde lesuur."
+   },
+   {
+    "n": 2,
+    "tekst": "Wie zich in het herbarium bevond, was er in het derde lesuur of in het tweede lesuur."
+   },
+   {
+    "n": 3,
+    "tekst": "Cleo had een dode kanarie of een stilzwijgtalisman bij zich."
+   },
+   {
+    "n": 4,
+    "tekst": "Loek was er in het derde lesuur of in het vijfde lesuur."
+   },
+   {
+    "n": 5,
+    "tekst": "Tussen Bruno en wie een dode kanarie bij zich had, zitten precies drie lesuren."
+   },
+   {
+    "n": 6,
+    "tekst": "Wie een gebarsten toverstaf bij zich had, was er in het vierde lesuur of in het vijfde lesuur."
+   },
+   {
+    "n": 7,
+    "tekst": "Wie zich in de verboden trappenhal bevond, was er eerder dan wie een dode kanarie bij zich had."
+   },
+   {
+    "n": 8,
+    "tekst": "Kiki was er eerder dan wie zich in de spiegelzaal bevond."
+   },
+   {
+    "n": 9,
+    "tekst": "Wie zich in de spiegelzaal bevond, was er in het tweede lesuur of in het eerste lesuur."
+   }
+  ]
+ },
+ "dader.woud.grid.5.start-5": {
+  "intro": "Er werd iemand gevonden met zijn hand om iets wat er niet meer is. De veerman lag in de steenkring, met een afgebroken hoorn ernaast. Wie zich daar bevond, is de dader.",
+  "aanwijzingen": [
+   {
+    "n": 1,
+    "tekst": "Bram was er eerder dan degene die een leren veldfles bij zich had."
+   },
+   {
+    "n": 2,
+    "tekst": "Degene die een leren veldfles bij zich had, was er eerder dan Kyra."
+   },
+   {
+    "n": 3,
+    "tekst": "Tussen wie zich in de steenkring bevond en degene die een kromme wichelroede bij zich had, zit precies één klokslag."
+   },
+   {
+    "n": 4,
+    "tekst": "Wie zich bij de dampende poel bevond, was er bij de tweede klokslag of de vijfde klokslag."
+   },
+   {
+    "n": 5,
+    "tekst": "Degene die een leren veldfles bij zich had, was er eerder dan Imke."
+   },
+   {
+    "n": 6,
+    "tekst": "Tussen degene die een handvol zoutkorrels bij zich had en Kyra zitten precies drie klokslagen."
+   },
+   {
+    "n": 7,
+    "tekst": "Tussen wie zich op het hertenpad bevond en Bram zitten precies vier klokslagen."
+   },
+   {
+    "n": 8,
+    "tekst": "Tussen degene die een handvol zoutkorrels bij zich had en wie zich op het verzonken bruggetje bevond, zitten precies drie klokslagen."
+   },
+   {
+    "n": 9,
+    "tekst": "Tussen degene die een leren veldfles bij zich had en Joris zitten precies vier klokslagen."
+   },
+   {
+    "n": 10,
+    "tekst": "Tussen wie zich in de omgevallen toren bevond en degene die een zakje gedroogde maanbloem bij zich had, zitten precies drie klokslagen."
+   },
+   {
+    "n": 11,
+    "tekst": "Degene die een afgebroken hoorn bij zich had, was er eerder dan Gwen."
+   }
+  ]
+ }
+}

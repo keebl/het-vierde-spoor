@@ -5,10 +5,35 @@
 // blijven. Haalt een zin dat niet, dan gebruiken we de originele zin. Zo kan
 // een slechte herschrijving een puzzel nooit onoplosbaar of dubbelzinnig
 // maken - dat is precies de fout waar papieren uitgaven klachten over
-// krijgen.
+// krijgen. Dat vangnet staat in src/ai/opdracht.js, want de server gebruikt
+// het ook: wat daar niet doorheen komt, wordt niet eens bewaard.
 //
-// Staat standaard uit. Aanzetten kan alleen als er een lokale server draait
-// met een API-key; zonder dat blijven de eigen templateteksten staan.
+// Wat deze kant verstuurt is één ding: het id van de puzzel. Geen teksten,
+// geen prompt. De server rekent de puzzel zelf uit en bouwt de vraag aan het
+// model daaruit op, zodat er langs deze weg geen eigen tekst een model in te
+// praten valt.
+//
+// Staat standaard uit.
+
+import { aiEndpoint } from './endpoint.js';
+
+// De teksten van de bibliotheek zijn vooraf herschreven en staan in de repo
+// (zie tools/ai-vooraf.mjs). Die hebben geen server nodig, geen sleutel en
+// geen toestemming: ze zijn gewoon inhoud, net als de eigen teksten. We
+// halen het bestand pas op als er een puzzel wordt geopend.
+let voorafBelofte = null;
+function voorafTeksten() {
+  if (!voorafBelofte) {
+    voorafBelofte = fetch(new URL('../content/ai-teksten.json', import.meta.url))
+      .then((r) => (r.ok ? r.json() : {}))
+      .catch(() => ({}));
+  }
+  return voorafBelofte;
+}
+
+import { keepsNames } from './opdracht.js';
+
+export { keepsNames };
 
 const FLAG = 'vierdespoor.ai';
 
@@ -28,43 +53,23 @@ export const setAiEnabled = (on) => {
   }
 };
 
-// De dragende delen van een aanwijzing, los van de stijl:
-//   - de eigennamen            (wie en wat er genoemd wordt)
-//   - de ontkenning            ("niet"/"geen" omdraaien keert de betekenis om)
-//   - de getallen              ("precies 3 uur" mag geen 2 worden)
-//   - het of-of                (een keuze mag geen bewering worden)
-// Blijft een van die vier niet staan, dan is het geen herschrijving meer
-// maar een andere aanwijzing, en gebruiken we het origineel.
-const heeftOntkenning = (t) => /\b(niet|geen|nooit)\b/i.test(t);
-const getallen = (t) => (t.match(/\d+/g) ?? []).sort().join(',');
-const heeftKeuze = (t) => /\bof\b/i.test(t);
-
-export function keepsNames(original, rewritten, names) {
-  if (typeof rewritten !== 'string' || rewritten.length < 4) return false;
-  if (!names.every((name) => rewritten.includes(name))) return false;
-  if (heeftOntkenning(original) !== heeftOntkenning(rewritten)) return false;
-  if (getallen(original) !== getallen(rewritten)) return false;
-  if (heeftKeuze(original) !== heeftKeuze(rewritten)) return false;
-  return true;
-}
-
 export async function dressUp(puzzle) {
-  if (!aiEnabled()) return puzzle;
+  // Staat deze puzzel in de vooraf herschreven set, dan is er niets te
+  // vragen: de tekst ligt er al.
+  const vooraf = (await voorafTeksten())[puzzle.id];
+  if (vooraf) return pasToe(puzzle, vooraf);
 
-  const payload = {
-    wereld: puzzle.world.name,
-    opdracht: puzzle.opdracht.name,
-    intro: puzzle.intro,
-    vraag: puzzle.question.text,
-    aanwijzingen: puzzle.clues.map((c) => ({ n: c.n, tekst: c.text, namen: c.names ?? [] })),
-  };
+  if (!aiEnabled()) return puzzle;
+  const url = aiEndpoint();
+  if (!url) return puzzle;
 
   let data;
   try {
-    const res = await fetch('/api/flavour', {
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(payload),
+      // Het enige dat we versturen: welke puzzel het is.
+      body: JSON.stringify({ id: puzzle.id }),
     });
     if (!res.ok) return puzzle;
     data = await res.json();
@@ -73,20 +78,30 @@ export async function dressUp(puzzle) {
   }
 
   if (!data || typeof data !== 'object') return puzzle;
+  return pasToe(puzzle, data);
+}
 
+// Een set herschreven teksten op een puzzel leggen - en wat het vangnet niet
+// haalt, blijft staan zoals het was. Dit gebeurt hier nog een keer, ook al
+// keurde de server het al: de puzzel in de browser is de echte, en alleen
+// hier weten we zeker dat elke zin bij zijn eigen aanwijzing hoort.
+function pasToe(puzzle, data) {
   const out = { ...puzzle, aiUsed: true, aiKept: 0, aiRejected: 0 };
   if (typeof data.intro === 'string' && data.intro.length > 20) out.intro = data.intro;
 
-  if (Array.isArray(data.aanwijzingen) && data.aanwijzingen.length === puzzle.clues.length) {
-    out.clues = puzzle.clues.map((clue, i) => {
-      const kandidaat = data.aanwijzingen[i]?.tekst;
-      if (keepsNames(clue.text, kandidaat, clue.names ?? [])) {
-        out.aiKept++;
-        return { ...clue, text: kandidaat, origineel: clue.text };
-      }
-      out.aiRejected++;
-      return clue;
-    });
-  }
+  const perNummer = new Map(
+    (Array.isArray(data.aanwijzingen) ? data.aanwijzingen : [])
+      .filter((a) => a && typeof a.tekst === 'string')
+      .map((a) => [Number(a.n), a.tekst])
+  );
+  out.clues = puzzle.clues.map((clue) => {
+    const kandidaat = perNummer.get(clue.n);
+    if (kandidaat && keepsNames(clue.text, kandidaat, clue.names ?? [])) {
+      out.aiKept++;
+      return { ...clue, text: kandidaat, origineel: clue.text };
+    }
+    if (kandidaat) out.aiRejected++;
+    return clue;
+  });
   return out;
 }
