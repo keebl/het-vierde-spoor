@@ -1,7 +1,8 @@
 // De speler. Houdt de markeringen van de speler bij, tekent het bord dat bij
 // de mechaniek hoort, en kan controleren, hinten en de oplossing geven.
 
-import { el, renderMatrix, renderMap, renderLatin, latinLegenda, cellKey } from './boards.js';
+import { el, renderBlok, renderMap, renderLatin, latinLegenda, cellKey } from './boards.js';
+import { blokkenVan } from './blokken.js';
 import { loadProgress, saveProgress, clearProgress } from './state.js';
 import { MECHANIC_BY_ID } from '../content/assignments.js';
 import { spelregelsVan } from '../content/spelregels.js';
@@ -258,8 +259,23 @@ function boardNodes(puzzle, state, onCell) {
   }
   const nodes = [];
   if (puzzle.graph) nodes.push(renderMap(puzzle));
-  for (const cat of puzzle.cats) {
-    nodes.push(renderMatrix(puzzle, cat, state.marks[cat.id] ?? {}, onCell, state.wrong));
+  const blokken = blokkenVan(puzzle);
+  for (const blok of blokken.filter((b) => b.soort === 'anker')) {
+    nodes.push(renderBlok(puzzle, blok, state.marks[blok.id] ?? {}, onCell, state.wrong));
+  }
+  const paren = blokken.filter((b) => b.soort === 'paar');
+  if (paren.length) {
+    nodes.push(el('p', {
+      class: 'label blok-kop',
+      text: paren.length === 1 ? 'En tussen die twee onderling' : 'En tussen de categorieën onderling',
+    }));
+    nodes.push(el('p', {
+      class: 'legend',
+      text: 'Hier noteer je wat je weet zonder dat er een verdachte bij genoemd wordt, zoals "degene met de bankbiljetten was in het hotel". Je hebt ze niet nodig om de vraag te beantwoorden, maar ze helpen je er wel sneller komen.',
+    }));
+    for (const blok of paren) {
+      nodes.push(renderBlok(puzzle, blok, state.marks[blok.id] ?? {}, onCell, state.wrong));
+    }
   }
   nodes.push(el('p', {
     class: 'legend',
@@ -332,11 +348,19 @@ function noteNode(state) {
   return el('div', { class: cls, text: state.note.text });
 }
 
+// Welk vakje hoort er in dit blok aan te staan? Bij een ankerblok is de rij
+// een slot en zoeken we het item van de kolomcategorie op. Bij een paarblok
+// is de rij zelf ook een item: dan zoeken we eerst bij welk slot die hoort.
+function juisteKolom(puzzle, blok, rij) {
+  const slot = blok.soort === 'anker' ? rij : puzzle.solution[blok.rij.id].indexOf(rij);
+  return puzzle.solution[blok.kolom.id][slot];
+}
+
 // -------------------------------------------------------- markeringen
 
 function emptyMarks(puzzle) {
   const marks = {};
-  for (const cat of puzzle.cats) marks[cat.id] = {};
+  for (const blok of blokkenVan(puzzle)) marks[blok.id] = {};
   return marks;
 }
 
@@ -416,10 +440,10 @@ function fillSolution(puzzle, state) {
   }
   state.marks = emptyMarks(puzzle);
   const n = puzzle.anchor.items.length;
-  for (const cat of puzzle.cats) {
-    for (let slot = 0; slot < n; slot++) {
-      const item = puzzle.solution[cat.id][slot];
-      for (let i = 0; i < n; i++) state.marks[cat.id][cellKey(slot, i)] = i === item ? 'yes' : 'no';
+  for (const blok of blokkenVan(puzzle)) {
+    for (let rij = 0; rij < n; rij++) {
+      const item = juisteKolom(puzzle, blok, rij);
+      for (let i = 0; i < n; i++) state.marks[blok.id][cellKey(rij, i)] = i === item ? 'yes' : 'no';
     }
   }
 }
@@ -454,20 +478,23 @@ function inspect(puzzle, state) {
     return { wrong, filled, total };
   }
   const n = puzzle.anchor.items.length;
-  for (const cat of puzzle.cats) {
-    const marks = state.marks[cat.id] ?? {};
+  for (const blok of blokkenVan(puzzle)) {
+    const marks = state.marks[blok.id] ?? {};
+    // De paarblokken zijn kladpapier: fouten erin wijzen we aan, maar je
+    // hoeft ze niet in te vullen om de puzzel opgelost te hebben.
+    const telt = blok.soort === 'anker';
     for (let slot = 0; slot < n; slot++) {
-      total++;
-      const correct = puzzle.solution[cat.id][slot];
+      if (telt) total++;
+      const correct = juisteKolom(puzzle, blok, slot);
       let picked = null;
       for (let i = 0; i < n; i++) if (marks[cellKey(slot, i)] === 'yes') picked = i;
       if (picked == null) {
         // een kruis op het juiste vakje is ook fout
-        if (marks[cellKey(slot, correct)] === 'no') wrong.add(`${cat.id}:${cellKey(slot, correct)}`);
+        if (marks[cellKey(slot, correct)] === 'no') wrong.add(`${blok.id}:${cellKey(slot, correct)}`);
         continue;
       }
-      filled++;
-      if (picked !== correct) wrong.add(`${cat.id}:${cellKey(slot, picked)}`);
+      if (telt) filled++;
+      if (picked !== correct) wrong.add(`${blok.id}:${cellKey(slot, picked)}`);
     }
   }
   return { wrong, filled, total };

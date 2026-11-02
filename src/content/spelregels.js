@@ -27,6 +27,7 @@ export const SPELREGELS = {
       'Elke verdachte hoort bij precies één voorwerp, één plek en - als die er zijn - één tijdstip.',
       'Andersom net zo: elk voorwerp, elke plek en elk tijdstip hoort bij precies één verdachte.',
       'Een vink streept de rest van zijn rij en zijn kolom door; dat doet het bord zelf.',
+      'Onder de blokken met de verdachten staan de blokken tussen de categorieën onderling. Daar noteer je wat je weet zonder dat er een verdachte bij genoemd wordt, zoals "degene met de bankbiljetten was in het hotel". Je hebt ze niet nodig om de vraag te beantwoorden.',
       'Alle aanwijzingen zijn waar, en er is precies één verdeling die ze allemaal waarmaakt.',
     ],
   },
@@ -34,6 +35,7 @@ export const SPELREGELS = {
     kop: 'De regels van de Rondgang',
     regels: [
       'Elke ruimte hoort bij precies één van elk ander soort ding, en andersom net zo.',
+      'Naast de blokken met de ruimtes staan de blokken tussen de categorieën onderling, voor wat je weet zonder dat er een ruimte bij genoemd wordt.',
       '"Grenst aan" betekent: er zit een deur tussen. Twee ruimtes die elkaar op de kaart raken zonder deur, grenzen dus niet aan elkaar.',
       '"Twee deuren verderop" telt de kortste route over de deuren die er zijn.',
       'De kaart is volledig: wat er niet op staat, bestaat niet.',

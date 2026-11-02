@@ -19,7 +19,8 @@ import { WORLDS } from '../src/content/worlds.js';
 import { ASSIGNMENTS, MECHANICS } from '../src/content/assignments.js';
 import { buildPuzzle, parsePuzzleId } from '../src/puzzle.js';
 import { countSolutions, makeCtx } from '../src/engine/assign.js';
-import { evalClue } from '../src/engine/clues.js';
+import { evalClue, catsTouched } from '../src/engine/clues.js';
+import { blokkenVan } from '../src/ui/blokken.js';
 import { countLatinSolutions, evalLatin } from '../src/engine/latin.js';
 import {
   telPlaatsingen, evalAanwijzing, graad, idx, rijVan, kolVan, kamerBuren, naastMeubel,
@@ -307,6 +308,18 @@ function keurAssign(p, waar) {
         p.intro.toLowerCase().includes(cat.items[ref.i].name.toLowerCase()), waar,
         cat.items[ref.i].name);
     }
+  }
+
+  // Regel 5c: een aanwijzing die precies twee categorieën aan elkaar knoopt,
+  // moet je ergens kunnen noteren. Daarvoor heeft het raster ook blokken
+  // tussen de categorieën onderling nodig: zonder het blok voorwerp x plek
+  // kun je "degene met de bankbiljetten was in het hotel" nergens kwijt.
+  const blokken = new Set(blokkenVan(p).flatMap((b) => [`${b.rij.id}|${b.kolom.id}`, `${b.kolom.id}|${b.rij.id}`]));
+  for (const c of p._rawClues) {
+    const raakt = [...catsTouched(c)];
+    if (raakt.length !== 2) continue;
+    eis('een aanwijzing tussen twee categorieen is op het bord te noteren',
+      blokken.has(`${raakt[0]}|${raakt[1]}`), waar, `${c.kind}: ${raakt.join(' x ')}`);
   }
 
   // Regel 6: de belofte van de moeilijkheidsgraad.

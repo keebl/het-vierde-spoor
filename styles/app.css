@@ -565,6 +565,11 @@ input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: -1p
   line-height: 1.5;
 }
 
+/* De blokken tussen twee categorieën onderling zijn kladpapier: ze staan
+   onder de blokken die er echt toe doen, en dragen een rustiger kop. */
+.blok-kop { margin-top: var(--s6); }
+.blok-paar .label { color: var(--text-3); }
+
 .play { display: grid; gap: var(--s6); align-items: start; }
 @media (min-width: 920px) { .play { grid-template-columns: 300px 1fr; gap: var(--s7); } }
 .play > *, .boards > * { min-width: 0; }

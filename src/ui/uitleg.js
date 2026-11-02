@@ -60,6 +60,10 @@ export function renderUitleg(mount) {
           el('span', { text: 'Had Clara de aansteker, dan had niemand anders die, en zij had verder niets anders. Daarom zet een vink in een vakje automatisch kruisjes in de rest van zijn rij en kolom.' }),
         ]),
         el('p', { text: 'Klikken loopt door drie standen: leeg, kruis (uitgesloten), vink (zeker). Een aanwijzing die je hebt verwerkt kun je wegstrepen door erop te klikken, zodat je ziet wat je nog niet hebt gebruikt.' }),
+        el('p', {}, [
+          el('b', { text: 'Onderaan staan de blokken tussen de categorieën onderling. ' }),
+          el('span', { text: 'Een aanwijzing als "degene met de bankbiljetten was in het hotel" noemt geen verdachte, en kon je daarom nergens kwijt. Nu wel: in het blok voorwerp × plek. Je hoeft die blokken niet in te vullen om de vraag te beantwoorden, maar met zo\'n aanwijzing kom je er wel sneller.' }),
+        ]),
       ]),
     ], 'Kruisjes en vinkjes tot er een naam overblijft.')
   );

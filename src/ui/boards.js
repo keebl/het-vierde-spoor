@@ -19,14 +19,18 @@ export const cellKey = (slot, item) => `${slot},${item}`;
 
 // ------------------------------------------------------- kruisjesraster
 
-// Een matrix per categorie: rijen zijn de ankeritems, kolommen de items van
-// die categorie. Klikken loopt door leeg -> kruis -> vink. Een vink zet de
-// rest van zijn rij en kolom automatisch op kruis, want dat volgt altijd.
-export function renderMatrix(puzzle, cat, marks, onChange, wrong) {
+// Een blok: rijen zijn de items van de ene categorie, kolommen die van de
+// andere. Klikken loopt door leeg -> kruis -> vink. Een vink zet de rest van
+// zijn rij en kolom automatisch op kruis, want dat volgt altijd.
+//
+// Blokken tegen het anker (verdachte x voorwerp) en blokken tussen twee
+// categorieën onderling (voorwerp x plek) werken precies hetzelfde; alleen
+// de koppen verschillen. Vandaar één functie.
+export function renderBlok(puzzle, blok, marks, onChange, wrong) {
   const n = puzzle.anchor.items.length;
   const table = el('table', { class: 'grid' });
   const head = el('tr', {}, [el('th', { class: 'corner' })]);
-  for (const item of cat.items) {
+  for (const item of blok.kolom.items) {
     head.append(el('th', { class: 'col-head' }, [
       el('span', { class: 'kop-staand' }, [icoonElement(item, 20), el('span', { text: item })]),
     ]));
@@ -35,7 +39,7 @@ export function renderMatrix(puzzle, cat, marks, onChange, wrong) {
 
   const body = el('tbody');
   for (let slot = 0; slot < n; slot++) {
-    const naam = puzzle.anchor.items[slot];
+    const naam = blok.rij.items[slot];
     const row = el('tr', {}, [
       el('th', { scope: 'row' }, [
         el('span', { class: 'kop-liggend' }, [icoonElement(naam, 18), el('span', { text: naam })]),
@@ -48,19 +52,22 @@ export function renderMatrix(puzzle, cat, marks, onChange, wrong) {
         class: 'mark',
         type: 'button',
         'data-state': state,
-        'data-wrong': wrong?.has(`${cat.id}:${key}`) ? '1' : null,
-        'aria-label': `${naam} / ${cat.items[item]}`,
+        'data-wrong': wrong?.has(`${blok.id}:${key}`) ? '1' : null,
+        'aria-label': `${naam} / ${blok.kolom.items[item]}`,
         text: state === 'yes' ? '✔' : state === 'no' ? '✕' : '',
       });
-      btn.addEventListener('click', () => onChange(cat.id, slot, item));
+      btn.addEventListener('click', () => onChange(blok.id, slot, item));
       row.append(el('td', { class: 'cell' }, btn));
     }
     body.append(row);
   }
   table.append(body);
 
-  return el('div', {}, [
-    el('p', { class: 'label', text: cat.name }),
+  const kop = blok.soort === 'anker'
+    ? blok.kolom.name
+    : `${blok.rij.name} × ${blok.kolom.name}`;
+  return el('div', { class: blok.soort === 'paar' ? 'blok blok-paar' : 'blok' }, [
+    el('p', { class: 'label', text: kop }),
     el('div', { class: 'board-wrap' }, table),
   ]);
 }
