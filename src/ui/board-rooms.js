@@ -149,32 +149,40 @@ export function renderKamerbord(puzzle, state, acties) {
   }
   svg.append(raster);
 
-  const naden = el('g');
   const muren = el('g');
+  // Een muur is geen streep maar een muur: een donkere voet met een lichter
+  // bovenvlak erop, alsof je van schuin boven op een maquette kijkt. Dat is
+  // wat een plattegrond een gebouw maakt in plaats van een schema.
+  const muurVert = (cx, y1, y2) => {
+    muren.append(el('line', { x1: cx, y1, x2: cx, y2, class: 'muurvoet' }));
+    muren.append(el('line', { x1: cx - 2, y1, x2: cx - 2, y2, class: 'muurtop' }));
+    muren.append(el('line', { x1: cx - 3.5, y1, x2: cx - 3.5, y2, class: 'muurglans' }));
+  };
+  const muurHor = (x1, x2, cy) => {
+    muren.append(el('line', { x1, y1: cy, x2, y2: cy, class: 'muurvoet' }));
+    muren.append(el('line', { x1, y1: cy - 2, x2, y2: cy - 2, class: 'muurtop' }));
+    muren.append(el('line', { x1, y1: cy - 3.5, x2, y2: cy - 3.5, class: 'muurglans' }));
+  };
+
   for (let i = 0; i < n * n; i++) {
     const r = rij(i);
     const c = kol(i);
     const rechts = c < n - 1 ? i + 1 : null;
     const onder = r < n - 1 ? i + n : null;
-    if (rechts != null) {
-      const zelfde = kamer(i) === kamer(rechts);
-      if (!zelfde) {
-        muren.append(el('line', { x1: x(c + 1), y1: y(r), x2: x(c + 1), y2: y(r + 1), class: 'kamermuur' }));
-        muren.append(el('line', { x1: x(c + 1), y1: y(r), x2: x(c + 1), y2: y(r + 1), class: 'kamermuur-top' }));
-      }
-    }
-    if (onder != null) {
-      const zelfde = kamer(i) === kamer(onder);
-      if (!zelfde) {
-        muren.append(el('line', { x1: x(c), y1: y(r + 1), x2: x(c + 1), y2: y(r + 1), class: 'kamermuur' }));
-        muren.append(el('line', { x1: x(c), y1: y(r + 1), x2: x(c + 1), y2: y(r + 1), class: 'kamermuur-top' }));
-      }
-    }
+    if (rechts != null && kamer(i) !== kamer(rechts)) muurVert(x(c + 1), y(r), y(r + 1));
+    if (onder != null && kamer(i) !== kamer(onder)) muurHor(x(c), x(c + 1), y(r + 1));
   }
   svg.append(muren);
-  svg.append(el('rect', {
-    x: x(0), y: y(0), width: n * CEL, height: n * CEL, class: 'buitenmuur-kamer',
+
+  // De buitenmuur: dezelfde opbouw, maar helemaal rond.
+  const buiten = el('g');
+  buiten.append(el('rect', {
+    x: x(0), y: y(0), width: n * CEL, height: n * CEL, class: 'buitenmuur-voet',
   }));
+  buiten.append(el('rect', {
+    x: x(0) + 2.5, y: y(0) + 2.5, width: n * CEL - 5, height: n * CEL - 5, class: 'buitenmuur-top',
+  }));
+  svg.append(buiten);
 
   // Rij- en kolomaanduiding, plus een kompas: de aanwijzingen spreken over
   // rijen, kolommen en het noorden, dus dat moet op het bord te zien zijn.
@@ -242,10 +250,16 @@ export function renderKamerbord(puzzle, state, acties) {
     }
 
     const hoogte = regels.length * (groot + 3) + 7;
-    borden.append(el('rect', {
-      x: midden - ruimte / 2, y: y(run.r) + 5, width: ruimte, height: hoogte,
-      rx: 4, class: 'kamerplaat',
-    }));
+    const bx = midden - ruimte / 2;
+    const by = y(run.r) + 5;
+    // Een houten naambordje, geen zwarte balk: donkere plank, lichter
+    // bovenvlak, en een schroefje in elke hoek.
+    borden.append(el('rect', { x: bx, y: by + 2, width: ruimte, height: hoogte, rx: 5, class: 'kamerplaat-schaduw' }));
+    borden.append(el('rect', { x: bx, y: by, width: ruimte, height: hoogte, rx: 5, class: 'kamerplaat' }));
+    borden.append(el('rect', { x: bx + 2, y: by + 1.5, width: ruimte - 4, height: hoogte - 4, rx: 4, class: 'kamerplaat-rand' }));
+    for (const sx of [bx + 5, bx + ruimte - 5]) {
+      borden.append(el('circle', { cx: sx, cy: by + hoogte / 2, r: 1.5, class: 'kamerplaat-schroef' }));
+    }
     regels.forEach((tekst, i) => {
       const t = el('text', {
         x: midden, y: y(run.r) + 5 + (groot + 3) * (i + 1), 'text-anchor': 'middle',
