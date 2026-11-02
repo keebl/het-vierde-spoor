@@ -104,35 +104,40 @@ export const VLOER_VAN = {
   sterrenwacht: { vul: '#c9b48f', lijn: '#ad9870', dessin: 'ruiten' },
 };
 
-// Wat staat er in zo'n ruimte? Naam plus het icoon dat erbij hoort.
+// Wat staat er in zo'n ruimte? Naam plus de tekening die erbij hoort.
+//
+// Elke naam heeft zijn eigen tekening. Een aanrecht is geen tafel en een
+// slijpsteen is geen touwhaspel, dus ze mogen ook niet hetzelfde plaatje
+// delen: tools/check-kamers.mjs faalt zodra dat gebeurt.
 export const MEUBELS_VAN = {
   keuken: [
     ['het fornuis', 'fornuis'], ['de gootsteen', 'gootsteen'], ['de koelkast', 'koelkast'],
-    ['het aanrecht', 'tafel'], ['de provisiekast', 'kast'], ['de vaatkast', 'rek'],
+    ['het aanrecht', 'aanrecht'], ['de provisiekast', 'provisiekast'], ['de vaatkast', 'vaatkast'],
   ],
   zaal: [
     ['de haard', 'haard'], ['de leren fauteuil', 'fauteuil'], ['de staande klok', 'staandeklok'],
-    ['de vleugel', 'vleugel'], ['de wandspiegel', 'spiegelstandaard'], ['het borstbeeld', 'buste'],
+    ['de vleugel', 'vleugel'], ['de wandspiegel', 'wandspiegel'], ['het borstbeeld', 'buste'],
   ],
   bibliotheek: [
     ['de boekenkast', 'boekenkast'], ['de lessenaar', 'lessenaar'], ['de globe', 'globe'],
-    ['de ladekast', 'kast'], ['de leesstoel', 'stoel'], ['de kaartentafel', 'kaartentafel'],
+    ['de ladekast', 'ladekast'], ['de leesstoel', 'stoel'], ['de kaartentafel', 'kaartentafel'],
   ],
   kelder: [
-    ['het wijnrek', 'rek'], ['het eikenhouten vat', 'vat'], ['de kolenkist', 'kist'],
-    ['de werkbank', 'tafel'], ['de touwhaspel', 'haspel'], ['de stapel kratten', 'krat'],
+    ['het wijnrek', 'wijnrek'], ['het eikenhouten vat', 'vat'], ['de kolenkist', 'kolenkist'],
+    ['de werkbank', 'werkbank'], ['de touwhaspel', 'touwhaspel'], ['de stapel kratten', 'krat'],
   ],
   slaapkamer: [
-    ['het bed', 'bed'], ['de kleerkast', 'kast'], ['het nachtkastje', 'tafel'],
-    ['de wastafel', 'gootsteen'], ['de hutkoffer', 'kist'], ['de voetenbank', 'mosbank'],
+    ['het bed', 'bed'], ['de kleerkast', 'kleerkast'], ['het nachtkastje', 'nachtkastje'],
+    ['de wastafel', 'wastafel'], ['de hutkoffer', 'hutkoffer'], ['de voetenbank', 'voetenbank'],
   ],
   gang: [
-    ['de kapstok', 'kapstok'], ['de paraplubak', 'mand'], ['de wandtafel', 'tafel'],
-    ['de staande spiegel', 'spiegelstandaard'], ['de gangklok', 'staandeklok'], ['het harnas', 'harnas'],
+    ['de kapstok', 'kapstok'], ['de paraplubak', 'paraplubak'], ['de wandtafel', 'wandtafel'],
+    ['de staande spiegel', 'staandespiegel'], ['de gangklok', 'gangklok'], ['het harnas', 'harnas'],
   ],
   werkplaats: [
-    ['de gereedschapskist', 'kist'], ['de ketel', 'ketel'], ['de schakelkast', 'noodkast'],
-    ['het laadrek', 'rek'], ['de slijpsteen', 'haspel'], ['de werktafel', 'tafel'],
+    ['de gereedschapskist', 'gereedschapskist'], ['de ketel', 'ketel'],
+    ['de schakelkast', 'schakelkast'], ['het laadrek', 'laadrek'],
+    ['de slijpsteen', 'slijpsteen'], ['de draaibank', 'draaibank'],
   ],
   buiten: [
     ['de houtstapel', 'houtstapel'], ['de drinkbak', 'drinkbak'], ['de vuurplaats', 'vuur'],
@@ -140,15 +145,17 @@ export const MEUBELS_VAN = {
   ],
   grafkelder: [
     ['de stenen sarcofaag', 'sarcofaag'], ['de knekelnis', 'knekelnis'], ['de zuil', 'zuil'],
-    ['het bidbankje', 'bidbank'], ['de kaarsentafel', 'kaarsentafel'], ['de grafzerk', 'sarcofaag'],
+    ['het bidbankje', 'bidbank'], ['de kaarsentafel', 'kaarsentafel'], ['de grafzerk', 'grafzerk'],
   ],
   laboratorium: [
-    ['de kweekbak', 'kweekbak'], ['de kruidenkast', 'kruidenkast'], ['de distilleerketel', 'ketel'],
-    ['de weegschaal', 'weegschaal'], ['de werktafel met flessen', 'tafel'], ['de plantenbak', 'kweekbak'],
+    ['de kweekbak', 'kweekbak'], ['de kruidenkast', 'kruidenkast'],
+    ['de distilleerketel', 'distilleerketel'], ['de weegschaal', 'weegschaal'],
+    ['de proeventafel', 'proeventafel'], ['de plantenbak', 'plantenbak'],
   ],
   sterrenwacht: [
-    ['de telescoop', 'telescoop'], ['de hemelbol', 'hemelbol'], ['de sterrenkaart', 'kaarthoek'],
-    ['de kaartenkast', 'kast'], ['de schrijflessenaar', 'lessenaar'], ['de wandklok', 'staandeklok'],
+    ['de telescoop', 'telescoop'], ['de hemelbol', 'hemelbol'], ['de sterrenkaart', 'sterrenkaart'],
+    ['de kaartenkast', 'kaartenkast'], ['de schrijflessenaar', 'schrijflessenaar'],
+    ['de chronometer', 'chronometer'],
   ],
 };
 

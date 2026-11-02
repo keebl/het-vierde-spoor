@@ -257,7 +257,13 @@ function mismatch(cand, params) {
   return Math.max(0, cand.clueCount - (params.maxClues ?? 99));
 }
 
-export function generateAssignment(spec, seed, params, forced = null, tries = 6) {
+// tries: hoeveel keer we een hele puzzel opnieuw opzetten. Een poging die de
+// belofte van het niveau niet haalt (niveau 4 en 5 moeten een aanname
+// vragen) is onbruikbaar, en of een poging die belofte haalt hangt van het
+// toeval af. Extra pogingen kosten niets zolang een eerdere het haalt: hij
+// stopt bij de eerste die past. Gemeten: met 6 pogingen bleef een op de
+// twintig moord-op-de-kaart op niveau 4 te makkelijk, met 20 geen enkele.
+export function generateAssignment(spec, seed, params, forced = null, tries = 24) {
   let best = null;
   for (let t = 0; t < tries; t++) {
     const rng = makeRng(`${seed}#${t}`);

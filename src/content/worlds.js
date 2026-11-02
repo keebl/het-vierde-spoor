@@ -22,6 +22,14 @@ const paden = {
       : `${a} ligt op een kruising van ${d} paden.`,
 };
 
+// victims    - de rol van het slachtoffer, voor de inleiding van het
+//               kruisverhoor en de rondgang: "de havenmeester werd gevonden".
+// slachtoffers - het slachtoffer als figuur op het speurdoku-bord. Daar staat
+//               hij tussen de verdachten op het bord, met zijn beginletter op
+//               een penning, dus hij heeft een eigen naam nodig met een
+//               beginletter die geen van de verdachten al heeft. Vandaar M, N
+//               en O: de verdachten gaan van A tot L.
+
 export const WORLDS = [
   {
     id: 'noir',
@@ -34,6 +42,7 @@ export const WORLDS = [
     roomWord: 'gelegenheid',
     map: deuren,
     victims: ['de havenmeester', 'de nachtportier', 'de kroegbaas'],
+    slachtoffers: ['Max', 'Nora', 'Otto'],
     lead: 'De regen kwam die nacht met bakken naar beneden, en niemand hoorde iets boven het water uit.',
     reconLead: 'Van die nacht is alleen het halve logboek van de brugwachter over.',
     findLead: 'Ergens in dit blok ligt het bewijs dat de hele zaak omgooit. Je hebt een nacht.',
@@ -55,9 +64,10 @@ export const WORLDS = [
     roomWord: 'kamer',
     map: deuren,
     victims: ['oom Aldert', 'grootvader Valkenhorst', 'de rentmeester'],
+    slachtoffers: ['Mathilde', 'Norbert', 'Oswald'],
     lead: 'Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat.',
     reconLead: 'Van die avond is alleen het dienstrooster van de butler over.',
-    findLead: 'Het testament is uit de bibliotheek verdwenen en ligt nog ergens in het huis.',
+    findLead: 'Het testament lag gisteren nog in de kluis. Nu niet meer, en het huis is groot.',
     assignLead: 'Iedereen bracht iets mee voor de gastheer. Niemand geeft toe wat.',
     persons: ['Agnes', 'Bertram', 'Clara', 'Diederik', 'Eleonora', 'Ferdinand', 'Godelieve', 'Hendrik', 'Isabel', 'Joachim', 'Katrien', 'Lodewijk'],
     objects: ['een zilveren kandelaar', 'een kristallen karaf', 'een paar leren handschoenen', 'een jachtgeweer', 'een doosje slaappoeder', 'een verzegelde envelop', 'een antieke briefopener', 'een vervalste cheque'],
@@ -84,6 +94,7 @@ export const WORLDS = [
           : `${a} bevindt zich in een module met ${d} sluizen.`,
     },
     victims: ['commandant Ngoie', 'de vluchtleider', 'de ladingmeester'],
+    slachtoffers: ['Mira', 'Nuru', 'Osvald'],
     lead: 'De koeling viel uit en het alarm werd pas veel later gehoord.',
     reconLead: 'Het wachtrooster is half gewist; dit is wat ervan over is.',
     findLead: 'Iemand heeft de noodbaken uitgezet. Hij hangt nog ergens aan boord.',
@@ -105,6 +116,7 @@ export const WORLDS = [
     roomWord: 'open plek',
     map: paden,
     victims: ['de oude boswachter', 'de veerman', 'de grensopzichter'],
+    slachtoffers: ['Maarten', 'Nienke', 'Olle'],
     lead: 'Er werd iemand gevonden met zijn hand om iets wat er niet meer is.',
     reconLead: 'Het woud houdt geen tijd bij. De klokslagen van de kapel wel.',
     findLead: 'De bron verlegt zich elke eeuw. Deze keer is hij hier, op een van deze plekken.',
@@ -134,6 +146,7 @@ export const WORLDS = [
           : `${a} bevindt zich in een gewelf met ${d} gangen.`,
     },
     victims: ['de voorste gids', 'de lampendrager', 'de opzichter'],
+    slachtoffers: ['Mies', 'Nina', 'Olaf'],
     lead: 'Iemand liep vooruit met de enige kaart. De kaart kwam terug.',
     reconLead: 'De afdaling werd bijgehouden per kwartier, maar het schrift is vochtig geworden.',
     findLead: 'Er is een uitgang. De kaart liegt erover, de luchtstroom niet.',
@@ -155,6 +168,7 @@ export const WORLDS = [
     roomWord: 'zaal',
     map: deuren,
     victims: ['de rector', 'de conrector', 'de huisbewaarder'],
+    slachtoffers: ['Melchior', 'Nadia', 'Orso'],
     lead: 'Tijdens het avondgebed is er iemand in steen veranderd. Niemand van de aanwezigen geeft iets toe.',
     reconLead: 'Het lesrooster van die dag is bewaard gebleven, maar half uitgewist.',
     findLead: 'Een van de zalen houdt de verdwenen leerstoel verborgen. De school zelf werkt tegen.',
@@ -176,6 +190,7 @@ export const WORLDS = [
     roomWord: 'kamer',
     map: deuren,
     victims: ['oom Nicolaas', 'de kerstgast', 'de buurman van nummer zes'],
+    slachtoffers: ['Marieke', 'Nicolaas', 'Olivier'],
     lead: 'Halverwege het kerstdiner viel de stroom uit, en toen de kaarsen weer brandden klopte er iets niet.',
     reconLead: 'Van die avond is alleen het tijdschema van de gastvrouw over.',
     findLead: 'Er is een cadeau verdwenen voordat het onder de boom lag.',
@@ -197,6 +212,7 @@ export const WORLDS = [
     roomWord: 'kamer',
     map: deuren,
     victims: ['de gastheer in het skeletpak', 'de huisbaas', 'de buurvrouw met de lantaarn'],
+    slachtoffers: ['Mila', 'Nestor', 'Oskar'],
     lead: 'Om middernacht ging het licht uit, en toen de lampionnen weer brandden lag er iemand stil.',
     reconLead: 'Van die nacht is alleen een half ingevuld rondje langs de deuren over.',
     findLead: 'Achter een van de deuren hangt het echte masker, en dat is geen kostuum.',

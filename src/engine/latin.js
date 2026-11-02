@@ -192,6 +192,32 @@ export function generateLatin(n, rng, params) {
     const proef = [...gesnoeid, ...aanwijzingen.slice(i + 1)];
     if (countLatinSolutions(grid, n, 2, proef).count !== 1) gesnoeid.push(aanwijzingen[i]);
   }
+
+  // Een dienstrooster zonder een enkele aanwijzing is geen deductiepuzzel maar
+  // een kaal latijns vierkant - precies waar dit speltype eerder op uitkwam.
+  // Dus: haal nog een vakje weg en zet er aanwijzingen voor terug, tot er
+  // zinnen bij de puzzel staan.
+  if (!gesnoeid.length) {
+    for (const [r, c] of rng.shuffle(cells.filter(([a, b]) => grid[a][b] != null))) {
+      const bewaar = grid[r][c];
+      grid[r][c] = null;
+      const extra = [];
+      let bron2 = 0;
+      while (countLatinSolutions(grid, n, 2, extra).count !== 1 && bron2 < vijver.length) {
+        extra.push(vijver[bron2++]);
+      }
+      if (countLatinSolutions(grid, n, 2, extra).count === 1 && extra.length) {
+        // Ook hier alleen houden wat nodig is.
+        for (let i = 0; i < extra.length; i++) {
+          const proef = [...gesnoeid, ...extra.slice(i + 1)];
+          if (countLatinSolutions(grid, n, 2, proef).count !== 1) gesnoeid.push(extra[i]);
+        }
+        removed.push([r, c]);
+        break;
+      }
+      grid[r][c] = bewaar;
+    }
+  }
   // Lage niveaus: een paar cellen weer prijsgeven als extra houvast.
   if (params.redundancy > 0 && removed.length) {
     const back = rng.sample(removed, Math.round(removed.length * params.redundancy * 0.5));

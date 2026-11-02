@@ -36,11 +36,9 @@ export function zinVoor(c, w) {
     case 'hoek':
       return hoofdletter(c.ja
         ? `${P} stond in een hoek van het gebouw.`
-        : `${P} stond niet in een hoek.`);
+        : `${P} stond niet in een hoek van het gebouw.`);
     case 'opKolom':
       return hoofdletter(`${P} stond in dezelfde kolom als ${M}.`);
-    case 'leegKamer':
-      return hoofdletter(`in ${K} stond niemand.`);
     case 'naast':
       return hoofdletter(c.ja ? `${P} stond naast ${M}.` : `${P} stond niet naast ${M}.`);
     case 'opRij':

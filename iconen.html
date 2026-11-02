@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="styles/app.css">
 <style>
   .blad { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(188px, 1fr)); }
+  .blad.groot { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
   .kaartje { display: flex; gap: 10px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 8px 10px; }
   .kaartje svg { color: var(--accent); flex: none; }
   .kaartje span { font-size: 0.8rem; line-height: 1.3; }
@@ -64,14 +65,16 @@
     sub.style.marginTop = '20px';
     blad.append(sub);
     const rij = document.createElement('div');
-    rij.className = 'blad';
+    rij.className = 'blad groot';
     for (const [naam, sleutel] of lijst) {
       const kaart = document.createElement('div');
       kaart.className = 'kaartje';
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       svg.setAttribute('viewBox', '0 0 48 48');
-      svg.setAttribute('width', 40);
-      svg.setAttribute('height', 40);
+      svg.setAttribute('width', 72);
+      svg.setAttribute('height', 72);
+      svg.style.background = 'var(--vloer, #e8e0d2)';
+      svg.style.borderRadius = '4px';
       tekenMeubel(svg, sleutel, { grootte: 48 });
       kaart.append(svg);
       const t = document.createElement('span');

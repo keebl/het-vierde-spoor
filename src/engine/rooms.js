@@ -1,12 +1,21 @@
 // Het kamerraster: personen staan op vakjes in plaats van in een tabel.
 //
-// Regels:
-//   - een rooster van n bij n vakjes, verdeeld in kamers
-//   - op sommige vakjes staat een meubelstuk; daar kan niemand staan
-//   - er staat precies een figuur per rij en precies een figuur per kolom
-//   - het slachtoffer is zelf een van die figuren: waar het lichaam ligt moet
-//     je dus net zo goed uitpuzzelen. De dader is de enige verdachte die
-//     uiteindelijk bij het slachtoffer in de kamer blijkt te staan.
+// De spelregels, op een rij - dit is de enige plek waar ze staan, en
+// tools/check-regels.mjs rekent ze na over elke puzzel:
+//
+//   1. Een rooster van n bij n vakjes, verdeeld in aaneengesloten kamers.
+//   2. Op sommige vakjes staat een meubelstuk; daar kan niemand staan.
+//   3. Er staat precies een figuur per rij en precies een figuur per kolom.
+//   4. Het slachtoffer is zelf een van die figuren: waar het lichaam ligt moet
+//      je dus net zo goed uitpuzzelen. De dader is de enige verdachte die
+//      uiteindelijk bij het slachtoffer in de kamer blijkt te staan.
+//   5. NAAST betekent pal boven, onder, links of rechts EN in dezelfde kamer.
+//      Een muur ertussen is geen "naast": je staat niet naast de werkbank als
+//      die aan de andere kant van de muur staat. Dat geldt voor mensen naast
+//      een meubelstuk en voor twee mensen naast elkaar. Diagonaal is nooit
+//      naast.
+//   6. RIJ, KOLOM, NOORD, WEST, BUITENMUUR en HOEK gaan over de plattegrond
+//      als geheel en lopen dus wel door muren heen. Noord is boven.
 //
 // De oplossing is dus een plaatsing: welke persoon staat op welk vakje. Dat
 // is een ander probleem dan de toewijzingspuzzels in assign.js, vandaar een
@@ -20,7 +29,9 @@ export const kolVan = (n, i) => i % n;
 
 const BUREN = [[-1, 0], [1, 0], [0, -1], [0, 1]];
 
-function burenVan(n, i) {
+// Buurvakjes op het raster, muren niet meegerekend. Alleen voor het bouwen
+// van kamers en voor regels die over de plattegrond als geheel gaan.
+function rasterBuren(n, i) {
   const r = rijVan(n, i);
   const c = kolVan(n, i);
   const uit = [];
@@ -30,6 +41,20 @@ function burenVan(n, i) {
     if (nr >= 0 && nr < n && nc >= 0 && nc < n) uit.push(idx(n, nr, nc));
   }
   return uit;
+}
+
+// Buurvakjes binnen dezelfde kamer. Dit is wat "naast" betekent: door een
+// muur heen sta je niet naast iets. Elke aanwijzing met het woord "naast"
+// erin rekent hiermee, zodat de zin klopt met het plaatje.
+export function kamerBuren(rooster, i) {
+  const { n, kamerVan } = rooster;
+  return rasterBuren(n, i).filter((b) => kamerVan[b] === kamerVan[i]);
+}
+
+// Staat dit vakje naast dit meubelstuk? Een meubelstuk aan de andere kant van
+// de muur telt niet mee.
+export function naastMeubel(rooster, cel, m) {
+  return kamerBuren(rooster, cel).some((b) => rooster.meubelOp[b] === m);
 }
 
 // ------------------------------------------------------------- het rooster
@@ -49,7 +74,7 @@ function verdeelKamers(n, aantal, rng) {
     for (let k = 0; k < aantal && open > 0; k++) {
       const kandidaten = [];
       for (const cel of randen[k]) {
-        for (const b of burenVan(n, cel)) if (kamerVan[b] === -1) kandidaten.push(b);
+        for (const b of rasterBuren(n, cel)) if (kamerVan[b] === -1) kandidaten.push(b);
       }
       if (!kandidaten.length) continue;
       const keuze = rng.pick(kandidaten);
@@ -63,7 +88,7 @@ function verdeelKamers(n, aantal, rng) {
   // Mocht er iets overblijven (kan bij ongelukkige zaden), hang het aan een buur.
   for (let i = 0; i < totaal; i++) {
     if (kamerVan[i] !== -1) continue;
-    const b = burenVan(n, i).find((x) => kamerVan[x] !== -1);
+    const b = rasterBuren(n, i).find((x) => kamerVan[x] !== -1);
     kamerVan[i] = b !== undefined ? kamerVan[b] : 0;
   }
   return kamerVan;
@@ -182,13 +207,12 @@ export const SOORTEN = {
   // Hoeveel mensen stonden er naast dit meubelstuk?
   aantalNaast: {
     eval(c, ctx) {
-      const n = ctx.rooster.n;
       let zeker = 0;
       let onbekend = 0;
       for (let p = 0; p < ctx.plaats.length; p++) {
         const cel = ctx.plaats[p];
         if (cel == null) { onbekend++; continue; }
-        if (burenVan(n, cel).some((b) => ctx.rooster.meubelOp[b] === c.m)) zeker++;
+        if (naastMeubel(ctx.rooster, cel, c.m)) zeker++;
       }
       if (zeker > c.aantal) return false;
       if (zeker + onbekend < c.aantal) return false;
@@ -234,23 +258,11 @@ export const SOORTEN = {
     },
   },
 
-  leegKamer: {
-    eval(c, ctx) {
-      let onbekend = false;
-      for (let p = 0; p < ctx.plaats.length; p++) {
-        const cel = ctx.plaats[p];
-        if (cel == null) { onbekend = true; continue; }
-        if (ctx.rooster.kamerVan[cel] === c.kamerIdx) return false;
-      }
-      return onbekend ? null : true;
-    },
-  },
   naast: {
     eval(c, ctx) {
       const cel = ctx.plaats[c.p];
       if (cel == null) return null;
-      const raak = burenVan(ctx.rooster.n, cel).some((b) => ctx.rooster.meubelOp[b] === c.m);
-      return raak === c.ja;
+      return naastMeubel(ctx.rooster, cel, c.m) === c.ja;
     },
   },
   opRij: {
@@ -285,9 +297,7 @@ export const SOORTEN = {
       const a = ctx.plaats[c.p];
       const b = ctx.plaats[c.q];
       if (a == null || b == null) return null;
-      const n = ctx.rooster.n;
-      const afstand = Math.abs(rijVan(n, a) - rijVan(n, b)) + Math.abs(kolVan(n, a) - kolVan(n, b));
-      return (afstand === 1) === c.ja;
+      return kamerBuren(ctx.rooster, a).includes(b) === c.ja;
     },
   },
 };
@@ -465,12 +475,9 @@ function propageerAanwijzing(rooster, dom, c) {
         return false;
       }) || veranderd;
       break;
-    case 'leegKamer':
-      for (const d of dom) veranderd = filter(d, (cel) => kamerVan[cel] !== c.kamerIdx) || veranderd;
-      break;
     case 'naast':
       veranderd = filter(dom[c.p], (cel) =>
-        burenVan(n, cel).some((b) => meubelOp[b] === c.m) === c.ja) || veranderd;
+        naastMeubel(rooster, cel, c.m) === c.ja) || veranderd;
       break;
     case 'opRij':
       veranderd = filter(dom[c.p], (cel) => {
@@ -495,8 +502,8 @@ function propageerAanwijzing(rooster, dom, c) {
     }
     case 'buren': {
       if (c.ja) {
-        veranderd = filter(dom[c.p], (cel) => burenVan(n, cel).some((b) => dom[c.q].has(b))) || veranderd;
-        veranderd = filter(dom[c.q], (cel) => burenVan(n, cel).some((b) => dom[c.p].has(b))) || veranderd;
+        veranderd = filter(dom[c.p], (cel) => kamerBuren(rooster, cel).some((b) => dom[c.q].has(b))) || veranderd;
+        veranderd = filter(dom[c.q], (cel) => kamerBuren(rooster, cel).some((b) => dom[c.p].has(b))) || veranderd;
       }
       break;
     }

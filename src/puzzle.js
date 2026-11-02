@@ -34,9 +34,25 @@ export function buildPuzzle(settings) {
 
 function buildAssignPuzzle({ world, assignment, params, settings }) {
   const { seed, mechaniek } = settings;
-  const specRng = makeRng(`${seed}:spec`);
-  const spec = assignment.buildSpec(world, params, specRng, mechaniek);
-  const gen = generateAssignment(spec, seed, params, assignment.forced);
+
+  // De moeilijkheidsgraad is een belofte: niveau 1 tot 3 is op te lossen door
+  // alleen door te strepen, niveau 4 en 5 vragen een aanname die je daarna
+  // weerlegt. Haalt een puzzel die belofte niet, dan zetten we dezelfde
+  // instellingen nog eens op met een andere greep uit de wereld - nog steeds
+  // voorspelbaar, want de variant zit in de seed.
+  let spec = null;
+  let gen = null;
+  for (let variant = 0; variant < 6; variant++) {
+    const staart = variant ? `#v${variant}` : '';
+    const proefSpec = assignment.buildSpec(
+      world, params, makeRng(`${seed}:spec${staart}`), mechaniek
+    );
+    const proef = generateAssignment(proefSpec, `${seed}${staart}`, params, assignment.forced);
+    spec = proefSpec;
+    gen = proef;
+    const belofte = params.style === 'shallow' ? proef.depth === 1 : proef.depth > 1;
+    if (belofte) break;
+  }
 
   const ctx = makeCtx(spec, emptyCols(spec));
   const introClues = gen.clues.filter((c) => c.intro);
@@ -181,7 +197,11 @@ function buildKamerPuzzle({ world, settings }) {
   // het lichaam ligt moet je zelf uitpuzzelen.
   const aantal = gen.rooster.n;
   const namen = rng.sample(world.persons, aantal);
-  const slachtofferNaam = rng.pick(world.victims);
+  // Het slachtoffer staat tussen de verdachten op het bord, met zijn
+  // beginletter op een penning. Die letter moet dus van hem alleen zijn:
+  // daarom een eigen namenlijst met beginletters die de verdachten niet
+  // gebruiken.
+  const slachtofferNaam = rng.pick(world.slachtoffers);
   namen[gen.slachtofferIdx] = slachtofferNaam;
 
   const kamerNamen = rng.sample(world.places, gen.rooster.kamers);

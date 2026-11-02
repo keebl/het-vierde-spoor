@@ -12,7 +12,7 @@
 // "X stond in dezelfde kamer als het slachtoffer" is daarom verboden - dat is
 // letterlijk de vraag.
 
-import { bouwRooster, tekenPlaatsing, telPlaatsingen, graad, idx, rijVan, kolVan } from './rooms.js';
+import { bouwRooster, tekenPlaatsing, telPlaatsingen, graad, idx, rijVan, kolVan, kamerBuren, naastMeubel } from './rooms.js';
 import { makeRng } from './rng.js';
 
 // Een poging die de solver niet binnen zijn budget rond krijgt, gooien we weg.
@@ -29,16 +29,6 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten) {
   };
 
   const kamerVanPersoon = (p) => kamerVan[plaats[p]];
-  const buren = (cel) => {
-    const r = rijVan(n, cel);
-    const k = kolVan(n, cel);
-    const uit = [];
-    if (r > 0) uit.push(idx(n, r - 1, k));
-    if (r < n - 1) uit.push(idx(n, r + 1, k));
-    if (k > 0) uit.push(idx(n, r, k - 1));
-    if (k < n - 1) uit.push(idx(n, r, k + 1));
-    return uit;
-  };
 
   for (let p = 0; p < n; p++) {
     const mijnKamer = kamerVanPersoon(p);
@@ -52,9 +42,9 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten) {
     }
 
     for (let m = 0; m < meubelAantal; m++) {
-      const raakt = buren(plaats[p]).some((b) => meubelOp[b] === m);
-      zet('naast', { p, m, ja: raakt });
-      if (!raakt) continue;
+      // Naast betekent: pal ernaast en in dezelfde kamer. Een meubelstuk aan
+      // de andere kant van de muur levert dus "niet naast" op.
+      zet('naast', { p, m, ja: naastMeubel(rooster, plaats[p], m) });
     }
     for (let m = 0; m < meubelAantal; m++) {
       const r = rijVan(n, plaats[p]);
@@ -78,8 +68,7 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten) {
         else zet('noord', { p: q, q: p });
         if (kolVan(n, a) < kolVan(n, b)) zet('west', { p, q });
         else zet('west', { p: q, q: p });
-        const naastElkaar = Math.abs(rijVan(n, a) - rijVan(n, b)) + Math.abs(kolVan(n, a) - kolVan(n, b)) === 1;
-        zet('buren', { p, q, ja: naastElkaar });
+        zet('buren', { p, q, ja: kamerBuren(rooster, a).includes(b) });
       }
     }
 
@@ -110,7 +99,7 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten) {
 
   for (let m = 0; m < meubelAantal; m++) {
     let aantal = 0;
-    for (const cel of plaats) if (buren(cel).some((b) => meubelOp[b] === m)) aantal++;
+    for (const cel of plaats) if (naastMeubel(rooster, cel, m)) aantal++;
     zet('aantalNaast', { m, aantal });
   }
 
@@ -120,12 +109,19 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten) {
     .map((e) => e.c);
 }
 
-function groeiTotVast(rooster, vijver, stijl) {
+function groeiTotVast(rooster, vijver, stijl, budget) {
   const gekozen = [];
   const gezien = new Set();
+
+  // Het uniek maken is de dure stap: bij twaalf bij twaalf kost een telling
+  // veel meer dan het doorstrepen. Dus eerst goedkoop doorstrepen, en de
+  // teller pas aan het werk zetten als er nog maar een paar figuren open
+  // staan. Anders rekent hij na elke toegevoegde aanwijzing de hele boom na.
   const klaar = () => {
-    if (stijl === 'shallow') return graad(rooster, gekozen).opgelost;
-    const uit = telPlaatsingen(rooster, gekozen);
+    const g = graad(rooster, gekozen);
+    if (stijl === 'shallow') return g.opgelost;
+    if (g.open > 4) return false;
+    const uit = telPlaatsingen(rooster, gekozen, 2, budget);
     // Weet de solver het niet binnen zijn budget, dan is deze poging niets
     // waard: we kunnen niet bewijzen dat de oplossing uniek is.
     if (uit.opgegeven) throw new TeZwaar();
@@ -142,7 +138,7 @@ function groeiTotVast(rooster, vijver, stijl) {
   return klaar() ? gekozen : null;
 }
 
-function snoei(rooster, aanwijzingen, stijl, rng) {
+function snoei(rooster, aanwijzingen, stijl, rng, budget) {
   const houd = aanwijzingen.slice();
   for (const i of rng.shuffle(houd.map((_, j) => j))) {
     if (!houd[i]) continue;
@@ -151,7 +147,10 @@ function snoei(rooster, aanwijzingen, stijl, rng) {
     if (stijl === 'shallow') {
       ok = graad(rooster, proef).opgelost;
     } else {
-      const uit = telPlaatsingen(rooster, proef);
+      // Blijven er na doorstrepen te veel figuren open, dan is deze
+      // aanwijzing bijna zeker nodig en hoeft de dure teller er niet aan.
+      if (graad(rooster, proef).open > 4) continue;
+      const uit = telPlaatsingen(rooster, proef, 2, budget);
       if (uit.opgegeven) throw new TeZwaar();
       ok = uit.count === 1;
     }
@@ -161,6 +160,9 @@ function snoei(rooster, aanwijzingen, stijl, rng) {
 }
 
 function poging(params, rng) {
+  // Hoe groter het rooster, hoe meer stappen de solver mag doen voordat we
+  // de poging weggooien. Zonder die ruimte lukt twaalf bij twaalf vaak niet.
+  const budget = 30000 * params.n;
   const rooster = bouwRooster(params.n, rng, {
     kamers: params.kamers,
     meubelDeel: params.meubelDeel,
@@ -186,17 +188,19 @@ function poging(params, rng) {
   const dader = paar.find((p) => p !== slachtofferIdx);
 
   const vijver = bouwVijver(rooster, plaats, slachtofferIdx, rng, params.gewichten);
-  const gegroeid = groeiTotVast(rooster, vijver, params.style);
+  const gegroeid = groeiTotVast(rooster, vijver, params.style, budget);
   if (!gegroeid) return null;
-  const controle = telPlaatsingen(rooster, gegroeid);
+  const controle = telPlaatsingen(rooster, gegroeid, 2, budget);
   if (controle.opgegeven || controle.count !== 1) return null;
 
-  const aanwijzingen = snoei(rooster, gegroeid, params.style, rng);
+  const aanwijzingen = snoei(rooster, gegroeid, params.style, rng, budget);
   const g = graad(rooster, aanwijzingen);
   return { rooster, plaats, slachtofferIdx, dader, kamerIdx, aanwijzingen, graad: g };
 }
 
-export function genereerKamerpuzzel(seed, params, pogingen = 10) {
+export function genereerKamerpuzzel(seed, params, pogingen = null) {
+  // Grote roosters mislukken vaker, dus die krijgen meer pogingen.
+  pogingen = pogingen ?? (params.n >= 9 ? 24 : 10);
   let beste = null;
   for (let t = 0; t < pogingen; t++) {
     const rng = makeRng(`${seed}#kamer${t}`);
