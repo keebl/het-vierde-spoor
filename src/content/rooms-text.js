@@ -1,10 +1,8 @@
 // De Nederlandse zinnen van het kamerraster. Apart gehouden, zodat de motor
 // niets van taal hoeft te weten.
 
-const hoofdletter = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-
-const TELWOORD = ['niemand', 'één', 'twee', 'drie', 'vier', 'vijf', 'zes', 'zeven', 'acht'];
-const telwoord = (n) => TELWOORD[n] ?? String(n);
+import { telwoord, hoofdletter } from './woorden.js';
+import { voorzetselVan } from './kamersoorten.js';
 
 export function zinVoor(c, w) {
   const P = w.personen[c.p];
@@ -12,17 +10,23 @@ export function zinVoor(c, w) {
   const K = c.kamerIdx != null ? w.kamerNamen[c.kamerIdx] : null;
   const M = c.m != null ? w.meubelNamen[c.m] : null;
 
+  // "in de keuken", maar "op het hertenpad" en "bij de dampende poel".
+  const V = K ? voorzetselVan(K) : 'in';
+  // "dezelfde kamer", of wat de wereld een ruimte noemt: in het woud is het
+  // geen kamer maar een plek, op het station een module.
+  const ZELFDE = w.zelfde ?? 'in dezelfde kamer';
+
   switch (c.soort) {
     case 'kamer':
-      return hoofdletter(c.ja ? `${P} stond in ${K}.` : `${P} stond niet in ${K}.`);
+      return hoofdletter(c.ja ? `${P} stond ${V} ${K}.` : `${P} stond niet ${V} ${K}.`);
     case 'zelfdeKamer':
       return hoofdletter(c.ja
-        ? `${P} en ${Q} stonden in dezelfde kamer.`
-        : `${P} en ${Q} stonden niet in dezelfde kamer.`);
+        ? `${P} en ${Q} stonden ${ZELFDE}.`
+        : `${P} en ${Q} stonden niet ${ZELFDE}.`);
     case 'aantalKamer': {
-      if (c.aantal === 0) return hoofdletter(`in ${K} stond niemand.`);
-      if (c.aantal === 1) return hoofdletter(`in ${K} stond precies één iemand.`);
-      return hoofdletter(`in ${K} stonden precies ${telwoord(c.aantal)} mensen.`);
+      if (c.aantal === 0) return hoofdletter(`${V} ${K} stond niemand.`);
+      if (c.aantal === 1) return hoofdletter(`${V} ${K} stond precies één iemand.`);
+      return hoofdletter(`${V} ${K} stonden precies ${telwoord(c.aantal)} mensen.`);
     }
     case 'aantalNaast': {
       if (c.aantal === 0) return hoofdletter(`er stond niemand naast ${M}.`);

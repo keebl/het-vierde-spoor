@@ -1,29 +1,47 @@
+import { telwoord } from './woorden.js';
+
 // Werelden leveren uitsluitend woorden en sfeer. De logica weet hier niets
 // van: voeg een wereld toe en je krijgt gratis alle opdrachten, alle
 // mechanieken en alle niveaus erbij.
 
+// De zinnen over een plattegrond. "Tussen A en B" in plaats van "A ligt van
+// B", want de ene kant kan al op een werkwoord eindigen: "waar de envelop
+// ligt ligt precies twee deuren van..." las niet.
 const deuren = {
   adj: (a, b) => `${a} grenst aan ${b}.`,
   notAdj: (a, b) => `${a} grenst niet aan ${b}.`,
-  hops: (a, b, d) => `${a} ligt precies ${d} deuren van ${b}.`,
+  hops: (a, b, d) => (d === 1
+    ? `Tussen ${a} en ${b} zit precies één deur.`
+    : `Tussen ${a} en ${b} zitten precies ${telwoord(d)} deuren.`),
   degree: (a, d) =>
     d === 1
       ? `${a} bevindt zich in een doodlopende ruimte.`
-      : `${a} bevindt zich in een ruimte met ${d} uitgangen.`,
+      : `${a} bevindt zich in een ruimte met ${telwoord(d)} uitgangen.`,
 };
 
 const paden = {
   adj: (a, b) => `${a} ligt aan hetzelfde pad als ${b}.`,
   notAdj: (a, b) => `${a} ligt niet aan hetzelfde pad als ${b}.`,
-  hops: (a, b, d) => `${a} ligt ${d} paden van ${b}.`,
+  hops: (a, b, d) => (d === 1
+    ? `Tussen ${a} en ${b} ligt precies één pad.`
+    : `Tussen ${a} en ${b} liggen precies ${telwoord(d)} paden.`),
   degree: (a, d) =>
     d === 1
       ? `${a} ligt aan een pad dat doodloopt.`
-      : `${a} ligt op een kruising van ${d} paden.`,
+      : `${a} ligt op een kruising van ${telwoord(d)} paden.`,
 };
 
 // victims    - de rol van het slachtoffer, voor de inleiding van het
 //               kruisverhoor en de rondgang: "de havenmeester werd gevonden".
+// sameRoom - hoe je zegt dat twee dingen bij elkaar zijn, mét voorzetsel:
+//               "in dezelfde kamer als", maar "op dezelfde plek als" in het
+//               woud. Zonder dat werd het "in dezelfde plek".
+// tijdVoorzetsel - hoe een tijdstip in een zin staat: "om 22:00", maar
+//               "tijdens de tweede wacht" en "in het derde kwartier".
+// plekWoord - hoe je in een zin naar een ruimte verwijst: "de kamer van
+//               Hendrik", "de module van Dmitri". Zonder zo'n woord werd het
+//               "waar Hendrik is", en dan botst dat met het werkwoord dat er
+//               achteraan komt.
 // slachtoffers - het slachtoffer als figuur op het speurdoku-bord. Daar staat
 //               hij tussen de verdachten op het bord, met zijn beginletter op
 //               een penning, dus hij heeft een eigen naam nodig met een
@@ -38,8 +56,10 @@ export const WORLDS = [
     accent: '#7fb2e5',
     blurb: 'Natte straten, te veel neon, en niemand die de waarheid in één keer vertelt.',
     timeUnit: { one: 'uur', many: 'uur' },
-    sameRoom: 'dezelfde gelegenheid als',
+    tijdVoorzetsel: 'om',
+    sameRoom: 'in dezelfde ruimte als',
     roomWord: 'gelegenheid',
+    plekWoord: 'plek',
     map: deuren,
     victims: ['de havenmeester', 'de nachtportier', 'de kroegbaas'],
     slachtoffers: ['Max', 'Nora', 'Otto'],
@@ -60,8 +80,10 @@ export const WORLDS = [
     accent: '#d8a657',
     blurb: 'Een erfenis, een huis vol kamers en een gezelschap dat elkaar al dertig jaar niet uitstaat.',
     timeUnit: { one: 'uur', many: 'uur' },
-    sameRoom: 'dezelfde kamer als',
+    tijdVoorzetsel: 'om',
+    sameRoom: 'in dezelfde kamer als',
     roomWord: 'kamer',
+    plekWoord: 'kamer',
     map: deuren,
     victims: ['oom Aldert', 'grootvader Valkenhorst', 'de rentmeester'],
     slachtoffers: ['Mathilde', 'Norbert', 'Oswald'],
@@ -82,27 +104,31 @@ export const WORLDS = [
     accent: '#8ad6c4',
     blurb: 'Een krappe bemanning, een kapotte koeling en geen schip dat binnen een week langskomt.',
     timeUnit: { one: 'wacht', many: 'wachten' },
-    sameRoom: 'dezelfde module als',
+    tijdVoorzetsel: 'tijdens',
+    sameRoom: 'in dezelfde module als',
     roomWord: 'module',
+    plekWoord: 'module',
     map: {
       adj: (a, b) => `${a} heeft een luchtsluis naar ${b}.`,
       notAdj: (a, b) => `${a} heeft geen luchtsluis naar ${b}.`,
-      hops: (a, b, d) => `${a} ligt ${d} sluizen van ${b}.`,
+      hops: (a, b, d) => (d === 1
+        ? `Tussen ${a} en ${b} zit precies één sluis.`
+        : `Tussen ${a} en ${b} zitten precies ${telwoord(d)} sluizen.`),
       degree: (a, d) =>
         d === 1
-          ? `${a} bevindt zich in een module met maar een sluis.`
-          : `${a} bevindt zich in een module met ${d} sluizen.`,
+          ? `${a} bevindt zich in een module met maar één sluis.`
+          : `${a} bevindt zich in een module met ${telwoord(d)} sluizen.`,
     },
     victims: ['commandant Ngoie', 'de vluchtleider', 'de ladingmeester'],
     slachtoffers: ['Mira', 'Nuru', 'Osvald'],
     lead: 'De koeling viel uit en het alarm werd pas veel later gehoord.',
     reconLead: 'Het wachtrooster is half gewist; dit is wat ervan over is.',
-    findLead: 'Iemand heeft de noodbaken uitgezet. Hij hangt nog ergens aan boord.',
+    findLead: 'Iemand heeft het noodbaken uitgezet. Het hangt nog ergens aan boord.',
     assignLead: 'Bij de laatste bevoorrading nam iedereen een persoonlijk pakket aan. De manifesten zijn gewist.',
     persons: ['Ada', 'Boris', 'Carmen', 'Dmitri', 'Elif', 'Finn', 'Gaia', 'Hiro', 'Ines', 'Jonas', 'Kaya', 'Luuk'],
     objects: ['een losgekoppelde zuurstofcel', 'een hoofdsleutel', 'een geleegde spuit', 'een gewiste datadrager', 'een snijbrander', 'een gesmolten zekering', 'een privaat logboek', 'een illegale zender'],
     places: ['de centrifuge', 'de hydrocultuur', 'de machinekamer', 'de observatiekoepel', 'de medische post', 'het vrachtruim', 'de slaapcabines', 'de communicatiekoker', 'de kombuis'],
-    times: ['wacht 1', 'wacht 2', 'wacht 3', 'wacht 4', 'wacht 5', 'wacht 6'],
+    times: ['de eerste wacht', 'de tweede wacht', 'de derde wacht', 'de vierde wacht', 'de vijfde wacht', 'de zesde wacht'],
     hidden: ['het noodbaken', 'een lek in de romp', 'een verborgen voorraad', 'een omgeleide kabel', 'een dode sensor', 'een geblindeerde camera', 'een tweede logboek', 'een los paneel'],
   },
   {
@@ -112,19 +138,21 @@ export const WORLDS = [
     accent: '#9ccf7a',
     blurb: 'Het bos verplaatst zijn paden als niemand kijkt. De bron ook, zeggen ze.',
     timeUnit: { one: 'klokslag', many: 'klokslagen' },
-    sameRoom: 'dezelfde plek als',
+    tijdVoorzetsel: 'bij',
+    sameRoom: 'op dezelfde plek als',
     roomWord: 'open plek',
+    plekWoord: 'plek',
     map: paden,
     victims: ['de oude boswachter', 'de veerman', 'de grensopzichter'],
     slachtoffers: ['Maarten', 'Nienke', 'Olle'],
     lead: 'Er werd iemand gevonden met zijn hand om iets wat er niet meer is.',
     reconLead: 'Het woud houdt geen tijd bij. De klokslagen van de kapel wel.',
-    findLead: 'De bron verlegt zich elke eeuw. Deze keer is hij hier, op een van deze plekken.',
+    findLead: 'De bron verlegt zich elke eeuw. Deze keer is hij hier, ergens tussen de bomen.',
     assignLead: 'Reizigers kwamen het woud in met elk een gave. Het woud heeft ze door elkaar gehusseld.',
     persons: ['Astrid', 'Bram', 'Cato', 'Dries', 'Eline', 'Fedde', 'Gwen', 'Hidde', 'Imke', 'Joris', 'Kyra', 'Laurens'],
     objects: ['een kromme wichelroede', 'een zakje gedroogde maanbloem', 'een ijzeren belletje', 'een afgebroken hoorn', 'een leren veldfles', 'een bundel vogelveren', 'een gebarsten spiegelscherf', 'een handvol zoutkorrels'],
     places: ['de doornenkom', 'het wilgenhoofd', 'de omgevallen toren', 'de dampende poel', 'het hertenpad', 'de steenkring', 'het verzonken bruggetje', 'de holle eik'],
-    times: ['eerste klokslag', 'tweede klokslag', 'derde klokslag', 'vierde klokslag', 'vijfde klokslag', 'zesde klokslag'],
+    times: ['de eerste klokslag', 'de tweede klokslag', 'de derde klokslag', 'de vierde klokslag', 'de vijfde klokslag', 'de zesde klokslag'],
     hidden: ['de magische bron', 'een valse bron', 'een hertenval', 'een offersteen', 'een slapend wezen', 'een omgekeerd pad', 'een verdronken wagen', 'een nest spiegelkraaien'],
   },
   {
@@ -134,16 +162,20 @@ export const WORLDS = [
     accent: '#c0a0d8',
     blurb: 'Je lamp houdt het nog twee uur. De uitgang zit niet waar hij op de kaart staat.',
     timeUnit: { one: 'kwartier', many: 'kwartier' },
-    sameRoom: 'hetzelfde gewelf als',
+    tijdVoorzetsel: 'in',
+    sameRoom: 'in hetzelfde gewelf als',
     roomWord: 'gewelf',
+    plekWoord: 'ruimte',
     map: {
       adj: (a, b) => `${a} heeft een gang naar ${b}.`,
       notAdj: (a, b) => `${a} heeft geen gang naar ${b}.`,
-      hops: (a, b, d) => `${a} ligt ${d} gangen van ${b}.`,
+      hops: (a, b, d) => (d === 1
+        ? `Tussen ${a} en ${b} ligt precies één gang.`
+        : `Tussen ${a} en ${b} liggen precies ${telwoord(d)} gangen.`),
       degree: (a, d) =>
         d === 1
-          ? `${a} bevindt zich in een gewelf waar maar een gang op uitkomt.`
-          : `${a} bevindt zich in een gewelf met ${d} gangen.`,
+          ? `${a} bevindt zich in een gewelf waar maar één gang op uitkomt.`
+          : `${a} bevindt zich in een gewelf met ${telwoord(d)} gangen.`,
     },
     victims: ['de voorste gids', 'de lampendrager', 'de opzichter'],
     slachtoffers: ['Mies', 'Nina', 'Olaf'],
@@ -154,7 +186,7 @@ export const WORLDS = [
     persons: ['Anton', 'Bart', 'Cecile', 'Daan', 'Emma', 'Floris', 'Gijs', 'Hanna', 'Ivo', 'Jet', 'Karel', 'Lotte'],
     objects: ['een bijna lege carbidlamp', 'een opgerold touw', 'een gestolen relikwie', 'een krijtje', 'een gebroken kompas', 'een veldflesje jenever', 'een losse kaarthoek', 'een zakje botstukken'],
     places: ['het beenderengewelf', 'de verzakte trap', 'de droge put', 'de bidkapel', 'het waterpeilgat', 'de ingestorte nis', 'de smalle schacht', 'het grafvertrek'],
-    times: ['eerste kwartier', 'tweede kwartier', 'derde kwartier', 'vierde kwartier', 'vijfde kwartier', 'zesde kwartier'],
+    times: ['het eerste kwartier', 'het tweede kwartier', 'het derde kwartier', 'het vierde kwartier', 'het vijfde kwartier', 'het zesde kwartier'],
     hidden: ['de uitgang', 'een vals gat', 'een luchtschacht', 'een ingestorte gang', 'een waterput', 'een dichtgemetselde deur', 'een nest vleermuizen', 'een verzegelde graftombe'],
   },
   {
@@ -164,8 +196,10 @@ export const WORLDS = [
     accent: '#e39aa8',
     blurb: 'Op een school waar iedereen kan liegen met een spreuk, is logica het enige bewijs.',
     timeUnit: { one: 'lesuur', many: 'lesuren' },
-    sameRoom: 'dezelfde zaal als',
+    tijdVoorzetsel: 'in',
+    sameRoom: 'in dezelfde zaal als',
     roomWord: 'zaal',
+    plekWoord: 'zaal',
     map: deuren,
     victims: ['de rector', 'de conrector', 'de huisbewaarder'],
     slachtoffers: ['Melchior', 'Nadia', 'Orso'],
@@ -176,7 +210,7 @@ export const WORLDS = [
     persons: ['Amira', 'Bruno', 'Cleo', 'Douwe', 'Esra', 'Felix', 'Gideon', 'Hugo', 'Iris', 'Jasper', 'Kiki', 'Loek'],
     objects: ['een gebarsten toverstaf', 'een inktvlek die niet weggaat', 'een geleend grimoire', 'een zakje ijzervijlsel', 'een vervalst rapport', 'een stuk steenhuid', 'een stilzwijgtalisman', 'een dode kanarie'],
     places: ['de spiegelzaal', 'het ketelhok', 'de verboden trappenhal', 'het herbarium', 'de studiecel', 'de sterrenkoepel', 'de eetzaal', 'het archief'],
-    times: ['eerste lesuur', 'tweede lesuur', 'derde lesuur', 'vierde lesuur', 'vijfde lesuur', 'zesde lesuur'],
+    times: ['het eerste lesuur', 'het tweede lesuur', 'het derde lesuur', 'het vierde lesuur', 'het vijfde lesuur', 'het zesde lesuur'],
     hidden: ['de verdwenen leerstoel', 'een illusiewand', 'een versteende leerling', 'een gesloten portaal', 'een verboden kast', 'een lekkende banspreuk', 'een tweede spiegel', 'een vergeten strafhok'],
   },
   {
@@ -186,8 +220,10 @@ export const WORLDS = [
     accent: '#2f7d4f',
     blurb: 'Kaarslicht, te veel familie in één huis, en iemand die het dessert niet haalde.',
     timeUnit: { one: 'uur', many: 'uur' },
-    sameRoom: 'dezelfde kamer als',
+    tijdVoorzetsel: 'om',
+    sameRoom: 'in dezelfde kamer als',
     roomWord: 'kamer',
+    plekWoord: 'kamer',
     map: deuren,
     victims: ['oom Nicolaas', 'de kerstgast', 'de buurman van nummer zes'],
     slachtoffers: ['Marieke', 'Nicolaas', 'Olivier'],
@@ -208,8 +244,10 @@ export const WORLDS = [
     accent: '#b4621f',
     blurb: 'Een huis vol maskers, en iemand die zijn kostuum nooit meer uitdoet.',
     timeUnit: { one: 'uur', many: 'uur' },
-    sameRoom: 'dezelfde kamer als',
+    tijdVoorzetsel: 'om',
+    sameRoom: 'in dezelfde kamer als',
     roomWord: 'kamer',
+    plekWoord: 'kamer',
     map: deuren,
     victims: ['de gastheer in het skeletpak', 'de huisbaas', 'de buurvrouw met de lantaarn'],
     slachtoffers: ['Mila', 'Nestor', 'Oskar'],

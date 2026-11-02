@@ -85,8 +85,11 @@ for (const { a, m, w, l } of combos) {
       if (p.symbols[p.full[r][c]] !== p.question.answer) problems.push('antwoord wijkt af');
     }
 
+    // Het dienstrooster heeft een eigen maat voor moeilijkheid (de grootte
+    // van het rooster en hoeveel vakjes er al staan), dus de vergelijking
+    // doorstrepen-tegen-aanname zegt daar niets.
     const want = levelParams(l).style;
-    const got = p.depth === 1 ? 'shallow' : 'deep';
+    const got = p.kind === 'latin' ? want : (p.depth === 1 ? 'shallow' : 'deep');
     depthTally[got] = (depthTally[got] ?? 0) + 1;
     perLevel[l] ??= { n: 0, miss: 0, want, rounds: [], clues: [] };
     perLevel[l].n++;

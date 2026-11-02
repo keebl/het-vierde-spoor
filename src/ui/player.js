@@ -4,6 +4,7 @@
 import { el, renderMatrix, renderMap, renderLatin, latinLegenda, cellKey } from './boards.js';
 import { loadProgress, saveProgress, clearProgress } from './state.js';
 import { MECHANIC_BY_ID } from '../content/assignments.js';
+import { spelregelsVan } from '../content/spelregels.js';
 import { sceneVoor } from './scenes.js';
 import { renderKamerbord, renderLegenda, PENNING } from './board-rooms.js';
 import { portretElement } from './personenkunst.js';
@@ -128,7 +129,13 @@ export function renderPlayer(puzzle, mount) {
       draw();
     },
     print() {
+      // Een dichtgeklapt blok drukt niet af. Wie de puzzel meeneemt naar de
+      // trein moet de regels er wel bij hebben.
+      const regels = document.querySelector('.spelregels');
+      const stond = regels?.open;
+      if (regels) regels.open = true;
       window.print();
+      if (regels) regels.open = !!stond;
     },
     async share() {
       const url = location.href;
@@ -172,8 +179,24 @@ function head(puzzle) {
         el('span', { class: 'label', text: 'De vraag' }),
         el('b', { text: puzzle.question.text }),
       ]),
+      spelregelBlok(puzzle),
     ]),
   ]);
+}
+
+// De spelregels bij de puzzel. Dichtgeklapt, want wie het spel kent heeft ze
+// niet nodig - maar wie zich afvraagt of "naast" ook door een muur heen gaat,
+// hoeft er niet naar te raden.
+function spelregelBlok(puzzle) {
+  const regels = spelregelsVan(puzzle.mechaniek);
+  if (!regels) return el('span', {});
+  const lijst = el('ul', { class: 'regellijst' });
+  for (const r of regels.regels) lijst.append(el('li', { text: r }));
+  const blok = el('details', { class: 'spelregels' }, [
+    el('summary', { text: regels.kop }),
+    lijst,
+  ]);
+  return blok;
 }
 
 function cluePanel(puzzle, state, draw, persist) {

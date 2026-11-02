@@ -160,3 +160,32 @@ export const MEUBELS_VAN = {
 };
 
 export const soortVan = (plek) => SOORT_VAN[plek] ?? 'zaal';
+
+// Je staat niet IN een bruggetje en niet IN een zolder. De meeste plekken
+// krijgen "in"; hier staan de uitzonderingen. Zonder dit leest een aanwijzing
+// als "Joris stond niet in het verzonken bruggetje", en dan gelooft een
+// puzzelaar de rest van de zinnen ook niet meer.
+export const VOORZETSEL_VAN = {
+  'het hertenpad': 'op',
+  'het verzonken bruggetje': 'op',
+  'het wilgenhoofd': 'bij',
+  'de dampende poel': 'bij',
+  'de droge put': 'bij',
+  'het waterpeilgat': 'bij',
+  'de verzakte trap': 'op',
+  'de koetshuiszolder': 'op',
+  'de spinnenwebzolder': 'op',
+  'de donkere veranda': 'op',
+  'de achtertuin bij het hek': 'in',
+  'de steenkring': 'in',
+};
+
+// Een "of-aanwijzing" noemt twee plekken in één adem: "het hertenpad of de
+// steenkring". Dan geldt het voorzetsel van de eerste.
+export function voorzetselVan(plek) {
+  if (VOORZETSEL_VAN[plek]) return VOORZETSEL_VAN[plek];
+  for (const [naam, voor] of Object.entries(VOORZETSEL_VAN)) {
+    if (plek.startsWith(`${naam} `)) return voor;
+  }
+  return 'in';
+}

@@ -54,6 +54,14 @@ function keurAlgemeen(p, waar) {
     eis('elke zin begint met een hoofdletter', /^[A-ZÀ-Þ]/.test(t), waar, t);
     eis('elke zin eindigt met een punt', /[.!?]$/.test(t), waar, t);
     eis('geen dubbele spaties of dubbele punten', !/ {2}|\.\./.test(t), waar, t);
+    // "waar de envelop ligt ligt precies twee deuren van" - een zin waarin
+    // hetzelfde woord twee keer achter elkaar staat, is bijna altijd een
+    // sjabloon dat tegen een ander sjabloon aan botst.
+    eis('geen woord dat zichzelf herhaalt',
+      !/\b([a-zà-ÿ]+) \1\b/i.test(t), waar, t);
+    // Getallen in een zin schrijf je uit; cijfers horen alleen bij een tijd.
+    eis('getallen staan uitgeschreven',
+      !/(^|[^\d:])\d+(?![\d:])/.test(t.replace(/\d{1,2}:\d{2}/g, '')), waar, t);
     // Een naam vooraan in de zin krijgt een hoofdletter, dus vergelijken we
     // zonder op hoofdletters te letten.
     const klein = t.toLowerCase();

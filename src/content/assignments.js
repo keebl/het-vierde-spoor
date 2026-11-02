@@ -5,44 +5,46 @@
 // "Moord" is hier dus een opdracht naast andere, geen aanname van de motor.
 
 import { buildGraph } from '../engine/graph.js';
+import { telwoord } from './woorden.js';
+import { voorzetselVan } from './kamersoorten.js';
 
 // ------------------------------------------------------------------ rollen
 // objectRank bepaalt wie onderwerp en wie lijdend voorwerp wordt in een zin.
 // Lage rank = hoort vooraan ("Mevrouw Dufour had ..."), hoge rank = achteraan.
 
-const rolePerson = (items, name = 'Verdachte') => ({
+const rolePerson = (items, name = 'Verdachte', plek = 'plek') => ({
   id: 'person',
   name,
   items,
   objectRank: 0,
   subj: (n) => n,
-  where: (n) => `waar ${n} is`,
+  where: (n) => `de ${plek} van ${n}`,
   pos: (s, o) => `${s} was samen met ${o}.`,
   neg: (s, o) => `${s} was niet samen met ${o}.`,
 });
 
-const roleObject = (items, name = 'Voorwerp') => ({
+const roleObject = (items, name = 'Voorwerp', plek = 'plek') => ({
   id: 'object',
   name,
   items,
   objectRank: 4,
   subj: (o) => `degene die ${o} bij zich had`,
-  where: (o) => `waar ${o} is`,
+  where: (o) => `de ${plek} met ${o}`,
   pos: (s, o) => `${s} had ${o} bij zich.`,
   neg: (s, o) => `${s} had ${o} niet bij zich.`,
 });
 
 // Een spoor wordt niet gedragen, het ligt ergens. Dus niet "had bij zich"
 // maar "in dezelfde ruimte als" - dat klopt voor mensen en voor dingen.
-const roleTrace = (items, name, sameRoom) => ({
+const roleTrace = (items, name, sameRoom, plek = 'plek') => ({
   id: 'object',
   name,
   items,
   objectRank: 4,
   subj: (o) => o,
-  where: (o) => `waar ${o} ligt`,
-  pos: (s, o) => `${s} bevindt zich in ${sameRoom} ${o}.`,
-  neg: (s, o) => `${s} bevindt zich niet in ${sameRoom} ${o}.`,
+  where: (o) => `de ${plek} met ${o}`,
+  pos: (s, o) => `${s} bevindt zich ${sameRoom} ${o}.`,
+  neg: (s, o) => `${s} bevindt zich niet ${sameRoom} ${o}.`,
 });
 
 const rolePlace = (items, name = 'Plek') => ({
@@ -50,10 +52,10 @@ const rolePlace = (items, name = 'Plek') => ({
   name,
   items,
   objectRank: 6,
-  subj: (p) => `wie zich in ${p} bevond`,
+  subj: (p) => `wie zich ${voorzetselVan(p)} ${p} bevond`,
   where: (p) => p,
-  pos: (s, p) => `${s} bevond zich in ${p}.`,
-  neg: (s, p) => `${s} bevond zich niet in ${p}.`,
+  pos: (s, p) => `${s} bevond zich ${voorzetselVan(p)} ${p}.`,
+  neg: (s, p) => `${s} bevond zich niet ${voorzetselVan(p)} ${p}.`,
 });
 
 // Dezelfde plekken, maar nu als ankercategorie (de rijen van de puzzel).
@@ -61,34 +63,36 @@ const rolePlaceAnchor = (items, name = 'Plek') => ({
   ...rolePlace(items, name),
   subj: (p) => p,
   where: (p) => p,
-  pos: (s, p) => `${s} bevindt zich in ${p}.`,
-  neg: (s, p) => `${s} bevindt zich niet in ${p}.`,
+  pos: (s, p) => `${s} bevindt zich ${voorzetselVan(p)} ${p}.`,
+  neg: (s, p) => `${s} bevindt zich niet ${voorzetselVan(p)} ${p}.`,
 });
 
-const roleTime = (items, unit, name = 'Moment') => ({
+// voor: het voorzetsel van de wereld. "om 22:00", maar "tijdens de tweede
+// wacht" en "in het derde kwartier".
+const roleTime = (items, unit, name = 'Moment', voor = 'om') => ({
   id: 'time',
   name,
   items,
   ordered: true,
   objectRank: 8,
-  subj: (t) => `wie er om ${t} was`,
-  where: (t) => `waar het om ${t} was`,
-  pos: (s, t) => `${s} was er om ${t}.`,
-  neg: (s, t) => `${s} was er niet om ${t}.`,
+  subj: (t) => `wie er ${voor} ${t} was`,
+  where: (t) => `waar het ${voor} ${t} was`,
+  pos: (s, t) => `${s} was er ${voor} ${t}.`,
+  neg: (s, t) => `${s} was er niet ${voor} ${t}.`,
   cmp: (a, b) => `${a} was er eerder dan ${b}.`,
   gap: (a, b, d) =>
-    `Tussen ${a} en ${b} zit precies ${d} ${d === 1 ? unit.one : unit.many}.`,
+    `Tussen ${a} en ${b} ${d === 1 ? 'zit' : 'zitten'} precies ${telwoord(d)} ${d === 1 ? unit.one : unit.many}.`,
 });
 
-const roleHidden = (items, sameRoom, name = 'Wat er ligt') => ({
+const roleHidden = (items, sameRoom, name = 'Wat er ligt', plek = 'plek') => ({
   id: 'hidden',
   name,
   items,
   objectRank: 2,
   subj: (f) => f,
-  where: (f) => `waar ${f} is`,
-  pos: (s, o) => `${s} bevindt zich in ${sameRoom} ${o}.`,
-  neg: (s, o) => `${s} bevindt zich niet in ${sameRoom} ${o}.`,
+  where: (f) => `de ${plek} met ${f}`,
+  pos: (s, o) => `${s} bevindt zich ${sameRoom} ${o}.`,
+  neg: (s, o) => `${s} bevindt zich niet ${sameRoom} ${o}.`,
 });
 
 const pick = (pool, n, rng) => rng.sample(pool, n).map((name, i) => ({ id: `i${i}`, name }));
@@ -121,8 +125,8 @@ export const ASSIGNMENTS = [
         const spec = {
           anchor: rolePlaceAnchor(pick(world.places, n, rng), cap(world.roomWord)),
           cats: [
-            rolePerson(pick(world.persons, n, rng)),
-            roleObject(pick(world.objects, n, rng)),
+            rolePerson(pick(world.persons, n, rng), 'Verdachte', world.plekWoord),
+            roleObject(pick(world.objects, n, rng), 'Voorwerp', world.plekWoord),
           ],
         };
         // Geen momentcategorie op een kaart: een ruimte heeft geen tijdstip.
@@ -136,7 +140,7 @@ export const ASSIGNMENTS = [
           rolePlace(pick(world.places, n, rng)),
         ],
       };
-      if (params.cats >= 3) spec.cats.push(roleTime(take(world.times, n), world.timeUnit));
+      if (params.cats >= 3) spec.cats.push(roleTime(take(world.times, n), world.timeUnit, 'Moment', world.tijdVoorzetsel));
       return spec;
     },
     // Het misdrijf zelf levert een feit: waar het gebeurde en wat er lag.
@@ -172,7 +176,8 @@ export const ASSIGNMENTS = [
       const objName = spec.cats.find((c) => c.id === 'object').items[f.a.i].name;
       const placeCat = spec.anchor.id === 'place' ? spec.anchor : spec.cats.find((c) => c.id === 'place');
       const placeName = placeCat.items[f.b.i].name;
-      return `${world.lead} ${slachtoffer.charAt(0).toUpperCase()}${slachtoffer.slice(1)} werd aangetroffen in ${placeName}, met ${objName} ernaast. Wie daar toen was, is de dader.`;
+      const V = voorzetselVan(placeName);
+      return `${world.lead} ${slachtoffer.charAt(0).toUpperCase()}${slachtoffer.slice(1)} werd aangetroffen ${V} ${placeName}, met ${objName} ernaast. Wie zich daar bevond, is de dader.`;
     },
   },
 
@@ -187,11 +192,13 @@ export const ASSIGNMENTS = [
       const spec = {
         anchor: rolePlaceAnchor(pick(world.places, n, rng), cap(world.roomWord)),
         cats: [
-          roleHidden(take(world.hidden, n), world.sameRoom),
-          roleTrace(pick(world.objects, n, rng), 'Spoor', world.sameRoom),
+          roleHidden(take(world.hidden, n), world.sameRoom, 'Wat er ligt', world.plekWoord),
+          roleTrace(pick(world.objects, n, rng), 'Spoor', world.sameRoom, world.plekWoord),
         ],
       };
-      if (params.cats >= 3) spec.cats.push(rolePerson(pick(world.persons, n, rng), 'Wie er was'));
+      if (params.cats >= 3) {
+        spec.cats.push(rolePerson(pick(world.persons, n, rng), 'Wie er was', world.plekWoord));
+      }
       return mechanic === 'map' ? withGraph(spec, world, rng) : spec;
     },
     forced: null,
@@ -226,7 +233,7 @@ export const ASSIGNMENTS = [
           rolePlace(pick(world.places, n, rng)),
         ],
       };
-      if (params.cats >= 3) spec.cats.push(roleTime(take(world.times, n), world.timeUnit, 'Aangekomen'));
+      if (params.cats >= 3) spec.cats.push(roleTime(take(world.times, n), world.timeUnit, 'Aangekomen', world.tijdVoorzetsel));
       return spec;
     },
     forced: null,

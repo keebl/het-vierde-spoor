@@ -120,8 +120,9 @@ function buildLatinPuzzle({ world, params, settings }) {
   const symbols = rng.sample(world.persons, n);
   const { full, givens, aanwijzingen, depth } = generateLatin(n, rng, params);
 
+  const voor = world.tijdVoorzetsel ?? 'om';
   const zin = (c) => {
-    if (c.soort === 'niet') return `${symbols[c.s]} was om ${cols[c.c]} niet in ${rows[c.r]}.`;
+    if (c.soort === 'niet') return `${symbols[c.s]} was ${voor} ${cols[c.c]} niet in ${rows[c.r]}.`;
     if (c.soort === 'voor') return `In ${rows[c.r]} was ${symbols[c.a]} er eerder dan ${symbols[c.b]}.`;
     return `In ${rows[c.r]} volgden ${symbols[c.a]} en ${symbols[c.b]} elkaar direct op.`;
   };
@@ -147,7 +148,7 @@ function buildLatinPuzzle({ world, params, settings }) {
     depth,
     intro: `${world.reconLead} Iedereen was precies één keer op elke plek, en op elk moment op precies één plek.`,
     question: {
-      text: `Wie was er in ${rows[qr]} tijdens ${cols[qc]}?`,
+      text: `Wie was er ${voor} ${cols[qc]} in ${rows[qr]}?`,
       answer: symbols[full[qr][qc]],
       cell: [qr, qc],
     },
@@ -229,7 +230,11 @@ function buildKamerPuzzle({ world, settings }) {
     meubelNamen[mi] = keuze[0];
     meubelIconen[mi] = keuze[1];
   }
-  const woorden = { personen: namen, kamerNamen, meubelNamen, slachtofferNaam };
+  // Hoe de wereld een ruimte noemt, met voorzetsel en al: "in dezelfde
+  // kamer", "op dezelfde plek", "in hetzelfde gewelf".
+  const zelfde = (world.sameRoom ?? 'in dezelfde kamer als').replace(/ als$/, '');
+
+  const woorden = { personen: namen, kamerNamen, meubelNamen, slachtofferNaam, zelfde };
 
   const clues = gen.aanwijzingen.map((c, i) => ({
     n: i + 1,
@@ -250,9 +255,9 @@ function buildKamerPuzzle({ world, settings }) {
     niveau: Number(niveau),
     niveauLabel: levelParams(niveau).label,
     depth: gen.graad.opgelost ? 1 : 2,
-    intro: `${world.lead} Niemand weet meer wie waar stond, en zelfs waar ${slachtofferNaam} lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij ${slachtofferNaam} in de kamer blijkt te staan, is de dader.`,
+    intro: `${world.lead} Niemand weet meer wie waar stond, en zelfs waar ${slachtofferNaam} lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij ${slachtofferNaam} ${zelfde} blijkt te staan, is de dader.`,
     question: {
-      text: `Wie stond er als enige bij ${slachtofferNaam} in dezelfde kamer?`,
+      text: `Wie stond er als enige bij ${slachtofferNaam} ${zelfde}?`,
       answer: namen[gen.dader],
     },
     // het bord
