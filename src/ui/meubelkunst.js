@@ -727,19 +727,157 @@ export const MEUBELKUNST = {
 
 const NS = 'http://www.w3.org/2000/svg';
 
-// Zet een meubelstuk neer, passend in een vierkant van `grootte` bij `grootte`.
 // De omlijning. Dit is wat een tekening een tekening maakt in plaats van een
 // pictogram: elk vlak krijgt dezelfde donkere contour, zoals in een
 // stripverhaal. Zonder die lijn vallen vlakken van dezelfde kleurfamilie in
 // elkaar en ziet een kamer er vlak en koud uit.
 const CONTOUR = '#3f3228';
 
+// --------------------------------------------------------------- materiaal
+//
+// Zeventig tekeningen met de hand bijwerken is geen doen, en het zou ook
+// niet consequent worden. In plaats daarvan krijgt elk vlak zijn detail uit
+// zijn eigen kleur:
+//
+//   - een verloop van licht naar donker, zodat een kast bol staat in plaats
+//     van plat te liggen;
+//   - een nerf over alles wat hout is, en een glans over alles wat metaal is.
+//
+// Welke kleur welk materiaal is, staat hieronder. Dat is één lijst voor alle
+// tekeningen tegelijk, dus het blijft vanzelf consequent.
+
+const HOUTKLEUREN = new Set(['#a87c4a', '#8a6134', '#6b4824', '#c89a5e']);
+const METAALKLEUREN = new Set(['#9aa3ac', '#737c86', '#3b4650', '#b9c0c4', '#8b9399']);
+const STEENKLEUREN = new Set(['#ada69a', '#9d968a', '#8d867a']);
+const STOFKLEUREN = new Set(['#a8543c', '#8a4a34', '#6f5a8e', '#b8795e', '#5f7f6a']);
+
+const klem = (v) => Math.max(0, Math.min(255, Math.round(v)));
+
+function schuif(hex, factor) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex);
+  if (!m) return hex;
+  const n = parseInt(m[1], 16);
+  const r = klem(((n >> 16) & 255) * factor);
+  const g = klem(((n >> 8) & 255) * factor);
+  const b = klem((n & 255) * factor);
+  return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
+}
+
+const sleutelVan = (hex) => `mk${hex.replace('#', '')}`;
+
+// Het verloop en de materiaalpatronen staan één keer per svg. Welke svg dat
+// is weten we pas als er getekend wordt, dus we zetten ze er dan bij.
+function zorgVoorDefs(ouder, kleuren) {
+  const svg = ouder.ownerSVGElement ?? (ouder.tagName === 'svg' ? ouder : null);
+  if (!svg) return false;
+  let defs = svg.querySelector('defs.meubeldefs');
+  if (!defs) {
+    defs = document.createElementNS(NS, 'defs');
+    defs.setAttribute('class', 'meubeldefs');
+
+    // De nerf van hout: fijne lijntjes, net niet evenwijdig.
+    const nerf = document.createElementNS(NS, 'pattern');
+    nerf.setAttribute('id', 'mk-nerf');
+    nerf.setAttribute('width', '6');
+    nerf.setAttribute('height', '5');
+    nerf.setAttribute('patternUnits', 'userSpaceOnUse');
+    for (const [d, o] of [['M0 1.2 q3 -0.8 6 0', '0.26'], ['M0 3.4 q3 0.9 6 0', '0.18']]) {
+      const pad = document.createElementNS(NS, 'path');
+      pad.setAttribute('d', d);
+      pad.setAttribute('fill', 'none');
+      pad.setAttribute('stroke', '#2e2114');
+      pad.setAttribute('stroke-width', '0.5');
+      pad.setAttribute('opacity', o);
+      nerf.append(pad);
+    }
+    defs.append(nerf);
+
+    // De glans van metaal: een schuine lichtband.
+    const glans = document.createElementNS(NS, 'linearGradient');
+    glans.setAttribute('id', 'mk-glans');
+    glans.setAttribute('x1', '0');
+    glans.setAttribute('y1', '0');
+    glans.setAttribute('x2', '1');
+    glans.setAttribute('y2', '1');
+    for (const [o, kl, op] of [['0%', '#ffffff', '0.32'], ['38%', '#ffffff', '0.06'],
+      ['55%', '#ffffff', '0.22'], ['100%', '#000000', '0.12']]) {
+      const stop = document.createElementNS(NS, 'stop');
+      stop.setAttribute('offset', o);
+      stop.setAttribute('stop-color', kl);
+      stop.setAttribute('stop-opacity', op);
+      glans.append(stop);
+    }
+    defs.append(glans);
+
+    // De korrel van steen.
+    const korrel = document.createElementNS(NS, 'pattern');
+    korrel.setAttribute('id', 'mk-korrel');
+    korrel.setAttribute('width', '7');
+    korrel.setAttribute('height', '7');
+    korrel.setAttribute('patternUnits', 'userSpaceOnUse');
+    for (const [cx, cy, r] of [[1.5, 2, 0.6], [4.5, 1, 0.4], [3, 5, 0.7], [6, 4.5, 0.5]]) {
+      const c = document.createElementNS(NS, 'circle');
+      c.setAttribute('cx', cx);
+      c.setAttribute('cy', cy);
+      c.setAttribute('r', r);
+      c.setAttribute('fill', '#2e2a24');
+      c.setAttribute('opacity', '0.22');
+      korrel.append(c);
+    }
+    defs.append(korrel);
+
+    // Het weefsel van stof: een fijne kruising van draden.
+    const weefsel = document.createElementNS(NS, 'pattern');
+    weefsel.setAttribute('id', 'mk-weefsel');
+    weefsel.setAttribute('width', '4');
+    weefsel.setAttribute('height', '4');
+    weefsel.setAttribute('patternUnits', 'userSpaceOnUse');
+    for (const [d, kl, op] of [['M0 2 h4', '#ffffff', '0.14'], ['M2 0 v4', '#2a1a12', '0.16']]) {
+      const pad = document.createElementNS(NS, 'path');
+      pad.setAttribute('d', d);
+      pad.setAttribute('stroke', kl);
+      pad.setAttribute('stroke-width', '0.7');
+      pad.setAttribute('opacity', op);
+      pad.setAttribute('fill', 'none');
+      weefsel.append(pad);
+    }
+    defs.append(weefsel);
+
+    svg.insertBefore(defs, svg.firstChild);
+  }
+
+  // Per kleur een verloop, en alleen als het er nog niet is.
+  for (const kleur of kleuren) {
+    const id = sleutelVan(kleur);
+    if (defs.querySelector(`#${id}`)) continue;
+    const grad = document.createElementNS(NS, 'linearGradient');
+    grad.setAttribute('id', id);
+    grad.setAttribute('x1', '0');
+    grad.setAttribute('y1', '0');
+    grad.setAttribute('x2', '0.25');
+    grad.setAttribute('y2', '1');
+    for (const [o, f] of [['0%', 1.16], ['45%', 1.0], ['100%', 0.82]]) {
+      const stop = document.createElementNS(NS, 'stop');
+      stop.setAttribute('offset', o);
+      stop.setAttribute('stop-color', schuif(kleur, f));
+      grad.append(stop);
+    }
+    defs.append(grad);
+  }
+  return true;
+}
+
+// Zet een meubelstuk neer, passend in een vierkant van `grootte` bij `grootte`.
 export function tekenMeubel(ouder, naam, { x = 0, y = 0, grootte = 48, contour = true } = {}) {
   const delen = MEUBELKUNST[naam];
   if (!delen) return null;
   const g = document.createElementNS(NS, 'g');
   g.setAttribute('transform', `translate(${x} ${y}) scale(${grootte / 48})`);
   g.setAttribute('class', 'meubelkunst');
+
+  const kleuren = delen.filter(([, , soort]) => soort !== 'lijn').map(([, kl]) => kl);
+  const metVerloop = zorgVoorDefs(ouder, new Set(kleuren));
+
   for (const [d, kleur, soort] of delen) {
     const pad = document.createElementNS(NS, 'path');
     pad.setAttribute('d', d);
@@ -750,16 +888,33 @@ export function tekenMeubel(ouder, naam, { x = 0, y = 0, grootte = 48, contour =
       pad.setAttribute('stroke-width', '2.4');
       pad.setAttribute('stroke-linecap', 'round');
       pad.setAttribute('class', 'meubellijn');
-    } else {
-      pad.setAttribute('fill', kleur);
-      if (contour) {
-        pad.setAttribute('stroke', CONTOUR);
-        pad.setAttribute('stroke-width', '1.4');
-        pad.setAttribute('stroke-linejoin', 'round');
-      }
+      g.append(pad);
+      continue;
+    }
+
+    pad.setAttribute('fill', metVerloop ? `url(#${sleutelVan(kleur)})` : kleur);
+    if (contour) {
+      pad.setAttribute('stroke', CONTOUR);
+      pad.setAttribute('stroke-width', '1.4');
+      pad.setAttribute('stroke-linejoin', 'round');
     }
     g.append(pad);
+
+    // En er overheen wat het materiaal eigen is. Hetzelfde pad nog een keer,
+    // maar dan gevuld met nerf, glans of korrel.
+    if (!metVerloop) continue;
+    const laag = HOUTKLEUREN.has(kleur) ? 'mk-nerf'
+      : METAALKLEUREN.has(kleur) ? 'mk-glans'
+        : STEENKLEUREN.has(kleur) ? 'mk-korrel'
+          : STOFKLEUREN.has(kleur) ? 'mk-weefsel' : null;
+    if (!laag) continue;
+    const over = document.createElementNS(NS, 'path');
+    over.setAttribute('d', d);
+    over.setAttribute('fill', `url(#${laag})`);
+    over.setAttribute('pointer-events', 'none');
+    g.append(over);
   }
+
   ouder.append(g);
   return g;
 }
