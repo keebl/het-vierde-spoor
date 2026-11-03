@@ -878,6 +878,11 @@ export function tekenMeubel(ouder, naam, { x = 0, y = 0, grootte = 48, contour =
   const kleuren = delen.filter(([, , soort]) => soort !== 'lijn').map(([, kl]) => kl);
   const metVerloop = zorgVoorDefs(ouder, new Set(kleuren));
 
+  // Een strip heeft een zware buitenlijn en lichtere lijnen binnenin. Het
+  // eerste vlak van een tekening is bijna altijd het lijf van het ding - de
+  // kast, de ketel, het bed - en dat krijgt de dikke lijn. Alles wat daarna
+  // komt ligt erop en krijgt een dunnere.
+  let eerste = true;
   for (const [d, kleur, soort] of delen) {
     const pad = document.createElementNS(NS, 'path');
     pad.setAttribute('d', d);
@@ -895,9 +900,10 @@ export function tekenMeubel(ouder, naam, { x = 0, y = 0, grootte = 48, contour =
     pad.setAttribute('fill', metVerloop ? `url(#${sleutelVan(kleur)})` : kleur);
     if (contour) {
       pad.setAttribute('stroke', CONTOUR);
-      pad.setAttribute('stroke-width', '1.4');
+      pad.setAttribute('stroke-width', eerste ? '2.2' : '1.1');
       pad.setAttribute('stroke-linejoin', 'round');
     }
+    eerste = false;
     g.append(pad);
 
     // En er overheen wat het materiaal eigen is. Hetzelfde pad nog een keer,
