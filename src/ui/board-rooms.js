@@ -36,6 +36,34 @@ const BREED = 0.68;
 
 const PENNING = ['#b8452f', '#2f6ea8', '#3f7d4f', '#8a4f9e', '#c07a1d', '#1f7f85'];
 
+// Uit de hand getrokken lijnen.
+//
+// Alles op dit bord was kaarsrecht, en daardoor zag het eruit als een
+// bouwtekening. Een getrokken lijn beeft een beetje en loopt in het midden
+// iets uit de koers. Dat is precies wat een plattegrond van een spelbord
+// onderscheidt van een plattegrond van een aannemer.
+//
+// De beving is berekend uit de coordinaten zelf, dus hij is altijd hetzelfde
+// op dezelfde plek - hij danst niet bij elke klik. En twee lijnstukken die
+// hetzelfde eindpunt delen, krijgen daar dezelfde afwijking, dus ze sluiten
+// netjes op elkaar aan.
+function beving(a, b) {
+  const h = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453;
+  return h - Math.floor(h) - 0.5;
+}
+
+function schetspad(x1, y1, x2, y2, amp = 1.5) {
+  const ax = x1 + beving(x1, y1) * amp;
+  const ay = y1 + beving(y1, x1) * amp;
+  const bx = x2 + beving(x2, y2) * amp;
+  const by = y2 + beving(y2, x2) * amp;
+  // Het midden wijkt wat verder uit: dat maakt de lijn een streek in plaats
+  // van een scheve lijn.
+  const mx = (x1 + x2) / 2 + beving(x1 + x2, y1 - y2) * amp * 2.2;
+  const my = (y1 + y2) / 2 + beving(y1 - y2, x1 + x2) * amp * 2.2;
+  return `M${ax.toFixed(1)} ${ay.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${bx.toFixed(1)} ${by.toFixed(1)}`;
+}
+
 export function renderKamerbord(puzzle, state, acties) {
   const n = puzzle.n;
   const breedte = n * CEL + RAND * 2 + BAND;
@@ -104,7 +132,12 @@ export function renderKamerbord(puzzle, state, acties) {
     }
     let nr = k;
     for (const cel of gekozen) {
-      tekenAankleding(kleden, soort, x(kol(cel)) + CEL / 2, y(rij(cel)) + CEL / 2, CEL, nr++);
+      const mx = x(kol(cel)) + CEL / 2;
+      const my = y(rij(cel)) + CEL / 2;
+      // Een kleed ligt nooit recht.
+      const draai = el('g', { transform: `rotate(${(beving(cel, k) * 14).toFixed(2)} ${mx} ${my})` });
+      kleden.append(draai);
+      tekenAankleding(draai, soort, mx, my, CEL, nr++);
     }
   }
   svg.append(kleden);
@@ -143,9 +176,13 @@ export function renderKamerbord(puzzle, state, acties) {
   // midden in een kamer. Anders moet je uit het vloerpatroon afleiden waar
   // een vakje ophoudt, en dat lukt niet.
   const raster = el('g');
+  // Per vakje een eigen streek in plaats van een lijn over het hele bord:
+  // dan beeft hij ook per vakje, en dat leest als met de hand getrokken.
   for (let k = 1; k < n; k++) {
-    raster.append(el('line', { x1: x(k), y1: y(0), x2: x(k), y2: y(n), class: 'vakjeslijn' }));
-    raster.append(el('line', { x1: x(0), y1: y(k), x2: x(n), y2: y(k), class: 'vakjeslijn' }));
+    for (let j = 0; j < n; j++) {
+      raster.append(el('path', { d: schetspad(x(k), y(j), x(k), y(j + 1), 1.5), class: 'vakjeslijn' }));
+      raster.append(el('path', { d: schetspad(x(j), y(k), x(j + 1), y(k), 1.5), class: 'vakjeslijn' }));
+    }
   }
   svg.append(raster);
 
@@ -153,16 +190,15 @@ export function renderKamerbord(puzzle, state, acties) {
   // Een muur is geen streep maar een muur: een donkere voet met een lichter
   // bovenvlak erop, alsof je van schuin boven op een maquette kijkt. Dat is
   // wat een plattegrond een gebouw maakt in plaats van een schema.
-  const muurVert = (cx, y1, y2) => {
-    muren.append(el('line', { x1: cx, y1, x2: cx, y2, class: 'muurvoet' }));
-    muren.append(el('line', { x1: cx - 2, y1, x2: cx - 2, y2, class: 'muurtop' }));
-    muren.append(el('line', { x1: cx - 3.5, y1, x2: cx - 3.5, y2, class: 'muurglans' }));
+  // De drie lijnen van een muur beven samen: eerst de streek, en dan
+  // dezelfde streek een paar pixels verschoven. Anders waaieren ze uiteen.
+  const muurStreek = (d, dx, dy) => {
+    muren.append(el('path', { d, class: 'muurvoet' }));
+    muren.append(el('path', { d, class: 'muurtop', transform: `translate(${dx} ${dy})` }));
+    muren.append(el('path', { d, class: 'muurglans', transform: `translate(${dx * 1.75} ${dy * 1.75})` }));
   };
-  const muurHor = (x1, x2, cy) => {
-    muren.append(el('line', { x1, y1: cy, x2, y2: cy, class: 'muurvoet' }));
-    muren.append(el('line', { x1, y1: cy - 2, x2, y2: cy - 2, class: 'muurtop' }));
-    muren.append(el('line', { x1, y1: cy - 3.5, x2, y2: cy - 3.5, class: 'muurglans' }));
-  };
+  const muurVert = (cx, y1, y2) => muurStreek(schetspad(cx, y1, cx, y2, 2.0), -2, 0);
+  const muurHor = (x1, x2, cy) => muurStreek(schetspad(x1, cy, x2, cy, 2.0), 0, -2);
 
   for (let i = 0; i < n * n; i++) {
     const r = rij(i);
@@ -176,12 +212,17 @@ export function renderKamerbord(puzzle, state, acties) {
 
   // De buitenmuur: dezelfde opbouw, maar helemaal rond.
   const buiten = el('g');
-  buiten.append(el('rect', {
-    x: x(0), y: y(0), width: n * CEL, height: n * CEL, class: 'buitenmuur-voet',
-  }));
-  buiten.append(el('rect', {
-    x: x(0) + 2.5, y: y(0) + 2.5, width: n * CEL - 5, height: n * CEL - 5, class: 'buitenmuur-top',
-  }));
+  const hoeken = [
+    [x(0), y(0), x(n), y(0)],
+    [x(n), y(0), x(n), y(n)],
+    [x(n), y(n), x(0), y(n)],
+    [x(0), y(n), x(0), y(0)],
+  ];
+  for (const [ax, ay, bx, by] of hoeken) {
+    const d = schetspad(ax, ay, bx, by, 1.6);
+    buiten.append(el('path', { d, class: 'buitenmuur-voet' }));
+    buiten.append(el('path', { d, class: 'buitenmuur-top' }));
+  }
   svg.append(buiten);
 
   // Rij- en kolomaanduiding, plus een kompas: de aanwijzingen spreken over
@@ -203,6 +244,61 @@ export function renderKamerbord(puzzle, state, acties) {
   randen.append(nLetter);
   svg.append(randen);
 
+  // ------------------------------------------------------------ kamernamen
+  // De naam staat op de grond geschreven, zoals op een bouwtekening. Eerst
+  // stond hij in een balkje dat werd neergezet waar het paste, en dat trok
+  // het beeld scheef: je zag de balk en niet de kamer. Nu loopt hij over het
+  // midden van de kamer, een slag scheef, met een lichte gloed eronder zodat
+  // hij op elke vloer leesbaar blijft. De meubels komen er bovenop te staan,
+  // want de naam ligt op de vloer.
+  const namen = el('g', { class: 'kamernamen' });
+  for (let k = 0; k < puzzle.kamerNamen.length; k++) {
+    const cellen = [];
+    for (let i = 0; i < n * n; i++) if (kamer(i) === k) cellen.push(i);
+    if (!cellen.length) continue;
+
+    // Op een vrij stuk vloer, niet over de meubels heen: anders valt de
+    // naam half achter een kast en kun je hem niet lezen. We zoeken de
+    // langste rij vakjes in deze kamer waar niets op staat.
+    const run = langsteVrijeRij(puzzle, n, k);
+    if (!run) continue;
+    const breedKamer = run.lengte * CEL;
+
+    const naam = puzzle.kamerNamen[k].toUpperCase();
+    let regels = [naam];
+    let groot = (breedKamer - 10) / (naam.length * BREED);
+    if (groot < 9) {
+      regels = splits(naam);
+      groot = (breedKamer - 10) / (Math.max(...regels.map((t) => t.length)) * BREED);
+    }
+    groot = Math.max(7, Math.min(17, groot));
+
+    const cx = x(run.c) + (run.lengte * CEL) / 2;
+    const cy = y(run.r) + CEL / 2;
+    const draai = (((k * 37) % 9) - 4) * 0.8;
+    const groep = el('g', { transform: `rotate(${draai.toFixed(2)} ${cx} ${cy})` });
+    // De letterbreedte van een geschreven letter laat zich niet uitrekenen,
+    // dus leggen we hem vast: nooit breder dan de vrije rij waar hij op
+    // staat. Zo loopt een lange naam niet de buurkamer in.
+    const ruimte = run.lengte * CEL - 10;
+    regels.forEach((tekst, i) => {
+      const geschat = tekst.length * groot * BREED;
+      const t = el('text', {
+        x: cx,
+        y: cy + (i - (regels.length - 1) / 2) * (groot + 3) + groot * 0.34,
+        'text-anchor': 'middle',
+        class: 'kamernaam',
+        'font-size': groot.toFixed(1),
+        textLength: Math.min(ruimte, geschat).toFixed(1),
+        lengthAdjust: 'spacingAndGlyphs',
+      });
+      t.textContent = tekst;
+      groep.append(t);
+    });
+    namen.append(groep);
+  }
+  svg.append(namen);
+
   // ----------------------------------------------------------- meubels
   const spullen = el('g');
   for (let i = 0; i < n * n; i++) {
@@ -214,62 +310,22 @@ export function renderKamerbord(puzzle, state, acties) {
       cx: x(kol(i)) + CEL / 2, cy: y(rij(i)) + CEL - 13,
       rx: CEL * 0.3, ry: 5, class: 'meubelschaduw',
     }));
-    const kunst = tekenMeubel(spullen, puzzle.meubelIconen?.[m], {
+    const scheef = el('g', {
+      transform: `rotate(${(beving(i, m) * 5).toFixed(2)} ${x(kol(i)) + CEL / 2} ${y(rij(i)) + CEL / 2})`,
+    });
+    spullen.append(scheef);
+    const kunst = tekenMeubel(scheef, puzzle.meubelIconen?.[m], {
       x: x(kol(i)) + 4, y: y(rij(i)) + 3, grootte: CEL - 8,
     });
     // Valt er geen tekening te maken, dan liever het lijnicoon dan niets.
     if (!kunst) {
-      tekenIcoon(spullen, icoonVan(naam) ?? 'deur', {
+      tekenIcoon(scheef, icoonVan(naam) ?? 'deur', {
         x: x(kol(i)) + CEL / 2 - 16, y: y(rij(i)) + CEL / 2 - 18, grootte: 32, klasse: 'meubelglyph',
       });
     }
   }
   svg.append(spullen);
 
-  // --------------------------------------------------------- kamerplaatjes
-  // Het bordje gaat op de langste aaneengesloten rij van de kamer staan en
-  // krijgt precies de breedte van die rij. Zo kan het nooit over een andere
-  // kamer heen vallen. Past de naam niet, dan krimpt de letter of breekt de
-  // naam over twee regels.
-  const borden = el('g');
-  for (let k = 0; k < puzzle.kamerNamen.length; k++) {
-    const run = langsteRij(puzzle, n, k);
-    if (!run) continue;
-    const naam = puzzle.kamerNamen[k].toUpperCase();
-    const ruimte = run.lengte * CEL - 12;
-    const midden = x(run.c) + (run.lengte * CEL) / 2;
-
-    let groot = 9;
-    let regels = [naam];
-    if (naam.length * groot * BREED > ruimte) {
-      groot = Math.max(6.5, ruimte / (naam.length * BREED));
-      if (groot < 8) {
-        regels = splits(naam);
-        groot = Math.min(9, ruimte / (Math.max(...regels.map((t) => t.length)) * BREED));
-      }
-    }
-
-    const hoogte = regels.length * (groot + 3) + 7;
-    const bx = midden - ruimte / 2;
-    const by = y(run.r) + 5;
-    // Een houten naambordje, geen zwarte balk: donkere plank, lichter
-    // bovenvlak, en een schroefje in elke hoek.
-    borden.append(el('rect', { x: bx, y: by + 2, width: ruimte, height: hoogte, rx: 5, class: 'kamerplaat-schaduw' }));
-    borden.append(el('rect', { x: bx, y: by, width: ruimte, height: hoogte, rx: 5, class: 'kamerplaat' }));
-    borden.append(el('rect', { x: bx + 2, y: by + 1.5, width: ruimte - 4, height: hoogte - 4, rx: 4, class: 'kamerplaat-rand' }));
-    for (const sx of [bx + 5, bx + ruimte - 5]) {
-      borden.append(el('circle', { cx: sx, cy: by + hoogte / 2, r: 1.5, class: 'kamerplaat-schroef' }));
-    }
-    regels.forEach((tekst, i) => {
-      const t = el('text', {
-        x: midden, y: y(run.r) + 5 + (groot + 3) * (i + 1), 'text-anchor': 'middle',
-        class: 'kamerplaat-tekst', 'font-size': groot.toFixed(1),
-      });
-      t.textContent = tekst;
-      borden.append(t);
-    });
-  }
-  svg.append(borden);
 
   // ------------------------------------------------------------ penningen
   // Kleur alleen is niet genoeg om twaalf mensen uit elkaar te houden, en op
@@ -384,6 +440,24 @@ export function renderKamerbord(puzzle, state, acties) {
 }
 
 // De langste aaneengesloten reeks vakjes van een kamer op een rij.
+// De langste rij aaneengesloten vakjes van deze kamer waar geen meubel op
+// staat. Daar past de naam zonder achter een kast te verdwijnen.
+function langsteVrijeRij(puzzle, n, k) {
+  let beste = null;
+  for (let r = 0; r < n; r++) {
+    let c = 0;
+    while (c < n) {
+      const vrij = (i) => puzzle.kamerVan[i] === k && puzzle.meubelOp[i] == null;
+      if (!vrij(r * n + c)) { c++; continue; }
+      const start = c;
+      while (c < n && vrij(r * n + c)) c++;
+      const lengte = c - start;
+      if (!beste || lengte > beste.lengte) beste = { r, c: start, lengte };
+    }
+  }
+  return beste;
+}
+
 function langsteRij(puzzle, n, k) {
   let beste = null;
   for (let r = 0; r < n; r++) {
