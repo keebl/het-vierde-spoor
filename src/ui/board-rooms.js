@@ -13,7 +13,7 @@ import { tekenMeubel } from './meubelkunst.js';
 import { tekenPersoon } from './personenkunst.js';
 import { icoonVan } from '../content/iconen.js';
 import { soortVan, VLOER_VAN } from '../content/kamersoorten.js';
-import { tekenAankleding } from './aankleding.js';
+import { tekenAankleding, tekenSnippers } from './aankleding.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const el = (naam, attrs = {}) => {
@@ -64,6 +64,27 @@ function schetspad(x1, y1, x2, y2, amp = 1.5) {
   return `M${ax.toFixed(1)} ${ay.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${bx.toFixed(1)} ${by.toFixed(1)}`;
 }
 
+// Een kleur lichter of donkerder maken. Boven de 1 is lichter.
+//
+// Hiermee krijgt elk vakje zijn eigen tint. Een vloer waar elke plank precies
+// even donker is, is geen vloer maar een vlak - dat is waar "kil" vandaan
+// kwam.
+function schuif(hex, factor) {
+  const n = parseInt(hex.slice(1), 16);
+  const kanaal = (v) => Math.max(0, Math.min(255, Math.round(v * factor)));
+  const r = kanaal((n >> 16) & 255);
+  const g = kanaal((n >> 8) & 255);
+  const b = kanaal(n & 255);
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+}
+
+// Meubels die zelf licht geven. Die werpen een warme plek op de vloer, en
+// dat is het verschil tussen een kamer met een haard en een kamer met een
+// tekening van een haard erin.
+const LICHTBRONNEN = new Set([
+  'haard', 'fornuis', 'vuur', 'kaarsentafel', 'distilleerketel', 'ketel',
+]);
+
 export function renderKamerbord(puzzle, state, acties) {
   const n = puzzle.n;
   const breedte = n * CEL + RAND * 2 + BAND;
@@ -92,8 +113,11 @@ export function renderKamerbord(puzzle, state, acties) {
   const vloer = el('g');
   for (let i = 0; i < n * n; i++) {
     const v = vloerVan(i);
+    // Elk vakje zijn eigen tint. Niet zichtbaar als je ernaar zoekt, wel
+    // zodra je het weglaat: dan is het weer een vlak.
+    const toon = 0.92 + ((i * 2654435761) % 160) / 1000;
     vloer.append(el('rect', {
-      x: x(kol(i)), y: y(rij(i)), width: CEL, height: CEL, fill: v.vul,
+      x: x(kol(i)), y: y(rij(i)), width: CEL, height: CEL, fill: schuif(v.vul, toon),
     }));
     vloer.append(el('rect', {
       x: x(kol(i)), y: y(rij(i)), width: CEL, height: CEL,
@@ -115,6 +139,33 @@ export function renderKamerbord(puzzle, state, acties) {
   }
   svg.append(vloer);
 
+  // ------------------------------------------------------- wandschaduw
+  // Langs elke muur loopt een donkere band over de vloer: de schaduw die de
+  // muur werpt. Dit ene laagje doet meer voor de diepte dan alle andere bij
+  // elkaar - zonder dit is de plattegrond een schema, met dit is het een
+  // ruimte waar je in kijkt.
+  const DIEP = 19;
+  const wand = el('g', { class: 'wandschaduw' });
+  for (let i = 0; i < n * n; i++) {
+    const r = rij(i);
+    const c = kol(i);
+    const anders = (rr, cc) =>
+      rr < 0 || cc < 0 || rr >= n || cc >= n || kamer(rr * n + cc) !== kamer(i);
+    if (anders(r - 1, c)) {
+      wand.append(el('rect', { x: x(c), y: y(r), width: CEL, height: DIEP, fill: 'url(#wandrand-n)' }));
+    }
+    if (anders(r + 1, c)) {
+      wand.append(el('rect', { x: x(c), y: y(r + 1) - DIEP, width: CEL, height: DIEP, fill: 'url(#wandrand-z)' }));
+    }
+    if (anders(r, c - 1)) {
+      wand.append(el('rect', { x: x(c), y: y(r), width: DIEP, height: CEL, fill: 'url(#wandrand-w)' }));
+    }
+    if (anders(r, c + 1)) {
+      wand.append(el('rect', { x: x(c + 1) - DIEP, y: y(r), width: DIEP, height: CEL, fill: 'url(#wandrand-o)' }));
+    }
+  }
+  svg.append(wand);
+
   // ----------------------------------------------------------- aankleding
   // Zie src/ui/aankleding.js: versiering op de vloer, geen onderdeel van de
   // puzzel. Hoe groter de kamer, hoe meer erin ligt, en elk vakje krijgt een
@@ -122,23 +173,74 @@ export function renderKamerbord(puzzle, state, acties) {
   const kleden = el('g', { class: 'aankleding' });
   for (let k = 0; k < puzzle.kamerNamen.length; k++) {
     const soort = soortVan(puzzle.kamerNamen[k]);
+    // De naam van de kamer komt verderop op de vloer te staan. Daar leggen
+    // we niets neer: een kleed half onder een naam leest als een balkje
+    // achter de letters, en dat was nou juist wat eruit moest.
+    const naamrij = langsteVrijeRij(puzzle, n, k);
+    const onderNaam = new Set();
+    if (naamrij) {
+      for (let c = naamrij.c; c < naamrij.c + naamrij.lengte; c++) onderNaam.add(naamrij.r * n + c);
+    }
+
     const cellen = [];
     for (let i = 0; i < n * n; i++) if (kamer(i) === k && bruikbaar(i)) cellen.push(i);
     if (!cellen.length) continue;
-    const aantal = Math.min(4, Math.max(1, Math.round(cellen.length / 2.5)));
-    const gekozen = new Set();
-    for (let t = 0; t < aantal; t++) {
-      gekozen.add(cellen[((k + 1) * 2654435761 + t * 1103515245) % cellen.length]);
-    }
-    let nr = k;
-    for (const cel of gekozen) {
+
+    // Eerst stond er hoogstens één ding per twee vakjes, en bleef de helft
+    // van de vloer leeg. Een kamer waar niets ligt ziet eruit als een kamer
+    // waar niemand komt. Nu krijgt bijna elk vrij vakje iets, en wat
+    // overblijft krijgt in elk geval wat stof en krassen.
+    cellen.forEach((cel, t) => {
       const mx = x(kol(cel)) + CEL / 2;
       const my = y(rij(cel)) + CEL / 2;
-      // Een kleed ligt nooit recht.
-      const draai = el('g', { transform: `rotate(${(beving(cel, k) * 14).toFixed(2)} ${mx} ${my})` });
+      // Op de rij waar straks de naam komt te staan mag wel iets liggen,
+      // maar niet in het midden: daar lopen de letters. Alles schuift naar
+      // de onderrand en wordt wat kleiner.
+      const bijNaam = onderNaam.has(cel);
+      // beving() geeft een getal tussen -0.5 en 0.5, dus los loopt van 0 tot
+      // 0.5. Daar zijn deze grenzen op gezet: ruwweg twee op de vijf vakjes
+      // houdt het bij stof, en een op de drie krijgt er iets kleins bij.
+      const los = Math.abs(beving(cel * 3, k * 7));
+      if (los < 0.06 && cellen.length > 2) {
+        tekenSnippers(kleden, cel, mx, my);
+        return;
+      }
+
+      // Alleen uitwijken naar een kant waar de kamer doorloopt. Anders
+      // schuift een kleed de muur in, en dan ligt het half in de gang.
+      const vrij = (dr, dc) => {
+        const r = rij(cel) + dr;
+        const c = kol(cel) + dc;
+        return r >= 0 && c >= 0 && r < n && c < n && kamer(r * n + c) === k;
+      };
+      const ruwX = beving(cel, k * 5);
+      const ruwY = beving(k * 5, cel);
+      const dx = vrij(0, Math.sign(ruwX) || 1) ? ruwX * CEL * 0.22 : 0;
+      const dy = bijNaam ? CEL * 0.34 : (vrij(Math.sign(ruwY) || 1, 0) ? ruwY * CEL * 0.22 : 0);
+
+      // Niet alles even groot: een pol varens is hoger dan de pol ernaast,
+      // en een kruk staat verder weg dan de kruk aan de andere kant van de
+      // kamer. Allemaal even groot leest als een stempel.
+      const maat = (1.0 + Math.abs(beving(cel * 11, k + 3)) * 0.72) * (bijNaam ? 0.6 : 1);
+      const draai = el('g', {
+        transform: `translate(${mx.toFixed(1)} ${my.toFixed(1)}) scale(${maat.toFixed(2)}) translate(${(-mx).toFixed(1)} ${(-my).toFixed(1)}) rotate(${(beving(cel, k) * 15).toFixed(2)} ${mx} ${my}) translate(${dx.toFixed(1)} ${dy.toFixed(1)})`,
+      });
       kleden.append(draai);
-      tekenAankleding(draai, soort, mx, my, CEL, nr++);
-    }
+      tekenAankleding(draai, soort, mx, my, CEL, k + t);
+
+      // Een tweede, kleiner ding in een hoek van hetzelfde vakje: twee
+      // dingen naast elkaar lezen als een bewoonde kamer, één ding precies
+      // in het midden leest als een icoon.
+      if (los > 0.33 && !bijNaam) {
+        const hx = mx + (ruwX > 0 ? 1 : -1) * CEL * 0.24;
+        const hy = my + (ruwY > 0 ? 1 : -1) * CEL * 0.22;
+        const hoek = el('g', {
+          transform: `translate(${hx.toFixed(1)} ${hy.toFixed(1)}) scale(0.58) translate(${(-hx).toFixed(1)} ${(-hy).toFixed(1)}) rotate(${(beving(k, cel) * 24).toFixed(2)} ${hx} ${hy})`,
+        });
+        kleden.append(hoek);
+        tekenAankleding(hoek, soort, hx, hy, CEL, k + t + 3);
+      }
+    });
   }
   svg.append(kleden);
 
@@ -161,11 +263,15 @@ export function renderKamerbord(puzzle, state, acties) {
     const maxC = Math.max(...cellen.map(kol));
     const minR = Math.min(...cellen.map(rij));
     const maxR = Math.max(...cellen.map(rij));
-    licht.append(el('rect', {
+    const vak = {
       x: x(minC), y: y(minR),
       width: (maxC - minC + 1) * CEL, height: (maxR - minR + 1) * CEL,
-      fill: 'url(#kamergloed)', 'clip-path': `url(#kamer-${k})`,
-    }));
+      'clip-path': `url(#kamer-${k})`,
+    };
+    licht.append(el('rect', { ...vak, fill: 'url(#kamergloed)' }));
+    // En er overheen het schuine licht: linksboven lichter, rechtsonder
+    // donkerder. Dat geeft de kamer een hoek om in te staan.
+    licht.append(el('rect', { ...vak, fill: 'url(#kamerschuin)' }));
   }
   svg.append(defs2);
   svg.append(licht);
@@ -197,8 +303,32 @@ export function renderKamerbord(puzzle, state, acties) {
     muren.append(el('path', { d, class: 'muurtop', transform: `translate(${dx} ${dy})` }));
     muren.append(el('path', { d, class: 'muurglans', transform: `translate(${dx * 1.75} ${dy * 1.75})` }));
   };
-  const muurVert = (cx, y1, y2) => muurStreek(schetspad(cx, y1, cx, y2, 2.0), -2, 0);
-  const muurHor = (x1, x2, cy) => muurStreek(schetspad(x1, cy, x2, cy, 2.0), 0, -2);
+  // Dwarsnerf op het bovenvlak van de muur: zonder die streepjes is een muur
+  // een balk kleur, en daar leest geen materiaal in.
+  const muurNerf = (x1, y1, x2, y2, dx, dy) => {
+    const lengte = Math.hypot(x2 - x1, y2 - y1);
+    const stappen = Math.max(2, Math.round(lengte / 11));
+    for (let st = 1; st < stappen; st++) {
+      const t = st / stappen;
+      const px = x1 + (x2 - x1) * t + dx;
+      const py = y1 + (y2 - y1) * t + dy;
+      // Haaks op de muur, en net niet over de hele breedte.
+      const hx = ((y2 - y1) / lengte) * 2.4;
+      const hy = ((x1 - x2) / lengte) * 2.4;
+      muren.append(el('path', {
+        d: `M${(px - hx).toFixed(1)} ${(py - hy).toFixed(1)} L${(px + hx).toFixed(1)} ${(py + hy).toFixed(1)}`,
+        class: 'muurnerf',
+      }));
+    }
+  };
+  const muurVert = (cx, y1, y2) => {
+    muurStreek(schetspad(cx, y1, cx, y2, 2.0), -2, 0);
+    muurNerf(cx, y1, cx, y2, -2, 0);
+  };
+  const muurHor = (x1, x2, cy) => {
+    muurStreek(schetspad(x1, cy, x2, cy, 2.0), 0, -2);
+    muurNerf(x1, cy, x2, cy, 0, -2);
+  };
 
   for (let i = 0; i < n * n; i++) {
     const r = rij(i);
@@ -301,21 +431,34 @@ export function renderKamerbord(puzzle, state, acties) {
 
   // ----------------------------------------------------------- meubels
   const spullen = el('g');
+  // Eerst het licht dat een haard of een kaars op de vloer werpt, want dat
+  // ligt onder alles - ook onder de meubels van de buren.
+  for (let i = 0; i < n * n; i++) {
+    const m = puzzle.meubelOp[i];
+    if (m == null) continue;
+    if (!LICHTBRONNEN.has(puzzle.meubelIconen?.[m])) continue;
+    spullen.append(el('circle', {
+      cx: x(kol(i)) + CEL / 2, cy: y(rij(i)) + CEL / 2,
+      r: CEL * 1.05, fill: 'url(#lampgloed)',
+    }));
+  }
   for (let i = 0; i < n * n; i++) {
     const m = puzzle.meubelOp[i];
     if (m == null) continue;
     const naam = puzzle.meubelNamen[m];
-    // Een schaduwtje onder het meubel, anders zweeft het boven de vloer.
+    // Een schaduw onder het meubel, anders zweeft het boven de vloer. Vaag
+    // getrokken: een scherpe ovaal onder een kast is geen schaduw maar een
+    // mat.
     spullen.append(el('ellipse', {
-      cx: x(kol(i)) + CEL / 2, cy: y(rij(i)) + CEL - 13,
-      rx: CEL * 0.3, ry: 5, class: 'meubelschaduw',
+      cx: x(kol(i)) + CEL / 2 + 3, cy: y(rij(i)) + CEL - 11,
+      rx: CEL * 0.36, ry: 7.5, class: 'meubelschaduw', filter: 'url(#vaag)',
     }));
     const scheef = el('g', {
       transform: `rotate(${(beving(i, m) * 5).toFixed(2)} ${x(kol(i)) + CEL / 2} ${y(rij(i)) + CEL / 2})`,
     });
     spullen.append(scheef);
     const kunst = tekenMeubel(scheef, puzzle.meubelIconen?.[m], {
-      x: x(kol(i)) + 4, y: y(rij(i)) + 3, grootte: CEL - 8,
+      x: x(kol(i)) + 2, y: y(rij(i)) + 1, grootte: CEL - 4,
     });
     // Valt er geen tekening te maken, dan liever het lijnicoon dan niets.
     if (!kunst) {
@@ -423,6 +566,14 @@ export function renderKamerbord(puzzle, state, acties) {
   svg.append(schetsen);
 
 
+  // -------------------------------------------------------------- vignet
+  // De hoeken van het bord wat donkerder. Het oog gaat daardoor naar het
+  // midden, en het bord ligt op tafel in plaats van dat het een plaatje is.
+  svg.append(el('rect', {
+    x: RAND + BAND, y: RAND + BAND, width: n * CEL, height: n * CEL,
+    fill: 'url(#bordvignet)', class: 'bordvignet', 'pointer-events': 'none',
+  }));
+
   // ------------------------------------------------------------ klikvlak
   const klik = el('g');
   for (let i = 0; i < n * n; i++) {
@@ -497,13 +648,51 @@ function dessins() {
   // scheuren, gras heeft pollen. Dat is het verschil tussen een vloer en een
   // vlak met een streepje erop.
 
-  const planken = el('pattern', { id: 'dessin-planken', width: CEL, height: q, patternUnits: 'userSpaceOnUse' });
-  planken.append(el('path', { d: `M0 ${q - 0.5} H${CEL}`, class: 'dessinlijn' }));
-  planken.append(el('path', { d: `M${h} 0 V${q}`, class: 'dessinlijn' }));
-  planken.append(el('path', { d: `M4 ${q * 0.45} q ${CEL * 0.2} -3 ${CEL * 0.4} 0`, class: 'dessinnerf' }));
-  planken.append(el('path', { d: `M${h + 6} ${q * 0.62} q ${CEL * 0.12} 3 ${CEL * 0.25} 0`, class: 'dessinnerf' }));
-  planken.append(el('circle', { cx: 6, cy: q * 0.5, r: 0.9, class: 'dessinspijker' }));
-  planken.append(el('circle', { cx: h + 6, cy: q * 0.5, r: 0.9, class: 'dessinspijker' }));
+  // Planken van verschillende breedte, met noesten en nerf die niet in elke
+  // plank op dezelfde plek zit. Het patroon beslaat twee vakjes, dus de
+  // herhaling valt pas op als je ernaar zoekt - en dat was precies het
+  // probleem met de oude tegel van negentien pixels.
+  const plankmaat = CEL * 2;
+  const pk = (k) => {
+    const v = Math.sin(k * 12.9898 + 7.3) * 43758.5453;
+    return v - Math.floor(v);
+  };
+  const planken = el('pattern', {
+    id: 'dessin-planken', width: plankmaat, height: plankmaat, patternUnits: 'userSpaceOnUse',
+  });
+  let yy = 0;
+  let rijnr = 0;
+  while (yy < plankmaat) {
+    const dikte = 14 + pk(rijnr) * 11;
+    planken.append(el('path', { d: `M0 ${yy.toFixed(1)} H${plankmaat}`, class: 'dessinlijn' }));
+    // Iets lichtere of donkerdere plank: geen twee planken zijn gelijk.
+    planken.append(el('rect', {
+      x: 0, y: yy, width: plankmaat, height: dikte,
+      class: pk(rijnr + 40) > 0.5 ? 'dessinplank-licht' : 'dessinplank-donker',
+    }));
+    // De kopse naden liggen nooit onder elkaar.
+    const naad = pk(rijnr + 80) * plankmaat;
+    planken.append(el('path', { d: `M${naad.toFixed(1)} ${yy.toFixed(1)} v${dikte.toFixed(1)}`, class: 'dessinlijn' }));
+    planken.append(el('circle', { cx: (naad - 5).toFixed(1), cy: (yy + dikte * 0.5).toFixed(1), r: 0.9, class: 'dessinspijker' }));
+    planken.append(el('circle', { cx: (naad + 5).toFixed(1), cy: (yy + dikte * 0.5).toFixed(1), r: 0.9, class: 'dessinspijker' }));
+    for (let nf = 0; nf < 3; nf++) {
+      const nx = pk(rijnr * 5 + nf) * plankmaat;
+      const ny = yy + 3 + pk(rijnr * 5 + nf + 11) * (dikte - 6);
+      planken.append(el('path', {
+        d: `M${nx.toFixed(1)} ${ny.toFixed(1)} q ${(CEL * 0.22).toFixed(1)} ${(pk(nf + rijnr) * 4 - 2).toFixed(1)} ${(CEL * 0.46).toFixed(1)} 0`,
+        class: 'dessinnerf',
+      }));
+    }
+    // Een noest, af en toe.
+    if (pk(rijnr + 120) > 0.55) {
+      const kx = pk(rijnr + 160) * plankmaat;
+      const ky = yy + dikte * 0.5;
+      planken.append(el('ellipse', { cx: kx.toFixed(1), cy: ky.toFixed(1), rx: 3.2, ry: 2.1, class: 'dessinnoest' }));
+      planken.append(el('ellipse', { cx: kx.toFixed(1), cy: ky.toFixed(1), rx: 1.5, ry: 1, class: 'dessinnoest-kern' }));
+    }
+    yy += dikte;
+    rijnr++;
+  }
   defs.append(planken);
 
   const dwars = el('pattern', { id: 'dessin-planken-dwars', width: q, height: CEL, patternUnits: 'userSpaceOnUse' });
@@ -537,9 +726,52 @@ function dessins() {
   defs.append(steen);
 
   // Pollen gras, niet een groen vlak.
-  const gras = el('pattern', { id: 'dessin-gras', width: q, height: q, patternUnits: 'userSpaceOnUse' });
-  gras.append(el('path', { d: 'M3 14 q 2 -6 4 -8 M7 14 q 1 -5 3 -7 M11 14 q 2 -4 3 -6', class: 'dessingras' }));
-  gras.append(el('path', { d: `M${q * 0.7} ${q * 0.35} q 2 -5 4 -7`, class: 'dessingras' }));
+  //
+  // Dit patroon was eerst een tegel van negentien pixels met drie sprietjes
+  // erin, en dan zie je geen gras maar behang: precies dezelfde drie
+  // sprietjes, vierhonderd keer. Nu is de tegel twee vakjes groot en staat
+  // er in elke tegel iets anders - pollen van verschillende hoogte, een paar
+  // klaverblaadjes, hier en daar een bloempje.
+  const grasmaat = CEL * 2;
+  const gras = el('pattern', {
+    id: 'dessin-gras', width: grasmaat, height: grasmaat, patternUnits: 'userSpaceOnUse',
+  });
+  const gr = (k) => {
+    const h = Math.sin(k * 12.9898 + 4.1) * 43758.5453;
+    return h - Math.floor(h);
+  };
+  for (let t = 0; t < 54; t++) {
+    const gx = gr(t) * grasmaat;
+    const gy = gr(t + 70) * grasmaat;
+    const hoog = 6 + gr(t + 140) * 9;
+    const helt = (gr(t + 210) - 0.5) * 7;
+    const dik = gr(t + 280) > 0.6 ? 'dessingras dessingras-dik' : 'dessingras';
+    gras.append(el('path', {
+      d: `M${gx.toFixed(1)} ${gy.toFixed(1)} q ${(helt * 0.4).toFixed(1)} ${(-hoog * 0.6).toFixed(1)} ${helt.toFixed(1)} ${(-hoog).toFixed(1)}`,
+      class: dik,
+    }));
+    // Een pol is meer dan één spriet.
+    if (gr(t + 350) > 0.45) {
+      gras.append(el('path', {
+        d: `M${(gx + 3).toFixed(1)} ${gy.toFixed(1)} q ${(-helt * 0.3).toFixed(1)} ${(-hoog * 0.5).toFixed(1)} ${(-helt * 0.7).toFixed(1)} ${(-hoog * 0.8).toFixed(1)}`,
+        class: dik,
+      }));
+    }
+  }
+  for (let t = 0; t < 7; t++) {
+    const bx = gr(t + 420) * grasmaat;
+    const by = gr(t + 490) * grasmaat;
+    gras.append(el('circle', { cx: bx.toFixed(1), cy: by.toFixed(1), r: 1.9, class: 'dessinbloem' }));
+    gras.append(el('circle', { cx: (bx + 4).toFixed(1), cy: (by + 3).toFixed(1), r: 1.4, class: 'dessinbloem' }));
+  }
+  for (let t = 0; t < 9; t++) {
+    const kx = gr(t + 560) * grasmaat;
+    const ky = gr(t + 630) * grasmaat;
+    gras.append(el('ellipse', {
+      cx: kx.toFixed(1), cy: ky.toFixed(1), rx: 4 + gr(t + 700) * 5, ry: 2.5 + gr(t + 770) * 3,
+      class: 'dessinpol',
+    }));
+  }
   defs.append(gras);
 
   // Een geweven tapijt: ruitjes met een dubbele draad.
@@ -559,10 +791,56 @@ function dessins() {
   // Warm licht in elke kamer: een zachte gloed vanuit het midden. Zonder dat
   // is een vloer een egaal vlak, en daar komt "kil" vandaan.
   const gloed = el('radialGradient', { id: 'kamergloed' });
-  gloed.append(el('stop', { offset: '0%', 'stop-color': '#fff3d2', 'stop-opacity': '0.22' }));
-  gloed.append(el('stop', { offset: '48%', 'stop-color': '#ffe9b8', 'stop-opacity': '0.07' }));
-  gloed.append(el('stop', { offset: '100%', 'stop-color': '#2e2112', 'stop-opacity': '0.26' }));
+  gloed.append(el('stop', { offset: '0%', 'stop-color': '#fff3d2', 'stop-opacity': '0.30' }));
+  gloed.append(el('stop', { offset: '48%', 'stop-color': '#ffe9b8', 'stop-opacity': '0.10' }));
+  gloed.append(el('stop', { offset: '100%', 'stop-color': '#2e2112', 'stop-opacity': '0.30' }));
   defs.append(gloed);
+
+  // Het licht valt schuin in: linksboven is de vloer lichter dan rechtsonder.
+  // Eén verloop over de hele kamer, en daardoor leest een kamer als een
+  // ruimte met een hoek in plaats van als een vlak.
+  const schuin = el('linearGradient', { id: 'kamerschuin', x1: '0', y1: '0', x2: '0.85', y2: '1' });
+  schuin.append(el('stop', { offset: '0%', 'stop-color': '#fffaf0', 'stop-opacity': '0.38' }));
+  schuin.append(el('stop', { offset: '46%', 'stop-color': '#fff6e4', 'stop-opacity': '0.05' }));
+  schuin.append(el('stop', { offset: '100%', 'stop-color': '#1d1206', 'stop-opacity': '0.34' }));
+  defs.append(schuin);
+
+  // ------------------------------------------------------- wandschaduw
+  // Een muur werpt schaduw op de vloer ernaast. Zonder dat zweeft de muur
+  // boven de plattegrond en blijft het een schema; mét dat zie je meteen
+  // waar de ruimte ophoudt. Vier richtingen, want een muur kan aan elke
+  // kant van een vakje staan.
+  const randen = { n: ['0', '0', '0', '1'], z: ['0', '1', '0', '0'], w: ['0', '0', '1', '0'], o: ['1', '0', '0', '0'] };
+  for (const [naam, [x1, y1, x2, y2]] of Object.entries(randen)) {
+    const g = el('linearGradient', { id: `wandrand-${naam}`, x1, y1, x2, y2 });
+    g.append(el('stop', { offset: '0%', 'stop-color': '#241708', 'stop-opacity': '0.40' }));
+    g.append(el('stop', { offset: '55%', 'stop-color': '#241708', 'stop-opacity': '0.09' }));
+    g.append(el('stop', { offset: '100%', 'stop-color': '#241708', 'stop-opacity': '0' }));
+    defs.append(g);
+  }
+
+  // Zachte schaduwen en gloed. Een vervaagde vlek leest als licht; een
+  // scherp omlijnde ovaal leest als een sticker.
+  for (const [id, mate] of [['vaag', 3.4], ['vager', 6.5]]) {
+    const f = el('filter', { id, x: '-60%', y: '-60%', width: '220%', height: '220%' });
+    f.append(el('feGaussianBlur', { stdDeviation: mate }));
+    defs.append(f);
+  }
+
+  // Het licht van een haard, een kaars of een fornuis op de vloer eromheen.
+  const lamp = el('radialGradient', { id: 'lampgloed' });
+  lamp.append(el('stop', { offset: '0%', 'stop-color': '#ffcf72', 'stop-opacity': '0.55' }));
+  lamp.append(el('stop', { offset: '45%', 'stop-color': '#ffb545', 'stop-opacity': '0.22' }));
+  lamp.append(el('stop', { offset: '100%', 'stop-color': '#ff9e2a', 'stop-opacity': '0' }));
+  defs.append(lamp);
+
+  // Een vignet over het hele bord: de hoeken wat donkerder, zodat het bord
+  // op tafel ligt in plaats van tegen een muur hangt.
+  const vignet = el('radialGradient', { id: 'bordvignet' });
+  vignet.append(el('stop', { offset: '0%', 'stop-color': '#2a1c0c', 'stop-opacity': '0' }));
+  vignet.append(el('stop', { offset: '64%', 'stop-color': '#2a1c0c', 'stop-opacity': '0' }));
+  vignet.append(el('stop', { offset: '100%', 'stop-color': '#2a1c0c', 'stop-opacity': '0.30' }));
+  defs.append(vignet);
 
   return defs;
 }

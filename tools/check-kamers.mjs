@@ -28,7 +28,17 @@ for (const s of soorten) {
   if (dessin && !DESSINS.includes(dessin)) meld('DESSIN BESTAAT NIET', `${s} -> ${dessin}`);
   // Een ruimte zonder aankleding ziet er kaal uit; dat is precies de klacht
   // waar de motieven voor zijn.
-  if (!motievenVoor(s).length) meld('GEEN AANKLEDING', s);
+  const motieven = motievenVoor(s);
+  if (!motieven.length) meld('GEEN AANKLEDING', s);
+  // Bijna elk vrij vakje krijgt iets. Met drie motieven zie je dan drie keer
+  // hetzelfde kleed onder elkaar, en dat leest als behang in plaats van als
+  // een kamer - precies de klacht waar deze ronde over ging.
+  if (motieven.length && motieven.length < 6) {
+    meld('TE WEINIG AANKLEDING', `${s}: ${motieven.length} motieven, minstens 6`);
+  }
+  for (const m of motieven) {
+    if (typeof m !== 'function') meld('AANKLEDING GEEN TEKENING', s);
+  }
   if (!MEUBELS_VAN[s]?.length) meld('GEEN MEUBELS', s);
   if (MEUBELS_VAN[s] && MEUBELS_VAN[s].length < 4) meld('TE WEINIG MEUBELS', s);
 }
