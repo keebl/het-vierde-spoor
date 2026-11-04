@@ -1,6 +1,6 @@
 {
  "dader.kerst.kamer.2.kerst-1": {
-  "intro": "Midden in het kerstdiner viel de stroom uit, en toen de kaarsen weer brandden klopte er iets niet. Niemand weet meer wie waar stond, en zelfs waar Nicolaas lag is onduidelijk. Zet iedereen op zijn plek: wie als enige bij Nicolaas in dezelfde kamer blijkt te staan, is de dader.",
+  "intro": "Halverwege het kerstdiner viel de stroom uit, en toen de kaarsen weer brandden klopte er iets niet. Niemand weet nog waar hij stond, en waar Nicolaas lag weet ook niemand. Zet ze allemaal neer; de enige die daarna bij Nicolaas in dezelfde kamer staat, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -29,7 +29,7 @@
   ]
  },
  "dader.kerst.kamer.4.kerst-2": {
-  "intro": "Midden in het kerstdiner ging het licht uit, en toen de kaarsen weer brandden klopte er iets niet. Niemand weet nog wie waar stond, en zelfs waar Marieke lag is onduidelijk. Zet iedereen op zijn plek: wie als enige bij Marieke in dezelfde kamer staat, is de dader.",
+  "intro": "Halverwege het kerstdiner viel de stroom uit, en toen de kaarsen weer brandden klopte er iets niet. Van die avond is geen plattegrond gemaakt. Zet iedereen terug op de plek waar hij stond, Marieke incluis: wie als enige bij haar in dezelfde kamer eindigt, heeft het gedaan.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -37,7 +37,7 @@
    },
    {
     "n": 2,
-    "tekst": "Naast het harnas stond niemand."
+    "tekst": "Er stond niemand naast het harnas."
    },
    {
     "n": 3,
@@ -69,7 +69,7 @@
    },
    {
     "n": 10,
-    "tekst": "Er stond niemand in de bijkeuken."
+    "tekst": "In de bijkeuken stond niemand."
    },
    {
     "n": 11,
@@ -86,7 +86,7 @@
   ]
  },
  "vinden.kerst.map.3.kerst-3": {
-  "intro": "Er is een cadeau verdwenen voordat het onder de boom lag. Het ligt op precies één van deze plekken, en welke dat is, volgt uit de aanwijzingen.",
+  "intro": "Op kerstavond is een cadeau verdwenen voordat het onder de boom lag. Het ligt op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -123,7 +123,7 @@
   ]
  },
  "toewijzing.kerst.grid.2.kerst-4": {
-  "intro": "Het is Kerstavond en iedereen bracht iets mee. De naamkaartjes zijn van de pakjes gevallen. Los het raster op en de rest volgt.",
+  "intro": "Op Kerstavond bracht iedereen iets mee. De naamkaartjes zijn van de pakjes gevallen. Los het raster op en de rest volgt.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -139,11 +139,11 @@
    },
    {
     "n": 4,
-    "tekst": "Floris had een gescheurd inpakpapier niet bij zich."
+    "tekst": "Floris had geen gescheurd inpakpapier bij zich."
    },
    {
     "n": 5,
-    "tekst": "Degene die een zilveren kerstbal bij zich had, bevond zich in de hal met de boom of in de bijkeuken."
+    "tekst": "Degene die een zilveren kerstbal bij zich had, bevond zich in de hal met de boom of de bijkeuken."
    },
    {
     "n": 6,
@@ -152,7 +152,7 @@
   ]
  },
  "dader.halloween.kamer.3.hall-1": {
-  "intro": "Om middernacht viel het licht uit, en toen de lampionnen weer brandden lag er iemand stil. Niemand weet nog wie waar stond, en zelfs de plek waar Mila lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige in dezelfde kamer als Mila blijkt te staan, is de dader.",
+  "intro": "Om middernacht ging het licht uit, en toen de lampionnen weer brandden lag er iemand stil. Reconstrueer wie waar stond, ook Mila zelf, want zelfs dat is niet meer bekend. Wie dan als enige bij hem in dezelfde kamer staat, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -193,7 +193,7 @@
   ]
  },
  "dader.halloween.kamer.5.hall-2": {
-  "intro": "Om middernacht viel het licht uit, en toen de lampionnen weer brandden lag er iemand stil. Niemand weet nog wie waar stond, en zelfs de plek waar Oskar lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige in dezelfde kamer als Oskar blijkt te staan, is de dader.",
+  "intro": "Om middernacht ging het licht uit, en toen de lampionnen weer brandden lag er iemand stil. De plattegrond is leeg gebleven: wie waar stond is niet opgeschreven, en ook niet waar Oskar lag. Vul hem in en kijk wie er als enige bij Oskar in dezelfde kamer overblijft.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -290,7 +290,7 @@
   ]
  },
  "vinden.halloween.map.3.hall-3": {
-  "intro": "Achter een van de deuren hangt het echte masker, en dat is geen kostuum. Het zit op precies één van deze plekken, en de aanwijzingen wijzen aan welke.",
+  "intro": "Achter een van de deuren hangt het echte masker, en dat is geen kostuum. Het kan op precies één van deze plekken zijn, en de aanwijzingen wijzen die plek aan.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -331,7 +331,7 @@
   ]
  },
  "dader.landhuis.kamer.1.kamer-1": {
-  "intro": "Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat. Niemand weet meer wie waar stond, en zelfs waar Mathilde lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij Mathilde in dezelfde kamer blijkt te staan, is de dader.",
+  "intro": "Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat. Van die avond bestaat geen plattegrond. Zet iedereen terug op zijn plek, Mathilde incluis: wie als enige bij haar in dezelfde kamer staat, heeft het gedaan.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -360,7 +360,7 @@
   ]
  },
  "dader.noir.kamer.2.kamer-2": {
-  "intro": "De regen kwam die nacht met bakken naar beneden, en niemand hoorde iets boven het water uit. Niemand weet meer wie waar stond, en zelfs waar Nora lag is onduidelijk. Zet iedereen op zijn plek: degene die dan als enige bij Nora in dezelfde ruimte blijkt te staan, is de dader.",
+  "intro": "De regen kwam die nacht met bakken naar beneden, en niemand hoorde iets boven het water uit. Er is van die avond geen plattegrond gemaakt. Zet iedereen terug op de plek waar hij stond, Nora incluis: wie als enige bij haar in dezelfde ruimte eindigt, heeft het gedaan.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -392,7 +392,7 @@
    },
    {
     "n": 8,
-    "tekst": "Fien stond in dezelfde ruimte als Cor."
+    "tekst": "Fien en Cor stonden in dezelfde ruimte."
    },
    {
     "n": 9,
@@ -401,7 +401,7 @@
   ]
  },
  "dader.station.kamer.3.kamer-3": {
-  "intro": "De koeling viel uit en het alarm werd pas veel later gehoord. Niemand weet meer wie waar stond, en zelfs waar Mira lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij Mira in dezelfde module blijkt te staan, is de dader.",
+  "intro": "De koeling viel uit en het alarm werd pas veel later gehoord. Van die avond bestaat geen plattegrond. Zet iedereen terug op zijn plek, Mira ook: wie als enige in dezelfde module als Mira terechtkomt, heeft het gedaan.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -446,7 +446,7 @@
   ]
  },
  "dader.woud.kamer.3.kamer-4": {
-  "intro": "Er werd iemand gevonden met zijn hand om iets wat er niet meer is. Niemand weet nog wie waar stond, en zelfs waar Olle lag is onduidelijk. Zet iedereen op zijn plek: wie als enige bij Olle in hetzelfde stuk bos blijkt te staan, is de dader.",
+  "intro": "Er werd iemand gevonden met zijn hand om iets wat er niet meer is. Reconstrueer wie waar stond, ook Olle zelf, want zelfs dat is niet meer bekend. Wie als enige bij hem in hetzelfde stuk bos staat, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -495,7 +495,7 @@
   ]
  },
  "dader.catacomben.kamer.4.kamer-5": {
-  "intro": "Iemand liep vooruit met de enige kaart, en de kaart kwam terug. Niemand weet meer wie waar stond, en zelfs waar Olaf lag is onduidelijk. Zet iedereen op zijn plek: wie als enige bij Olaf in hetzelfde gewelf blijkt te staan, is de dader.",
+  "intro": "Iemand liep vooruit met de enige kaart, en die kaart kwam terug. Niemand weet nog waar hij stond, en waar Olaf lag weet ook niemand. Zet ze allemaal neer; de enige die daarna bij Olaf in hetzelfde gewelf staat, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -572,7 +572,7 @@
   ]
  },
  "dader.academie.kamer.5.kamer-6": {
-  "intro": "Tijdens het avondgebed op Academie Morgenstond is iemand in steen veranderd. Niemand van de aanwezigen geeft iets toe, niemand weet meer wie waar stond, en zelfs de plek waar Melchior lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij Melchior in dezelfde zaal blijkt te staan, is de dader.",
+  "intro": "Tijdens het avondgebed is er iemand in steen veranderd, maar niemand van de aanwezigen geeft iets toe. Van die avond is geen plattegrond gemaakt. Zet iedereen terug op de plek waar hij stond, Melchior incluis: wie als enige bij hem in dezelfde zaal eindigt, heeft het gedaan.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -673,7 +673,7 @@
   ]
  },
  "dader.landhuis.kamer.4.kamer-7": {
-  "intro": "Na het dessert viel in Huize Valkenhorst de stroom uit, en toen het licht terugkwam was het al te laat. Niemand weet nog wie waar stond, en zelfs waar Norbert lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij Norbert in dezelfde kamer blijkt te staan, is de dader.",
+  "intro": "Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat. Niemand weet meer waar hij stond, en waar Norbert lag weet ook niemand. Zet ze allemaal neer: de enige die daarna bij Norbert in dezelfde kamer staat, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -730,7 +730,7 @@
   ]
  },
  "dader.station.kamer.5.kamer-8": {
-  "intro": "De koeling viel uit en het alarm werd pas veel later gehoord. Niemand weet meer wie waar stond, en zelfs waar Nuru lag is onduidelijk. Zet iedereen op zijn plek: wie als enige bij Nuru in dezelfde module blijkt te staan, is de dader.",
+  "intro": "De koeling viel uit en het alarm werd pas veel later gehoord. Van die avond is geen plattegrond gemaakt. Zet iedereen terug op de plek waar hij stond, Nuru incluis: wie als enige bij hem in dezelfde module eindigt, heeft het gedaan.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -835,7 +835,7 @@
   ]
  },
  "dader.noir.grid.2.kade-1": {
-  "intro": "Het goot die nacht van de regen en boven het kletterende water uit hoorde niemand iets. In het hotel aan de kade lag de kroegbaas, met een pakje bankbiljetten naast zich. Wie daar was, heeft het gedaan.",
+  "intro": "Het regende die nacht met bakken uit de hemel, en niemand hoorde iets boven het water uit. De kroegbaas lag in het hotel aan de kade, met een pakje bankbiljetten naast zich. Wie daar was, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -860,23 +860,23 @@
   "aanwijzingen": [
    {
     "n": 1,
-    "tekst": "Tussen wie zich in het pandjeshuis bevond en degene die een geladen revolver bij zich had zit precies één uur."
+    "tekst": "Er zit precies één uur tussen wie zich in het pandjeshuis bevond en degene die een geladen revolver bij zich had."
    },
    {
     "n": 2,
-    "tekst": "Degene die een gebroken horloge bij zich had was er eerder dan Gerard."
+    "tekst": "Degene die een gebroken horloge bij zich had, was er eerder dan Gerard."
    },
    {
     "n": 3,
-    "tekst": "Wie zich in de nachtapotheek bevond was er eerder dan Fien."
+    "tekst": "Wie zich in de nachtapotheek bevond, was er eerder dan Fien."
    },
    {
     "n": 4,
-    "tekst": "Albert had een geladen revolver niet bij zich."
+    "tekst": "Albert had geen geladen revolver bij zich."
    },
    {
     "n": 5,
-    "tekst": "Tussen degene die een verzilverde aansteker bij zich had en wie zich in de jazzkelder bevond zit precies één uur."
+    "tekst": "Er zit precies één uur tussen degene die een verzilverde aansteker bij zich had en wie zich in de jazzkelder bevond."
    },
    {
     "n": 6,
@@ -884,7 +884,7 @@
    },
    {
     "n": 7,
-    "tekst": "Tussen degene die een pakje bankbiljetten bij zich had en Leni zitten precies drie uur."
+    "tekst": "Er zitten precies drie uur tussen degene die een pakje bankbiljetten bij zich had en Leni."
    },
    {
     "n": 8,
@@ -892,7 +892,7 @@
    },
    {
     "n": 9,
-    "tekst": "Degene die een treinkaartje enkele reis bij zich had was er eerder dan wie zich in het pandjeshuis bevond."
+    "tekst": "Degene die een treinkaartje enkele reis bij zich had, was er eerder dan wie zich in het pandjeshuis bevond."
    },
    {
     "n": 10,
@@ -900,7 +900,7 @@
    },
    {
     "n": 11,
-    "tekst": "Tussen degene die een verzilverde aansteker bij zich had en Gerard zit precies één uur."
+    "tekst": "Er zit precies één uur tussen degene die een verzilverde aansteker bij zich had en Gerard."
    }
   ]
  },
@@ -930,7 +930,7 @@
   ]
  },
  "vinden.noir.map.2.bewijs-2": {
-  "intro": "Ergens in dit blok ligt het bewijs dat de hele zaak omgooit, en je hebt maar één nacht om het te vinden. Het ligt op precies één van deze plekken, en de aanwijzingen laten zien welke.",
+  "intro": "Ergens in dit blok ligt het bewijs dat de hele zaak omgooit, en je hebt maar één nacht. Het ligt op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -942,7 +942,7 @@
    },
    {
     "n": 3,
-    "tekst": "Een natte regenjas bevindt zich in het pandjeshuis of in het hotel aan de kade."
+    "tekst": "Een natte regenjas bevindt zich in het pandjeshuis of het hotel aan de kade."
    },
    {
     "n": 4,
@@ -950,7 +950,7 @@
    },
    {
     "n": 5,
-    "tekst": "Een valse bodem bevindt zich in de verlaten loods of in het hotel aan de kade."
+    "tekst": "Een valse bodem bevindt zich in de verlaten loods of het hotel aan de kade."
    },
    {
     "n": 6,
@@ -959,7 +959,7 @@
   ]
  },
  "toewijzing.noir.grid.2.bureau-5": {
-  "intro": "Getuigen, halve verhalen en een bureau vol spullen waarvan niemand meer weet van wie ze zijn. Los het raster op en de rest volgt vanzelf.",
+  "intro": "Getuigen die elkaar tegenspreken, verhalen die niet sluiten en een bureau vol spullen waarvan niemand meer weet van wie ze zijn. Vul het raster in en de rest volgt vanzelf.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -971,7 +971,7 @@
    },
    {
     "n": 3,
-    "tekst": "Fien had een pakje bankbiljetten niet bij zich."
+    "tekst": "Fien had geen pakje bankbiljetten bij zich."
    },
    {
     "n": 4,
@@ -988,7 +988,7 @@
   ]
  },
  "dader.landhuis.grid.1.erfenis-1": {
-  "intro": "Het toetje was nog niet afgeruimd toen de stroom uitviel, en bij het terugkomen van het licht was het al te laat. Grootvader Valkenhorst lag in de dienstgang, naast hem een paar leren handschoenen. Wie zich daar bevond, is de dader.",
+  "intro": "Na het dessert viel de stroom uit, en pas toen het licht terugkwam, bleek het te laat. Grootvader Valkenhorst lag in de dienstgang, met een paar leren handschoenen naast zich. Wie zich daar bevond, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -996,7 +996,7 @@
    },
    {
     "n": 2,
-    "tekst": "Ferdinand had een verzegelde envelop niet bij zich."
+    "tekst": "Ferdinand had geen verzegelde envelop bij zich."
    },
    {
     "n": 3,
@@ -1005,7 +1005,7 @@
   ]
  },
  "dader.landhuis.grid.3.erfenis-4": {
-  "intro": "Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat. De rentmeester werd aangetroffen in de bibliotheek, met een antieke briefopener ernaast. Wie zich daar bevond, is de dader.",
+  "intro": "Na het dessert viel de stroom uit in Huize Valkenhorst, en toen het licht terugkwam was het al te laat. De rentmeester werd aangetroffen in de bibliotheek, met een antieke briefopener ernaast. Wie zich daar bevond, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1021,7 +1021,7 @@
    },
    {
     "n": 4,
-    "tekst": "Tussen degene die zich in de bibliotheek bevond en Godelieve zitten precies drie uur."
+    "tekst": "Tussen wie zich in de bibliotheek bevond en Godelieve zitten precies drie uur."
    },
    {
     "n": 5,
@@ -1029,11 +1029,11 @@
    },
    {
     "n": 6,
-    "tekst": "Degene die een paar leren handschoenen bij zich had, bevond zich in het rookkabinet of in de bibliotheek."
+    "tekst": "Degene die een paar leren handschoenen bij zich had, bevond zich in het rookkabinet of de bibliotheek."
    },
    {
     "n": 7,
-    "tekst": "Degene die een vervalste cheque bij zich had, was er eerder dan degene die zich in de wintertuin bevond."
+    "tekst": "Degene die een vervalste cheque bij zich had, was er eerder dan wie zich in de wintertuin bevond."
    }
   ]
  },
@@ -1123,7 +1123,7 @@
    },
    {
     "n": 6,
-    "tekst": "Agnes had een jachtgeweer niet bij zich."
+    "tekst": "Agnes had geen jachtgeweer bij zich."
    },
    {
     "n": 7,
@@ -1135,12 +1135,12 @@
    },
    {
     "n": 9,
-    "tekst": "Hendrik had een jachtgeweer niet bij zich."
+    "tekst": "Hendrik had geen jachtgeweer bij zich."
    }
   ]
  },
  "vinden.landhuis.map.3.kluis-3": {
-  "intro": "Het testament lag gisteren nog in de kluis, maar nu is het weg. Huize Valkenhorst is groot, en het testament ligt op precies één van de plekken in het huis. Welke dat is, volgt uit de aanwijzingen.",
+  "intro": "Het testament lag gisteren nog in de kluis, maar nu is het weg, en Huize Valkenhorst is groot. Het ligt op precies één van de plekken in het huis. Welke dat is, volgt uit de aanwijzingen.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1177,7 +1177,7 @@
   ]
  },
  "toewijzing.landhuis.grid.1.cadeau-1": {
-  "intro": "In Huize Valkenhorst bracht iedereen iets mee voor de gastheer, maar niemand geeft toe wat. Los het raster op en de rest volgt vanzelf.",
+  "intro": "In Huize Valkenhorst bracht iedereen iets mee voor de gastheer, maar niemand geeft toe wat. Los het raster op en de rest volgt.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1189,11 +1189,11 @@
    },
    {
     "n": 3,
-    "tekst": "Degene met een zilveren kandelaar bevond zich in de bibliotheek."
+    "tekst": "Degene die een zilveren kandelaar bij zich had, bevond zich in de bibliotheek."
    },
    {
     "n": 4,
-    "tekst": "Degene met een kristallen karaf bevond zich niet in de wijnkelder."
+    "tekst": "Degene die een kristallen karaf bij zich had, bevond zich niet in de wijnkelder."
    }
   ]
  },
@@ -1239,7 +1239,7 @@
   "aanwijzingen": [
    {
     "n": 1,
-    "tekst": "Tussen de module van Gaia en de module met een geleegde spuit zitten precies twee sluizen."
+    "tekst": "Tussen de module van Gaia en de module met een geleegde spuit liggen precies twee sluizen."
    },
    {
     "n": 2,
@@ -1247,7 +1247,7 @@
    },
    {
     "n": 3,
-    "tekst": "Kaya bevindt zich in de communicatiekoker of de observatiekoepel."
+    "tekst": "Kaya bevindt zich in de communicatiekoker of in de observatiekoepel."
    },
    {
     "n": 4,
@@ -1255,11 +1255,11 @@
    },
    {
     "n": 5,
-    "tekst": "De hydrocultuur heeft geen luchtsluis naar de module van Dmitri."
+    "tekst": "Tussen de hydrocultuur en de module van Dmitri ligt geen luchtsluis."
    },
    {
     "n": 6,
-    "tekst": "Elif had een geleegde spuit niet bij zich."
+    "tekst": "Elif had geen geleegde spuit bij zich."
    },
    {
     "n": 7,
@@ -1267,12 +1267,12 @@
    },
    {
     "n": 8,
-    "tekst": "Tussen het vrachtruim en de module met een gewiste datadrager zitten precies twee sluizen."
+    "tekst": "Tussen het vrachtruim en de module met een gewiste datadrager liggen precies twee sluizen."
    }
   ]
  },
  "vinden.station.map.2.baken-1": {
-  "intro": "Iemand heeft het noodbaken uitgezet. Het hangt nog ergens aan boord, op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
+  "intro": "Iemand heeft het noodbaken uitgezet. Het hangt nog ergens aan boord, op precies één van deze plekken. Wat je moet weten, volgt uit de aanwijzingen.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1301,7 +1301,7 @@
   ]
  },
  "vinden.station.map.5.baken-9": {
-  "intro": "Iemand heeft het noodbaken uitgezet. Het hangt nog ergens aan boord van Meridiaan, op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
+  "intro": "Iemand heeft het noodbaken uitgezet. Het hangt nog ergens aan boord, op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1378,7 +1378,7 @@
   ]
  },
  "toewijzing.station.grid.3.manifest-3": {
-  "intro": "Bij de laatste bevoorrading nam iedereen een persoonlijk pakket aan. De manifesten zijn gewist. Los het raster op en de rest volgt.",
+  "intro": "Bij de laatste bevoorrading kreeg iedereen op Ruimtestation Meridiaan een persoonlijk pakket. De manifesten zijn gewist. Los het raster op en de rest volgt.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1415,7 +1415,7 @@
   ]
  },
  "vinden.woud.map.1.bron-1": {
-  "intro": "De bron verlegt zich elke eeuw. Deze keer ligt hij ergens tussen de bomen van het Verstilde Woud, op precies één van de plekken. Welke dat is, volgt uit de aanwijzingen.",
+  "intro": "De bron verlegt zich elke eeuw. Deze keer is hij hier, ergens tussen de bomen, op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1436,64 +1436,64 @@
   ]
  },
  "vinden.woud.map.4.bron-5": {
-  "intro": "De bron verlegt zich elke eeuw. Nu ligt hij ergens tussen de bomen van het Verstilde Woud, op precies één van deze plekken. Welke, volgt uit de aanwijzingen.",
+  "intro": "De bron verlegt zich elke eeuw. Deze keer ligt hij ergens tussen de bomen, op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
   "aanwijzingen": [
    {
     "n": 1,
-    "tekst": "Tussen het hertenpad en Kyra liggen precies twee paden."
+    "tekst": "Tussen het hertenpad en de plek van Kyra liggen precies twee paden."
    },
    {
     "n": 2,
-    "tekst": "Een zakje gedroogde maanbloem ligt op het hertenpad of de steenkring."
+    "tekst": "Een zakje gedroogde maanbloem bevindt zich op het hertenpad of de steenkring."
    },
    {
     "n": 3,
-    "tekst": "Tussen een zakje gedroogde maanbloem en Eline liggen precies twee paden."
+    "tekst": "Tussen de plek met een zakje gedroogde maanbloem en de plek van Eline liggen precies twee paden."
    },
    {
     "n": 4,
-    "tekst": "Het verzonken bruggetje ligt niet op hetzelfde pad als een slapend wezen."
+    "tekst": "Het verzonken bruggetje ligt niet aan hetzelfde pad als de plek met een slapend wezen."
    },
    {
     "n": 5,
-    "tekst": "Tussen de omgevallen toren en een ijzeren belletje liggen precies twee paden."
+    "tekst": "Tussen de omgevallen toren en de plek met een ijzeren belletje liggen precies twee paden."
    },
    {
     "n": 6,
-    "tekst": "Joris ligt in hetzelfde stuk bos als een offersteen of een hertenval."
+    "tekst": "Joris bevindt zich in hetzelfde stuk bos als een offersteen of een hertenval."
    },
    {
     "n": 7,
-    "tekst": "Eline ligt niet in hetzelfde stuk bos als een hertenval."
+    "tekst": "Eline bevindt zich niet in hetzelfde stuk bos als een hertenval."
    },
    {
     "n": 8,
-    "tekst": "De magische bron ligt in hetzelfde stuk bos als een afgebroken hoorn of een gebarsten spiegelscherf."
+    "tekst": "De magische bron bevindt zich in hetzelfde stuk bos als een afgebroken hoorn of een gebarsten spiegelscherf."
    },
    {
     "n": 9,
-    "tekst": "Een gebarsten spiegelscherf ligt op hetzelfde pad als een offersteen."
+    "tekst": "De plek met een gebarsten spiegelscherf ligt aan hetzelfde pad als de plek met een offersteen."
    },
    {
     "n": 10,
-    "tekst": "Tussen een hertenval en Imke liggen precies twee paden."
+    "tekst": "Tussen de plek met een hertenval en de plek van Imke liggen precies twee paden."
    },
    {
     "n": 11,
-    "tekst": "Het hertenpad ligt niet op hetzelfde pad als een handvol zoutkorrels."
+    "tekst": "Het hertenpad ligt niet aan hetzelfde pad als de plek met een handvol zoutkorrels."
    },
    {
     "n": 12,
-    "tekst": "Eline ligt niet in hetzelfde stuk bos als een gebarsten spiegelscherf."
+    "tekst": "Eline bevindt zich niet in hetzelfde stuk bos als een gebarsten spiegelscherf."
    },
    {
     "n": 13,
-    "tekst": "Tussen het verzonken bruggetje en een hertenval liggen precies twee paden."
+    "tekst": "Tussen het verzonken bruggetje en de plek met een hertenval liggen precies twee paden."
    }
   ]
  },
  "dader.woud.grid.3.grenssteen-2": {
-  "intro": "Er werd iemand gevonden met zijn hand om iets wat er niet meer is. De veerman lag in de doornenkom, met een zakje gedroogde maanbloem ernaast. Wie zich daar bevond, is de dader.",
+  "intro": "Er werd iemand gevonden met zijn hand om iets wat er niet meer is. De veerman lag in de doornenkom, met een zakje gedroogde maanbloem naast zich. Wie daar was, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1501,7 +1501,7 @@
    },
    {
     "n": 2,
-    "tekst": "Tussen wie zich in de doornenkom bevond en Hidde zitten precies drie klokslagen."
+    "tekst": "Tussen wie in de doornenkom was en Hidde zitten precies drie klokslagen."
    },
    {
     "n": 3,
@@ -1513,24 +1513,24 @@
    },
    {
     "n": 5,
-    "tekst": "Tussen Kyra en degene met een ijzeren belletje zitten precies drie klokslagen."
+    "tekst": "Tussen Kyra en wie een ijzeren belletje bij zich had zitten precies drie klokslagen."
    },
    {
     "n": 6,
-    "tekst": "Degene met een leren veldfles was er niet bij de tweede klokslag."
+    "tekst": "Wie een leren veldfles bij zich had, was er niet bij de tweede klokslag."
    },
    {
     "n": 7,
-    "tekst": "Degene met een leren veldfles bevond zich in de omgevallen toren."
+    "tekst": "Wie een leren veldfles bij zich had, was in de omgevallen toren."
    },
    {
     "n": 8,
-    "tekst": "Eline bevond zich niet in de steenkring."
+    "tekst": "Eline was niet in de steenkring."
    }
   ]
  },
  "toewijzing.woud.grid.2.gave-3": {
-  "intro": "Reizigers kwamen het woud in, elk met een gave. Het woud heeft alles door elkaar gehusseld. Los het raster op en de rest volgt vanzelf.",
+  "intro": "Reizigers kwamen het woud in en ieder droeg een gave bij zich. Het woud heeft alles door elkaar gehusseld. Los het raster op en de rest volgt vanzelf.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1563,23 +1563,23 @@
   "aanwijzingen": [
    {
     "n": 1,
-    "tekst": "Tussen de droge put en de ruimte met een luchtschacht loopt geen gang."
+    "tekst": "Van de droge put loopt geen gang naar de ruimte met een luchtschacht."
    },
    {
     "n": 2,
-    "tekst": "Tussen de droge put en de ruimte met een losse kaarthoek loopt geen gang."
+    "tekst": "Van de droge put loopt geen gang naar de ruimte met een losse kaarthoek."
    },
    {
     "n": 3,
-    "tekst": "De uitgang bevindt zich bij de droge put of bij het grafvertrek."
+    "tekst": "De uitgang ligt bij de droge put of bij het grafvertrek."
    },
    {
     "n": 4,
-    "tekst": "Op de verzakte trap bevindt zich een vals gat."
+    "tekst": "Op de verzakte trap ligt een vals gat."
    },
    {
     "n": 5,
-    "tekst": "Tussen de verzakte trap en de ruimte met een gebroken kompas loopt geen gang."
+    "tekst": "Van de verzakte trap loopt geen gang naar de ruimte met een gebroken kompas."
    },
    {
     "n": 6,
@@ -1588,7 +1588,7 @@
   ]
  },
  "vinden.catacomben.map.5.uitgang-6": {
-  "intro": "Er is een uitgang in de catacomben. De kaart liegt erover, de luchtstroom niet. Het is op precies één van deze plekken, en welke dat is, volgt uit de aanwijzingen.",
+  "intro": "Er is een uitgang in de Catacomben van Sint-Oda. De kaart liegt erover, de luchtstroom niet. Het is op precies één van deze plekken, en welke dat is, volgt uit de aanwijzingen.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1596,7 +1596,7 @@
    },
    {
     "n": 2,
-    "tekst": "Een dichtgemetselde deur bevindt zich in de bidkapel of het waterpeilgat."
+    "tekst": "Een dichtgemetselde deur bevindt zich in de bidkapel of in het waterpeilgat."
    },
    {
     "n": 3,
@@ -1616,7 +1616,7 @@
    },
    {
     "n": 7,
-    "tekst": "Een luchtschacht bevindt zich in het grafvertrek of het waterpeilgat."
+    "tekst": "Een luchtschacht bevindt zich in het grafvertrek of in het waterpeilgat."
    },
    {
     "n": 8,
@@ -1657,19 +1657,19 @@
   "aanwijzingen": [
    {
     "n": 1,
-    "tekst": "Tussen Hanna en wie zich bij de droge put bevond zit precies één kwartier."
+    "tekst": "Tussen Hanna en degene die zich bij de droge put bevond zit precies één kwartier."
    },
    {
     "n": 2,
-    "tekst": "Tussen wie zich in het grafvertrek bevond en Hanna zit precies één kwartier."
+    "tekst": "Tussen degene die zich in het grafvertrek bevond en Hanna zit precies één kwartier."
    },
    {
     "n": 3,
-    "tekst": "Tussen degene die een gebroken kompas bij zich had en wie zich bij het waterpeilgat bevond zitten precies twee kwartier."
+    "tekst": "Tussen degene die een gebroken kompas bij zich had en degene die zich bij het waterpeilgat bevond zitten precies twee kwartier."
    },
    {
     "n": 4,
-    "tekst": "Degene die een losse kaarthoek bij zich had, bevond zich bij de droge put of de smalle schacht."
+    "tekst": "Degene die een losse kaarthoek bij zich had, bevond zich bij de droge put of bij de smalle schacht."
    },
    {
     "n": 5,
@@ -1681,11 +1681,11 @@
    },
    {
     "n": 7,
-    "tekst": "Tussen degene die een gestolen relikwie bij zich had en wie zich in het beenderengewelf bevond zit precies één kwartier."
+    "tekst": "Tussen degene die een gestolen relikwie bij zich had en degene die zich in het beenderengewelf bevond zit precies één kwartier."
    },
    {
     "n": 8,
-    "tekst": "Gijs was er in het vijfde kwartier of het eerste kwartier."
+    "tekst": "Gijs was er in het vijfde kwartier of in het eerste kwartier."
    },
    {
     "n": 9,
@@ -1710,7 +1710,7 @@
    },
    {
     "n": 2,
-    "tekst": "Floris had een bijna lege carbidlamp niet bij zich."
+    "tekst": "Floris had geen bijna lege carbidlamp bij zich."
    },
    {
     "n": 3,
@@ -1723,7 +1723,7 @@
   ]
  },
  "dader.academie.grid.2.rector-1": {
-  "intro": "Tijdens het avondgebed is er iemand in steen veranderd en niemand van de aanwezigen geeft iets toe. De huisbewaarder werd aangetroffen in het ketelhok, met een dode kanarie ernaast. Wie zich daar bevond, is de dader.",
+  "intro": "Tijdens het avondgebed is iemand op Academie Morgenstond in steen veranderd. Niemand van de aanwezigen geeft iets toe. De huisbewaarder werd aangetroffen in het ketelhok, met een dode kanarie ernaast. Wie zich daar bevond, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1739,7 +1739,7 @@
    },
    {
     "n": 4,
-    "tekst": "Jasper had een dode kanarie niet bij zich."
+    "tekst": "Jasper had geen dode kanarie bij zich."
    },
    {
     "n": 5,
@@ -1748,7 +1748,7 @@
   ]
  },
  "dader.academie.grid.5.rector-8": {
-  "intro": "Tijdens het avondgebed is er iemand in steen veranderd, en niemand van de aanwezigen geeft iets toe. De huisbewaarder werd aangetroffen in de verboden trappenhal, met een inktvlek die niet weggaat ernaast. Wie zich daar bevond, is de dader.",
+  "intro": "Tijdens het avondgebed is er iemand in steen veranderd, maar niemand van de aanwezigen geeft iets toe. De huisbewaarder werd aangetroffen in de verboden trappenhal, met een inktvlek die niet weggaat ernaast. Wie zich daar bevond, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1768,7 +1768,7 @@
    },
    {
     "n": 5,
-    "tekst": "Tussen Gideon en degene die een inktvlek die niet weggaat bij zich had zit precies één lesuur."
+    "tekst": "Tussen Gideon en degene die een inktvlek die niet weggaat bij zich had, zit precies één lesuur."
    },
    {
     "n": 6,
@@ -1792,11 +1792,11 @@
    },
    {
     "n": 11,
-    "tekst": "Tussen Jasper en wie zich in het herbarium bevond zit precies één lesuur."
+    "tekst": "Tussen Jasper en wie zich in het herbarium bevond, zit precies één lesuur."
    },
    {
     "n": 12,
-    "tekst": "Tussen degene die een geleend grimoire bij zich had en wie zich in het herbarium bevond zit precies één lesuur."
+    "tekst": "Tussen degene die een geleend grimoire bij zich had en wie zich in het herbarium bevond, zit precies één lesuur."
    },
    {
     "n": 13,
@@ -1808,7 +1808,7 @@
    },
    {
     "n": 15,
-    "tekst": "Tussen wie zich in de eetzaal bevond en Kiki zit precies één lesuur."
+    "tekst": "Tussen wie zich in de eetzaal bevond en Kiki, zit precies één lesuur."
    },
    {
     "n": 16,
@@ -1817,11 +1817,11 @@
   ]
  },
  "dader.academie.map.3.trappen-3": {
-  "intro": "Tijdens het avondgebed op Academie Morgenstond is iemand in steen veranderd. Niemand van de aanwezigen geeft iets toe. De rector werd aangetroffen in het herbarium, met een gebarsten toverstaf ernaast. Wie zich daar bevond, is de dader.",
+  "intro": "Tijdens het avondgebed op Academie Morgenstond is iemand in steen veranderd. Niemand van de aanwezigen geeft iets toe. De rector werd aangetroffen in het herbarium, met een gebarsten toverstaf ernaast, en wie zich daar bevond, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
-    "tekst": "Degene met een zakje ijzervijlsel bevindt zich in het archief of het herbarium."
+    "tekst": "Degene die een zakje ijzervijlsel bij zich had, bevindt zich in het archief of het herbarium."
    },
    {
     "n": 2,
@@ -1833,12 +1833,12 @@
    },
    {
     "n": 4,
-    "tekst": "Kiki had een gebarsten toverstaf niet bij zich."
+    "tekst": "Kiki had geen gebarsten toverstaf bij zich."
    }
   ]
  },
  "vinden.academie.map.3.leerstoel-2": {
-  "intro": "Een van de zalen houdt de verdwenen leerstoel verborgen. De school zelf werkt tegen. Het is op precies één van deze plekken, en dat volgt uit de aanwijzingen.",
+  "intro": "Een van de zalen houdt de verdwenen leerstoel verborgen. De school zelf werkt tegen. Het is op precies één van deze plekken. Welke, dat volgt uit de aanwijzingen.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1900,7 +1900,7 @@
   ]
  },
  "dader.noir.kamer.1.start-0": {
-  "intro": "De regen kwam die nacht met bakken naar beneden, en niemand hoorde iets boven het water uit. Niemand weet meer wie waar stond, en zelfs waar Nora lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij Nora in dezelfde ruimte blijkt te staan, is de dader.",
+  "intro": "De regen kwam die nacht met bakken naar beneden, en niemand hoorde iets boven het water uit. De plattegrond is leeg gebleven: wie waar stond is niet opgeschreven, ook niet waar Nora lag. Vul hem in en kijk wie er als enige bij Nora in dezelfde ruimte overblijft.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1929,7 +1929,7 @@
   ]
  },
  "dader.noir.grid.1.start-1": {
-  "intro": "Die nacht stortte de regen met bakken neer, en boven het water uit hoorde niemand iets. De kroegbaas lag in het pandjeshuis, met een pakje bankbiljetten naast zich. Wie zich daar bevond, is de dader.",
+  "intro": "Die nacht stortte de regen met bakken uit de lucht, en boven het water uit hoorde niemand iets. In het pandjeshuis lag de kroegbaas, met een pakje bankbiljetten naast zich. Wie zich daar bevond, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -1967,7 +1967,7 @@
   ]
  },
  "dader.station.grid.3.start-3": {
-  "intro": "De koeling viel uit en het alarm werd pas veel later gehoord. De ladingmeester werd aangetroffen in de medische post, met een geleegde spuit ernaast. Wie zich daar bevond, is de dader.",
+  "intro": "Op Ruimtestation Meridiaan viel de koeling uit en het alarm werd pas veel later gehoord. De ladingmeester werd aangetroffen in de medische post, met een geleegde spuit ernaast. Wie zich daar bevond, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
@@ -2000,15 +2000,15 @@
   ]
  },
  "dader.academie.grid.4.start-4": {
-  "intro": "Tijdens het avondgebed is er iemand in steen veranderd, en niemand van de aanwezigen geeft iets toe. De rector werd aangetroffen in de studiecel, met een stuk steenhuid ernaast. Wie zich daar bevond, is de dader.",
+  "intro": "Tijdens het avondgebed is er iemand in steen veranderd en niemand van de aanwezigen geeft iets toe. De rector werd aangetroffen in de studiecel, met een stuk steenhuid ernaast. Wie zich daar bevond, is de dader.",
   "aanwijzingen": [
    {
     "n": 1,
-    "tekst": "Wie een stilzwijgtalisman bij zich had, was er in het tweede lesuur of in het vierde lesuur."
+    "tekst": "Degene met een stilzwijgtalisman was er in het tweede lesuur of in het vierde lesuur."
    },
    {
     "n": 2,
-    "tekst": "Wie zich in het herbarium bevond, was er in het derde lesuur of in het tweede lesuur."
+    "tekst": "Degene in het herbarium was er in het derde lesuur of in het tweede lesuur."
    },
    {
     "n": 3,
@@ -2020,23 +2020,23 @@
    },
    {
     "n": 5,
-    "tekst": "Tussen Bruno en wie een dode kanarie bij zich had, zitten precies drie lesuren."
+    "tekst": "Tussen Bruno en degene met een dode kanarie zitten precies drie lesuren."
    },
    {
     "n": 6,
-    "tekst": "Wie een gebarsten toverstaf bij zich had, was er in het vierde lesuur of in het vijfde lesuur."
+    "tekst": "Degene met een gebarsten toverstaf was er in het vierde lesuur of in het vijfde lesuur."
    },
    {
     "n": 7,
-    "tekst": "Wie zich in de verboden trappenhal bevond, was er eerder dan wie een dode kanarie bij zich had."
+    "tekst": "Degene in de verboden trappenhal was er eerder dan degene met een dode kanarie."
    },
    {
     "n": 8,
-    "tekst": "Kiki was er eerder dan wie zich in de spiegelzaal bevond."
+    "tekst": "Kiki was er eerder dan degene in de spiegelzaal."
    },
    {
     "n": 9,
-    "tekst": "Wie zich in de spiegelzaal bevond, was er in het tweede lesuur of in het eerste lesuur."
+    "tekst": "Degene in de spiegelzaal was er in het tweede lesuur of in het eerste lesuur."
    }
   ]
  },
@@ -2073,7 +2073,7 @@
    },
    {
     "n": 8,
-    "tekst": "Tussen degene die een handvol zoutkorrels bij zich had en wie zich op het verzonken bruggetje bevond, zitten precies drie klokslagen."
+    "tekst": "Tussen degene die een handvol zoutkorrels bij zich had en wie zich op het verzonken bruggetje bevond zitten precies drie klokslagen."
    },
    {
     "n": 9,
@@ -2081,7 +2081,7 @@
    },
    {
     "n": 10,
-    "tekst": "Tussen wie zich in de omgevallen toren bevond en degene die een zakje gedroogde maanbloem bij zich had, zitten precies drie klokslagen."
+    "tekst": "Tussen wie zich in de omgevallen toren bevond en degene die een zakje gedroogde maanbloem bij zich had zitten precies drie klokslagen."
    },
    {
     "n": 11,

@@ -31,7 +31,12 @@ const roleObject = (items, name = 'Voorwerp', plek = 'plek') => ({
   subj: (o) => `degene die ${o} bij zich had`,
   where: (o) => `de ${plek} met ${o}`,
   pos: (s, o) => `${s} had ${o} bij zich.`,
-  neg: (s, o) => `${s} had ${o} niet bij zich.`,
+  // "had een envelop niet bij zich" is krom Nederlands; dat is "had geen
+  // envelop bij zich". Alleen als het voorwerp met een lidwoord begint,
+  // anders klopt de zin juist niet meer.
+  neg: (s, o) => (o.startsWith('een ')
+    ? `${s} had geen ${o.slice(4)} bij zich.`
+    : `${s} had ${o} niet bij zich.`),
 });
 
 // Een spoor wordt niet gedragen, het ligt ergens. Dus niet "had bij zich"

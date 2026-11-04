@@ -4,16 +4,18 @@
 import { el } from './boards.js';
 import { WORLDS } from '../content/worlds.js';
 import { ASSIGNMENTS, MECHANICS, MECHANIC_BY_ID } from '../content/assignments.js';
-import { LEVELS, LEVEL_IDS } from '../engine/difficulty.js';
+import { LEVELS, LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
 import { randomSeed } from '../engine/rng.js';
 import { puzzleId } from '../puzzle.js';
 import { aiEnabled, setAiEnabled } from '../ai/flavour.js';
 import { aiEndpoint } from '../ai/endpoint.js';
 
+// Speurdoku staat voorop: dat is het hoofdspel, en dan hoort het ook de
+// stand te zijn waar je op uitkomt als je niets kiest.
 const keuze = {
   opdracht: 'dader',
   wereld: 'noir',
-  mechaniek: 'grid',
+  mechaniek: 'kamer',
   niveau: 3,
   seed: randomSeed(),
 };
@@ -57,8 +59,8 @@ export function renderGenerator(mount) {
     el('div', { class: 'field' }, [el('span', { class: 'label', text: label }), el('div', { class: cls }, kids)]);
 
   form.append(field('Opdracht', ASSIGNMENTS.map((a) => optButton('opdracht', a.id, a.name, a.blurb))));
-  form.append(field('Wereld', WORLDS.map((w) => optButton('wereld', w.id, `${w.icon} ${w.name}`, w.blurb))));
-  form.append(field('Mechaniek', MECHANICS.map((m) => {
+  form.append(field('Genre', WORLDS.map((w) => optButton('wereld', w.id, `${w.icon} ${w.name}`, w.blurb))));
+  form.append(field('Soort spel', MECHANICS.map((m) => {
     const can = assignment.mechanics.includes(m.id);
     return optButton('mechaniek', m.id, m.name, can ? m.blurb : `Niet mogelijk bij ${assignment.name.toLowerCase()}`, !can);
   })));
@@ -71,7 +73,13 @@ export function renderGenerator(mount) {
     }, [
       el('b', { text: String(l) }),
       el('span', { class: 'opt-name', text: p.label }),
-      el('small', { text: `${p.slots} rijen, ${p.style === 'shallow' ? 'doorstrepen' : 'aanname nodig'}` }),
+      // Bij een Speurdoku zegt "vier rijen" niets: daar gaat het om de maat
+      // van het bord. Dus staat er bij dat speltype wat er echt verandert.
+      el('small', {
+        text: keuze.mechaniek === 'kamer'
+          ? `${KAMER_LEVELS[l].n} bij ${KAMER_LEVELS[l].n}, ${p.style === 'shallow' ? 'doorstrepen' : 'aanname nodig'}`
+          : `${p.slots} rijen, ${p.style === 'shallow' ? 'doorstrepen' : 'aanname nodig'}`,
+      }),
     ]);
     b.addEventListener('click', () => { keuze.niveau = l; renderGenerator(mount); });
     return b;

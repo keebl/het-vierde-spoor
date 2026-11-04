@@ -7,6 +7,8 @@ import { loadProgress, saveProgress, clearProgress } from './state.js';
 import { MECHANIC_BY_ID } from '../content/assignments.js';
 import { spelregelsVan } from '../content/spelregels.js';
 import { genreStijl } from './genre.js';
+import { CATALOG, catalogSettings } from '../content/catalog.js';
+import { puzzleId } from '../puzzle.js';
 import { sceneVoor } from './scenes.js';
 import { renderKamerbord, renderLegenda, PENNING } from './board-rooms.js';
 import { portretElement } from './personenkunst.js';
@@ -35,6 +37,36 @@ export function renderPlayer(puzzle, mount) {
     onthuld: !!saved.onthuld,
   };
 
+  // Ongedaan maken. Op een bord van twaalf bij twaalf is één misklik anders
+  // tien zetten werk. We bewaren hele toestanden in plaats van losse zetten:
+  // dat is een paar honderd bytes per stap en het kan niet uit de pas lopen
+  // met wat er op het bord staat.
+  const terug = [];
+  const vooruit = [];
+
+  const momentopname = () => JSON.stringify({
+    marks: state.marks,
+    plaats: state.plaats,
+    kruis: [...state.kruis],
+    schets: state.schets,
+  });
+
+  const herstel = (tekst) => {
+    const d = JSON.parse(tekst);
+    state.marks = d.marks;
+    state.plaats = d.plaats;
+    state.kruis = new Set(d.kruis);
+    state.schets = d.schets;
+    state.wrong = new Set();
+    state.note = null;
+  };
+
+  const onthoud = () => {
+    terug.push(momentopname());
+    if (terug.length > 80) terug.shift();
+    vooruit.length = 0;
+  };
+
   const persist = () => {
     saveProgress(puzzle.id, {
       marks: state.marks,
@@ -58,6 +90,21 @@ export function renderPlayer(puzzle, mount) {
   const play = el('div', { class: 'play' }, [clueCol, el('div', {}, [boards, notes])]);
   mount.append(play);
 
+  // Het toetsenbord erbij: ctrl+z en cmd+z. De vorige luisteraar gaat eraf,
+  // anders stapelen ze op bij elke keer dat de speler opnieuw getekend wordt.
+  if (renderPlayer.luisteraar) {
+    document.removeEventListener('keydown', renderPlayer.luisteraar);
+  }
+  renderPlayer.luisteraar = (e) => {
+    if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== 'z') return;
+    const veld = e.target?.tagName;
+    if (veld === 'INPUT' || veld === 'TEXTAREA') return;
+    e.preventDefault();
+    if (e.shiftKey) actions.overdoen();
+    else actions.ongedaan();
+  };
+  document.addEventListener('keydown', renderPlayer.luisteraar);
+
   const draw = () => {
     clueCol.replaceChildren(cluePanel(puzzle, state, draw, persist));
     boards.replaceChildren(...boardNodes(puzzle, state, onCell));
@@ -65,6 +112,7 @@ export function renderPlayer(puzzle, mount) {
   };
 
   function onCell(...args) {
+    onthoud();
     if (puzzle.kind === 'latin') cycleLatin(puzzle, state, ...args);
     else if (puzzle.kind === 'kamer') zetNeer(puzzle, state, ...args);
     else cycleMark(puzzle, state, ...args);
@@ -104,6 +152,7 @@ export function renderPlayer(puzzle, mount) {
       draw();
     },
     reveal() {
+      onthoud();
       // Eén misklik mag een puzzel niet verpesten.
       const bezig = Object.keys(state.plaats).length || Object.keys(state.marks).length;
       if (bezig && !window.confirm('De hele oplossing invullen? Daarmee is de puzzel voorbij.')) return;
@@ -115,7 +164,30 @@ export function renderPlayer(puzzle, mount) {
       persist();
       draw();
     },
+    ongedaan() {
+      if (!terug.length) {
+        state.note = { kind: 'ok', text: 'Er is niets om ongedaan te maken.' };
+        draw();
+        return;
+      }
+      vooruit.push(momentopname());
+      herstel(terug.pop());
+      persist();
+      draw();
+    },
+    overdoen() {
+      if (!vooruit.length) {
+        state.note = { kind: 'ok', text: 'Er is niets om over te doen.' };
+        draw();
+        return;
+      }
+      terug.push(momentopname());
+      herstel(vooruit.pop());
+      persist();
+      draw();
+    },
     reset() {
+      onthoud();
       const bezig = Object.keys(state.plaats).length || Object.keys(state.marks).length || state.kruis.size;
       if (bezig && !window.confirm('Alles wissen en opnieuw beginnen?')) return;
       state.onthuld = false;
@@ -161,6 +233,18 @@ function head(puzzle) {
   const deel = (tekst) => el('span', { text: tekst });
   const sep = () => el('span', { class: 'sep', text: '·' });
 
+  // Een puzzel uit de bibliotheek heeft een eigen naam - "Eerste zaak",
+  // "Natte voeten". Die stond nergens op de pagina; er stond alleen het
+  // algemene "Regenstad: Wie deed het?". Nu staat de echte naam boven, en in
+  // de tab, en het algemene eronder.
+  const uitCatalogus = CATALOG.find((e) => puzzleId(catalogSettings(e)) === puzzle.id);
+  const kop = uitCatalogus?.titel ?? puzzle.title;
+  try {
+    document.title = `${kop} · Het Vierde Spoor`;
+  } catch {
+    /* geen document, geen titel */
+  }
+
   const crumbs = el('div', { class: 'crumbs' }, [
     el('a', { href: `#/puzzels?wereld=${puzzle.world.id}`, text: `${puzzle.world.icon} ${puzzle.world.name}` }),
     sep(),
@@ -175,7 +259,8 @@ function head(puzzle) {
     el('div', { class: 'scene-wrap' }, sceneVoor(puzzle.world.id, puzzle.world.accent)),
     el('div', { class: 'puzzle-head' }, [
       crumbs,
-      el('h1', { text: puzzle.title }),
+      el('h1', { text: kop }),
+      el('p', { class: 'puzzel-ondertitel', text: puzzle.title }),
       el('p', { class: 'intro', text: puzzle.intro }),
       el('div', { class: 'question' }, [
         el('span', { class: 'label', text: 'De vraag' }),
@@ -214,6 +299,19 @@ function cluePanel(puzzle, state, draw, persist) {
     ]);
   }
 
+  // De feiten uit de inleiding staan hier nog een keer, genummerd als V1, V2.
+  // Ze beperken de oplossing net zo hard als een aanwijzing; stonden ze
+  // alleen in het verhaal, dan kom je bij het natellen een aanwijzing tekort.
+  const feitenBlok = (puzzle.feiten ?? []).length
+    ? el('div', { class: 'feiten' }, [
+      el('p', { class: 'label', text: 'Wat vaststaat' }),
+      el('div', { class: 'clues' }, puzzle.feiten.map((tekst, i) => el('div', { class: 'clue clue-feit' }, [
+        el('span', { class: 'clue-n', text: `V${i + 1}.` }),
+        el('span', { class: 'clue-text', text: tekst }),
+      ]))),
+    ])
+    : null;
+
   const list = el('div', { class: 'clues' });
   for (const clue of puzzle.clues) {
     const done = state.struck.has(clue.n);
@@ -235,6 +333,7 @@ function cluePanel(puzzle, state, draw, persist) {
   }
 
   return el('div', {}, [
+    feitenBlok,
     el('p', { class: 'label', text: `Aanwijzingen (${puzzle.clues.length})` }),
     list,
     el('p', { class: 'legend', text: 'Klik een aanwijzing weg als je hem hebt gebruikt.' }),
@@ -270,9 +369,13 @@ function boardNodes(puzzle, state, onCell) {
       class: 'label blok-kop',
       text: paren.length === 1 ? 'En tussen die twee onderling' : 'En tussen de categorieën onderling',
     }));
+    // Het voorbeeld komt uit deze puzzel. Eerder stond er een vaste zin met
+    // een hotel in, en dat hotel bestond in de meeste puzzels niet.
+    const v = paren[0];
+    const voorbeeld = `${v.rij.items[0]} en ${v.kolom.items[0]} bij elkaar horen`;
     nodes.push(el('p', {
       class: 'legend',
-      text: 'Hier noteer je wat je weet zonder dat er een verdachte bij genoemd wordt, zoals "degene met de bankbiljetten was in het hotel". Je hebt ze niet nodig om de vraag te beantwoorden, maar ze helpen je er wel sneller komen.',
+      text: `Hier noteer je wat je weet zonder dat er een verdachte bij genoemd wordt - bijvoorbeeld dat ${voorbeeld}. Je hebt deze blokken niet nodig om de vraag te beantwoorden, maar met zo'n aanwijzing kom je er wel sneller.`,
     }));
     for (const blok of paren) {
       nodes.push(renderBlok(puzzle, blok, state.marks[blok.id] ?? {}, onCell, state.wrong));
@@ -335,9 +438,11 @@ function toolbar(puzzle, state, actions) {
     bar.append(b);
   };
   add('Controleer', actions.check, true);
+  add('Ongedaan', actions.ongedaan);
+  add('Overdoen', actions.overdoen);
   add('Hint', actions.hint);
   add('Oplossing', actions.reveal);
-  add('Opnieuw', actions.reset);
+  add('Begin opnieuw', actions.reset);
   add('Printen', actions.print);
   add('Link kopiëren', actions.share);
   return bar;
@@ -519,7 +624,7 @@ function nextHint(puzzle, state) {
       const kamer = puzzle.kamerNamen[puzzle.kamerVan[cel]];
       return {
         text: i >= 0
-          ? `${puzzle.personen[p]} stond in ${kamer}. Dat volgt uit aanwijzing ${i + 1}.`
+          ? `${puzzle.personen[p]} stond in ${kamer}. Dat volgt uit aanwijzing ${i + 1}, samen met wat er al staat.`
           : `${puzzle.personen[p]} stond in ${kamer}.`,
       };
     }
@@ -553,7 +658,7 @@ function nextHint(puzzle, state) {
       );
       const waar = `${puzzle.anchor.items[slot]}: ${cat.items[correct]}.`;
       return {
-        text: idx >= 0 ? `${waar} Dat volgt uit aanwijzing ${idx + 1}.` : waar,
+        text: idx >= 0 ? `${waar} Dat volgt uit aanwijzing ${idx + 1}, samen met wat er al staat.` : waar,
       };
     }
   }

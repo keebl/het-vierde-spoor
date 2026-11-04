@@ -383,7 +383,63 @@ function keurLatin(p, waar) {
 
 // --------------------------------------------------------------- de rondes
 
-function keur(settings, waar) {
+// De titel en het regeltje eronder beloven van alles: "vier verdachten",
+// "zes bij zes", "zeven reizigers". Die getallen moeten kloppen met de
+// puzzel die je krijgt. Toen de niveaus van maat veranderden, klopte de
+// helft niet meer - en dat zie je pas als je de puzzel opent.
+// "Een" staat er niet bij: "een nacht", "een deur", "een tijdlijn" zijn geen
+// beloftes over de maat van de puzzel.
+const TELWOORDEN = {
+  twee: 2, drie: 3, vier: 4, vijf: 5, zes: 6,
+  zeven: 7, acht: 8, negen: 9, tien: 10, elf: 11, twaalf: 12,
+};
+
+// Alleen getallen die over de puzzel zelf gaan. "Tien minuten werk" en "twee
+// keer op dezelfde rij" tellen niet mee.
+const TELBAAR = new RegExp(
+  '\\b(' + Object.keys(TELWOORDEN).join('|') + ')\\s+'
+  + '(?:\\w+\\s+)?(verdachten|figuren|mensen|familieleden|bemanningsleden|reizigers'
+  + '|getuigen|afdalers|aanwezigen|gasten|leerlingen|kamers|gewelven|modules|zalen'
+  + '|plekken|ruimtes|panden|rijen|kolommen|vakjes|sporen|pakketten|jassen|gaven'
+  + '|meesterproeven|klokslagen|kwartier)\\b',
+  'gi'
+);
+
+// "Zes bij zes" is een belofte over de maat van het bord, en die heeft zijn
+// eigen vorm.
+const MAAT = new RegExp(
+  '\\b(' + Object.keys(TELWOORDEN).join('|') + ')\\s+bij\\s+(' + Object.keys(TELWOORDEN).join('|') + ')\\b',
+  'gi'
+);
+
+function keurBelofte(p, entry, waar) {
+  const echte = new Set([p.clues.length]);
+  if (p.kind === 'kamer') {
+    echte.add(p.n).add(p.personen.length).add(p.kamerNamen.length);
+  } else if (p.kind === 'latin') {
+    echte.add(p.rows.length);
+  } else {
+    echte.add(p.anchor.items.length).add(p.cats.length);
+    if (p.graph) echte.add(p.graph.n);
+  }
+
+  const tekst = `${entry.titel} ${entry.sub}`;
+  for (const m of tekst.matchAll(TELBAAR)) {
+    const getal = TELWOORDEN[m[1].toLowerCase()];
+    eis('wat de titel belooft, krijg je ook',
+      echte.has(getal), waar, `"${m[0]}" terwijl het er ${[...echte].sort((a, b) => a - b).join(' of ')} zijn`);
+  }
+  for (const m of tekst.matchAll(MAAT)) {
+    const a = TELWOORDEN[m[1].toLowerCase()];
+    const b = TELWOORDEN[m[2].toLowerCase()];
+    eis('wat de titel belooft, krijg je ook',
+      a === b && echte.has(a), waar, `"${m[0]}" terwijl het bord ${p.n ?? '?'} bij ${p.n ?? '?'} is`);
+  }
+  eis('geen tweede puzzel die ook "begin hier" zegt',
+    !/begin hier/i.test(tekst), waar, tekst);
+}
+
+function keur(settings, waar, entry = null) {
   let p;
   try {
     p = buildPuzzle(settings);
@@ -393,6 +449,7 @@ function keur(settings, waar) {
   }
   gekeurd++;
   keurAlgemeen(p, waar);
+  if (entry) keurBelofte(p, entry, waar);
   if (p.kind === 'kamer') keurKamer(p, waar);
   else if (p.kind === 'assign') keurAssign(p, waar);
   else keurLatin(p, waar);
@@ -484,8 +541,12 @@ for (const w of WORLDS) {
 console.log(`  ${WORLDS.length} werelden gekeurd`);
 
 console.log('\nDe bibliotheek');
+const titels = new Set();
 for (const entry of CATALOG) {
-  keur(catalogSettings(entry), `  ${entry.titel} (${entry.mechaniek}, niveau ${entry.niveau})`);
+  const waar = `  ${entry.titel} (${entry.mechaniek}, niveau ${entry.niveau})`;
+  eis('elke puzzel heeft een eigen titel', !titels.has(entry.titel), waar, entry.titel);
+  titels.add(entry.titel);
+  keur(catalogSettings(entry), waar, entry);
 }
 console.log(`  ${CATALOG.length} puzzels gekeurd`);
 

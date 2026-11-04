@@ -73,6 +73,12 @@ function buildAssignPuzzle({ world, assignment, params, settings }) {
   const question = assignment.question(spec, gen.solution, introClues, world, qRng);
   const intro = assignment.intro(world, spec, gen.solution, introClues, slachtoffer);
 
+  // Wat de inleiding weggeeft, is net zo goed een aanwijzing: het beperkt de
+  // oplossing even hard. Als het alleen in het verhaal staat, telt een
+  // puzzelaar de aanwijzingen en komt hij er een tekort - en dan lijkt de
+  // puzzel niet rond te komen. Dus zetten we het er als feit bij.
+  const feiten = introClues.map((c) => cap(phraseClue(c, ctx)));
+
   return {
     kind: 'assign',
     id: puzzleId(settings),
@@ -104,6 +110,7 @@ function buildAssignPuzzle({ world, assignment, params, settings }) {
         }
       : null,
     clues,
+    feiten,
     solution: gen.solution,
     _grade: gen.grade,
     _spec: spec,
@@ -180,6 +187,23 @@ function clueNames(clue, spec) {
   }
   return out;
 }
+
+// De opdracht van een speurdoku, in vijf toonaarden.
+//
+// Elke zaak in hetzelfde genre kreeg woordelijk dezelfde zin, en dan leest
+// de tweede puzzel als een herhaling van de eerste. Alle vijf zeggen
+// precies hetzelfde: waar het lichaam ligt weet niemand meer, je zet
+// iedereen terug, en wie als enige bij het slachtoffer overblijft is de
+// dader. Alleen de toon verschilt.
+const OPDRACHT_ZINNEN = [
+  (naam, zelfde) => `Niemand weet meer wie waar stond, en zelfs waar ${naam} lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij ${naam} ${zelfde} blijkt te staan, is de dader.`,
+  (naam, zelfde) => `Van die avond is geen plattegrond gemaakt. Zet iedereen terug op de plek waar hij stond, ${naam} incluis - want wie als enige bij hem ${zelfde} eindigt, heeft het gedaan.`,
+  (naam, zelfde) => `Er is niemand die nog weet waar hij stond, en waar ${naam} lag weet ook niemand. Zet ze allemaal neer; de enige die daarna bij ${naam} ${zelfde} staat, is de dader.`,
+  (naam, zelfde) => `De plattegrond is leeg gebleven: wie waar stond is niet opgeschreven, ook niet waar ${naam} lag. Vul hem in en kijk wie er als enige bij ${naam} ${zelfde} overblijft.`,
+  (naam, zelfde) => `Reconstrueer wie waar stond. Ook ${naam} zelf, want zelfs dat is niet meer bekend. Wie dan als enige bij hem ${zelfde} staat, is de dader.`,
+];
+
+const opdrachtZin = (naam, zelfde, rng) => rng.pick(OPDRACHT_ZINNEN)(naam, zelfde);
 
 function buildKamerPuzzle({ world, settings }) {
   const { seed, niveau } = settings;
@@ -262,7 +286,7 @@ function buildKamerPuzzle({ world, settings }) {
     niveau: Number(niveau),
     niveauLabel: levelParams(niveau).label,
     depth: gen.graad.opgelost ? 1 : 2,
-    intro: `${world.lead} Niemand weet meer wie waar stond, en zelfs waar ${slachtofferNaam} lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij ${slachtofferNaam} ${zelfde} blijkt te staan, is de dader.`,
+    intro: `${world.lead} ${opdrachtZin(slachtofferNaam, zelfde, rng)}`,
     question: {
       text: `Wie stond er als enige bij ${slachtofferNaam} ${zelfde}?`,
       answer: namen[gen.dader],

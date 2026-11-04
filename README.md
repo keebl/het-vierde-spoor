@@ -313,10 +313,15 @@ tools/                  keuringsscripts
 
 - Inloggen en voortgang over apparaten heen. Voortgang staat in
   `localStorage`, dus per browser.
-- Ongedaan maken, en bediening met het toetsenbord.
-- Het Kruisverhoor mist het blok voorwerp x plek: een aanwijzing als "degene
-  met de bankbiljetten was in het hotel" kun je nergens noteren.
+- Bediening met het toetsenbord op het bord zelf: de vakjes zijn nog geen
+  knoppen, dus met alleen een toetsenbord of een schermlezer kun je een
+  Speurdoku niet spelen. Ongedaan maken kan wel (ctrl+Z).
 - Een dagelijkse puzzel.
+- Een afsluiting als je het goed hebt: nu staat er alleen "Opgelost". Daar
+  hoort de dader in beeld te komen, met een slotzin en een knop naar de
+  volgende zaak.
+- Twaalf bij twaalf is op een telefoon niet te spelen: de vakjes worden te
+  klein om te raken. Dat vraagt om een volledig scherm met zoom.
 - De oplossing zit in de pagina: wie de ontwikkelaarsconsole opent kan hem
   lezen. Voor een wedstrijdvorm moet dat naar een server.
 - Meer feestdaggenres dan kerst en halloween.

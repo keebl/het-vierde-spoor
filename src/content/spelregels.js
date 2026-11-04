@@ -39,6 +39,7 @@ export const SPELREGELS = {
       '"Grenst aan" betekent: er zit een deur tussen. Twee ruimtes die elkaar op de kaart raken zonder deur, grenzen dus niet aan elkaar.',
       '"Twee deuren verderop" telt de kortste route over de deuren die er zijn.',
       'De kaart is volledig: wat er niet op staat, bestaat niet.',
+      'Staat er "Wat vaststaat" boven de aanwijzingen, dan telt dat feit net zo hard mee als een aanwijzing.',
       'Alle aanwijzingen zijn waar, en er is precies één verdeling die ze allemaal waarmaakt.',
     ],
   },

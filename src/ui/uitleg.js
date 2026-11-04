@@ -73,6 +73,10 @@ export function renderUitleg(mount) {
       el('div', { class: 'prose' }, [
         el('p', { text: 'De hint vult één vakje voor je in en zegt erbij uit welke aanwijzing dat volgde. Controleer kijkt na wat je tot nu toe hebt ingevuld en omlijnt wat niet klopt — je ziet dus wel dát er iets fout staat, maar niet wat het goede antwoord is.' }),
         el('p', { text: 'Oplossing vult alles in. Dan is de puzzel natuurlijk voorbij.' }),
+        el('p', {}, [
+          el('b', { text: 'Ongedaan en Overdoen. ' }),
+          el('span', { text: 'Een misklik op een groot bord kost anders tien zetten werk. Met ctrl+Z (of cmd+Z) gaat het ook, en met shift erbij doe je het weer over.' }),
+        ]),
       ]),
     ])
   );
@@ -108,7 +112,7 @@ export function renderUitleg(mount) {
   );
 
   mount.append(
-    sectie('Genres', tabel(WORLDS.map((w) => [`${w.icon} ${w.name}`, w.blurb])), 'Dezelfde spellen, een ander decor en een ander verhaal.')
+    sectie('Genres', tabel(WORLDS.map((w) => [`${w.icon} ${w.name}`, w.blurb])), 'Hetzelfde spel, een ander decor en een ander verhaal.')
   );
 
   mount.append(
