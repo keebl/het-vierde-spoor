@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nu naast nieuw · Het Vierde Spoor</title>
+<link rel="stylesheet" href="styles/app.css">
+<style>
+  body { padding: 28px 20px 80px; }
+  .uitleg { max-width: 62ch; margin: 0 auto 36px; }
+  .uitleg p { margin: 0 0 10px; }
+  .paar { max-width: 980px; margin: 0 auto 30px; }
+  .paar h2 { margin: 0 0 10px; font-size: 1.1rem; }
+  .rij {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    background: var(--surface-2); border: 1px solid var(--line-soft);
+    border-radius: 12px; padding: 16px;
+  }
+  .kolom { text-align: center; }
+  .kolom > .label { margin-bottom: 10px; }
+  .maten { display: flex; align-items: flex-end; justify-content: center; gap: 18px; }
+  .maat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .maat small { color: var(--text-3); font-size: 0.7rem; }
+  .vloer {
+    background: #c9a06a; border-radius: 6px; padding: 3px;
+    box-shadow: inset 0 0 14px rgba(40,24,8,.35);
+  }
+  .vloer.groot { padding: 6px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="uitleg">
+    <h1>Nu naast nieuw</h1>
+    <p>Links staat de tekening zoals hij nu op het bord staat. Rechts staat
+      dezelfde tekening, opnieuw gemaakt met een andere motor.</p>
+    <p>Het verschil zit in vier dingen, en in geen ervan in "meer lijntjes":
+      elk vlak loopt nu van bijna zijn lichtste naar bijna zijn donkerste
+      kleur; de schaduw trekt naar violet in plaats van naar dezelfde kleur
+      donkerder; langs de verlichte kant van elke vorm ligt een heldere rand;
+      en waar iets de vloer raakt is het donker. Daarbij staan er geen haakse
+      rechthoeken meer in: een kast staat een slag scheef en een plank buigt
+      door.</p>
+    <p>De maten zijn de echte: 44 is een vakje op een bord van twaalf bij
+      twaalf, 68 is een vakje op een klein bord, en 180 is om te kunnen zien
+      wat er gebeurt.</p>
+  </div>
+  <div class="paar" id="borden">
+    <h2>Op een stuk vloer</h2>
+    <div class="rij" id="bordrij"></div>
+  </div>
+  <div id="lijst"></div>
+</main>
+
+<script type="module">
+import { tekenMeubel } from './src/ui/meubelkunst.js';
+import { tekenGeschilderd } from './src/ui/geschilderd.js';
+import { GESCHILDERD } from './src/ui/meubelkunst-geschilderd.js';
+import { tekenPersoon as persoonOud } from './src/ui/personenkunst.js';
+import { tekenPersoon as persoonNieuw } from './src/ui/personenkunst-geschilderd.js';
+
+const NS = 'http://www.w3.org/2000/svg';
+const MATEN = [44, 68, 180];
+
+function vak(maat, teken) {
+  const wrap = document.createElement('div');
+  wrap.className = 'maat';
+  const vloer = document.createElement('div');
+  vloer.className = maat > 100 ? 'vloer groot' : 'vloer';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 48 48');
+  svg.setAttribute('width', maat);
+  svg.setAttribute('height', maat);
+  teken(svg, maat);
+  vloer.append(svg);
+  const bijschrift = document.createElement('small');
+  bijschrift.textContent = `${maat} px`;
+  wrap.append(vloer, bijschrift);
+  return wrap;
+}
+
+function paar(titel, oud, nieuw) {
+  const blok = document.createElement('div');
+  blok.className = 'paar';
+  const kop = document.createElement('h2');
+  kop.textContent = titel;
+  const rij = document.createElement('div');
+  rij.className = 'rij';
+  for (const [naam, teken] of [['Zoals het nu is', oud], ['Opnieuw getekend', nieuw]]) {
+    const kolom = document.createElement('div');
+    kolom.className = 'kolom';
+    const label = document.createElement('p');
+    label.className = 'label';
+    label.textContent = naam;
+    const maten = document.createElement('div');
+    maten.className = 'maten';
+    for (const m of MATEN) maten.append(vak(m, teken));
+    kolom.append(label, maten);
+    rij.append(kolom);
+  }
+  blok.append(kop, rij);
+  return blok;
+}
+
+// ------------------------------------------------- en dan op een stuk vloer
+//
+// Losse plaatjes naast elkaar zeggen niet zo veel; het gaat erom hoe het
+// eruitziet als het op het bord staat. Dit is een stuk vloer van drie bij
+// twee vakjes op ware grootte, met dezelfde zes dingen erop.
+const CEL = 76;
+
+function miniBord(teken) {
+  const svg = document.createElementNS(NS, 'svg');
+  const b = CEL * 3 + 16;
+  const h = CEL * 2 + 16;
+  svg.setAttribute('viewBox', `0 0 ${b} ${h}`);
+  svg.setAttribute('width', b);
+  svg.setAttribute('height', h);
+  svg.style.maxWidth = '100%';
+  const vul = (naam, attrs) => {
+    const n = document.createElementNS(NS, naam);
+    for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+    svg.append(n);
+    return n;
+  };
+  vul('rect', { x: 0, y: 0, width: b, height: h, fill: '#3b2e21', rx: 8 });
+  for (let r = 0; r < 2; r++) {
+    for (let c = 0; c < 3; c++) {
+      vul('rect', {
+        x: 8 + c * CEL, y: 8 + r * CEL, width: CEL, height: CEL,
+        fill: r === 0 ? '#cb9f62' : '#c49357',
+      });
+      vul('rect', {
+        x: 8 + c * CEL, y: 8 + r * CEL, width: CEL, height: CEL,
+        fill: 'none', stroke: 'rgba(90,70,45,.35)', 'stroke-width': 1.2,
+      });
+    }
+  }
+  MEUBELS.forEach(([sleutel], i) => {
+    const c = i % 3;
+    const r = Math.floor(i / 3);
+    teken(svg, sleutel, 8 + c * CEL + 2, 8 + r * CEL + 1);
+  });
+  return svg;
+}
+
+function bordKolom(naam, teken) {
+  const kolom = document.createElement('div');
+  kolom.className = 'kolom';
+  const label = document.createElement('p');
+  label.className = 'label';
+  label.textContent = naam;
+  kolom.append(label, miniBord(teken));
+  return kolom;
+}
+
+const lijst = document.getElementById('lijst');
+
+const MEUBELS = [
+  ['haard', 'De haard'],
+  ['fauteuil', 'De leren fauteuil'],
+  ['boekenkast', 'De boekenkast'],
+  ['staandespiegel', 'De staande spiegel'],
+  ['put', 'De waterput'],
+  ['globe', 'De globe'],
+];
+
+const bordrij = document.getElementById('bordrij');
+bordrij.append(bordKolom('Zoals het nu is', (svg, sleutel, x, y) =>
+  tekenMeubel(svg, sleutel, { x, y, grootte: CEL - 4 })));
+bordrij.append(bordKolom('Opnieuw getekend', (svg, sleutel, x, y) =>
+  tekenGeschilderd(svg, GESCHILDERD[sleutel], { x, y, grootte: CEL - 4 })));
+
+for (const [sleutel, titel] of MEUBELS) {
+  lijst.append(paar(
+    titel,
+    (svg) => tekenMeubel(svg, sleutel, { grootte: 48 }),
+    (svg) => tekenGeschilderd(svg, GESCHILDERD[sleutel], { grootte: 48 }),
+  ));
+}
+
+for (const i of [0, 3, 5]) {
+  lijst.append(paar(
+    `Verdachte ${i + 1}`,
+    (svg) => persoonOud(svg, { index: i, letter: 'K', grootte: 48 }),
+    (svg) => persoonNieuw(svg, { index: i, letter: 'K', grootte: 48 }),
+  ));
+}
+</script>
+</body>
+</html>
