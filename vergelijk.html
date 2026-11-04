@@ -45,6 +45,10 @@
       twaalf, 68 is een vakje op een klein bord, en 180 is om te kunnen zien
       wat er gebeurt.</p>
   </div>
+  <div class="paar">
+    <h2>Twaalf verdachten naast elkaar</h2>
+    <div class="rij" id="mensen"></div>
+  </div>
   <div class="paar" id="borden">
     <h2>Op een stuk vloer</h2>
     <div class="rij" id="bordrij"></div>
@@ -164,6 +168,30 @@ const MEUBELS = [
   ['put', 'De waterput'],
   ['globe', 'De globe'],
 ];
+
+// Twaalf naast elkaar: dat is de echte toets. Als er twee zijn die je in
+// een oogopslag door elkaar haalt, deugt de set niet - je moet ze uit elkaar
+// kunnen houden zonder de letter te lezen.
+const mensen = document.getElementById('mensen');
+for (const [naam, teken] of [['Zoals het nu is', persoonOud], ['Opnieuw getekend', persoonNieuw]]) {
+  const kolom = document.createElement('div');
+  kolom.className = 'kolom';
+  const label = document.createElement('p');
+  label.className = 'label';
+  label.textContent = naam;
+  const raster = document.createElement('div');
+  raster.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:6px;justify-items:center';
+  for (let i = 0; i < 12; i++) {
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 48 48');
+    svg.setAttribute('width', 88);
+    svg.setAttribute('height', 88);
+    teken(svg, { index: i, letter: String.fromCharCode(65 + i), grootte: 48 });
+    raster.append(svg);
+  }
+  kolom.append(label, raster);
+  mensen.append(kolom);
+}
 
 const bordrij = document.getElementById('bordrij');
 bordrij.append(bordKolom('Zoals het nu is', (svg, sleutel, x, y) =>

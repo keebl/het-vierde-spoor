@@ -60,29 +60,29 @@ export function meng(a, b, deel) {
 // metaal trekt staalblauw. Dat is het verschil tussen geschilderd en
 // ingekleurd.
 export const STOFFEN = {
-  hout: { kern: '#9d6a38', koel: '#2b182a', warm: '#ffdca8', rand: 0.5 },
-  houtdonker: { kern: '#6f4524', koel: '#1f1222', warm: '#eeb679', rand: 0.5 },
-  houtrood: { kern: '#8d4a2c', koel: '#2a101f', warm: '#ffb37e', rand: 0.5 },
-  steen: { kern: '#a39784', koel: '#33283a', warm: '#e8dcc0', rand: 0.3 },
-  steenkoel: { kern: '#8c8678', koel: '#281f2e', warm: '#ddd2bc', rand: 0.28 },
-  metaal: { kern: '#8e98a0', koel: '#1c2432', warm: '#f8fdff', rand: 1 },
-  koper: { kern: '#b07440', koel: '#331a1c', warm: '#ffd9a0', rand: 0.9 },
-  stof: { kern: '#a8543c', koel: '#2c1230', warm: '#ffb08c', rand: 0.3 },
-  stofblauw: { kern: '#42618c', koel: '#141a34', warm: '#abd4ff', rand: 0.3 },
-  stofgroen: { kern: '#4d7a5c', koel: '#13241f', warm: '#b2e8bd', rand: 0.3 },
+  hout: { kern: '#9d6a38', koel: '#2b182a', warm: '#ffdca8', rand: 0.5, textuur: 'nerf' },
+  houtdonker: { kern: '#6f4524', koel: '#1f1222', warm: '#eeb679', rand: 0.5, textuur: 'nerf' },
+  houtrood: { kern: '#8d4a2c', koel: '#2a101f', warm: '#ffb37e', rand: 0.5, textuur: 'nerf' },
+  steen: { kern: '#a39784', koel: '#33283a', warm: '#e8dcc0', rand: 0.3, textuur: 'korrel' },
+  steenkoel: { kern: '#8c8678', koel: '#281f2e', warm: '#ddd2bc', rand: 0.28, textuur: 'korrel' },
+  metaal: { kern: '#8e98a0', koel: '#1c2432', warm: '#f8fdff', rand: 1, textuur: 'strijk' },
+  koper: { kern: '#b07440', koel: '#331a1c', warm: '#ffd9a0', rand: 0.9, textuur: 'strijk' },
+  stof: { kern: '#a8543c', koel: '#2c1230', warm: '#ffb08c', rand: 0.3, textuur: 'weefsel' },
+  stofblauw: { kern: '#42618c', koel: '#141a34', warm: '#abd4ff', rand: 0.3, textuur: 'weefsel' },
+  stofgroen: { kern: '#4d7a5c', koel: '#13241f', warm: '#b2e8bd', rand: 0.3, textuur: 'weefsel' },
   glas: { kern: '#b2cdc8', koel: '#1f3744', warm: '#ffffff', rand: 1 },
   spiegel: { kern: '#c3d6dd', koel: '#2a3f52', warm: '#ffffff', rand: 1 },
   vuur: { kern: '#e8912a', koel: '#7b1e0f', warm: '#fff6bb', rand: 0.9 },
   goud: { kern: '#c8992f', koel: '#3a2208', warm: '#fff2ac', rand: 0.95 },
-  donker: { kern: '#3b4650', koel: '#0e111a', warm: '#92a3b8', rand: 0.45 },
-  papier: { kern: '#e7dbbd', koel: '#463733', warm: '#fffdf2', rand: 0.4 },
-  blad: { kern: '#4e7f3c', koel: '#11231c', warm: '#caf28c', rand: 0.5 },
+  donker: { kern: '#3b4650', koel: '#0e111a', warm: '#92a3b8', rand: 0.45, textuur: 'strijk' },
+  papier: { kern: '#e7dbbd', koel: '#463733', warm: '#fffdf2', rand: 0.4, textuur: 'korrel' },
+  blad: { kern: '#4e7f3c', koel: '#11231c', warm: '#caf28c', rand: 0.5, textuur: 'vezel' },
   water: { kern: '#5e94a8', koel: '#13293c', warm: '#d6f6ff', rand: 0.8 },
   huid: { kern: '#e3b78b', koel: '#59313e', warm: '#fff1da', rand: 0.5 },
   huiddonker: { kern: '#a9703f', koel: '#3c1d26', warm: '#ebc193', rand: 0.5 },
   haar: { kern: '#5c3b22', koel: '#180e1e', warm: '#dcab6c', rand: 0.55 },
   haargrijs: { kern: '#9ea3a8', koel: '#262c3a', warm: '#ffffff' },
-  touw: { kern: '#c0a068', koel: '#33261f', warm: '#ffe9bb', rand: 0.45 },
+  touw: { kern: '#c0a068', koel: '#33261f', warm: '#ffe9bb', rand: 0.45, textuur: 'weefsel' },
 };
 
 // ------------------------------------------------------------------ de defs
@@ -121,6 +121,42 @@ function zorgVoorDefs(svgWortel) {
   const vaag = el('filter', { id: 'gs-vaag', x: '-50%', y: '-50%', width: '200%', height: '200%' });
   vaag.append(el('feGaussianBlur', { stdDeviation: '1.4' }));
   defs.append(vaag);
+
+  // ------------------------------------------------------------ textuur
+  //
+  // Licht alleen maakt een vorm rond; textuur maakt hem van iets. Hout heeft
+  // nerf, steen heeft korrel, stof is geweven en metaal heeft strepen van de
+  // polijstschijf. Het is bijna niet te zien, en juist daarom werkt het: zet
+  // je het uit, dan oogt alles ineens van plastic.
+  const patroon = (id, breed, hoog, kinderen) => {
+    const pat = el('pattern', { id, width: breed, height: hoog, patternUnits: 'userSpaceOnUse' });
+    for (const k of kinderen) pat.append(k);
+    defs.append(pat);
+  };
+  patroon('gs-nerf', 9, 5, [
+    el('path', { d: 'M0 1.6 q2.2 -1.1 4.4 0 q2.2 1.1 4.6 0', stroke: '#2a1708', 'stroke-width': 0.55, fill: 'none', opacity: 0.3 }),
+    el('path', { d: 'M0 3.8 q2.6 1 5 0 q2 -0.8 4 0', stroke: '#2a1708', 'stroke-width': 0.4, fill: 'none', opacity: 0.2 }),
+    el('path', { d: 'M0 2.7 q2.4 -0.8 4.8 0 q2 0.7 4.2 0', stroke: '#ffe6bc', 'stroke-width': 0.4, fill: 'none', opacity: 0.22 }),
+  ]);
+  patroon('gs-korrel', 6, 6, [
+    el('circle', { cx: 1.3, cy: 1.8, r: 0.52, fill: '#241a26', opacity: 0.3 }),
+    el('circle', { cx: 4.2, cy: 0.9, r: 0.36, fill: '#241a26', opacity: 0.22 }),
+    el('circle', { cx: 2.7, cy: 4.4, r: 0.62, fill: '#241a26', opacity: 0.26 }),
+    el('circle', { cx: 5.2, cy: 3.9, r: 0.42, fill: '#fff4de', opacity: 0.26 }),
+    el('circle', { cx: 0.7, cy: 5.1, r: 0.34, fill: '#fff4de', opacity: 0.2 }),
+  ]);
+  patroon('gs-weefsel', 3, 3, [
+    el('path', { d: 'M0 1.5 h3', stroke: '#ffffff', 'stroke-width': 0.5, opacity: 0.12 }),
+    el('path', { d: 'M1.5 0 v3', stroke: '#1a0e18', 'stroke-width': 0.5, opacity: 0.16 }),
+  ]);
+  patroon('gs-strijk', 11, 11, [
+    el('path', { d: 'M-2 11 L11 -2', stroke: '#ffffff', 'stroke-width': 0.8, opacity: 0.14 }),
+    el('path', { d: 'M3 11 L14 0', stroke: '#101822', 'stroke-width': 0.6, opacity: 0.13 }),
+  ]);
+  patroon('gs-vezel', 5, 5, [
+    el('path', { d: 'M0.8 5 q1 -2.6 0.4 -5', stroke: '#1d3416', 'stroke-width': 0.45, fill: 'none', opacity: 0.3 }),
+    el('path', { d: 'M3.4 5 q-0.8 -2.4 0.2 -5', stroke: '#d8f0a0', 'stroke-width': 0.4, fill: 'none', opacity: 0.22 }),
+  ]);
 
   for (const [naam, { kern, koel, warm }] of Object.entries(STOFFEN)) {
     // Het vlak zelf: van bijna de lichtkleur linksboven naar diep in de
@@ -207,6 +243,15 @@ function zetVorm(g, vorm, stof, { fijn, eerste, verloop }) {
     g.append(el('path', {
       d, fill: 'none', stroke: meng(warm, '#ffffff', 0.35), 'stroke-width': 1.7,
       opacity: vorm.glans ?? stof.rand ?? 0.6, mask: 'url(#gs-rand)', 'clip-path': vorm.knip,
+    }));
+  }
+
+  // 4b. Wat het materiaal eigen is: nerf, korrel, weefsel. Hetzelfde pad nog
+  //     een keer, gevuld met het patroon.
+  if (fijn && stof.textuur) {
+    g.append(el('path', {
+      d, fill: `url(#gs-${stof.textuur})`, 'fill-rule': vorm.gat ? 'evenodd' : null,
+      'pointer-events': 'none',
     }));
   }
 
