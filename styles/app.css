@@ -87,7 +87,8 @@ button { font-family: inherit; }
   align-items: baseline;
   gap: var(--s2);
   text-decoration: none;
-  font-family: var(--serif);
+  font-family: var(--display);
+  font-weight: 600;
   font-size: var(--t-md);
   letter-spacing: 0.01em;
   white-space: nowrap;
@@ -129,7 +130,9 @@ main {
 
 /* =============================================================== tekst */
 
-h1, h2, h3 { font-family: var(--serif); font-weight: 600; }
+/* Koppen in de displayletter: rond en stevig, zoals op een speldoos. De
+   lopende tekst blijft schreef, want daar lees je hele alinea's in. */
+h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: -0.01em; }
 
 h1 {
   font-size: var(--t-2xl);
@@ -194,6 +197,50 @@ h2 {
 }
 
 .hero h1 { max-width: 16ch; }
+
+/* Op de voordeur ligt een echte plattegrond, een slag gedraaid, alsof het
+   spel open op tafel ligt. Op een smal scherm gaat hij eronder. */
+@media (min-width: 900px) {
+  .hero-met-bord {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+    column-gap: var(--s7);
+    align-items: center;
+  }
+  .hero-met-bord > :first-child { grid-column: 1; }
+  .hero-met-bord .hero-actions,
+  .hero-met-bord .hero-note { grid-column: 1; }
+  .hero-bord { grid-column: 2; grid-row: 1 / span 3; }
+}
+
+.hero-bord {
+  position: relative;
+  display: block;
+  margin-top: var(--s5);
+  transform: rotate(-2deg);
+  transition: transform 0.18s ease;
+  text-decoration: none;
+}
+
+.hero-bord:hover { transform: rotate(-1deg) translateY(-3px); }
+.hero-bord .kamerbord { max-width: 100%; }
+
+.hero-bord-label {
+  position: absolute;
+  left: 50%;
+  bottom: -14px;
+  transform: translateX(-50%) rotate(1.5deg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: var(--t-sm);
+  color: var(--text);
+  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(90, 68, 34, 0.18);
+}
 .hero .lede { margin: 0; }
 
 .hero-actions { display: flex; gap: var(--s3); flex-wrap: wrap; align-items: center; }
@@ -258,6 +305,95 @@ h2 {
 
 /* Puzzels als rijen in plaats van losse kaarten: rustiger, even hoog,
    en je kunt titels naast elkaar lezen. */
+/* De bibliotheek: kaarten in plaats van regels. Elke kaart draagt de kleur
+   en de sfeertekening van zijn genre, zodat je ziet waar je terechtkomt
+   voordat je klikt. */
+.kaarten {
+  display: grid;
+  gap: var(--s4);
+  grid-template-columns: repeat(auto-fill, minmax(258px, 1fr));
+}
+
+.kaart {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 2px 0 rgba(90, 68, 34, 0.12);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.kaart:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(90, 68, 34, 0.2);
+  border-color: var(--line);
+}
+
+.kaart-beeld {
+  position: relative;
+  display: block;
+  height: 104px;
+  overflow: hidden;
+  background: var(--genre-diep, #3a2e22);
+  border-bottom: 2px solid var(--genre-diep, #3a2e22);
+}
+
+.kaart-beeld .scene { width: 100%; height: 100%; display: block; }
+
+/* Het teken van het speltype als penning op de rand van de tekening. */
+.kaart-merk {
+  position: absolute;
+  left: var(--s4);
+  bottom: -15px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border: 2px solid var(--genre-diep, #3a2e22);
+  font-size: 15px;
+  line-height: 1;
+}
+
+.kaart-tekst { padding: var(--s5) var(--s4) var(--s4); display: grid; gap: 5px; align-content: start; }
+.kaart-titel { font-family: var(--display); font-weight: 600; font-size: var(--t-md); line-height: 1.25; }
+.kaart-sub { color: var(--text-2); font-size: var(--t-sm); line-height: 1.45; }
+.kaart-voet {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: var(--t-xs);
+}
+
+/* Opgelost is een stempel, geen vinkje in een kolom. */
+.kaart-stempel {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  transform: rotate(-7deg);
+  border: 2px solid #3f7d4f;
+  color: #3f7d4f;
+  border-radius: 5px;
+  padding: 2px 7px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(255, 253, 247, 0.88);
+}
+
+.kaart-stempel-grijs { border-color: var(--text-3); color: var(--text-3); }
+
 .rows { border-top: 1px solid var(--line-soft); }
 
 .row-item {
@@ -288,7 +424,7 @@ h2 {
 }
 
 .row-body { display: grid; gap: 3px; min-width: 0; }
-.row-title { font-family: var(--serif); font-size: var(--t-md); line-height: 1.3; }
+.row-title { font-family: var(--display); font-weight: 600; font-size: var(--t-md); line-height: 1.3; }
 .row-sub { color: var(--text-2); font-size: var(--t-sm); line-height: 1.5; }
 
 .row-meta {
@@ -353,7 +489,7 @@ h2 {
 }
 
 .tile-body { display: grid; gap: var(--s2); padding: var(--s4); }
-.tile-name { font-family: var(--serif); font-size: var(--t-md); }
+.tile-name { font-family: var(--display); font-weight: 600; font-size: var(--t-md); }
 .tile-sub { color: var(--text-2); font-size: var(--t-sm); line-height: 1.5; }
 .tile-count { color: var(--text-3); font-size: var(--t-xs); }
 
@@ -432,7 +568,7 @@ select:hover { border-color: #c3b393; }
 
 .levels { display: flex; gap: var(--s2); flex-wrap: wrap; }
 .level-btn { flex: 1 1 100px; text-align: center; justify-items: center; }
-.level-btn b { font-family: var(--serif); font-size: var(--t-md); color: var(--accent); }
+.level-btn b { font-family: var(--display); font-size: var(--t-md); color: var(--accent); }
 
 .row-inline { display: flex; gap: var(--s3); align-items: center; flex-wrap: wrap; }
 
@@ -539,7 +675,7 @@ input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: -1p
 }
 
 .question .label { margin: 0; }
-.question b { font-family: var(--serif); font-size: var(--t-md); font-weight: 600; }
+.question b { font-family: var(--display); font-size: var(--t-md); font-weight: 600; }
 
 /* De spelregels bij de puzzel: dichtgeklapt, maar altijd binnen handbereik. */
 .spelregels {

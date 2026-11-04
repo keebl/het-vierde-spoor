@@ -72,7 +72,7 @@ function lanAdressen() {
 // Wat de buitenwereld mag zien. Een witte lijst, geen zwarte: de projectmap
 // bevat ook .env, .git en de serverbron, en die horen nooit over de lijn te
 // gaan. Zeker niet als je de site op het huisnetwerk openzet.
-const PUBLIEK = new Set(['index.html', 'iconen.html', 'styles', 'src']);
+const PUBLIEK = new Set(['index.html', 'iconen.html', 'favicon.svg', 'styles', 'src']);
 
 async function serveStatic(req, res) {
   const url = new URL(req.url, `http://localhost:${PORT}`);

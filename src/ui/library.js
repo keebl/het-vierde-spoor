@@ -2,7 +2,7 @@
 // puzzels gegroepeerd per decor zodat je iets leest in plaats van scant.
 
 import { el } from './boards.js';
-import { puzzelRij } from './home.js';
+import { puzzelKaart } from './home.js';
 import { CATALOG } from '../content/catalog.js';
 import { WORLDS, WORLD_BY_ID } from '../content/worlds.js';
 import { ASSIGNMENTS, MECHANICS } from '../content/assignments.js';
@@ -111,7 +111,7 @@ export function renderLibrary(mount, query = {}) {
   // Zonder decorfilter groeperen we per decor: dat geeft de lijst koppen en
   // leesrust. Met een filter aan is een platte lijst duidelijker.
   if (actief.wereld) {
-    mount.append(el('div', { class: 'rows' }, lijst.map((e) => puzzelRij(e, done, null, bekeken))));
+    mount.append(el('div', { class: 'kaarten' }, lijst.map((e) => puzzelKaart(e, done, bekeken))));
     return;
   }
 
@@ -124,7 +124,7 @@ export function renderLibrary(mount, query = {}) {
           el('h2', { text: `${w.icon} ${WORLD_BY_ID.get(w.id).name}` }),
           el('p', { text: w.blurb }),
         ]),
-        el('div', { class: 'rows' }, vanWereld.map((e) => puzzelRij(e, done, null, bekeken))),
+        el('div', { class: 'kaarten' }, vanWereld.map((e) => puzzelKaart(e, done, bekeken))),
       ])
     );
   }

@@ -6,6 +6,7 @@ import { blokkenVan } from './blokken.js';
 import { loadProgress, saveProgress, clearProgress } from './state.js';
 import { MECHANIC_BY_ID } from '../content/assignments.js';
 import { spelregelsVan } from '../content/spelregels.js';
+import { genreStijl } from './genre.js';
 import { sceneVoor } from './scenes.js';
 import { renderKamerbord, renderLegenda, PENNING } from './board-rooms.js';
 import { portretElement } from './personenkunst.js';
@@ -170,7 +171,7 @@ function head(puzzle) {
     deel(puzzle.depth === 1 ? 'doorstrepen volstaat' : 'aanname nodig'),
   ]);
 
-  return el('div', { class: 'puzzel-genre', style: genreStijl(puzzle) }, [
+  return el('div', { class: 'puzzel-genre', style: genreStijl(puzzle.world) }, [
     el('div', { class: 'scene-wrap' }, sceneVoor(puzzle.world.id, puzzle.world.accent)),
     el('div', { class: 'puzzle-head' }, [
       crumbs,
@@ -183,26 +184,6 @@ function head(puzzle) {
       spelregelBlok(puzzle),
     ]),
   ]);
-}
-
-// De kleur van het genre als variabelen op de puzzelpagina. Zo kleurt de
-// lijst om het bord, de aanwijzingenbalk en de kop mee met de wereld waar de
-// zaak zich afspeelt, zonder dat elk onderdeel de wereld hoeft te kennen.
-function genreStijl(puzzle) {
-  const accent = puzzle.world?.accent ?? '#a3551f';
-  return `--genre: ${accent}; --genre-diep: ${verdiep(accent)};`;
-}
-
-// Dezelfde kleur, maar donker genoeg om een lijst van te maken waar een licht
-// bord goed op uitkomt.
-function verdiep(hex) {
-  const m = /^#?([0-9a-f]{6})$/i.exec(hex);
-  if (!m) return '#3a2e22';
-  const n = parseInt(m[1], 16);
-  const r = Math.round(((n >> 16) & 255) * 0.3 + 18);
-  const g = Math.round(((n >> 8) & 255) * 0.3 + 14);
-  const b = Math.round((n & 255) * 0.3 + 12);
-  return `rgb(${r} ${g} ${b})`;
 }
 
 // De spelregels bij de puzzel. Dichtgeklapt, want wie het spel kent heeft ze

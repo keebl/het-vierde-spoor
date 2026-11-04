@@ -6,8 +6,13 @@ import { CATALOG } from '../content/catalog.js';
 import { WORLDS } from '../content/worlds.js';
 import { LEVELS } from '../engine/difficulty.js';
 import { solvedIds, onthuldIds } from './state.js';
-import { puzzleId } from '../puzzle.js';
+import { puzzleId, buildPuzzle } from '../puzzle.js';
+import { renderKamerbord } from './board-rooms.js';
+import { catalogSettings } from '../content/catalog.js';
 import { sceneVoor } from './scenes.js';
+import { genreStijl } from './genre.js';
+import { WORLD_BY_ID } from '../content/worlds.js';
+import { MECHANIC_BY_ID } from '../content/assignments.js';
 
 const STAPPEN = [
   {
@@ -32,8 +37,13 @@ export function renderHome(mount) {
   mount.replaceChildren();
 
   // ---------------------------------------------------------------- hero
+  // Een echte plattegrond naast de tekst, geen plaatje van een plattegrond:
+  // het eerste wat je ziet is waar het spel over gaat. Hij wordt hier
+  // gebouwd uit de eerste instappuzzel, dus hij klopt ook echt.
+  const voorbeeld = instap[0] ? bordVoorbeeld(instap[0]) : null;
+
   mount.append(
-    el('section', { class: 'hero' }, [
+    el('section', { class: voorbeeld ? 'hero hero-met-bord' : 'hero' }, [
       el('div', {}, [
         el('p', { class: 'eyebrow', text: 'Deductiepuzzels' }),
         el('h1', { text: 'Puzzels die je uitredeneert' }),
@@ -54,6 +64,7 @@ export function renderHome(mount) {
         class: 'hero-note',
         text: 'Geen account nodig. Je voortgang blijft in deze browser bewaard.',
       }),
+      voorbeeld,
     ])
   );
 
@@ -145,6 +156,82 @@ export function puzzelRij(entry, done, nummer, bekeken = new Set()) {
           : null,
       el('span', { text: niveau.label }),
       bolletjes,
+    ]),
+  ]);
+}
+
+
+// Een puzzel als kaart in plaats van als regel.
+//
+// De bibliotheek was een lijst met tekst en verder niets. Een kaart laat
+// meteen zien in welke wereld je terechtkomt: de sfeertekening van dat genre
+// als omslag, de kleur van dat genre eromheen, en het teken van het speltype
+// op een penning in de hoek. Opgelost staat erop als stempel.
+// Een plattegrond om naar te kijken, niet om in te spelen: hij staat op de
+// voordeur als voorproefje. Daarom een leeg bord - niemand neergezet, geen
+// kruisjes - en een link die je naar de echte puzzel brengt.
+function bordVoorbeeld(entry) {
+  let puzzle;
+  try {
+    puzzle = buildPuzzle(catalogSettings(entry));
+  } catch {
+    return null;
+  }
+  if (puzzle.kind !== 'kamer') return null;
+
+  const leeg = {
+    plaats: {},
+    kruis: new Set(),
+    schets: {},
+    gekozen: -1,
+    plaatsVanCel: () => null,
+    fout: new Set(),
+  };
+  const bord = renderKamerbord(puzzle, leeg, { klikCel: () => {} });
+  return el('a', {
+    class: 'hero-bord',
+    href: `#/puzzel/${puzzleId(entry)}`,
+    'aria-label': `Open ${entry.titel}`,
+  }, [bord, el('span', { class: 'hero-bord-label', text: entry.titel })]);
+}
+
+export function puzzelKaart(entry, done, bekeken = new Set()) {
+  const id = puzzleId(entry);
+  const wereld = WORLD_BY_ID.get(entry.wereld);
+  const niveau = LEVELS[entry.niveau];
+  const speltype = MECHANIC_BY_ID.get(entry.mechaniek);
+
+  // Drie zaken in hetzelfde genre krijgen dezelfde tekening. Door per puzzel
+  // een ander stuk ervan te laten zien, lijken ze toch niet op elkaar.
+  let som = 0;
+  for (let i = 0; i < id.length; i++) som = (som * 31 + id.charCodeAt(i)) % 1000;
+  const verschuiving = [-13, -5, 4, 12][som % 4];
+  const beeld = el('span', { class: 'kaart-beeld' }, [
+    sceneVoor(entry.wereld, wereld?.accent),
+    el('span', { class: 'kaart-merk', title: speltype?.name ?? '', text: speltype?.icon ?? '' }),
+  ]);
+  beeld.firstChild.style.transform = `translateX(${verschuiving}%) scale(1.22)`;
+
+  const bolletjes = el('span', { class: 'dots', title: `Niveau ${entry.niveau}: ${niveau.label}` },
+    [1, 2, 3, 4, 5].map((n) => el('span', { class: n <= entry.niveau ? 'dot on' : 'dot' })));
+
+  return el('a', {
+    class: 'kaart',
+    href: `#/puzzel/${id}`,
+    style: genreStijl(wereld),
+  }, [
+    beeld,
+    done.has(id) ? el('span', { class: 'kaart-stempel', text: 'opgelost' }) : null,
+    bekeken.has(id) && !done.has(id)
+      ? el('span', { class: 'kaart-stempel kaart-stempel-grijs', text: 'bekeken' })
+      : null,
+    el('span', { class: 'kaart-tekst' }, [
+      el('span', { class: 'kaart-titel', text: entry.titel }),
+      el('span', { class: 'kaart-sub', text: entry.sub }),
+      el('span', { class: 'kaart-voet' }, [
+        el('span', { text: `${speltype?.name ?? ''} · ${niveau.label}` }),
+        bolletjes,
+      ]),
     ]),
   ]);
 }
