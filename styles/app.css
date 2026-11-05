@@ -1285,4 +1285,19 @@ table.latin td.cell { width: 78px; height: 46px; }
   .kamerlicht,
   .bordvignet,
   .meubelschaduw { display: none; }
+
+  /* De meubels blijven, maar als lijntekening. Een geschilderd meubelstuk is
+     op papier een grijze klodder waar je niet meer in kunt schrijven, terwijl
+     elk onderdeel al zijn eigen omtrek heeft - haal het licht, de schaduw, de
+     textuur en de vulling weg en er staat precies de prent die je op papier
+     wilt. */
+  .geschilderd .gs-contact,
+  .geschilderd .gs-diepte,
+  .geschilderd .gs-glans,
+  .geschilderd .gs-textuur,
+  .geschilderd .gs-draadglans { display: none; }
+
+  .geschilderd .gs-vlak { fill: #fff; }
+  .geschilderd .gs-omtrek { stroke: #000; opacity: 1; }
+  .geschilderd .gs-draad { stroke: #000; }
 }

@@ -10,6 +10,8 @@
 import { WORLDS } from '../src/content/worlds.js';
 import { SOORT_VAN, VLOER_VAN, MEUBELS_VAN } from '../src/content/kamersoorten.js';
 import { MEUBELKUNST } from '../src/ui/meubelkunst.js';
+import { GESCHILDERD } from '../src/ui/meubelkunst-geschilderd.js';
+import { STOFFEN } from '../src/ui/geschilderd.js';
 import { DESSINS } from '../src/ui/board-rooms.js';
 import { motievenVoor } from '../src/ui/aankleding.js';
 
@@ -52,6 +54,7 @@ const namen = new Map();
 const sleutels = new Map();
 for (const { soort, naam, sleutel } of paren) {
   if (!MEUBELKUNST[sleutel]) meld('GEEN TEKENING', `${soort}/${naam} -> ${sleutel}`);
+  if (!GESCHILDERD[sleutel]) meld('GEEN GESCHILDERDE TEKENING', `${soort}/${naam} -> ${sleutel}`);
   if (namen.has(naam) && namen.get(naam) !== sleutel) {
     meld('NAAM TWEE KEER', `${naam} (${namen.get(naam)} en ${sleutel})`);
   }
@@ -63,6 +66,9 @@ for (const { soort, naam, sleutel } of paren) {
 }
 for (const sleutel of Object.keys(MEUBELKUNST)) {
   if (!sleutels.has(sleutel)) meld('TEKENING ONGEBRUIKT', sleutel);
+}
+for (const sleutel of Object.keys(GESCHILDERD)) {
+  if (!sleutels.has(sleutel)) meld('GESCHILDERDE TEKENING ONGEBRUIKT', sleutel);
 }
 
 // ------------------------------------------------- en tekent de tekening iets?
@@ -119,6 +125,22 @@ function omhulsel(d) {
           y = rel ? y + g[i + 5] : g[i + 5];
         }
         break;
+      case 'Q':
+      case 'S':
+        for (let i = 0; i + 3 < g.length; i += 4) {
+          raak(rel ? x + g[i] : g[i], rel ? y + g[i + 1] : g[i + 1]);
+          x = rel ? x + g[i + 2] : g[i + 2];
+          y = rel ? y + g[i + 3] : g[i + 3];
+          raak(x, y);
+        }
+        break;
+      case 'T':
+        for (let i = 0; i + 1 < g.length; i += 2) {
+          x = rel ? x + g[i] : g[i];
+          y = rel ? y + g[i + 1] : g[i + 1];
+          raak(x, y);
+        }
+        break;
       case 'A':
         for (let i = 0; i + 6 < g.length; i += 7) {
           const rx = Math.abs(g[i]);
@@ -158,42 +180,64 @@ function boogStappen(d) {
   return uit;
 }
 
-for (const [sleutel, delen] of Object.entries(MEUBELKUNST)) {
+// Dezelfde regels gelden voor beide sets: de oude tekeningen (nog in gebruik
+// op de vergelijkpagina) en de geschilderde (die op het bord staan). Wat de
+// toets per onderdeel wil weten is steeds hetzelfde: een gevuld pad sluit een
+// vlak, een lijn is open, het past in het vierkant, en het meubelstuk staat
+// op de vloer.
+function keurTekening(label, delen) {
   let laagste = -Infinity;
   let hoogste = Infinity;
   let links = Infinity;
   let rechts = -Infinity;
-  for (const [d, kleur, soort] of delen) {
+  for (const { d, lijn, stof, kleur } of delen) {
     const gesloten = /[Zz]\s*$/.test(d);
-    if (soort === 'lijn') {
-      if (gesloten) meld('LIJN IS DICHT', `${sleutel}: ${d}`);
+    if (lijn) {
+      if (gesloten) meld('LIJN IS DICHT', `${label}: ${d}`);
     } else if (!gesloten) {
       // Een open pad met een vulling tekent niets of bijna niets. Zo was de
       // waterput zijn dak kwijt en de vleugel zijn poten.
-      meld('VULLING ZONDER VLAK', `${sleutel}: ${d}`);
+      meld('VULLING ZONDER VLAK', `${label}: ${d}`);
     }
     // Een boog die op zijn eigen beginpunt eindigt: dan is uit de code niet
     // te zien naar welke kant de cirkel valt (en dus ook niet of het
     // meubelstuk op de vloer staat). Twee halve bogen wel.
     for (const [dx, dy] of boogStappen(d)) {
-      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) meld('CIRKELTRUC', `${sleutel}: ${d}`);
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) meld('CIRKELTRUC', `${label}: ${d}`);
     }
-    if (!/^#[0-9a-f]{6}$/i.test(kleur)) meld('RARE KLEUR', `${sleutel}: ${kleur}`);
+    if (kleur != null && !/^#[0-9a-f]{6}$/i.test(kleur)) meld('RARE KLEUR', `${label}: ${kleur}`);
+    // Een materiaal dat niet bestaat valt stil terug op hout, en dan sta je
+    // naar een koperen ketel te kijken die van hout is.
+    if (stof != null && !STOFFEN[stof]) meld('MATERIAAL BESTAAT NIET', `${label}: ${stof}`);
     const b = omhulsel(d);
     laagste = Math.max(laagste, b.maxY);
     hoogste = Math.min(hoogste, b.minY);
     links = Math.min(links, b.minX);
     rechts = Math.max(rechts, b.maxX);
     if (b.minX < -1 || b.minY < -1 || b.maxX > 49 || b.maxY > 49) {
-      meld('BUITEN HET VAKJE', `${sleutel}: ${d} (${Math.round(b.minX)},${Math.round(b.minY)} - ${Math.round(b.maxX)},${Math.round(b.maxY)})`);
+      meld('BUITEN HET VAKJE', `${label}: ${d} (${Math.round(b.minX)},${Math.round(b.minY)} - ${Math.round(b.maxX)},${Math.round(b.maxY)})`);
     }
   }
   // Een meubelstuk staat op de vloer. Zweeft het, dan is dat op het bord
   // meteen te zien - zo is het zwevende bed gevonden.
-  if (laagste < 36) meld('ZWEEFT', `${sleutel}: onderkant op ${Math.round(laagste)} van 48`);
-  if (rechts - links < 14) meld('TE SMAL', `${sleutel}: ${Math.round(rechts - links)} breed`);
-  if (laagste - hoogste < 14) meld('TE PLAT', `${sleutel}: ${Math.round(laagste - hoogste)} hoog`);
-  if (delen.length < 3) meld('TE KAAL', `${sleutel}: ${delen.length} onderdelen`);
+  if (laagste < 36) meld('ZWEEFT', `${label}: onderkant op ${Math.round(laagste)} van 48`);
+  if (rechts - links < 14) meld('TE SMAL', `${label}: ${Math.round(rechts - links)} breed`);
+  if (laagste - hoogste < 14) meld('TE PLAT', `${label}: ${Math.round(laagste - hoogste)} hoog`);
+  if (delen.length < 3) meld('TE KAAL', `${label}: ${delen.length} onderdelen`);
+  // Precies één onderdeel raakt de grond. Nul betekent dat er geen
+  // contactschaduw staat en het ding zweeft; meer dan één is modder.
+  const staan = delen.filter((o) => o.grond).length;
+  if (delen.some((o) => 'grond' in o) || delen.some((o) => o.stof)) {
+    if (staan === 0) meld('GEEN CONTACT', label);
+    if (staan > 1) meld('TE VEEL CONTACT', `${label}: ${staan} onderdelen op de grond`);
+  }
+}
+
+for (const [sleutel, delen] of Object.entries(MEUBELKUNST)) {
+  keurTekening(`oud/${sleutel}`, delen.map(([d, kleur, soort]) => ({ d, kleur, lijn: soort === 'lijn' })));
+}
+for (const [sleutel, delen] of Object.entries(GESCHILDERD)) {
+  keurTekening(sleutel, delen);
 }
 
 console.log('');

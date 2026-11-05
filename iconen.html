@@ -26,8 +26,11 @@
   import { WORLDS } from './src/content/worlds.js';
   import { ICOON_VAN } from './src/content/iconen.js';
   import { icoonElement } from './src/ui/icons.js';
-  import { portretElement } from './src/ui/personenkunst.js';
-  import { MEUBELKUNST, tekenMeubel } from './src/ui/meubelkunst.js';
+  import { portretElement } from './src/ui/personenkunst-geschilderd.js';
+  import { tekenGeschilderd } from './src/ui/geschilderd.js';
+  import { GESCHILDERD } from './src/ui/meubelkunst-geschilderd.js';
+  const MEUBELKUNST = GESCHILDERD;
+  const tekenMeubel = (svg, naam, o) => tekenGeschilderd(svg, GESCHILDERD[naam], o);
   import { MEUBELS_VAN } from './src/content/kamersoorten.js';
 
   const VELDEN = [

@@ -11,7 +11,7 @@ import { CATALOG, catalogSettings } from '../content/catalog.js';
 import { puzzleId } from '../puzzle.js';
 import { sceneVoor } from './scenes.js';
 import { renderKamerbord, renderLegenda, PENNING } from './board-rooms.js';
-import { portretElement } from './personenkunst.js';
+import { portretElement } from './personenkunst-geschilderd.js';
 
 export function renderPlayer(puzzle, mount) {
   const saved = loadProgress(puzzle.id) ?? {};

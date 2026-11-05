@@ -92,9 +92,18 @@ export const STOFFEN = {
 // de schaduwrand doorlaat. De maskers rekenen per vorm, niet per tekening -
 // zo krijgt elk onderdeel zijn eigen lichtkant, net als in een prent.
 
-function zorgVoorDefs(svgWortel) {
-  let defs = svgWortel.querySelector('defs.gs-defs');
-  if (defs) return;
+// Eén palet voor de hele pagina, niet een palet per tekening.
+//
+// Een bord van twaalf bij twaalf heeft zo'n negentig tekeningen plus de
+// legenda, en elke tekening in zijn eigen svg zetten betekende zestig keer
+// dezelfde drieentwintig verlopen, vijf patronen en twee maskers: duizenden
+// knooppunten die geen pixel opleveren. In een HTML-pagina zoekt url(#...)
+// door het hele document, dus één verzameling in een verborgen svg is genoeg.
+function paletDefs() {
+  let defs = document.querySelector('defs.gs-defs');
+  if (defs) return defs;
+  const houder = el('svg', { class: 'gs-palet', 'aria-hidden': 'true', focusable: 'false' });
+  houder.setAttribute('style', 'position:absolute;width:0;height:0;overflow:hidden');
   defs = el('defs', { class: 'gs-defs' });
 
   const randOp = el('linearGradient', { id: 'gs-randverloop', x1: '0', y1: '0', x2: '0.75', y2: '1' });
@@ -169,7 +178,9 @@ function zorgVoorDefs(svgWortel) {
     defs.append(g);
   }
 
-  svgWortel.insertBefore(defs, svgWortel.firstChild);
+  houder.append(defs);
+  document.body.append(houder);
+  return defs;
 }
 
 // Een materiaal uit een losse kleur.
@@ -187,10 +198,10 @@ export function stofVanKleur(hex) {
 }
 
 // Zorg dat er een verloop bestaat voor een losse kleur, en geef zijn naam.
-function zorgVoorKleur(svgWortel, hex) {
+function zorgVoorKleur(hex) {
   const naam = `los-${hex.slice(1)}`;
-  const defs = svgWortel.querySelector('defs.gs-defs');
-  if (!defs || defs.querySelector(`#gs-${naam}`)) return naam;
+  const defs = paletDefs();
+  if (defs.querySelector(`#gs-${naam}`)) return naam;
   const { kern, koel, warm } = stofVanKleur(hex);
   const g = el('linearGradient', { id: `gs-${naam}`, x1: '0', y1: '0', x2: '0.72', y2: '1' });
   g.append(el('stop', { offset: '0%', 'stop-color': meng(kern, warm, 0.62) }));
@@ -199,14 +210,6 @@ function zorgVoorKleur(svgWortel, hex) {
   g.append(el('stop', { offset: '100%', 'stop-color': meng(kern, koel, 0.68) }));
   defs.append(g);
   return naam;
-}
-
-// Waar hangt de defs aan? Altijd aan de buitenste svg, anders staat hij in een
-// groep die later weggegooid wordt.
-function wortelVan(node) {
-  let n = node;
-  while (n && n.tagName !== 'svg') n = n.parentNode;
-  return n ?? node;
 }
 
 // ------------------------------------------------------------- een vorm zetten
@@ -223,19 +226,19 @@ function zetVorm(g, vorm, stof, { fijn, eerste, verloop }) {
   if (vorm.grond) {
     g.append(el('path', {
       d, fill: koel, opacity: 0.5, filter: 'url(#gs-vaag)',
-      transform: 'translate(1.1 1.8)',
+      transform: 'translate(1.1 1.8)', class: 'gs-contact',
     }));
   }
 
   // 2. Het vlak, met het volle bereik van licht naar schaduw.
-  g.append(el('path', { d, fill: `url(#gs-${verloop})`, 'fill-rule': vorm.gat ? 'evenodd' : null }));
+  g.append(el('path', { d, fill: `url(#gs-${verloop})`, 'fill-rule': vorm.gat ? 'evenodd' : null, class: 'gs-vlak' }));
 
   if (fijn) {
     // 3. De schaduwrand aan de donkere kant: waar een vorm wegdraait van het
     //    licht wordt hij donkerder, en het meest vlak langs de rand.
     g.append(el('path', {
       d, fill: 'none', stroke: koel, 'stroke-width': 3.4, opacity: 0.55,
-      mask: 'url(#gs-diep)', 'clip-path': vorm.knip,
+      mask: 'url(#gs-diep)', 'clip-path': vorm.knip, class: 'gs-diepte',
     }));
 
     // 4. Het randlicht. Een smalle heldere rand langs de lichtkant, binnen de
@@ -243,6 +246,7 @@ function zetVorm(g, vorm, stof, { fijn, eerste, verloop }) {
     g.append(el('path', {
       d, fill: 'none', stroke: meng(warm, '#ffffff', 0.35), 'stroke-width': 1.7,
       opacity: vorm.glans ?? stof.rand ?? 0.6, mask: 'url(#gs-rand)', 'clip-path': vorm.knip,
+      class: 'gs-glans',
     }));
   }
 
@@ -251,7 +255,7 @@ function zetVorm(g, vorm, stof, { fijn, eerste, verloop }) {
   if (fijn && stof.textuur) {
     g.append(el('path', {
       d, fill: `url(#gs-${stof.textuur})`, 'fill-rule': vorm.gat ? 'evenodd' : null,
-      'pointer-events': 'none',
+      'pointer-events': 'none', class: 'gs-textuur',
     }));
   }
 
@@ -261,7 +265,7 @@ function zetVorm(g, vorm, stof, { fijn, eerste, verloop }) {
   g.append(el('path', {
     d, fill: 'none', stroke: meng(koel, '#000000', 0.45),
     'stroke-width': eerste ? 1.5 : 0.85, 'stroke-linejoin': 'round', 'stroke-linecap': 'round',
-    'fill-rule': vorm.gat ? 'evenodd' : null, opacity: 0.9,
+    'fill-rule': vorm.gat ? 'evenodd' : null, opacity: 0.9, class: 'gs-omtrek',
   }));
 }
 
@@ -270,11 +274,12 @@ function zetLijn(g, vorm, stof) {
   g.append(el('path', {
     d: vorm.d, fill: 'none', stroke: meng(stof.kern, stof.koel, 0.35),
     'stroke-width': vorm.dik ?? 1.6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+    class: 'gs-draad',
   }));
   g.append(el('path', {
     d: vorm.d, fill: 'none', stroke: meng(stof.warm, '#ffffff', 0.2),
     'stroke-width': (vorm.dik ?? 1.6) * 0.42, 'stroke-linecap': 'round',
-    opacity: 0.75, transform: 'translate(-0.35 -0.45)',
+    opacity: 0.75, transform: 'translate(-0.35 -0.45)', class: 'gs-draadglans',
   }));
 }
 
@@ -288,7 +293,7 @@ function zetLijn(g, vorm, stof) {
 // blijft het bereik van het verloop over, en dat is het meeste.
 export function tekenGeschilderd(ouder, delen, { x = 0, y = 0, grootte = 48 } = {}) {
   if (!delen || !delen.length) return null;
-  zorgVoorDefs(wortelVan(ouder));
+  paletDefs();
 
   const g = el('g', {
     class: 'geschilderd',
@@ -296,7 +301,6 @@ export function tekenGeschilderd(ouder, delen, { x = 0, y = 0, grootte = 48 } = 
   });
 
   const fijn = grootte >= 34;
-  const wortel = wortelVan(ouder);
   let eerste = true;
   for (const vorm of delen) {
     const stof = vorm.kleur ? stofVanKleur(vorm.kleur) : (STOFFEN[vorm.stof] ?? STOFFEN.hout);
@@ -304,7 +308,7 @@ export function tekenGeschilderd(ouder, delen, { x = 0, y = 0, grootte = 48 } = 
       zetLijn(g, vorm, stof);
       continue;
     }
-    const verloop = vorm.kleur ? zorgVoorKleur(wortel, vorm.kleur) : (STOFFEN[vorm.stof] ? vorm.stof : 'hout');
+    const verloop = vorm.kleur ? zorgVoorKleur(vorm.kleur) : (STOFFEN[vorm.stof] ? vorm.stof : 'hout');
     zetVorm(g, vorm, stof, { fijn, eerste, verloop });
     eerste = false;
   }

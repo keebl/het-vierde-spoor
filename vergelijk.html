@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nu naast nieuw · Het Vierde Spoor</title>
+<title>Oud naast nieuw · Het Vierde Spoor</title>
 <link rel="stylesheet" href="styles/app.css">
 <style>
   body { padding: 28px 20px 80px; }
@@ -31,9 +31,11 @@
 <body>
 <main>
   <div class="uitleg">
-    <h1>Nu naast nieuw</h1>
-    <p>Links staat de tekening zoals hij nu op het bord staat. Rechts staat
-      dezelfde tekening, opnieuw gemaakt met een andere motor.</p>
+    <h1>Oud naast nieuw</h1>
+    <p>Rechts staat wat er nu op het bord staat. Links staat de tekening
+      zoals hij eerder was, met de oude motor. Deze pagina blijft staan om
+      het verschil te kunnen blijven zien; het bord zelf gebruikt alleen nog
+      de rechterkolom.</p>
     <p>Het verschil zit in vier dingen, en in geen ervan in "meer lijntjes":
       elk vlak loopt nu van bijna zijn lichtste naar bijna zijn donkerste
       kleur; de schaduw trekt naar violet in plaats van naar dezelfde kleur
@@ -90,7 +92,7 @@ function paar(titel, oud, nieuw) {
   kop.textContent = titel;
   const rij = document.createElement('div');
   rij.className = 'rij';
-  for (const [naam, teken] of [['Zoals het nu is', oud], ['Opnieuw getekend', nieuw]]) {
+  for (const [naam, teken] of [['Zoals het was', oud], ['Zoals het nu is', nieuw]]) {
     const kolom = document.createElement('div');
     kolom.className = 'kolom';
     const label = document.createElement('p');
@@ -173,7 +175,7 @@ const MEUBELS = [
 // een oogopslag door elkaar haalt, deugt de set niet - je moet ze uit elkaar
 // kunnen houden zonder de letter te lezen.
 const mensen = document.getElementById('mensen');
-for (const [naam, teken] of [['Zoals het nu is', persoonOud], ['Opnieuw getekend', persoonNieuw]]) {
+for (const [naam, teken] of [['Zoals het was', persoonOud], ['Zoals het nu is', persoonNieuw]]) {
   const kolom = document.createElement('div');
   kolom.className = 'kolom';
   const label = document.createElement('p');
@@ -194,9 +196,9 @@ for (const [naam, teken] of [['Zoals het nu is', persoonOud], ['Opnieuw getekend
 }
 
 const bordrij = document.getElementById('bordrij');
-bordrij.append(bordKolom('Zoals het nu is', (svg, sleutel, x, y) =>
+bordrij.append(bordKolom('Zoals het was', (svg, sleutel, x, y) =>
   tekenMeubel(svg, sleutel, { x, y, grootte: CEL - 4 })));
-bordrij.append(bordKolom('Opnieuw getekend', (svg, sleutel, x, y) =>
+bordrij.append(bordKolom('Zoals het nu is', (svg, sleutel, x, y) =>
   tekenGeschilderd(svg, GESCHILDERD[sleutel], { x, y, grootte: CEL - 4 })));
 
 for (const [sleutel, titel] of MEUBELS) {

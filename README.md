@@ -270,13 +270,32 @@ thema, laadt direct, en er kleeft geen licentie aan.
   de content aan precies één icoon. Er wordt niets geraden en niets geleend:
   `tools/check-iconen.mjs` faalt zodra er een woord bijkomt zonder eigen
   icoon.
-- `src/ui/meubelkunst.js` - zeventig gevulde meubeltekeningen voor het
-  speurdokubord, elk meubelstuk met zijn eigen plaatje. Eerder leenden
-  meerdere namen hetzelfde plaatje, en dan ziet een aanrecht eruit als een
-  tafel. `tools/check-kamers.mjs` faalt nu op een geleende tekening, op een
-  gevuld pad dat geen vlak omsluit (dat tekent niets), op een meubelstuk dat
-  zweeft in plaats van op de vloer te staan, en op een cirkel waarvan uit de
-  code niet te zien is naar welke kant hij valt.
+- `src/ui/geschilderd.js` - de tekenmotor van het speurdokubord. Een vlak
+  met één kleur en een lijntje eromheen blijft een pictogram, hoeveel
+  onderdelen je er ook in stopt. Wat een prent ervan maakt zijn vier dingen:
+  elk vlak loopt van bijna zijn lichtste naar bijna zijn donkerste kleur; de
+  schaduw trekt naar violet in plaats van naar dezelfde kleur donkerder;
+  langs de verlichte kant ligt een smalle heldere rand; en waar iets de
+  vloer raakt is het donker. Daar bovenop krijgt elk materiaal zijn eigen
+  textuur - nerf in hout, korrel in steen, weefsel in stof. Het licht komt
+  overal uit linksboven; dat is geen stijlkeuze maar de voorwaarde.
+- `src/ui/vormen.js` - de bouwstenen van de silhouetten. Een romp loopt naar
+  boven iets taps toe, een plank zakt door, een poot wordt naar onder dunner.
+  Die kromming staat hier één keer, anders worden zeventig meubelstukken
+  zeventig verschillende handschriften.
+- `src/ui/meubelkunst-geschilderd.js` - zeventig meubeltekeningen voor dat
+  bord, elk meubelstuk met zijn eigen plaatje. Eerder leenden meerdere namen
+  hetzelfde plaatje, en dan ziet een aanrecht eruit als een tafel.
+  `tools/check-kamers.mjs` faalt op een geleende tekening, op een gevuld pad
+  dat geen vlak omsluit (dat tekent niets), op een meubelstuk dat zweeft in
+  plaats van op de vloer te staan, op een materiaal dat niet bestaat, en op
+  een cirkel waarvan uit de code niet te zien is naar welke kant hij valt.
+  `src/ui/meubelkunst.js` is de oude set; die staat alleen nog op
+  `vergelijk.html`, naast de nieuwe.
+- Op papier gaat het licht eruit. Elk onderdeel heeft al zijn eigen omtrek,
+  dus de afdruk haalt de vulling, de schaduw, het randlicht en de textuur weg
+  en houdt de lijntekening over - anders is een meubelstuk een grijze klodder
+  waar je niet meer in kunt schrijven.
 - `src/ui/scenes.js` - een sfeertekening per wereld, opgebouwd uit drie
   dieptelagen die naar voren toe donkerder worden, wat atmosfeer (regen,
   sterren, mist) en precies een goudkleurig lichtpunt. Dat ene lichtje doet

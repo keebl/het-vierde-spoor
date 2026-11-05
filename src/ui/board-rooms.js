@@ -9,11 +9,18 @@
 // op tafel ligt.
 
 import { tekenIcoon } from './icons.js';
-import { tekenMeubel } from './meubelkunst.js';
-import { tekenPersoon } from './personenkunst.js';
+import { tekenGeschilderd } from './geschilderd.js';
+import { GESCHILDERD } from './meubelkunst-geschilderd.js';
+import { tekenPersoon } from './personenkunst-geschilderd.js';
 import { icoonVan } from '../content/iconen.js';
 import { soortVan, VLOER_VAN } from '../content/kamersoorten.js';
 import { tekenAankleding, tekenSnippers } from './aankleding.js';
+
+// Een meubelstuk zetten. De tekeningen staan in meubelkunst-geschilderd.js
+// als lijstjes onderdelen; geschilderd.js doet het licht. Dat is één laag
+// meer dan "teken plaatje X", en die laag is precies waar het verschil zit
+// tussen een prent en een pictogram.
+const tekenMeubel = (ouder, naam, opties) => tekenGeschilderd(ouder, GESCHILDERD[naam], opties);
 
 const NS = 'http://www.w3.org/2000/svg';
 const el = (naam, attrs = {}) => {
