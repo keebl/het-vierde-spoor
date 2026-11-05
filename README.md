@@ -325,6 +325,20 @@ thema, laadt direct, en er kleeft geen licentie aan.
   een wereld zonder lijst, op een lijst die te licht is om er een te zijn, en
   op een hoekornament met een pad dat geen vlak omsluit. Op papier gaat de
   lijst eruit: daar is het een brede donkere balk die alleen inkt kost.
+- `src/ui/randornamenten.js` - wat er op die lijst hangt, staat en kruipt.
+  De lijst was per wereld al anders, maar hij was keurig: een band met om de
+  zoveel eenheden hetzelfde motiefje. Keurig is precies het probleem. Nu
+  hangen er hangplanten over de rand het bord in, staan er grafzerken scheef
+  tegen de onderrand, zit er een uil op de zijkant en staat er een
+  tovenaarshoed boven op de puzzel. Per wereld vijf tot zeven dingen, met de
+  hand neergezet, niets op een rooster en niets symmetrisch - twee dezelfde
+  dingen tegenover elkaar is weer een lijst. Daarvoor heeft het bord lucht om
+  zich heen gekregen: het blad met zijn schaduw wordt nu in de tekening gezet
+  in plaats van als achtergrond op de svg, want een achtergrond vult ook die
+  lucht en dan kan er niets meer buiten het bord uitsteken.
+  `tools/check-kamers.mjs` faalt op een wereld met minder dan vier dingen op
+  de rand, op alles aan dezelfde kant, en op iets dat verder dan een halve
+  cel het speelveld in hangt.
 - Het kruisraster en het dienstrooster zijn tabellen. Daar staat in de rijen
   wie het zijn, en die krijgen hun eigen geschilderde kop - dezelfde als op de
   knoppen en op het speurdokubord, zodat je iemand over de puzzelsoorten heen

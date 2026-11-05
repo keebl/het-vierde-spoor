@@ -84,7 +84,7 @@ button { font-family: inherit; }
 
 .brand {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--s2);
   text-decoration: none;
   font-family: var(--display);
@@ -94,7 +94,10 @@ button { font-family: inherit; }
   white-space: nowrap;
 }
 
-.brand-mark { color: var(--accent); }
+.brand-mark { display: inline-flex; color: var(--accent); }
+.brand-mark svg { display: block; }
+.brand-mark circle { fill: currentColor; }
+.brand-mark .spoor-vier { fill: none; stroke: currentColor; stroke-width: 1.8; }
 
 .nav { display: flex; gap: var(--s1); }
 
@@ -759,7 +762,13 @@ input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: -1p
 .clue[aria-pressed="true"] { color: var(--text-3); }
 .clue[aria-pressed="true"] .clue-text { text-decoration: line-through; }
 
-.toolbar { display: flex; gap: var(--s2); flex-wrap: wrap; margin-top: var(--s5); }
+.toolbar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: var(--s2);
+  margin-top: var(--s5);
+}
+.toolbar .btn { justify-content: center; }
 
 .note {
   margin-top: var(--s4);
@@ -949,12 +958,12 @@ table.latin td.cell { width: 78px; height: 46px; }
   height: auto;
   max-width: min(680px, 100%);
   display: block;
-  border-radius: var(--r);
-  background: var(--genre-diep, #3a2e22);
-  /* De lijst wordt nu getekend (src/ui/bordrand.js), dus geen tweede
-     randje er nog eens overheen. */
-  box-shadow: 0 10px 30px rgba(50, 36, 18, 0.35);
+  /* Geen achtergrond en geen schaduw meer op de svg zelf: die vullen ook de
+     lucht om het bord, en dan kan er niets meer buiten het bord uitsteken.
+     Het blad en zijn schaduw worden nu in de tekening gezet. */
 }
+
+.bordblad { fill: var(--genre-diep, #3a2e22); }
 
 .dessinlijn { fill: none; stroke: rgba(90, 70, 45, 0.34); stroke-width: 1.1; }
 .dessinvlak { fill: rgba(255, 252, 240, 0.42); }
@@ -1157,8 +1166,8 @@ table.latin td.cell { width: 78px; height: 46px; }
 .klikvak-dicht { cursor: default; pointer-events: none; }
 
 .legenda {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
   gap: var(--s2) var(--s4);
   margin-bottom: var(--s4);
 }
@@ -1326,5 +1335,9 @@ table.latin td.cell { width: 78px; height: 46px; }
      een brede donkere balk die alleen inkt kost. De rij- en kolomaanduiding
      staat erbinnen en blijft dus gewoon staan. */
   .bordrand,
-  .bordhoeken { display: none; }
+  .bordhoeken,
+  .bordhangers { display: none; }
+
+  /* Zonder lijst hoeft het bord ook niet op een blad te liggen. */
+  .bordblad { fill: #fff; }
 }

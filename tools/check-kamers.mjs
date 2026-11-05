@@ -13,6 +13,7 @@ import { MEUBELKUNST } from '../src/ui/meubelkunst.js';
 import { GESCHILDERD } from '../src/ui/meubelkunst-geschilderd.js';
 import { STOFFEN } from '../src/ui/geschilderd.js';
 import { RANDSTIJLEN } from '../src/ui/bordrand.js';
+import { ORNAMENTEN } from '../src/ui/randornamenten.js';
 import { DESSINS } from '../src/ui/board-rooms.js';
 import { motievenVoor } from '../src/ui/aankleding.js';
 
@@ -273,6 +274,28 @@ for (const [id, stijl] of Object.entries(RANDSTIJLEN)) {
   // ruimtestation, op 0.355.
   if (helder(stijl.kern) > 0.4) meld('RAND TE LICHT', `${id}: ${stijl.kern}`);
   keurOrnament(`rand/${id}`, stijl.hoek ?? []);
+
+  // Wat er op de lijst hangt en staat. Een wereld zonder ornamenten heeft
+  // weer een kale rand, en dat was precies de klacht.
+  const dingen = ORNAMENTEN[id] ?? [];
+  if (dingen.length < 4) meld('TE WEINIG OP DE RAND', `${id}: ${dingen.length}`);
+  // Alles aan één kant is geen rand die leeft maar een rij.
+  const kanten = new Set(dingen.map((d) => d.kant));
+  if (dingen.length && kanten.size < 3) {
+    meld('RAND EENZIJDIG', `${id}: alleen ${[...kanten].join(', ')}`);
+  }
+  dingen.forEach((d, i) => {
+    const label = `rand/${id}#${i}`;
+    if (!['boven', 'onder', 'links', 'rechts'].includes(d.kant)) meld('RANDKANT RAAR', `${label}: ${d.kant}`);
+    if (!(d.t > 0.02 && d.t < 0.98)) meld('RANDPLEK RAAR', `${label}: t=${d.t}`);
+    if (!(d.maat >= 30 && d.maat <= 130)) meld('RANDMAAT RAAR', `${label}: ${d.maat}`);
+    // Steekt het verder naar binnen dan een halve cel, dan staat het niet op
+    // de rand maar op het speelveld.
+    const naarBinnen = d.maat - 24 - (d.uit ?? Math.round(d.maat * 0.3));
+    if (naarBinnen > 56) meld('RAND HANGT TE VER OVER', `${label}: ${Math.round(naarBinnen)}`);
+    if (naarBinnen < 0) meld('RAND HANGT ER NAAST', `${label}: ${Math.round(naarBinnen)}`);
+    keurOrnament(label, d.delen ?? []);
+  });
 }
 
 // Een hoekornament volgt dezelfde regels als een meubelstuk, op één na: het
@@ -290,14 +313,16 @@ function keurOrnament(label, delen) {
       meld('HOEK BUITEN HET VAKJE', `${label}: ${d}`);
     }
   }
-  if (staan !== 1) meld('HOEK CONTACT', `${label}: ${staan} onderdelen op de grond`);
+  // Een hoekstuk staat ergens op; een hangplant hangt. Nul mag dus, twee niet.
+  if (staan > 1) meld('HOEK CONTACT', `${label}: ${staan} onderdelen op de grond`);
 }
 
 console.log('');
 console.log(`plekken            ${plekken.size}, allemaal met een soort`);
 console.log(`soorten ruimte     ${soorten.size}, elk met vloer en meubilair`);
 console.log(`meubelstukken      ${paren.length} namen, ${Object.keys(MEUBELKUNST).length} eigen tekeningen`);
-console.log(`bordranden         ${Object.keys(RANDSTIJLEN).length}, één per wereld`);
+const opDeRand = Object.values(ORNAMENTEN).reduce((a, l) => a + l.length, 0);
+console.log(`bordranden         ${Object.keys(RANDSTIJLEN).length}, één per wereld, met ${opDeRand} dingen erop`);
 
 if (fouten.length) {
   console.log('');

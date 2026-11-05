@@ -30,6 +30,7 @@
 
 import { tekenGeschilderd, meng, zorgVoorPalet } from './geschilderd.js';
 import { bol, ovaal, plaat, romp, staaf, blad, hoop, zuilvorm } from './vormen.js';
+import { ORNAMENTEN } from './randornamenten.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const el = (naam, attrs = {}) => {
@@ -266,7 +267,7 @@ function verloop(defs, id, van, naar, x2, y2) {
 
 // Zet de lijst neer. `dikte` is de breedte van de band; het speelveld begint
 // daarbinnen.
-export function tekenBordrand(svg, { wereld, breedte, hoogte, dikte }) {
+export function tekenBordrand(svg, { wereld, x0 = 0, y0 = 0, breedte, hoogte, dikte }) {
   const s = RANDSTIJLEN[wereld] ?? STANDAARD;
   const diep = meng(s.kern, s.koel, 0.78);
 
@@ -284,10 +285,10 @@ export function tekenBordrand(svg, { wereld, breedte, hoogte, dikte }) {
   const g = el('g', { class: 'bordrand', 'pointer-events': 'none' });
 
   const band = (x, y, b, h, naam) => {
-    g.append(el('rect', { x, y, width: b, height: h, fill: `url(#bordrand-${naam})` }));
+    g.append(el('rect', { x: x0 + x, y: y0 + y, width: b, height: h, fill: `url(#bordrand-${naam})` }));
     if (s.textuur) {
       g.append(el('rect', {
-        x, y, width: b, height: h, fill: `url(#gs-${s.textuur})`, opacity: s.ruw ?? 0.4,
+        x: x0 + x, y: y0 + y, width: b, height: h, fill: `url(#gs-${s.textuur})`, opacity: s.ruw ?? 0.4,
       }));
     }
   };
@@ -302,16 +303,16 @@ export function tekenBordrand(svg, { wereld, breedte, hoogte, dikte }) {
   const naad = (d) => g.append(el('path', {
     d, stroke: diep, 'stroke-width': 0.9, opacity: 0.5, fill: 'none',
   }));
-  naad(`M0 0 L${dikte} ${dikte}`);
-  naad(`M${breedte} 0 L${breedte - dikte} ${dikte}`);
-  naad(`M0 ${hoogte} L${dikte} ${hoogte - dikte}`);
-  naad(`M${breedte} ${hoogte} L${breedte - dikte} ${hoogte - dikte}`);
+  naad(`M${x0} ${y0} L${x0 + dikte} ${y0 + dikte}`);
+  naad(`M${x0 + breedte} ${y0} L${x0 + breedte - dikte} ${y0 + dikte}`);
+  naad(`M${x0} ${y0 + hoogte} L${x0 + dikte} ${y0 + hoogte - dikte}`);
+  naad(`M${x0 + breedte} ${y0 + hoogte} L${x0 + breedte - dikte} ${y0 + hoogte - dikte}`);
 
   // Wat erlangs loopt. Elk motief tekent rond de oorsprong met de band langs
   // de x-as; hier wordt het naar zijn plek geschoven en meegedraaid.
   const langs = el('g', { class: 'randmotief' });
   const zet = (cx, cy, draai) => {
-    const m = el('g', { transform: `translate(${cx.toFixed(1)} ${cy.toFixed(1)}) rotate(${draai})` });
+    const m = el('g', { transform: `translate(${(x0 + cx).toFixed(1)} ${(y0 + cy).toFixed(1)}) rotate(${draai})` });
     s.motief(m, dikte);
     langs.append(m);
   };
@@ -328,22 +329,22 @@ export function tekenBordrand(svg, { wereld, breedte, hoogte, dikte }) {
 
   // Randlicht langs de buitenkant linksboven, schaduw langs rechtsonder.
   g.append(el('path', {
-    d: `M0.8 ${hoogte} L0.8 0.8 L${breedte - 0.8} 0.8`,
+    d: `M${x0 + 0.8} ${y0 + hoogte} L${x0 + 0.8} ${y0 + 0.8} L${x0 + breedte - 0.8} ${y0 + 0.8}`,
     stroke: meng(s.warm, '#ffffff', 0.3), 'stroke-width': 1.5, opacity: 0.45, fill: 'none',
   }));
   g.append(el('path', {
-    d: `M${breedte - 0.8} 0.8 L${breedte - 0.8} ${hoogte - 0.8} L0.8 ${hoogte - 0.8}`,
+    d: `M${x0 + breedte - 0.8} ${y0 + 0.8} L${x0 + breedte - 0.8} ${y0 + hoogte - 0.8} L${x0 + 0.8} ${y0 + hoogte - 0.8}`,
     stroke: diep, 'stroke-width': 1.5, opacity: 0.6, fill: 'none',
   }));
 
   // De binnenkant: een donkere sponning, zodat het speelveld in de lijst
   // ligt in plaats van ertegenaan.
   g.append(el('rect', {
-    x: dikte, y: dikte, width: breedte - dikte * 2, height: hoogte - dikte * 2,
+    x: x0 + dikte, y: y0 + dikte, width: breedte - dikte * 2, height: hoogte - dikte * 2,
     fill: 'none', stroke: diep, 'stroke-width': 3, opacity: 0.8,
   }));
   g.append(el('rect', {
-    x: dikte + 2.2, y: dikte + 2.2, width: breedte - dikte * 2 - 4.4, height: hoogte - dikte * 2 - 4.4,
+    x: x0 + dikte + 2.2, y: y0 + dikte + 2.2, width: breedte - dikte * 2 - 4.4, height: hoogte - dikte * 2 - 4.4,
     fill: 'none', stroke: meng(s.warm, '#ffffff', 0.2), 'stroke-width': 1, opacity: 0.26,
   }));
 
@@ -357,9 +358,53 @@ export function tekenBordrand(svg, { wereld, breedte, hoogte, dikte }) {
     [0, hoogte - maat],
     [breedte - maat, hoogte - maat],
   ]) {
-    tekenGeschilderd(hoeken, s.hoek, { x: hx, y: hy, grootte: maat });
+    tekenGeschilderd(hoeken, s.hoek, { x: x0 + hx, y: y0 + hy, grootte: maat });
   }
   svg.append(hoeken);
 }
 
 export const RANDWERELDEN = Object.keys(RANDSTIJLEN);
+
+// ------------------------------------------------------------- de hangers
+//
+// Wat er op de lijst hangt en staat. Dit gaat als laatste over het bord
+// heen, want het hoort eroverheen te vallen: een hangplant die netjes achter
+// het speelveld blijft is geen hangplant.
+//
+// `lucht` is hoeveel ruimte er buiten de lijst is. Steekt een ding verder
+// naar buiten dan dat, dan wordt het kleiner gemaakt in plaats van
+// afgesneden - een tovenaarshoed zonder punt is geen tovenaarshoed.
+export function tekenBordhangers(svg, {
+  wereld, x0 = 0, y0 = 0, breedte, hoogte, dikte, luchtBoven = 0, luchtZij = 0,
+}) {
+  const lijst = ORNAMENTEN[wereld];
+  if (!lijst?.length) return;
+
+  const g = el('g', { class: 'bordhangers', 'pointer-events': 'none' });
+  for (const o of lijst) {
+    const lucht = o.kant === 'boven' ? luchtBoven : luchtZij;
+    // `uit` is hoe ver het ding buiten het bord steekt, `maat` hoe groot het
+    // is. Wat daar tussenin zit valt over het speelveld heen. Zo bepaalt de
+    // maat vanzelf hoe diep iets het bord in hangt, en hoeft dat niet op twee
+    // plekken te kloppen.
+    const uit = Math.min(o.uit ?? Math.round(o.maat * 0.3), lucht);
+    const maat = o.maat;
+
+    let x;
+    let y;
+    if (o.kant === 'boven' || o.kant === 'onder') {
+      x = x0 + dikte + o.t * (breedte - dikte * 2) - maat / 2;
+      y = o.kant === 'boven' ? y0 - uit : y0 + hoogte + uit - maat;
+    } else {
+      y = y0 + dikte + o.t * (hoogte - dikte * 2) - maat / 2;
+      x = o.kant === 'links' ? x0 - uit : x0 + breedte + uit - maat;
+    }
+
+    const houder = o.draai
+      ? el('g', { transform: `rotate(${o.draai} ${(x + maat / 2).toFixed(1)} ${(y + maat / 2).toFixed(1)})` })
+      : g;
+    tekenGeschilderd(houder, o.delen, { x, y, grootte: maat });
+    if (houder !== g) g.append(houder);
+  }
+  svg.append(g);
+}

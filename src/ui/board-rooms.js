@@ -10,7 +10,7 @@
 
 import { tekenIcoon } from './icons.js';
 import { tekenGeschilderd } from './geschilderd.js';
-import { tekenBordrand } from './bordrand.js';
+import { tekenBordrand, tekenBordhangers } from './bordrand.js';
 import { GESCHILDERD } from './meubelkunst-geschilderd.js';
 import { tekenPersoon } from './personenkunst-geschilderd.js';
 import { icoonVan } from '../content/iconen.js';
@@ -34,6 +34,12 @@ const CEL = 76;
 // De lijst om het bord. Zie src/ui/bordrand.js: per wereld een ander
 // materiaal, met ornamenten in drie hoeken.
 const RAND = 24;
+// Lucht buiten de lijst, zodat er dingen op en over het bord kunnen steken:
+// een tovenaarshoed boven op de puzzel, een hangplant die over de rand valt.
+// Boven meer dan opzij, want daar gaan de hoge dingen staan en het kost daar
+// geen breedte.
+const LUCHT_BOVEN = 56;
+const LUCHT_ZIJ = 17;
 // Ruimte voor de rij- en kolomaanduiding en het kompas.
 const BAND = 22;
 const PLAAT = 20;
@@ -97,8 +103,11 @@ const LICHTBRONNEN = new Set([
 
 export function renderKamerbord(puzzle, state, acties) {
   const n = puzzle.n;
-  const breedte = n * CEL + RAND * 2 + BAND;
-  const hoogte = n * CEL + RAND * 2 + BAND;
+  // Het bord zelf, en daaromheen de lucht waar de ornamenten in steken.
+  const bordB = n * CEL + RAND * 2 + BAND;
+  const bordH = n * CEL + RAND * 2 + BAND;
+  const breedte = bordB + LUCHT_ZIJ * 2;
+  const hoogte = bordH + LUCHT_BOVEN + LUCHT_ZIJ;
 
   const svg = el('svg', {
     viewBox: `0 0 ${breedte} ${hoogte}`,
@@ -107,12 +116,26 @@ export function renderKamerbord(puzzle, state, acties) {
     'aria-label': `Plattegrond van ${n} bij ${n} vakjes`,
   });
   svg.append(dessins());
+
+  // Het blad waar het bord op ligt. Dit stond eerst als achtergrondkleur op
+  // de svg zelf, maar dan vult hij ook de lucht eromheen en kan er niets
+  // meer buiten het bord uitsteken.
+  svg.append(el('rect', {
+    x: LUCHT_ZIJ + 3, y: LUCHT_BOVEN + 6, width: bordB, height: bordH,
+    rx: 14, fill: 'rgba(40, 28, 14, 0.34)', filter: 'url(#vager)',
+  }));
+  svg.append(el('rect', {
+    x: LUCHT_ZIJ, y: LUCHT_BOVEN, width: bordB, height: bordH,
+    rx: 12, class: 'bordblad',
+  }));
+
   tekenBordrand(svg, {
-    wereld: puzzle.world?.id, breedte, hoogte, dikte: RAND,
+    wereld: puzzle.world?.id,
+    x0: LUCHT_ZIJ, y0: LUCHT_BOVEN, breedte: bordB, hoogte: bordH, dikte: RAND,
   });
 
-  const x = (c) => RAND + BAND + c * CEL;
-  const y = (r) => RAND + BAND + r * CEL;
+  const x = (c) => LUCHT_ZIJ + RAND + BAND + c * CEL;
+  const y = (r) => LUCHT_BOVEN + RAND + BAND + r * CEL;
   const rij = (i) => Math.floor(i / n);
   const kol = (i) => i % n;
   const kamer = (i) => puzzle.kamerVan[i];
@@ -379,8 +402,8 @@ export function renderKamerbord(puzzle, state, acties) {
     zij.textContent = String.fromCharCode(65 + k);
     randen.append(zij);
   }
-  const kx = RAND + BAND / 2 - 2;
-  const ky = RAND + BAND / 2 + 2;
+  const kx = LUCHT_ZIJ + RAND + BAND / 2 - 2;
+  const ky = LUCHT_BOVEN + RAND + BAND / 2 + 2;
   randen.append(el('path', { d: `M ${kx} ${ky - 9} L ${kx + 4} ${ky + 2} L ${kx} ${ky - 0.5} L ${kx - 4} ${ky + 2} Z`, class: 'kompasnaald' }));
   const nLetter = el('text', { x: kx, y: ky + 11, 'text-anchor': 'middle', class: 'kompasletter' });
   nLetter.textContent = 'N';
@@ -583,7 +606,7 @@ export function renderKamerbord(puzzle, state, acties) {
   // De hoeken van het bord wat donkerder. Het oog gaat daardoor naar het
   // midden, en het bord ligt op tafel in plaats van dat het een plaatje is.
   svg.append(el('rect', {
-    x: RAND + BAND, y: RAND + BAND, width: n * CEL, height: n * CEL,
+    x: x(0), y: y(0), width: n * CEL, height: n * CEL,
     fill: 'url(#bordvignet)', class: 'bordvignet', 'pointer-events': 'none',
   }));
 
@@ -599,6 +622,13 @@ export function renderKamerbord(puzzle, state, acties) {
     klik.append(vak);
   }
   svg.append(klik);
+
+  // Als laatste, zodat het over het speelveld heen valt.
+  tekenBordhangers(svg, {
+    wereld: puzzle.world?.id,
+    x0: LUCHT_ZIJ, y0: LUCHT_BOVEN, breedte: bordB, hoogte: bordH, dikte: RAND,
+    luchtBoven: LUCHT_BOVEN, luchtZij: LUCHT_ZIJ,
+  });
 
   return svg;
 }
