@@ -12,6 +12,7 @@ import { SOORT_VAN, VLOER_VAN, MEUBELS_VAN } from '../src/content/kamersoorten.j
 import { MEUBELKUNST } from '../src/ui/meubelkunst.js';
 import { GESCHILDERD } from '../src/ui/meubelkunst-geschilderd.js';
 import { STOFFEN } from '../src/ui/geschilderd.js';
+import { RANDSTIJLEN } from '../src/ui/bordrand.js';
 import { DESSINS } from '../src/ui/board-rooms.js';
 import { motievenVoor } from '../src/ui/aankleding.js';
 
@@ -240,10 +241,63 @@ for (const [sleutel, delen] of Object.entries(GESCHILDERD)) {
   keurTekening(sleutel, delen);
 }
 
+// ------------------------------------------------- de lijst om het bord
+
+// Elke wereld hoort zijn eigen lijst te hebben. Valt een wereld erbuiten, dan
+// krijgt hij stilzwijgend de houten standaardlijst en ziet een ruimtestation
+// eruit als een landhuis - precies het soort fout dat niemand meldt omdat het
+// er niet kapot uitziet, alleen verkeerd.
+for (const w of WORLDS) {
+  if (!RANDSTIJLEN[w.id]) meld('GEEN BORDRAND', w.id);
+}
+for (const id of Object.keys(RANDSTIJLEN)) {
+  if (!WORLDS.some((w) => w.id === id)) meld('BORDRAND ONGEBRUIKT', id);
+}
+for (const [id, stijl] of Object.entries(RANDSTIJLEN)) {
+  for (const sleutel of ['kern', 'koel', 'warm']) {
+    if (!/^#[0-9a-f]{6}$/i.test(stijl[sleutel] ?? '')) meld('RANDKLEUR RAAR', `${id}.${sleutel}`);
+  }
+  if (stijl.textuur && !['nerf', 'korrel', 'weefsel', 'strijk', 'vezel'].includes(stijl.textuur)) {
+    meld('RANDTEXTUUR BESTAAT NIET', `${id}: ${stijl.textuur}`);
+  }
+  if (typeof stijl.motief !== 'function') meld('RAND ZONDER MOTIEF', id);
+  if (!(stijl.stap > 12)) meld('RANDSTAP TE KLEIN', `${id}: ${stijl.stap}`);
+  // Een lijst hoort donkerder te zijn dan het speelveld: hij vat het bord in.
+  // De eerste poging was een fel groene band die harder riep dan de kamers.
+  const helder = (hex) => {
+    const n = parseInt(hex.slice(1), 16);
+    return (((n >> 16) & 255) * 0.299 + ((n >> 8) & 255) * 0.587 + (n & 255) * 0.114) / 255;
+  };
+  // 0.40: de steenband van de grafkelder stond op 0.415 en viel samen met
+  // de vloeren erbinnen. De lichtste die wel werkt is het staal van het
+  // ruimtestation, op 0.355.
+  if (helder(stijl.kern) > 0.4) meld('RAND TE LICHT', `${id}: ${stijl.kern}`);
+  keurOrnament(`rand/${id}`, stijl.hoek ?? []);
+}
+
+// Een hoekornament volgt dezelfde regels als een meubelstuk, op één na: het
+// staat niet op een vloer, dus de eis "onderkant onderin het vierkant" geldt
+// er niet voor.
+function keurOrnament(label, delen) {
+  if (delen.length < 3) meld('HOEK TE KAAL', `${label}: ${delen.length} onderdelen`);
+  let staan = 0;
+  for (const { d, lijn, stof, grond } of delen) {
+    if (grond) staan++;
+    if (!lijn && !/[Zz]\s*$/.test(d)) meld('HOEK ZONDER VLAK', `${label}: ${d}`);
+    if (stof != null && !STOFFEN[stof]) meld('HOEK MATERIAAL BESTAAT NIET', `${label}: ${stof}`);
+    const b = omhulsel(d);
+    if (b.minX < -1 || b.minY < -1 || b.maxX > 49 || b.maxY > 49) {
+      meld('HOEK BUITEN HET VAKJE', `${label}: ${d}`);
+    }
+  }
+  if (staan !== 1) meld('HOEK CONTACT', `${label}: ${staan} onderdelen op de grond`);
+}
+
 console.log('');
 console.log(`plekken            ${plekken.size}, allemaal met een soort`);
 console.log(`soorten ruimte     ${soorten.size}, elk met vloer en meubilair`);
 console.log(`meubelstukken      ${paren.length} namen, ${Object.keys(MEUBELKUNST).length} eigen tekeningen`);
+console.log(`bordranden         ${Object.keys(RANDSTIJLEN).length}, één per wereld`);
 
 if (fouten.length) {
   console.log('');
@@ -251,4 +305,4 @@ if (fouten.length) {
   console.log(`\n${fouten.length} FOUTEN`);
   process.exit(1);
 }
-console.log('\nelke ruimte weet wat hij is, elk meubelstuk heeft zijn eigen tekening');
+console.log('\nelke ruimte weet wat hij is, elk meubelstuk heeft zijn eigen tekening,\nen elke wereld zijn eigen lijst om het bord');

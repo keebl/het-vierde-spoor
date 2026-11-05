@@ -99,6 +99,10 @@ export const STOFFEN = {
 // dezelfde drieentwintig verlopen, vijf patronen en twee maskers: duizenden
 // knooppunten die geen pixel opleveren. In een HTML-pagina zoekt url(#...)
 // door het hele document, dus één verzameling in een verborgen svg is genoeg.
+export function zorgVoorPalet() {
+  return paletDefs();
+}
+
 function paletDefs() {
   let defs = document.querySelector('defs.gs-defs');
   if (defs) return defs;

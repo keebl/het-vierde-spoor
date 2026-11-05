@@ -951,7 +951,9 @@ table.latin td.cell { width: 78px; height: 46px; }
   display: block;
   border-radius: var(--r);
   background: var(--genre-diep, #3a2e22);
-  box-shadow: 0 10px 30px rgba(50, 36, 18, 0.35), inset 0 0 0 2px rgba(255, 244, 220, 0.12);
+  /* De lijst wordt nu getekend (src/ui/bordrand.js), dus geen tweede
+     randje er nog eens overheen. */
+  box-shadow: 0 10px 30px rgba(50, 36, 18, 0.35);
 }
 
 .dessinlijn { fill: none; stroke: rgba(90, 70, 45, 0.34); stroke-width: 1.1; }
@@ -1319,4 +1321,10 @@ table.latin td.cell { width: 78px; height: 46px; }
   .geschilderd .gs-draad { stroke: #000; }
 
   .plan-vloer rect { fill: #fff; }
+
+  /* De lijst om het speurdokubord is sfeer en verder niets: op papier is het
+     een brede donkere balk die alleen inkt kost. De rij- en kolomaanduiding
+     staat erbinnen en blijft dus gewoon staan. */
+  .bordrand,
+  .bordhoeken { display: none; }
 }

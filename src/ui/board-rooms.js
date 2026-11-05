@@ -10,6 +10,7 @@
 
 import { tekenIcoon } from './icons.js';
 import { tekenGeschilderd } from './geschilderd.js';
+import { tekenBordrand } from './bordrand.js';
 import { GESCHILDERD } from './meubelkunst-geschilderd.js';
 import { tekenPersoon } from './personenkunst-geschilderd.js';
 import { icoonVan } from '../content/iconen.js';
@@ -30,7 +31,9 @@ const el = (naam, attrs = {}) => {
 };
 
 const CEL = 76;
-const RAND = 14;
+// De lijst om het bord. Zie src/ui/bordrand.js: per wereld een ander
+// materiaal, met ornamenten in drie hoeken.
+const RAND = 24;
 // Ruimte voor de rij- en kolomaanduiding en het kompas.
 const BAND = 22;
 const PLAAT = 20;
@@ -104,6 +107,9 @@ export function renderKamerbord(puzzle, state, acties) {
     'aria-label': `Plattegrond van ${n} bij ${n} vakjes`,
   });
   svg.append(dessins());
+  tekenBordrand(svg, {
+    wereld: puzzle.world?.id, breedte, hoogte, dikte: RAND,
+  });
 
   const x = (c) => RAND + BAND + c * CEL;
   const y = (r) => RAND + BAND + r * CEL;

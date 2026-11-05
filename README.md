@@ -312,6 +312,19 @@ thema, laadt direct, en er kleeft geen licentie aan.
   meubelstuk: twee keer dezelfde kist naast elkaar leest als een fout, ook al
   is het er geen. Op papier wordt het weer wit met lijnen, zodat je erin kunt
   schrijven.
+- `src/ui/bordrand.js` - de lijst om het speurdokubord, per wereld een
+  andere. Eromheen zat hetzelfde bruine kader voor een kerstavond, een
+  ruimtestation en een grafkelder, en dat is de plek waar je het minst naar
+  kijkt en waar het juist daarom opvalt als hij nergens over gaat. Een lijst
+  bestaat uit een materiaal met hetzelfde licht als de rest (boven en links
+  vangen het, onder en rechts liggen in de schaduw), iets wat erlangs loopt -
+  klinknagels, dennennaalden, regenstrepen, voegen, spinrag - en drie
+  hoekornamenten. Linksboven niet: daar staat het kompas, en de aanwijzingen
+  gaan over het noorden. Een lijst hoort donkerder te zijn dan het speelveld,
+  want hij is er om het bord in te vatten; `tools/check-kamers.mjs` faalt op
+  een wereld zonder lijst, op een lijst die te licht is om er een te zijn, en
+  op een hoekornament met een pad dat geen vlak omsluit. Op papier gaat de
+  lijst eruit: daar is het een brede donkere balk die alleen inkt kost.
 - Het kruisraster en het dienstrooster zijn tabellen. Daar staat in de rijen
   wie het zijn, en die krijgen hun eigen geschilderde kop - dezelfde als op de
   knoppen en op het speurdokubord, zodat je iemand over de puzzelsoorten heen
