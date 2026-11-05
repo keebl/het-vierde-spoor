@@ -305,7 +305,22 @@ thema, laadt direct, en er kleeft geen licentie aan.
   delen hun muren, buitenmuren zijn dikker, en een doorgang is een gat in de
   muur met een deurblad en een draaicirkel. Daardoor zie je in een oogopslag
   waar je wel en niet langs kunt, en dat is precies waar de aanwijzingen over
-  gaan.
+  gaan. De muren blijven lijnwerk; wat erbinnen ligt niet meer. Elke ruimte
+  krijgt de vloer die bij zijn soort hoort - dezelfde tegels, planken of
+  steen als op het speurdokubord - met één geschilderd meubelstuk erin en één
+  ding in de hoek. Geen twee ruimtes op dezelfde kaart krijgen hetzelfde
+  meubelstuk: twee keer dezelfde kist naast elkaar leest als een fout, ook al
+  is het er geen. Op papier wordt het weer wit met lijnen, zodat je erin kunt
+  schrijven.
+- Het kruisraster en het dienstrooster zijn tabellen. Daar staat in de rijen
+  wie het zijn, en die krijgen hun eigen geschilderde kop - dezelfde als op de
+  knoppen en op het speurdokubord, zodat je iemand over de puzzelsoorten heen
+  herkent. Vier keer hetzelfde poppetje zei niets. De kolommen zijn
+  voorwerpen en plekken, en daar blijven de lijniconen van `icons.js` staan:
+  ze zijn vijftien tot twintig pixels groot, en op dat formaat is een
+  geschilderd icoontje geen tekening maar een vlek - het randlicht is een
+  halve pixel en het verloop is modder. Een lijn op die maat is scherper, en
+  dat is de hele reden dat er twee sets zijn.
 
 ## Over plagiaat
 

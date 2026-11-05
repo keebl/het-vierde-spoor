@@ -832,6 +832,15 @@ table.grid td.cell { width: 42px; height: 40px; text-align: center; }
 .muur { stroke: #6f6454; stroke-width: 3; stroke-linecap: square; }
 .muur-buiten { stroke: #4a4134; stroke-width: 6; }
 
+/* Een doorgang ligt nu op een gekleurde vloer in plaats van op wit. Een
+   lichte lijn eronder houdt hem leesbaar op elke vloer, en valt weg op
+   papier omdat hij daar dezelfde kleur heeft als het blad. */
+.deur-onder {
+  stroke: rgba(255, 249, 234, 0.75);
+  stroke-width: 5.5;
+  fill: none;
+  stroke-linecap: round;
+}
 .deurblad { stroke: var(--accent); stroke-width: 2.5; fill: none; stroke-linecap: round; }
 .deurboog {
   stroke: color-mix(in oklab, var(--accent) 40%, transparent);
@@ -850,7 +859,15 @@ table.grid td.cell { width: 42px; height: 40px; text-align: center; }
 }
 .kamer-bol { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1; }
 .kamer-nr { fill: var(--accent); font: 700 12px var(--serif); }
-.kamer-naam { fill: var(--text); font: 500 12.5px var(--sans); }
+.kamer-naam {
+  fill: rgba(48, 34, 20, 0.78);
+  font: 700 12.5px var(--schrift, var(--sans));
+  letter-spacing: 0.04em;
+  paint-order: stroke;
+  stroke: rgba(255, 249, 234, 0.72);
+  stroke-width: 3.5;
+  stroke-linejoin: round;
+}
 
 .kompas circle { fill: none; stroke: var(--line); stroke-width: 1; }
 .kompas-naald { fill: var(--accent); }
@@ -1300,4 +1317,6 @@ table.latin td.cell { width: 78px; height: 46px; }
   .geschilderd .gs-vlak { fill: #fff; }
   .geschilderd .gs-omtrek { stroke: #000; opacity: 1; }
   .geschilderd .gs-draad { stroke: #000; }
+
+  .plan-vloer rect { fill: #fff; }
 }

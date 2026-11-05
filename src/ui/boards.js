@@ -3,6 +3,12 @@
 
 import { tekenIcoon, icoonElement } from './icons.js';
 import { icoonVan } from '../content/iconen.js';
+import { soortVan, VLOER_VAN, MEUBELS_VAN } from '../content/kamersoorten.js';
+import { dessins, schuif } from './board-rooms.js';
+import { tekenGeschilderd } from './geschilderd.js';
+import { GESCHILDERD } from './meubelkunst-geschilderd.js';
+import { tekenAankleding } from './aankleding.js';
+import { portretElement } from './personenkunst-geschilderd.js';
 
 const el = (tag, attrs = {}, kids = []) => {
   const node = document.createElement(tag);
@@ -29,20 +35,30 @@ export const cellKey = (slot, item) => `${slot},${item}`;
 export function renderBlok(puzzle, blok, marks, onChange, wrong) {
   const n = puzzle.anchor.items.length;
   const table = el('table', { class: 'grid' });
+  // Mensen krijgen hun eigen kop, geen poppetje. Dezelfde kop als op de
+  // knoppen en op het speurdokubord, dus je herkent ze over de puzzelsoorten
+  // heen; vier keer hetzelfde poppetje zei niets. Welke categorie de mensen
+  // zijn verschilt per puzzel - soms staan ze in de rijen, soms in de
+  // kolommen - dus het gaat op de categorie zelf, niet op waar hij staat.
+  const merkVan = (cat, i, naam, maat) => (cat.id === 'person'
+    ? portretElement(i, naam.charAt(0).toUpperCase(), maat)
+    : icoonElement(naam, maat - 6));
+
   const head = el('tr', {}, [el('th', { class: 'corner' })]);
-  for (const item of blok.kolom.items) {
+  blok.kolom.items.forEach((item, i) => {
     head.append(el('th', { class: 'col-head' }, [
-      el('span', { class: 'kop-staand' }, [icoonElement(item, 20), el('span', { text: item })]),
+      el('span', { class: 'kop-staand' }, [merkVan(blok.kolom, i, item, 26), el('span', { text: item })]),
     ]));
-  }
+  });
   table.append(el('thead', {}, head));
 
   const body = el('tbody');
   for (let slot = 0; slot < n; slot++) {
     const naam = blok.rij.items[slot];
+    const merk = merkVan(blok.rij, slot, naam, 26);
     const row = el('tr', {}, [
       el('th', { scope: 'row' }, [
-        el('span', { class: 'kop-liggend' }, [icoonElement(naam, 18), el('span', { text: naam })]),
+        el('span', { class: 'kop-liggend' }, [merk, el('span', { text: naam })]),
       ]),
     ]);
     for (let item = 0; item < n; item++) {
@@ -88,6 +104,34 @@ const svgEl = (naam, attrs = {}) => {
   return node;
 };
 
+// Welk meubelstuk hoort bij welke ruimte?
+//
+// Een plattegrond met in elke kamer hetzelfde flauwe pictogram vertelt je
+// alleen hoe de kamer heet, en dat staat er al bij. Eén geschilderd
+// meubelstuk vertelt wat voor kamer het IS - en het is hetzelfde meubelstuk
+// dat op het speurdokubord in zo'n kamer staat, dus het is één huis.
+//
+// De keuze ligt vast per naam, dus dezelfde plek krijgt altijd hetzelfde
+// meubelstuk. En geen twee ruimtes op één kaart krijgen hetzelfde: twee keer
+// dezelfde kist naast elkaar leest als een fout, ook al is het er geen.
+function kiesMeubels(namen) {
+  const gebruikt = new Set();
+  return namen.map((naam, i) => {
+    const lijst = MEUBELS_VAN[soortVan(naam)];
+    if (!lijst?.length) return null;
+    let h = i * 7;
+    for (let k = 0; k < naam.length; k++) h = (h * 31 + naam.charCodeAt(k)) % 100003;
+    for (let stap = 0; stap < lijst.length; stap++) {
+      const [, sleutel] = lijst[(h + stap) % lijst.length];
+      if (!gebruikt.has(sleutel) && GESCHILDERD[sleutel]) {
+        gebruikt.add(sleutel);
+        return GESCHILDERD[sleutel];
+      }
+    }
+    return GESCHILDERD[lijst[h % lijst.length][1]] ?? null;
+  });
+}
+
 const KAMER_B = 172;
 const KAMER_H = 124;
 const RAND = 26;
@@ -105,6 +149,9 @@ export function renderMap(puzzle) {
   });
 
   svg.append(vloerPatroon());
+  svg.append(dessins());
+
+  const meubels = kiesMeubels(puzzle.anchor.items);
 
   const bijPositie = new Map(g.layout.map((p, i) => [`${p.row},${p.col}`, i]));
   const kamer = (r, c) => bijPositie.get(`${r},${c}`);
@@ -116,13 +163,23 @@ export function renderMap(puzzle) {
   const doorgangen = new Set(g.edges.map(([a, b]) => sleutel(a, b)));
   const verbonden = (a, b) => a != null && b != null && doorgangen.has(sleutel(a, b));
 
-  // Vloeren eerst, zodat de muren er bovenop liggen.
-  const vloeren = svgEl('g');
-  g.layout.forEach((pos) => {
-    vloeren.append(svgEl('rect', {
-      x: x(pos.col), y: y(pos.row), width: KAMER_B, height: KAMER_H,
-      class: 'vloer',
-    }));
+  // Vloeren eerst, zodat de muren er bovenop liggen. Elke ruimte krijgt de
+  // vloer die bij zijn soort hoort - dezelfde tegels, planken of steen als op
+  // het speurdokubord. Een ruimte waarvan we de soort niet kennen houdt de
+  // oude bouwtekeningvloer.
+  const vloeren = svgEl('g', { class: 'plan-vloer' });
+  g.layout.forEach((pos, i) => {
+    const vak = { x: x(pos.col), y: y(pos.row), width: KAMER_B, height: KAMER_H };
+    const v = VLOER_VAN[soortVan(puzzle.anchor.items[i])];
+    if (!v) {
+      vloeren.append(svgEl('rect', { ...vak, class: 'vloer' }));
+      return;
+    }
+    // Elke ruimte zijn eigen tint. Niet te zien als je ernaar zoekt, wel
+    // zodra je het weglaat: dan is het weer een vlak.
+    const toon = 0.93 + ((i * 2654435761) % 140) / 1000;
+    vloeren.append(svgEl('rect', { ...vak, fill: schuif(v.vul, toon) }));
+    vloeren.append(svgEl('rect', { ...vak, fill: `url(#dessin-${v.dessin})`, opacity: 0.5 }));
   });
   svg.append(vloeren);
 
@@ -152,7 +209,27 @@ export function renderMap(puzzle) {
     const cy = y(pos.row) + KAMER_H / 2;
     const naam = puzzle.anchor.items[i];
 
-    tekenIcoon(groep, icoonVan(naam), { x: cx - 29, y: cy - 40, grootte: 58, klasse: 'kamer-glyph' });
+    const soort = soortVan(naam);
+    if (soort) {
+      // Eén ding erbij, in de hoek rechtsboven. Dat is de enige plek die in
+      // een ruimte van 172 bij 124 echt vrij is: linksboven staat het
+      // nummer, het midden is het meubelstuk, onderin ligt de naam over de
+      // hele breedte, en halverwege elke muur kan een doorgang zitten. Zet
+      // je er daar toch iets neer, dan ligt er een kleed in een deuropening
+      // of achter de letters - en dan is het weer een naambalk.
+      //
+      // Behalve in de ruimte rechtsboven: daar staat het kompas al.
+      const hoekBezet = pos.row === 0 && pos.col === g.cols - 1;
+      if (!hoekBezet) {
+        tekenAankleding(groep, soort, x(pos.col) + KAMER_B - 28, y(pos.row) + 28, 52, i * 3);
+      }
+    }
+
+    // Eén geschilderd meubelstuk in plaats van een bleek pictogram. Valt er
+    // geen te kiezen - een plek zonder soort - dan blijft het pictogram.
+    const meubel = meubels[i];
+    if (meubel) tekenGeschilderd(groep, meubel, { x: cx - 34, y: cy - 52, grootte: 68 });
+    else tekenIcoon(groep, icoonVan(naam), { x: cx - 29, y: cy - 40, grootte: 58, klasse: 'kamer-glyph' });
 
     groep.append(svgEl('circle', { cx: x(pos.col) + 22, cy: y(pos.row) + 22, r: 11, class: 'kamer-bol' }));
     const nr = svgEl('text', { x: x(pos.col) + 22, y: y(pos.row) + 26, class: 'kamer-nr', 'text-anchor': 'middle' });
@@ -208,26 +285,22 @@ function tekenMuur(ouder, x1, y1, x2, y2, buitenmuur, doorgang, richting, kant) 
     ouder.append(svgEl('line', { x1, y1, x2: mid - half, y2: y1, class: klasse }));
     ouder.append(svgEl('line', { x1: mid + half, y1, x2, y2, class: klasse }));
     const hx = mid - half;
-    ouder.append(svgEl('path', {
-      d: `M ${hx} ${y1} L ${hx} ${y1 + DEUR * kant}`,
-      class: 'deurblad',
-    }));
-    ouder.append(svgEl('path', {
-      d: `M ${hx} ${y1 + DEUR * kant} A ${DEUR} ${DEUR} 0 0 ${kant > 0 ? 0 : 1} ${hx + DEUR} ${y1}`,
-      class: 'deurboog',
-    }));
+    const blad = `M ${hx} ${y1} L ${hx} ${y1 + DEUR * kant}`;
+    const boog = `M ${hx} ${y1 + DEUR * kant} A ${DEUR} ${DEUR} 0 0 ${kant > 0 ? 0 : 1} ${hx + DEUR} ${y1}`;
+    ouder.append(svgEl('path', { d: blad, class: 'deur-onder' }));
+    ouder.append(svgEl('path', { d: boog, class: 'deur-onder' }));
+    ouder.append(svgEl('path', { d: blad, class: 'deurblad' }));
+    ouder.append(svgEl('path', { d: boog, class: 'deurboog' }));
   } else {
     ouder.append(svgEl('line', { x1, y1, x2: x1, y2: mid - half, class: klasse }));
     ouder.append(svgEl('line', { x1, y1: mid + half, x2, y2, class: klasse }));
     const hy = mid - half;
-    ouder.append(svgEl('path', {
-      d: `M ${x1} ${hy} L ${x1 + DEUR * kant} ${hy}`,
-      class: 'deurblad',
-    }));
-    ouder.append(svgEl('path', {
-      d: `M ${x1 + DEUR * kant} ${hy} A ${DEUR} ${DEUR} 0 0 ${kant > 0 ? 1 : 0} ${x1} ${hy + DEUR}`,
-      class: 'deurboog',
-    }));
+    const blad = `M ${x1} ${hy} L ${x1 + DEUR * kant} ${hy}`;
+    const boog = `M ${x1 + DEUR * kant} ${hy} A ${DEUR} ${DEUR} 0 0 ${kant > 0 ? 1 : 0} ${x1} ${hy + DEUR}`;
+    ouder.append(svgEl('path', { d: blad, class: 'deur-onder' }));
+    ouder.append(svgEl('path', { d: boog, class: 'deur-onder' }));
+    ouder.append(svgEl('path', { d: blad, class: 'deurblad' }));
+    ouder.append(svgEl('path', { d: boog, class: 'deurboog' }));
   }
 }
 
@@ -267,10 +340,15 @@ function regels(tekst, max) {
 
 // ------------------------------------------------------ getallenraster
 
+// De symbolen van het dienstrooster zijn mensen, dus staan hier dezelfde
+// koppen als overal elders.
 export function latinLegenda(puzzle) {
   return el('div', { class: 'swatches' },
-    puzzle.symbols.map((naam) =>
-      el('span', { class: 'swatch' }, [icoonElement(naam, 15), el('span', { text: naam })])
+    puzzle.symbols.map((naam, i) =>
+      el('span', { class: 'swatch' }, [
+        portretElement(i, naam.charAt(0).toUpperCase(), 24),
+        el('span', { text: naam }),
+      ])
     )
   );
 }

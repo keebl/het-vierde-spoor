@@ -76,7 +76,7 @@ function schetspad(x1, y1, x2, y2, amp = 1.5) {
 // Hiermee krijgt elk vakje zijn eigen tint. Een vloer waar elke plank precies
 // even donker is, is geen vloer maar een vlak - dat is waar "kil" vandaan
 // kwam.
-function schuif(hex, factor) {
+export function schuif(hex, factor) {
   const n = parseInt(hex.slice(1), 16);
   const kanaal = (v) => Math.max(0, Math.min(255, Math.round(v * factor)));
   const r = kanaal((n >> 16) & 255);
@@ -645,7 +645,9 @@ function splits(naam) {
   return beste.regels;
 }
 
-function dessins() {
+// De vloerpatronen. De plattegrond gebruikt ze ook: een keuken hoort op
+// beide borden dezelfde tegels te hebben, anders zijn het twee huizen.
+export function dessins() {
   const defs = el('defs');
   const h = CEL / 2;
   const q = CEL / 4;
