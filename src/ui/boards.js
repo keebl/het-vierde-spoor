@@ -3,7 +3,7 @@
 
 import { tekenIcoon, icoonElement } from './icons.js';
 import { icoonVan } from '../content/iconen.js';
-import { soortVan, VLOER_VAN, MEUBELS_VAN } from '../content/kamersoorten.js';
+import { soortVan, VLOER_VAN, meubelsVoor } from '../content/kamersoorten.js';
 import { dessins, schuif } from './board-rooms.js';
 import { tekenGeschilderd } from './geschilderd.js';
 import { GESCHILDERD } from './meubelkunst-geschilderd.js';
@@ -114,10 +114,10 @@ const svgEl = (naam, attrs = {}) => {
 // De keuze ligt vast per naam, dus dezelfde plek krijgt altijd hetzelfde
 // meubelstuk. En geen twee ruimtes op één kaart krijgen hetzelfde: twee keer
 // dezelfde kist naast elkaar leest als een fout, ook al is het er geen.
-function kiesMeubels(namen) {
+function kiesMeubels(namen, wereld) {
   const gebruikt = new Set();
   return namen.map((naam, i) => {
-    const lijst = MEUBELS_VAN[soortVan(naam)];
+    const lijst = meubelsVoor(soortVan(naam), wereld)[0];
     if (!lijst?.length) return null;
     let h = i * 7;
     for (let k = 0; k < naam.length; k++) h = (h * 31 + naam.charCodeAt(k)) % 100003;
@@ -151,7 +151,7 @@ export function renderMap(puzzle) {
   svg.append(vloerPatroon());
   svg.append(dessins());
 
-  const meubels = kiesMeubels(puzzle.anchor.items);
+  const meubels = kiesMeubels(puzzle.anchor.items, puzzle.world?.id);
 
   const bijPositie = new Map(g.layout.map((p, i) => [`${p.row},${p.col}`, i]));
   const kamer = (r, c) => bijPositie.get(`${r},${c}`);

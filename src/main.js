@@ -35,10 +35,20 @@ function leesQuery(path) {
   return Object.fromEntries(new URLSearchParams(path.slice(vraag + 1)));
 }
 
+// Welke wereld kleurt de pagina? Dat staat op de body, zodat de hele site
+// meeschuift zodra er een zaak openstaat: in het woud is het een nachtbos,
+// in Regenstad een natte straat. Buiten een zaak gaat het eraf, want op de
+// lijst staan alle werelden naast elkaar en zou een kleur partij kiezen.
+export function zetWereldThema(wereldId) {
+  if (wereldId) document.body.dataset.wereld = wereldId;
+  else delete document.body.dataset.wereld;
+}
+
 function route() {
   const hash = location.hash || '#/';
   const path = hash.slice(2);
   window.scrollTo(0, 0);
+  zetWereldThema(null);
 
   if (path.startsWith('puzzel/')) {
     markNav(null);
@@ -48,6 +58,7 @@ function route() {
     setTimeout(() => {
       try {
         const puzzle = buildPuzzle(parsePuzzleId(id));
+        zetWereldThema(puzzle.world?.id);
         renderPlayer(puzzle, app);
         // De puzzel staat er al en is speelbaar. Daarna kijken we nog of er
         // een mooiere tekst voor is: voor de bibliotheek ligt die klaar in
@@ -55,7 +66,10 @@ function route() {
         // logica verandert er nooit door - het vangnet laat niets door dat
         // een naam, een ontkenning, een getal of een keuze aantast.
         dressUp(puzzle).then((dressed) => {
-          if (dressed.aiUsed && location.hash.includes(id)) renderPlayer(dressed, app);
+          if (dressed.aiUsed && location.hash.includes(id)) {
+            zetWereldThema(dressed.world?.id);
+            renderPlayer(dressed, app);
+          }
         });
       } catch (err) {
         // De technische oorzaak hoort in de console, niet op het scherm.

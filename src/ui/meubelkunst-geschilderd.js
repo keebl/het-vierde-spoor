@@ -1143,4 +1143,152 @@ export const GESCHILDERD = {
     v('koper', bol(34.8, 25.4, 1.4)),
     v('metaal', plaat(9, 38.6, 30, 3, { zak: 0.5 })),
   ],
+
+  // =================================================== ruimtestation Meridiaan
+  //
+  // Zeven stukken die het station van zichzelf heeft. De rest van het
+  // meubilair krijgt daar een andere naam en een ander materiaal (zie
+  // WERELDMEUBELS en WERELDSTOF), maar deze zeven silhouetten liegen als je
+  // ze alleen omdoopt: een bed is geen slaapcapsule en een vleugel is geen
+  // luchtbehandelaar, hoeveel staal je er ook over heen giet.
+
+  serverrek: [
+    v('metaal', romp(9, 4, 30, 36, { taps: 0.01 })),
+    v('donker', romp(11.5, 6.4, 25, 31, { taps: 0.01 })),
+    v('metaal', plaat(12, 8, 24, 4.4, { zak: 0.4 })),
+    v('vuur', bol(33.4, 10.2, 1.1), { glans: 1 }),
+    v('metaal', plaat(12, 14, 24, 4.4, { zak: 0.4 })),
+    v('water', bol(33.4, 16.2, 1.1), { glans: 1 }),
+    v('metaal', plaat(12, 20, 24, 4.4, { zak: 0.4 })),
+    v('vuur', bol(33.4, 22.2, 1.1), { glans: 1 }),
+    v('metaal', plaat(12, 26, 24, 4.4, { zak: 0.4 })),
+    v('water', bol(33.4, 28.2, 1.1), { glans: 1 }),
+    v('metaal', plaat(12, 32, 24, 4.4, { zak: 0.4 })),
+    streep('donker', 0.8, 'M14 10.4 Q20 10 26 10.4 M14 16.4 Q20 16 26 16.4 M14 22.4 Q20 22 26 22.4 M14 28.4 Q20 28 26 28.4'),
+    vloer('metaal', plaat(8.6, 39.6, 30.8, 3.4)),
+  ],
+
+  cilinderrek: [
+    v('metaal', zuilvorm(15, 12, 7.4, 7.8, 28)),
+    v('metaal', zuilvorm(24, 10, 7.4, 7.8, 30)),
+    v('metaal', zuilvorm(33, 13, 7.4, 7.8, 27)),
+    v('koper', bol(15, 10.6, 2)),
+    v('koper', bol(24, 8.6, 2)),
+    v('koper', bol(33, 11.6, 2)),
+    v('donker', plaat(7.6, 21, 32.8, 2.6, { zak: 0.4 })),
+    v('donker', plaat(7.6, 32, 32.8, 2.6, { zak: 0.4 })),
+    v('water', bol(28.6, 16.4, 1.2), { glans: 1 }),
+    vloer('metaal', plaat(7.6, 39.6, 32.8, 3.4)),
+  ],
+
+  slaapcapsule: [
+    v('metaal', romp(6, 18, 36, 16, { taps: 0.02 })),
+    v('donker', romp(8.5, 20.4, 31, 11, { taps: 0.01 })),
+    v('water', romp(10, 21.4, 22, 8.6, { taps: 0.02 }), { glans: 1 }),
+    v('stofblauw', plaat(11, 26, 20, 3, { zak: 0.6 })),
+    v('metaal', ring(35.4, 26, 3.6, 1.2), { gat: true }),
+    v('metaal', bol(35.4, 26, 1.4)),
+    v('vuur', bol(9.6, 16.4, 1.2), { glans: 1 }),
+    v('metaal', poot(10, 34, 6, 6)),
+    v('metaal', poot(32, 34, 6, 6)),
+    vloer('metaal', plaat(7, 39.6, 34, 3.4)),
+  ],
+
+  pakkenrek: [
+    v('metaal', zuilvorm(12, 6, 3.4, 4.4, 34)),
+    v('metaal', zuilvorm(36, 6, 3.4, 4.4, 34)),
+    streep('metaal', 2, 'M12 9 Q24 8 36 9'),
+    v('water', bol(22, 14, 4.4), { glans: 1 }),
+    v('metaal', romp(16, 17, 14, 14, { taps: 0.1 })),
+    v('stofblauw', romp(17.2, 18, 11.6, 12, { taps: 0.1 })),
+    v('metaal', staaf(18, 19.4, 14.4, 28, 3.4)),
+    v('metaal', staaf(28, 19.4, 31.6, 28, 3.4)),
+    v('koper', bol(23, 22.4, 1.4)),
+    vloer('metaal', plaat(10, 39.6, 28, 3.4)),
+  ],
+
+  massameter: [
+    v('metaal', zuilvorm(31, 14, 4, 5.4, 20)),
+    v('donker', romp(20, 5, 22, 12, { taps: 0.03 })),
+    v('glas', romp(22, 7, 18, 6.6, { taps: 0.02 }), { glans: 1 }),
+    streep('vuur', 1.4, 'M24 10.6 L27.6 10.6 M29.6 10.6 L33 10.6 M35 10.6 L37.4 10.6'),
+    v('metaal', romp(7, 30, 25, 7, { taps: 0.02 })),
+    v('metaal', plaat(5.4, 27.2, 28, 3.4, { zak: 0.6 })),
+    v('vuur', bol(39.4, 7.4, 1.1), { glans: 1 }),
+    vloer('metaal', plaat(6, 39.4, 30, 3.6, { zak: 0.7 })),
+  ],
+
+  navigatieconsole: [
+    v('donker', romp(9, 24, 30, 16, { taps: 0.04 })),
+    v('donker', romp(14, 4, 20, 13, { taps: 0.03 })),
+    v('glas', romp(16, 6, 16, 7, { taps: 0.02 }), { glans: 1 }),
+    streep('water', 1, 'M18 9 L24 9 M26 9 L30 9 M18 11.4 L22 11.4'),
+    v('metaal', 'M7.4 22.6 Q24 19.6 40.6 16.4 L41.6 22 Q24 25.4 6.6 28 Z'),
+    v('glas', 'M15 19.4 Q24 17.8 32.6 16.2 L33.4 19.8 Q24 21.4 15.6 23 Z', { glans: 1 }),
+    streep('vuur', 1.1, 'M17 19.8 Q22 19 27.4 18 M17.4 21 Q22.4 20.2 27.8 19.2'),
+    v('donker', romp(12, 28.4, 11, 4.6, { taps: 0.02 })),
+    streep('metaal', 0.7, 'M13.4 30.2 Q17.6 29.8 21.6 30.2 M13.4 31.6 Q17.6 31.2 21.6 31.6'),
+    v('vuur', bol(35, 26.4, 1.2), { glans: 1 }),
+    v('metaal', plaat(10, 34.4, 28, 3, { zak: 0.5 })),
+    vloer('metaal', plaat(8.6, 39.6, 30.8, 3.4)),
+  ],
+
+  luchtmenger: [
+    v('metaal', romp(7, 12, 34, 28, { taps: 0.01 })),
+    v('donker', romp(9.5, 14.4, 29, 23, { taps: 0.01 })),
+    v('metaal', ring(22, 24, 9, 1.6), { gat: true }),
+    v('donker', bol(22, 24, 7.4)),
+    v('metaal', staaf(22, 24, 22, 17.4, 3.4)),
+    v('metaal', staaf(22, 24, 28, 28.6, 3.4)),
+    v('metaal', staaf(22, 24, 16, 28.6, 3.4)),
+    v('metaal', bol(22, 24, 2.2)),
+    v('metaal', zuilvorm(36, 15, 6, 6, 9)),
+    v('vuur', bol(36, 34.4, 1.2), { glans: 1 }),
+    vloer('metaal', plaat(6.6, 39.6, 34.8, 3.4)),
+  ],
+
+  // ================================================ de catacomben van Sint-Oda
+  //
+  // Beneden hangt geen gangklok en staat geen schakelkast. Drie stukken die
+  // het gewelf van zichzelf heeft, op de plek waar de uitwijk anders iets uit
+  // een huis naar binnen trok.
+
+  lampenstaander: [
+    v('metaal', zuilvorm(24, 8, 3.4, 5.4, 32)),
+    v('metaal', staaf(24, 9.4, 34, 11.4, 2.4)),
+    v('metaal', staaf(34, 11.4, 34, 15.4, 1.6)),
+    v('koper', bak(34, 15.4, 9.4, 6, 5)),
+    v('vuur', vlam(34, 15.8, 6, 8), { glans: 1 }),
+    v('metaal', bol(24, 6.6, 2.2)),
+    v('metaal', bol(24, 24, 2)),
+    vloer('metaal', plaat(15, 39.4, 18, 3.6, { zak: 0.7 })),
+  ],
+
+  zandloper: [
+    v('houtdonker', plaat(12, 8, 24, 3.4, { zak: 0.5 })),
+    v('houtdonker', plaat(12, 34, 24, 3.4, { zak: 0.5 })),
+    v('houtdonker', staaf(15, 9.6, 15, 35, 2.6)),
+    v('houtdonker', staaf(33, 9.6, 33, 35, 2.6)),
+    v('water', 'M18 12.4 Q24 13.4 30 12.4 Q26 20 24 22.4 Q22 20 18 12.4 Z', { glans: 1 }),
+    v('water', 'M24 22.4 Q26 25 30 33.4 Q24 34.4 18 33.4 Q22 25 24 22.4 Z', { glans: 1 }),
+    v('touw', 'M20 29 Q24 27.6 28 29 Q26 32.6 24 32.8 Q22 32.6 20 29 Z'),
+    v('touw', staaf(24, 22.8, 24, 29, 1)),
+    v('koper', bol(24, 22.4, 1.2)),
+    vloer('houtdonker', plaat(13, 39.4, 22, 3.6, { zak: 0.7 })),
+  ],
+
+  reliekkast: [
+    v('houtdonker', romp(10, 7, 28, 33)),
+    v('houtdonker', plaat(8.6, 4.6, 30.8, 3.2)),
+    v('donker', romp(13, 10, 22, 26, { taps: 0.01 })),
+    v('water', romp(14.5, 11.4, 19, 16, { taps: 0.01 }), { glans: 1 }),
+    v('steen', bol(24, 19.4, 4.4)),
+    v('donker', bol(22.2, 18.8, 1.1)),
+    v('donker', bol(25.8, 18.8, 1.1)),
+    v('steen', plaat(20.6, 23, 6.8, 2.4, { zak: 0.4 })),
+    v('houtdonker', plaat(13, 28, 22, 3, { zak: 0.5 })),
+    v('koper', bol(33.6, 20, 1.2)),
+    vloer('houtdonker', poot(12, 40, 5, 3.4)),
+    v('houtdonker', poot(31, 40, 5, 3.4)),
+  ],
 };

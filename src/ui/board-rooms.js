@@ -9,12 +9,12 @@
 // op tafel ligt.
 
 import { tekenIcoon } from './icons.js';
-import { tekenGeschilderd } from './geschilderd.js';
+import { tekenGeschilderd, meng, zetWereldstof } from './geschilderd.js';
 import { tekenBordrand, tekenBordhangers } from './bordrand.js';
 import { GESCHILDERD } from './meubelkunst-geschilderd.js';
-import { tekenPersoon } from './personenkunst-geschilderd.js';
+import { tekenPersoon, tekenSlachtofferkruis, slachtofferElement } from './personenkunst-geschilderd.js';
 import { icoonVan } from '../content/iconen.js';
-import { soortVan, VLOER_VAN } from '../content/kamersoorten.js';
+import { soortVan, VLOER_VAN, WERELDVLOER, WERELDSTOF } from '../content/kamersoorten.js';
 import { tekenAankleding, tekenSnippers } from './aankleding.js';
 
 // Een meubelstuk zetten. De tekeningen staan in meubelkunst-geschilderd.js
@@ -31,15 +31,21 @@ const el = (naam, attrs = {}) => {
 };
 
 const CEL = 76;
-// De lijst om het bord. Zie src/ui/bordrand.js: per wereld een ander
-// materiaal, met ornamenten in drie hoeken.
-const RAND = 24;
-// Lucht buiten de lijst, zodat er dingen op en over het bord kunnen steken:
-// een tovenaarshoed boven op de puzzel, een hangplant die over de rand valt.
-// Boven meer dan opzij, want daar gaan de hoge dingen staan en het kost daar
-// geen breedte.
-const LUCHT_BOVEN = 56;
-const LUCHT_ZIJ = 17;
+// De lijst om het bord. Zie src/ui/bordrand.js: per wereld een hele nacht,
+// met verte, gebladerte en licht erin.
+//
+// Hij was vierentwintig breed, en dat was de reden dat er niets op kon
+// staan: een derde van een vakje is ruimte voor een streep, niet voor een
+// bos. Nu is hij een hele cel breed op een klein bord en nog altijd twee
+// derde op het grootste - genoeg voor een verte, een middengrond en iets
+// vlak voor je neus. Op een bord van twaalf bij twaalf krimpt hij mee,
+// anders wordt de puzzel zelf te klein op een telefoon.
+const randVan = (n) => Math.round(Math.max(58, Math.min(104, 760 / n)));
+// Lucht buiten de lijst. Dit was ruimte voor dingen die over het bord heen
+// staken; die staan nu in de band zelf, dus er hoeft alleen nog plek te zijn
+// voor de slagschaduw onder het bord.
+const LUCHT_BOVEN = 18;
+const LUCHT_ZIJ = 14;
 // Ruimte voor de rij- en kolomaanduiding en het kompas.
 const BAND = 22;
 const PLAAT = 20;
@@ -102,7 +108,12 @@ const LICHTBRONNEN = new Set([
 ]);
 
 export function renderKamerbord(puzzle, state, acties) {
+  // Waar het meubilair in deze wereld van gemaakt is. Zie WERELDSTOF; de
+  // ruil gaat er aan het eind van deze functie weer af, zodat de portretjes
+  // in het palet en de tegels op de voorpagina hun eigen kleur houden.
+  zetWereldstof(WERELDSTOF[puzzle.world?.id]);
   const n = puzzle.n;
+  const RAND = randVan(n);
   // Het bord zelf, en daaromheen de lucht waar de ornamenten in steken.
   const bordB = n * CEL + RAND * 2 + BAND;
   const bordH = n * CEL + RAND * 2 + BAND;
@@ -144,7 +155,18 @@ export function renderKamerbord(puzzle, state, acties) {
   const bruikbaar = (i) => puzzle.meubelOp[i] == null;
 
   // ---------------------------------------------------------------- vloer
-  const vloerVan = (i) => VLOER_VAN[soortVan(puzzle.kamerNamen[kamer(i)])] ?? VLOER_VAN.zaal;
+  // De soort zegt wat voor ruimte het is, de wereld waar hij van gemaakt is.
+  // Zie WERELDVLOER in kamersoorten.js.
+  const wv = WERELDVLOER[puzzle.world?.id];
+  const vloerVan = (i) => {
+    const basis = VLOER_VAN[soortVan(puzzle.kamerNamen[kamer(i)])] ?? VLOER_VAN.zaal;
+    if (!wv) return basis;
+    return {
+      vul: meng(basis.vul, wv.tint, wv.kracht),
+      lijn: meng(basis.lijn, wv.tint, wv.kracht),
+      dessin: wv.dessin?.[basis.dessin] ?? basis.dessin,
+    };
+  };
 
   const vloer = el('g');
   for (let i = 0; i < n * n; i++) {
@@ -234,10 +256,17 @@ export function renderKamerbord(puzzle, state, acties) {
       // de onderrand en wordt wat kleiner.
       const bijNaam = onderNaam.has(cel);
       // beving() geeft een getal tussen -0.5 en 0.5, dus los loopt van 0 tot
-      // 0.5. Daar zijn deze grenzen op gezet: ruwweg twee op de vijf vakjes
-      // houdt het bij stof, en een op de drie krijgt er iets kleins bij.
+      // 0.5.
+      //
+      // Hier stond bijna op elk vrij vakje iets, groot en midden op het
+      // vakje. Daarmee leek elk vakje bezet: je kon niet meer zien waar je
+      // nog iemand neer mocht zetten, want een kruk in het midden van een
+      // vakje ziet er precies zo uit als een meubelstuk dat het vakje
+      // blokkeert. Nu krijgt ongeveer een op de drie vakjes iets, het is
+      // kleiner, en het ligt in een hoek. Het midden van een vakje blijft
+      // leeg, want dat is waar een figuur komt te staan.
       const los = Math.abs(beving(cel * 3, k * 7));
-      if (los < 0.06 && cellen.length > 2) {
+      if (los < 0.34 || bijNaam) {
         tekenSnippers(kleden, cel, mx, my);
         return;
       }
@@ -249,33 +278,27 @@ export function renderKamerbord(puzzle, state, acties) {
         const c = kol(cel) + dc;
         return r >= 0 && c >= 0 && r < n && c < n && kamer(r * n + c) === k;
       };
+      // Naar welke hoek het schuift. Liefst naar een kant waar de kamer
+      // doorloopt - anders schuift het de muur in en ligt het half in de
+      // gang - maar het gaat hoe dan ook uit het midden weg.
       const ruwX = beving(cel, k * 5);
       const ruwY = beving(k * 5, cel);
-      const dx = vrij(0, Math.sign(ruwX) || 1) ? ruwX * CEL * 0.22 : 0;
-      const dy = bijNaam ? CEL * 0.34 : (vrij(Math.sign(ruwY) || 1, 0) ? ruwY * CEL * 0.22 : 0);
+      const kantX = Math.sign(ruwX) || 1;
+      const kantY = Math.sign(ruwY) || 1;
+      const naarX = vrij(0, kantX) ? kantX : -kantX;
+      const naarY = vrij(kantY, 0) ? kantY : -kantY;
+      const dx = naarX * CEL * (0.26 + Math.abs(ruwX) * 0.1);
+      const dy = naarY * CEL * (0.24 + Math.abs(ruwY) * 0.1);
 
-      // Niet alles even groot: een pol varens is hoger dan de pol ernaast,
-      // en een kruk staat verder weg dan de kruk aan de andere kant van de
-      // kamer. Allemaal even groot leest als een stempel.
-      const maat = (1.0 + Math.abs(beving(cel * 11, k + 3)) * 0.72) * (bijNaam ? 0.6 : 1);
+      // Klein: het is aankleding in een hoek, geen inboedel. Niet alles even
+      // groot, want allemaal even groot leest als een stempel.
+      const maat = 0.5 + Math.abs(beving(cel * 11, k + 3)) * 0.34;
       const draai = el('g', {
         transform: `translate(${mx.toFixed(1)} ${my.toFixed(1)}) scale(${maat.toFixed(2)}) translate(${(-mx).toFixed(1)} ${(-my).toFixed(1)}) rotate(${(beving(cel, k) * 15).toFixed(2)} ${mx} ${my}) translate(${dx.toFixed(1)} ${dy.toFixed(1)})`,
       });
       kleden.append(draai);
       tekenAankleding(draai, soort, mx, my, CEL, k + t);
 
-      // Een tweede, kleiner ding in een hoek van hetzelfde vakje: twee
-      // dingen naast elkaar lezen als een bewoonde kamer, één ding precies
-      // in het midden leest als een icoon.
-      if (los > 0.33 && !bijNaam) {
-        const hx = mx + (ruwX > 0 ? 1 : -1) * CEL * 0.24;
-        const hy = my + (ruwY > 0 ? 1 : -1) * CEL * 0.22;
-        const hoek = el('g', {
-          transform: `translate(${hx.toFixed(1)} ${hy.toFixed(1)}) scale(0.58) translate(${(-hx).toFixed(1)} ${(-hy).toFixed(1)}) rotate(${(beving(k, cel) * 24).toFixed(2)} ${hx} ${hy})`,
-        });
-        kleden.append(hoek);
-        tekenAankleding(hoek, soort, hx, hy, CEL, k + t + 3);
-      }
     });
   }
   svg.append(kleden);
@@ -519,25 +542,18 @@ export function renderKamerbord(puzzle, state, acties) {
     const cx = x(kol(cel)) + CEL / 2;
     const cy = y(rij(cel)) + CEL / 2;
 
+    // Iedereen staat er hetzelfde bij, ook het slachtoffer: een mens, geen
+    // krijtcontour. Dat die ene dood is zie je aan het kruis erdoorheen.
+    const maat = CEL - 16;
+    tekenPersoon(g, {
+      index: pi,
+      letter: (puzzle.personen[pi] ?? '?').charAt(0).toUpperCase(),
+      x: cx - maat / 2,
+      y: cy - maat / 2,
+      grootte: maat,
+    });
     if (pi === puzzle.slachtofferIdx) {
-      // Het slachtoffer is geen penning maar een krijtcontour: je ziet meteen
-      // dat dat het lichaam is, en in welke kamer het dus ligt.
-      g.append(el('circle', { cx, cy, r: 27, class: 'lijkvlak' }));
-      g.append(el('path', {
-        d: `M ${cx} ${cy - 17} a 5.5 5.5 0 1 1 0.1 0 Z
-            M ${cx - 2} ${cy - 7} l -13 6 M ${cx + 2} ${cy - 7} l 14 4
-            M ${cx} ${cy - 8} l -3 14 l -8 8 M ${cx} ${cy - 8} l 4 13 l 10 6`,
-        class: 'krijtlijn',
-      }));
-    } else {
-      const maat = CEL - 16;
-      tekenPersoon(g, {
-        index: pi,
-        letter: (puzzle.personen[pi] ?? '?').charAt(0).toUpperCase(),
-        x: cx - maat / 2,
-        y: cy - maat / 2,
-        grootte: maat,
-      });
+      tekenSlachtofferkruis(g, { x: cx - maat / 2, y: cy - maat / 2, grootte: maat });
     }
     if (state.fout?.has(cel)) g.append(el('circle', { cx, cy, r: 30, class: 'penningfout' }));
     geplaatst.append(g);
@@ -570,10 +586,13 @@ export function renderKamerbord(puzzle, state, acties) {
     if (!bruikbaar(cel)) continue;
     const cx = x(kol(cel)) + CEL / 2;
     const cy = y(rij(cel)) + CEL / 2;
-    kruisjes.append(el('path', {
-      d: `M ${cx - 9} ${cy - 9} l 18 18 M ${cx + 9} ${cy - 9} l -18 18`,
-      class: vanzelf.has(cel) ? 'kruisje kruisje-vanzelf' : 'kruisje',
-    }));
+    // Twee keer hetzelfde pad: een lichte baan eronder en het kruis
+    // erbovenop. Zonder die baan verdwijnt een kruisje in een vloer met
+    // tegels of gras - het stond er wel, maar je zag het niet.
+    const d = `M ${cx - 11} ${cy - 11} l 22 22 M ${cx + 11} ${cy - 11} l -22 22`;
+    const zacht = vanzelf.has(cel);
+    kruisjes.append(el('path', { d, class: zacht ? 'kruisbaan kruisbaan-vanzelf' : 'kruisbaan' }));
+    kruisjes.append(el('path', { d, class: zacht ? 'kruisje kruisje-vanzelf' : 'kruisje' }));
   }
   svg.append(kruisjes);
 
@@ -630,6 +649,7 @@ export function renderKamerbord(puzzle, state, acties) {
     luchtBoven: LUCHT_BOVEN, luchtZij: LUCHT_ZIJ,
   });
 
+  zetWereldstof(null);
   return svg;
 }
 
@@ -833,12 +853,38 @@ export function dessins() {
   }
   defs.append(beton);
 
+  // Vloerplaat: geschroefde stalen platen met een traanplaatreliëf. Dit is
+  // wat een ruimtestation onder je voeten heeft in plaats van parket. De
+  // naden lopen over twee vakjes, de schroeven zitten in de hoeken, en het
+  // reliëf is een rij schuine streepjes - genoeg om metaal te lezen, niet
+  // zoveel dat het een ruitjesvloer wordt.
+  const plaatmaat = CEL * 2;
+  const plaat = el('pattern', {
+    id: 'dessin-plaat', width: plaatmaat, height: plaatmaat, patternUnits: 'userSpaceOnUse',
+  });
+  plaat.append(el('path', { d: `M0 0 H${plaatmaat} M0 ${CEL} H${plaatmaat}`, class: 'dessinlijn' }));
+  plaat.append(el('path', { d: `M0 0 V${plaatmaat} M${CEL} 0 V${plaatmaat}`, class: 'dessinlijn' }));
+  for (const [sx, sy] of [[0, 0], [CEL, 0], [0, CEL], [CEL, CEL]]) {
+    for (const [dx, dy] of [[5, 5], [CEL - 5, 5], [5, CEL - 5], [CEL - 5, CEL - 5]]) {
+      plaat.append(el('circle', { cx: sx + dx, cy: sy + dy, r: 1.5, class: 'dessinspijker' }));
+    }
+    for (let k = 0; k < 4; k++) {
+      const ox = sx + 13 + k * 8;
+      const oy = sy + 16 + (k % 2) * 13;
+      plaat.append(el('path', { d: `M${ox} ${oy} l5 5`, class: 'dessindraad' }));
+    }
+  }
+  defs.append(plaat);
+
   // Warm licht in elke kamer: een zachte gloed vanuit het midden. Zonder dat
   // is een vloer een egaal vlak, en daar komt "kil" vandaan.
   const gloed = el('radialGradient', { id: 'kamergloed' });
-  gloed.append(el('stop', { offset: '0%', 'stop-color': '#fff3d2', 'stop-opacity': '0.30' }));
-  gloed.append(el('stop', { offset: '48%', 'stop-color': '#ffe9b8', 'stop-opacity': '0.10' }));
-  gloed.append(el('stop', { offset: '100%', 'stop-color': '#2e2112', 'stop-opacity': '0.30' }));
+  // De kleur van dat licht staat in de stylesheet, want hij hoort bij de
+  // wereld: kaarslicht in een landhuis, tl-licht op een ruimtestation. Een
+  // warme gloed over een stalen vloer maakt er weer hout van.
+  gloed.append(el('stop', { offset: '0%', class: 'gloedkern', 'stop-opacity': '0.30' }));
+  gloed.append(el('stop', { offset: '48%', class: 'gloedmid', 'stop-opacity': '0.10' }));
+  gloed.append(el('stop', { offset: '100%', class: 'gloedrand', 'stop-opacity': '0.30' }));
   defs.append(gloed);
 
   // Het licht valt schuin in: linksboven is de vloer lichter dan rechtsonder.
@@ -903,6 +949,10 @@ export { CEL, PENNING };
 // aanwijzingen noemen die namen, dus je moet altijd kunnen opzoeken welk
 // tekeningetje erbij hoort - zonder te hoeven raden.
 export function renderLegenda(puzzle) {
+  // Hetzelfde materiaal als op het bord. Zonder dit staat er een stalen
+  // wachtklok op het station en een houten eronder in de legenda, en dan
+  // zoek je het tekeningetje op dat er net niet is.
+  zetWereldstof(WERELDSTOF[puzzle.world?.id]);
   const gebruikt = [];
   const gezien = new Set();
   for (let cel = 0; cel < puzzle.n * puzzle.n; cel++) {
@@ -929,17 +979,17 @@ export function renderLegenda(puzzle) {
 
   const lijk = document.createElement('span');
   lijk.className = 'legenda-item';
-  const lijkSvg = el('svg', { viewBox: '0 0 48 48', width: 30, height: 30, 'aria-hidden': 'true' });
-  lijkSvg.append(el('circle', { cx: 24, cy: 24, r: 21, class: 'lijkvlak' }));
-  lijkSvg.append(el('path', {
-    d: 'M24 11a4.5 4.5 0 1 1 0.1 0 Z M22 20l-10 5 M26 20l11 3 M24 19l-2 11l-6 6 M24 19l3 10l8 5',
-    class: 'krijtlijn',
-  }));
-  lijk.append(lijkSvg);
+  lijk.append(slachtofferElement(
+    puzzle.slachtofferIdx,
+    (puzzle.slachtofferNaam ?? '?').charAt(0).toUpperCase(),
+    30,
+  ));
   const lijkNaam = document.createElement('span');
-  lijkNaam.textContent = `${puzzle.slachtofferNaam} (het lichaam)`;
+  lijkNaam.textContent = puzzle.slachtofferNaam;
   lijk.append(lijkNaam);
   lijst.append(lijk);
+
+  zetWereldstof(null);
 
   const blok = document.createElement('div');
   const kop = document.createElement('p');

@@ -341,3 +341,29 @@ export function portretElement(index, letter, grootte = 24) {
   tekenPersoon(svg, { index, letter, grootte: 48, metLetter: false });
   return svg;
 }
+
+// ------------------------------------------------------- het slachtoffer
+//
+// Het slachtoffer was een krijtcontour: een omtrek van een lichaam op de
+// grond, zoals op een plattegrond van een plaats delict. Dat leest als een
+// symbool, niet als iemand die er stond, en het staat los van de stijl van
+// de andere elf. Nu is het slachtoffer gewoon een van de figuren, met een
+// kruis erdoorheen. Het kruis is rood en dik, en daarmee iets anders dan de
+// donkere kruisjes waarmee je zelf vakjes wegstreept.
+export function tekenSlachtofferkruis(ouder, { x = 0, y = 0, grootte = 48 } = {}) {
+  const r = grootte * 0.4;
+  const cx = x + grootte / 2;
+  const cy = y + grootte / 2;
+  const d = `M${(cx - r).toFixed(1)} ${(cy - r).toFixed(1)} L${(cx + r).toFixed(1)} ${(cy + r).toFixed(1)}`
+    + ` M${(cx + r).toFixed(1)} ${(cy - r).toFixed(1)} L${(cx - r).toFixed(1)} ${(cy + r).toFixed(1)}`;
+  ouder.append(el('path', { d, class: 'lijkbaan' }));
+  ouder.append(el('path', { d, class: 'lijkkruis' }));
+}
+
+// Hetzelfde portretje als de anderen, maar doorgekruist.
+export function slachtofferElement(index, letter, grootte = 24) {
+  const svg = el('svg', { viewBox: '0 0 48 48', width: grootte, height: grootte, 'aria-hidden': 'true' });
+  tekenPersoon(svg, { index, letter, grootte: 48, metLetter: false });
+  tekenSlachtofferkruis(svg, { grootte: 48 });
+  return svg;
+}

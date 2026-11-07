@@ -25,10 +25,10 @@ import { countLatinSolutions, evalLatin } from '../src/engine/latin.js';
 import {
   telPlaatsingen, evalAanwijzing, graad, idx, rijVan, kolVan, kamerBuren, naastMeubel,
 } from '../src/engine/rooms.js';
-import { levelParams, kamerParams } from '../src/engine/difficulty.js';
+import { levelParams, kamerParams, KAMER_LEVELS, LEVEL_IDS } from '../src/engine/difficulty.js';
 import { keepsNames } from '../src/ai/opdracht.js';
 import { readFileSync } from 'node:fs';
-import { soortVan, meubelsVoor } from '../src/content/kamersoorten.js';
+import { soortVan, meubelsVoor, vormVan } from '../src/content/kamersoorten.js';
 
 const seedsPerCombinatie = Number(process.argv[2] ?? 2);
 
@@ -214,6 +214,50 @@ function keurKamer(p, waar) {
       !(c.soort === 'zelfdeKamer' && c.ja && raaktLijk), waar, p.clues[i]?.text);
   }
 
+  // De naam van een kamer moet bij zijn vorm passen. Noem je een vierkante
+  // klodder "het verzonken bruggetje", dan leest de hele plattegrond als
+  // iets wat de computer bij elkaar heeft gegooid. De generator deelt de
+  // namen daarom uit op vorm; hier wordt nagerekend dat dat ook gelukt is.
+  {
+    const maten = new Map();
+    for (let cel = 0; cel < p.n * p.n; cel++) {
+      const k = p.kamerVan[cel];
+      const r = Math.floor(cel / p.n);
+      const c = cel % p.n;
+      const m = maten.get(k) ?? { cellen: 0, minR: p.n, maxR: -1, minC: p.n, maxC: -1 };
+      m.cellen += 1;
+      m.minR = Math.min(m.minR, r); m.maxR = Math.max(m.maxR, r);
+      m.minC = Math.min(m.minC, c); m.maxC = Math.max(m.maxC, c);
+      maten.set(k, m);
+    }
+    const vorm = new Map();
+    for (const [k, m] of maten) {
+      const hoog = m.maxR - m.minR + 1;
+      const breed = m.maxC - m.minC + 1;
+      m.lang = Math.max(hoog, breed) / Math.max(1, Math.min(hoog, breed));
+      vorm.set(k, vormVan(p.kamerNamen[k]));
+    }
+    const van = (soort) => [...maten].filter(([k]) => vorm.get(k) === soort);
+    const stroken = van('smal');
+    const anders = [...maten].filter(([k]) => vorm.get(k) !== 'smal');
+    for (const [k, m] of stroken) {
+      const langer = anders.every(([, o]) => m.lang >= o.lang);
+      eis('een strooknaam ligt op de langste kamer die er is', langer, waar,
+        `${p.kamerNamen[k]} (${m.lang.toFixed(1)})`);
+    }
+    // Alleen te vergelijken als er ook echt een hoeknaam op het bord staat.
+    // Zonder die vergelijking werd de ondergrens oneindig en faalde elke
+    // zaalnaam - de regel klopte niet, de puzzels wel.
+    const hoeken = van('klein');
+    if (hoeken.length) {
+      const kleinste = Math.min(...hoeken.map(([, m]) => m.cellen));
+      for (const [k, m] of van('groot')) {
+        eis('een zaalnaam ligt op een grotere kamer dan een hoeknaam',
+          m.cellen >= kleinste, waar, `${p.kamerNamen[k]} (${m.cellen} vakjes)`);
+      }
+    }
+  }
+
   // Regel 9: namen moeten los van elkaar te noemen zijn.
   const uniek = (lijst) => new Set(lijst).size === lijst.length;
   eis('alle figuren hebben een eigen naam', uniek(p.personen), waar, p.personen.join(', '));
@@ -232,7 +276,7 @@ function keurKamer(p, waar) {
     const m = p.meubelOp[cel];
     if (m == null) continue;
     const soort = soortVan(p.kamerNamen[kamerVan[cel]]);
-    const mag = meubelsVoor(soort).flat().map(([naam]) => naam);
+    const mag = meubelsVoor(soort, p.world?.id).flat().map(([naam]) => naam);
     eis('het meubilair past bij de soort ruimte',
       mag.includes(p.meubelNamen[m]), waar,
       `${p.meubelNamen[m]} in ${p.kamerNamen[kamerVan[cel]]} (${soort})`);
@@ -392,6 +436,9 @@ function keurLatin(p, waar) {
 const TELWOORDEN = {
   twee: 2, drie: 3, vier: 4, vijf: 5, zes: 6,
   zeven: 7, acht: 8, negen: 9, tien: 10, elf: 11, twaalf: 12,
+  // Sinds niveau 6 bestaat kan een titel ook zestien beloven, en dan moet
+  // die belofte net zo goed nagerekend worden als de rest.
+  dertien: 13, veertien: 14, vijftien: 15, zestien: 16,
 };
 
 // Alleen getallen die over de puzzel zelf gaan. "Tien minuten werk" en "twee
@@ -528,15 +575,44 @@ console.log(`  ${herschreven} puzzels met een herschreven tekst`);
 console.log('\nDe werelden');
 for (const w of WORLDS) {
   const waar = `  ${w.name}`;
-  const letters = [...w.persons, ...w.slachtoffers].map((x) => x.charAt(0).toUpperCase());
+  const letters = [...w.persons, ...(w.personenXL ?? []), ...w.slachtoffers].map((x) => x.charAt(0).toUpperCase());
   eis('verdachten en slachtoffers hebben elk een eigen beginletter',
     new Set(letters).size === letters.length, waar, letters.join(''));
-  eis('genoeg verdachten voor het grootste rooster', w.persons.length >= 12, waar);
-  eis('genoeg plekken voor het grootste aantal kamers', w.places.length >= 8, waar);
+  // Het grootste rooster is zestien bij zestien, met elf kamers. Zet je
+  // daar een wereld naast die twaalf namen heeft, dan valt de generator om
+  // op een plek waar je het pas merkt als iemand niveau zes kiest.
+  // Het grootste rooster is zestien bij zestien met elf kamers. Zet je daar
+  // een wereld naast die twaalf namen heeft, dan valt de generator om op een
+  // plek waar je het pas merkt als iemand niveau zes kiest. De extra namen
+  // en plekken staan apart omdat ze de bestaande puzzels niet mogen
+  // verschuiven; voor de maat tellen ze gewoon mee.
+  const grootste = KAMER_LEVELS[Math.max(...LEVEL_IDS)];
+  const alleNamen = [...w.persons, ...(w.personenXL ?? [])];
+  const allePlekken = [...w.places, ...(w.plekkenXL ?? [])];
+  eis('genoeg verdachten voor het grootste rooster',
+    alleNamen.length >= grootste.n, waar, `${alleNamen.length} namen`);
+  eis('genoeg plekken voor het grootste aantal kamers',
+    allePlekken.length >= grootste.kamers, waar, `${allePlekken.length} plekken`);
   eis('genoeg voorwerpen, tijden en sporen voor zes slots',
     w.objects.length >= 6 && w.times.length >= 6 && w.hidden.length >= 6, waar);
   eis('elk slachtoffer heeft een naam en een rol',
     w.slachtoffers.length >= 1 && w.victims.length >= 1, waar);
+
+  // Het woord waarmee een wereld een ruimte aanduidt - "in dezelfde zaal",
+  // "in hetzelfde gewelf" - staat in de vraag en in elke aanwijzing over
+  // twee mensen bij elkaar. Als datzelfde woord ook in een kamernaam zit,
+  // dan leest de vraag als een hint: "in welke zaal stond hij" terwijl er
+  // precies een zaal op het bord ligt. Het woord moet dus van geen enkele
+  // plek in die wereld een deel van de naam zijn.
+  const ruimtewoord = (w.sameRoom ?? '')
+    .replace(/^(in|op) (dezelfde|hetzelfde) /, '')
+    .replace(/ als$/, '')
+    .toLowerCase();
+  if (ruimtewoord) {
+    const botsing = allePlekken.filter((plek) => plek.toLowerCase().includes(ruimtewoord));
+    eis('het woord voor een ruimte zit in geen enkele kamernaam',
+      botsing.length === 0, waar, `"${ruimtewoord}" zit in ${botsing.join(', ')}`);
+  }
 }
 console.log(`  ${WORLDS.length} werelden gekeurd`);
 
@@ -563,10 +639,31 @@ for (const a of ASSIGNMENTS) {
             `  ${a.id}/${w.id}/${m.id}/n${niveau}/seed regel-${s}`);
         }
       }
+      // Niveau zes krijgt bij het Speurdoku een eigen, dunnere ronde. Een
+      // bord van zestien bij zestien kost zeven tot elf seconden om te
+      // bouwen; alles wat voor de andere niveaus geldt zou hier uren duren.
+      // Daarom hier een seed per wereld in plaats van per combinatie - de
+      // overige mechanieken zijn op niveau zes net zo snel als op vijf en
+      // gaan wel de volle ronde door.
+      if (m.id !== 'kamer') {
+        combinaties++;
+        for (let s = 0; s < seedsPerCombinatie; s++) {
+          keur({ opdracht: a.id, wereld: w.id, mechaniek: m.id, niveau: 6, seed: `regel-${s}` },
+            `  ${a.id}/${w.id}/${m.id}/n6/seed regel-${s}`);
+        }
+      }
     }
   }
 }
+for (const w of WORLDS) {
+  const a = ASSIGNMENTS.find((x) => x.mechanics.includes('kamer'));
+  combinaties++;
+  keur({ opdracht: a.id, wereld: w.id, mechaniek: 'kamer', niveau: 6, seed: 'regel-xl' },
+    `  ${a.id}/${w.id}/kamer/n6/seed regel-xl`);
+}
 console.log(`  ${combinaties} combinaties, ${seedsPerCombinatie} seeds elk`);
+console.log('  (niveau zes bij het Speurdoku: een seed per wereld, want');
+console.log('   zestien bij zestien kost zeven tot elf seconden per stuk)');
 
 console.log(`\n${regelsGeraakt.size} regels nagerekend over ${gekeurd} puzzels:`);
 for (const [naam, aantal] of [...regelsGeraakt].sort()) {

@@ -3,8 +3,9 @@
 
 import { el } from './boards.js';
 import { CATALOG } from '../content/catalog.js';
+import { mechaniekZichtbaar } from '../content/assignments.js';
 import { WORLDS } from '../content/worlds.js';
-import { LEVELS } from '../engine/difficulty.js';
+import { LEVELS, LEVEL_IDS, ZICHTBARE_LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
 import { solvedIds, onthuldIds } from './state.js';
 import { puzzleId, buildPuzzle } from '../puzzle.js';
 import { renderKamerbord } from './board-rooms.js';
@@ -29,10 +30,21 @@ const STAPPEN = [
   },
 ];
 
+// Alleen de Speurdoku's; zie ZICHTBARE_MECHANICS in assignments.js.
+const TEZIEN = CATALOG.filter((p) => mechaniekZichtbaar(p.mechaniek) && ZICHTBARE_LEVEL_IDS.includes(p.niveau));
+
 export function renderHome(mount) {
   const done = solvedIds();
   const bekeken = onthuldIds();
-  const instap = CATALOG.filter((p) => p.seed.startsWith('start-'));
+  // Het instappad was de reeks met seeds die met 'start-' beginnen, en die
+  // liep door alle vier de soorten spel heen. Nu alleen het Speurdoku te
+  // zien is, bleef daar één zaak van over. Dus is het pad nu wat het altijd
+  // had moeten zijn: de eerste zaak van elk niveau, van vijf bij vijf tot
+  // zestien bij zestien. Dat loopt echt op, en het loopt vanzelf mee als er
+  // een niveau bij komt.
+  const instap = ZICHTBARE_LEVEL_IDS
+    .map((niveau) => TEZIEN.find((p) => p.niveau === niveau))
+    .filter(Boolean);
 
   mount.replaceChildren();
 
@@ -58,7 +70,7 @@ export function renderHome(mount) {
           href: `#/puzzel/${puzzleId(instap[0])}`,
           text: 'Begin bij de eerste zaak',
         }),
-        el('a', { class: 'btn', href: '#/puzzels', text: `Alle ${CATALOG.length} puzzels` }),
+        el('a', { class: 'btn', href: '#/puzzels', text: `Alle ${TEZIEN.length} puzzels` }),
       ]),
       el('p', {
         class: 'hero-note',
@@ -89,7 +101,7 @@ export function renderHome(mount) {
     el('section', { class: 'section' }, [
       el('div', { class: 'section-head' }, [
         el('h2', { text: 'Begin hier' }),
-        el('p', { text: `${instap.length} zaken die stap voor stap zwaarder worden.` }),
+        el('p', { text: `Eén zaak per niveau, van ${KAMER_LEVELS[ZICHTBARE_LEVEL_IDS[0]].n} bij ${KAMER_LEVELS[ZICHTBARE_LEVEL_IDS[0]].n} tot ${KAMER_LEVELS[ZICHTBARE_LEVEL_IDS.at(-1)].n} bij ${KAMER_LEVELS[ZICHTBARE_LEVEL_IDS.at(-1)].n}.` }),
       ]),
       el('div', { class: 'rows' }, instap.map((entry, i) => puzzelRij(entry, done, i + 1, bekeken))),
     ])
@@ -104,7 +116,7 @@ export function renderHome(mount) {
       ]),
       el('div', { class: 'tiles' },
         WORLDS.map((w) => {
-          const aantal = CATALOG.filter((p) => p.wereld === w.id).length;
+          const aantal = TEZIEN.filter((p) => p.wereld === w.id).length;
           return el('a', { class: 'tile', href: `#/puzzels?wereld=${w.id}` }, [
             el('span', { class: 'tile-scene' }, sceneVoor(w.id, w.accent)),
             el('span', { class: 'tile-body' }, [
@@ -213,7 +225,7 @@ export function puzzelKaart(entry, done, bekeken = new Set()) {
   beeld.firstChild.style.transform = `translateX(${verschuiving}%) scale(1.22)`;
 
   const bolletjes = el('span', { class: 'dots', title: `Niveau ${entry.niveau}: ${niveau.label}` },
-    [1, 2, 3, 4, 5].map((n) => el('span', { class: n <= entry.niveau ? 'dot on' : 'dot' })));
+    LEVEL_IDS.map((n) => el('span', { class: n <= entry.niveau ? 'dot on' : 'dot' })));
 
   return el('a', {
     class: 'kaart',

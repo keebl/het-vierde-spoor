@@ -4,20 +4,22 @@
 import { el } from './boards.js';
 import { puzzelKaart } from './home.js';
 import { CATALOG } from '../content/catalog.js';
-import { WORLDS, WORLD_BY_ID } from '../content/worlds.js';
-import { ASSIGNMENTS, MECHANICS } from '../content/assignments.js';
-import { LEVELS, LEVEL_IDS } from '../engine/difficulty.js';
+import { WORLDS } from '../content/worlds.js';
+import { ASSIGNMENTS, mechaniekZichtbaar } from '../content/assignments.js';
+import { LEVELS, LEVEL_IDS, ZICHTBARE_LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
 import { solvedIds, onthuldIds } from './state.js';
 import { puzzleId } from '../puzzle.js';
 
-// Twee keuzelijsten is genoeg. 'Wat je uitzoekt' en 'Decor' zijn eruit: de
-// puzzels staan al per decor gegroepeerd, en wat je uitzoekt is bijna altijd
-// hetzelfde. Minder knoppen boven de lijst, meer lijst.
+// Twee keuzelijsten is genoeg. 'Soort spel' is eruit omdat er voorlopig maar
+// één soort te zien is, en 'Wat je uitzoekt' omdat dat bijna altijd hetzelfde
+// is. Minder knoppen boven de lijst, meer lijst.
 const FILTERS = [
-  { key: 'mechaniek', label: 'Soort spel', opties: () => MECHANICS.map((m) => [m.id, m.name]) },
   { key: 'wereld', label: 'Genre', opties: () => WORLDS.map((w) => [w.id, `${w.icon} ${w.name}`]) },
-  { key: 'niveau', label: 'Moeilijkheidsgraad', opties: () => LEVEL_IDS.map((l) => [String(l), `${l} - ${LEVELS[l].label}`]) },
+  { key: 'niveau', label: 'Moeilijkheidsgraad', opties: () => ZICHTBARE_LEVEL_IDS.map((l) => [String(l), `${l} - ${LEVELS[l].label}`]) },
 ];
+
+// Alleen de Speurdoku's. Zie ZICHTBARE_MECHANICS in assignments.js.
+const TEZIEN = CATALOG.filter((p) => mechaniekZichtbaar(p.mechaniek) && ZICHTBARE_LEVEL_IDS.includes(p.niveau));
 
 // Het decorfilter blijft wel werken via de link (#/puzzels?wereld=noir), want
 // de tegels op de voorpagina wijzen daarheen.
@@ -34,7 +36,7 @@ export function renderLibrary(mount, query = {}) {
 
   const alleSleutels = [...FILTERS.map((f) => f.key), ...EXTRA_FILTERS];
   const alleenOpen = query.open === '1';
-  const lijst = CATALOG
+  const lijst = TEZIEN
     .filter((p) => alleSleutels.every((k) => !actief[k] || String(p[k]) === String(actief[k])))
     .filter((p) => !alleenOpen || !done.has(puzzleId(p)))
     // Oplopend in moeilijkheid: je wilt niet van Meesterlijk naar Beginner
@@ -47,7 +49,7 @@ export function renderLibrary(mount, query = {}) {
     el('h1', { text: 'Alle puzzels' }),
     el('p', {
       class: 'lede',
-      text: `${CATALOG.length} zaken in vier soorten spel en vijf moeilijkheidsgraden. Hoe hoger het niveau, hoe verder je moet doorredeneren voordat er iets vastligt.`,
+      text: `${TEZIEN.length} zaken in ${ZICHTBARE_LEVEL_IDS.length} moeilijkheidsgraden, van vijf verdachten tot zestien. Hoe hoger het niveau, hoe verder je moet doorredeneren voordat er iets vastligt.`,
     })
   );
 
@@ -89,12 +91,12 @@ export function renderLibrary(mount, query = {}) {
     balk.append(wis);
   }
 
-  const opgelost = CATALOG.filter((p) => done.has(puzzleId(p))).length;
+  const opgelost = TEZIEN.filter((p) => done.has(puzzleId(p))).length;
   balk.append(el('span', {
     class: 'filter-count',
-    text: lijst.length === CATALOG.length
-      ? `${opgelost} van ${CATALOG.length} opgelost`
-      : `${lijst.length} van ${CATALOG.length} puzzels · ${opgelost} opgelost`,
+    text: lijst.length === TEZIEN.length
+      ? `${opgelost} van ${TEZIEN.length} opgelost`
+      : `${lijst.length} van ${TEZIEN.length} puzzels · ${opgelost} opgelost`,
   }));
   mount.append(balk);
 
@@ -108,23 +110,31 @@ export function renderLibrary(mount, query = {}) {
     return;
   }
 
-  // Zonder decorfilter groeperen we per decor: dat geeft de lijst koppen en
-  // leesrust. Met een filter aan is een platte lijst duidelijker.
-  if (actief.wereld) {
+  // Gegroepeerd op moeilijkheid, niet op decor.
+  //
+  // Eerst stond de lijst per wereld: eerst alle catacomben, dan alle
+  // landhuizen. Dan kies je een decor en werk je dat af, en loopt de
+  // moeilijkheid binnen zo'n blokje alle kanten op. Wat je als speler zoekt
+  // is "iets van mijn niveau", niet "nog een keer dat decor". Dus staan de
+  // niveaus nu onder elkaar en lopen de decors er doorheen: in één kop zie
+  // je een woud naast een ruimtestation naast een crypte.
+  if (actief.niveau) {
     mount.append(el('div', { class: 'kaarten' }, lijst.map((e) => puzzelKaart(e, done, bekeken))));
     return;
   }
 
-  for (const w of WORLDS) {
-    const vanWereld = lijst.filter((p) => p.wereld === w.id);
-    if (!vanWereld.length) continue;
+  for (const niveau of ZICHTBARE_LEVEL_IDS) {
+    const vanNiveau = lijst.filter((p) => p.niveau === niveau);
+    if (!vanNiveau.length) continue;
+    const L = LEVELS[niveau];
+    const K = KAMER_LEVELS[niveau];
     mount.append(
       el('section', { class: 'section' }, [
         el('div', { class: 'section-head' }, [
-          el('h2', { text: `${w.icon} ${WORLD_BY_ID.get(w.id).name}` }),
-          el('p', { text: w.blurb }),
+          el('h2', { text: `${niveau} · ${L.label}` }),
+          el('p', { text: `${K.n} verdachten op een plattegrond van ${K.n} bij ${K.n}, in ${K.kamers} kamers.` }),
         ]),
-        el('div', { class: 'kaarten' }, vanWereld.map((e) => puzzelKaart(e, done, bekeken))),
+        el('div', { class: 'kaarten' }, vanNiveau.map((e) => puzzelKaart(e, done, bekeken))),
       ])
     );
   }

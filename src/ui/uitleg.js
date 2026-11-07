@@ -3,7 +3,7 @@
 
 import { el } from './boards.js';
 import { WORLDS } from '../content/worlds.js';
-import { ASSIGNMENTS, MECHANICS } from '../content/assignments.js';
+import { ASSIGNMENTS, ZICHTBARE_MECHANICS } from '../content/assignments.js';
 import { LEVELS, LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
 
 const tabel = (rijen) =>
@@ -87,8 +87,10 @@ export function renderUitleg(mount) {
   );
 
   mount.append(
-    sectie('Soorten spel', tabel(MECHANICS.map((m) => [m.name, m.blurb])),
-      'Dezelfde logica, vier verschillende vormen.')
+    sectie('Soorten spel', tabel(ZICHTBARE_MECHANICS.map((m) => [m.name, m.blurb])),
+      ZICHTBARE_MECHANICS.length > 1
+        ? 'Dezelfde logica, verschillende vormen.'
+        : 'Eén vorm, acht decors en zes moeilijkheidsgraden.')
   );
 
   mount.append(
@@ -120,7 +122,7 @@ export function renderUitleg(mount) {
       el('div', { class: 'prose' }, [
         el('p', {}, [
           el('b', { text: 'Moet ik ooit gokken? ' }),
-          el('span', { text: 'Nee. Op de eerste drie moeilijkheidsgraden kom je er door stap voor stap uit te sluiten. Op de twee zwaarste moet je soms een mogelijkheid aannemen en laten zien dat die tot een tegenspraak leidt — dat is nog steeds redeneren.' }),
+          el('span', { text: 'Nee. Op de eerste drie moeilijkheidsgraden kom je er door stap voor stap uit te sluiten. Op de drie zwaarste moet je soms een mogelijkheid aannemen en laten zien dat die tot een tegenspraak leidt — dat is nog steeds redeneren.' }),
         ]),
         el('p', {}, [
           el('b', { text: 'Hoe weet ik dat een puzzel klopt? ' }),

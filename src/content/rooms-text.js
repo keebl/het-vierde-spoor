@@ -22,6 +22,7 @@ export function zinVoor(c, w) {
 
   switch (c.soort) {
     case 'kamer':
+    case 'kamerNiet':
       return hoofdletter(c.ja ? `${P} stond ${V} ${K}.` : `${P} stond niet ${V} ${K}.`);
     case 'zelfdeKamer':
       return hoofdletter(c.ja

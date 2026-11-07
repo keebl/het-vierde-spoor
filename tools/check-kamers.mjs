@@ -8,12 +8,14 @@
 // en wij niet, dus hij staat hier zwart op wit.
 
 import { WORLDS } from '../src/content/worlds.js';
-import { SOORT_VAN, VLOER_VAN, MEUBELS_VAN } from '../src/content/kamersoorten.js';
+import {
+  SOORT_VAN, VLOER_VAN, MEUBELS_VAN, VERWANTE_SOORTEN,
+  WERELDMEUBELS, WERELDVERWANT, meubelsVoor, soortVan,
+} from '../src/content/kamersoorten.js';
 import { MEUBELKUNST } from '../src/ui/meubelkunst.js';
 import { GESCHILDERD } from '../src/ui/meubelkunst-geschilderd.js';
 import { STOFFEN } from '../src/ui/geschilderd.js';
 import { RANDSTIJLEN } from '../src/ui/bordrand.js';
-import { ORNAMENTEN } from '../src/ui/randornamenten.js';
 import { DESSINS } from '../src/ui/board-rooms.js';
 import { motievenVoor } from '../src/ui/aankleding.js';
 
@@ -22,7 +24,10 @@ const meld = (soort, wat) => fouten.push(`${soort.padEnd(20)}${wat}`);
 
 // ------------------------------------------------------------ de ruimten
 
-const plekken = new Set(WORLDS.flatMap((w) => w.places));
+// plekkenXL zijn de kamers die pas meedoen op het bord van zestien bij
+// zestien. Ze staan apart in de wereld omdat ze de bestaande puzzels niet
+// mogen verschuiven, maar een soort ruimte hebben ze net zo hard nodig.
+const plekken = new Set(WORLDS.flatMap((w) => [...w.places, ...(w.plekkenXL ?? [])]));
 for (const p of plekken) if (!SOORT_VAN[p]) meld('GEEN SOORT', p);
 for (const p of Object.keys(SOORT_VAN)) if (!plekken.has(p)) meld('OVERBODIG', p);
 const soorten = new Set(Object.values(SOORT_VAN));
@@ -69,8 +74,70 @@ for (const { soort, naam, sleutel } of paren) {
 for (const sleutel of Object.keys(MEUBELKUNST)) {
   if (!sleutels.has(sleutel)) meld('TEKENING ONGEBRUIKT', sleutel);
 }
+
+// ---------------------------------------- en wat deze wereld het noemt
+//
+// Een wereld mag het meubilair omdopen en hertekenen (WERELDMEUBELS). Daar
+// gaat precies hetzelfde in mis als in de basislijst, maar een laag diep:
+// twee namen die dezelfde tekening lenen, een tekening die niet bestaat, een
+// naam die ook een kamer is. En het geniepigste: een naam die blijft staan
+// omdat niemand aan de uitwijkroute dacht - zo stond er een eikenhouten vat
+// op het ruimtestation. Daarom rekent deze toets per wereld na welke namen
+// er kunnen opduiken, en eist hij van een wereld met `volledig: true` dat hij
+// er allemaal een antwoord op heeft.
+const gebruikteSleutels = new Set(sleutels.keys());
+let wereldenMetLaag = 0;
+
+for (const w of WORLDS) {
+  const laag = WERELDMEUBELS[w.id];
+  const kamers = new Set([...w.places, ...(w.plekkenXL ?? [])]);
+  // De soorten ruimte die in deze wereld echt op het bord komen, plus de
+  // soorten waar hun meubilair naar uitwijkt als het opraakt.
+  const eigen = new Set([...kamers].map(soortVan));
+  const bereik = new Set(eigen);
+  for (const s of eigen) {
+    for (const v of (WERELDVERWANT[w.id]?.[s] ?? VERWANTE_SOORTEN[s] ?? [])) bereik.add(v);
+  }
+  const basisnamen = new Set([...bereik].flatMap((s) => (MEUBELS_VAN[s] ?? []).map(([naam]) => naam)));
+
+  const perNaam = new Map();
+  const perSleutel = new Map();
+  for (const s of bereik) {
+    for (const [naam, sleutel] of meubelsVoor(s, w.id).flat()) {
+      gebruikteSleutels.add(sleutel);
+      if (!GESCHILDERD[sleutel]) meld('GEEN TEKENING IN WERELD', `${w.id}/${naam} -> ${sleutel}`);
+      if (kamers.has(naam)) meld('MEUBEL HEET ALS EEN KAMER', `${w.id}: ${naam}`);
+      if (perNaam.has(naam) && perNaam.get(naam) !== sleutel) {
+        meld('NAAM TWEE KEER', `${w.id}: ${naam}`);
+      }
+      perNaam.set(naam, sleutel);
+      if (perSleutel.has(sleutel) && perSleutel.get(sleutel) !== naam) {
+        meld('TEKENING GELEEND', `${w.id}/${sleutel}: ${perSleutel.get(sleutel)} en ${naam}`);
+      }
+      perSleutel.set(sleutel, naam);
+    }
+  }
+
+  if (!laag) continue;
+  wereldenMetLaag++;
+  const gedekt = new Set([...(laag.zelfde ?? []), ...Object.keys(laag.anders ?? {})]);
+  for (const naam of gedekt) {
+    if (!basisnamen.has(naam)) meld('OMDOPEN OVERBODIG', `${w.id}: ${naam} komt hier niet voor`);
+  }
+  // Een naam kan niet twee keer in de laag staan: dan is niet te zien welke
+  // van de twee regels wint.
+  for (const naam of (laag.zelfde ?? [])) {
+    if (laag.anders?.[naam]) meld('TWEE KEER IN DE LAAG', `${w.id}: ${naam}`);
+  }
+  if (laag.volledig) {
+    for (const naam of basisnamen) {
+      if (!gedekt.has(naam)) meld('NIET OMGEDOOPT', `${w.id}: ${naam} kan hier opduiken`);
+    }
+  }
+}
+
 for (const sleutel of Object.keys(GESCHILDERD)) {
-  if (!sleutels.has(sleutel)) meld('GESCHILDERDE TEKENING ONGEBRUIKT', sleutel);
+  if (!gebruikteSleutels.has(sleutel)) meld('GESCHILDERDE TEKENING ONGEBRUIKT', sleutel);
 }
 
 // ------------------------------------------------- en tekent de tekening iets?
@@ -261,68 +328,31 @@ for (const [id, stijl] of Object.entries(RANDSTIJLEN)) {
   if (stijl.textuur && !['nerf', 'korrel', 'weefsel', 'strijk', 'vezel'].includes(stijl.textuur)) {
     meld('RANDTEXTUUR BESTAAT NIET', `${id}: ${stijl.textuur}`);
   }
-  if (typeof stijl.motief !== 'function') meld('RAND ZONDER MOTIEF', id);
+  if (typeof stijl.verf !== 'function') meld('RAND ZONDER SCHILDERING', id);
+  if (!/^#[0-9a-f]{6}$/i.test(stijl.gloed ?? '')) meld('RAND ZONDER LICHT', id);
   if (!(stijl.stap > 12)) meld('RANDSTAP TE KLEIN', `${id}: ${stijl.stap}`);
-  // Een lijst hoort donkerder te zijn dan het speelveld: hij vat het bord in.
-  // De eerste poging was een fel groene band die harder riep dan de kamers.
   const helder = (hex) => {
     const n = parseInt(hex.slice(1), 16);
     return (((n >> 16) & 255) * 0.299 + ((n >> 8) & 255) * 0.587 + (n & 255) * 0.114) / 255;
   };
-  // 0.40: de steenband van de grafkelder stond op 0.415 en viel samen met
-  // de vloeren erbinnen. De lichtste die wel werkt is het staal van het
-  // ruimtestation, op 0.355.
-  if (helder(stijl.kern) > 0.4) meld('RAND TE LICHT', `${id}: ${stijl.kern}`);
-  keurOrnament(`rand/${id}`, stijl.hoek ?? []);
-
-  // Wat er op de lijst hangt en staat. Een wereld zonder ornamenten heeft
-  // weer een kale rand, en dat was precies de klacht.
-  const dingen = ORNAMENTEN[id] ?? [];
-  if (dingen.length < 4) meld('TE WEINIG OP DE RAND', `${id}: ${dingen.length}`);
-  // Alles aan één kant is geen rand die leeft maar een rij.
-  const kanten = new Set(dingen.map((d) => d.kant));
-  if (dingen.length && kanten.size < 3) {
-    meld('RAND EENZIJDIG', `${id}: alleen ${[...kanten].join(', ')}`);
-  }
-  dingen.forEach((d, i) => {
-    const label = `rand/${id}#${i}`;
-    if (!['boven', 'onder', 'links', 'rechts'].includes(d.kant)) meld('RANDKANT RAAR', `${label}: ${d.kant}`);
-    if (!(d.t > 0.02 && d.t < 0.98)) meld('RANDPLEK RAAR', `${label}: t=${d.t}`);
-    if (!(d.maat >= 30 && d.maat <= 130)) meld('RANDMAAT RAAR', `${label}: ${d.maat}`);
-    // Steekt het verder naar binnen dan een halve cel, dan staat het niet op
-    // de rand maar op het speelveld.
-    const naarBinnen = d.maat - 24 - (d.uit ?? Math.round(d.maat * 0.3));
-    if (naarBinnen > 56) meld('RAND HANGT TE VER OVER', `${label}: ${Math.round(naarBinnen)}`);
-    if (naarBinnen < 0) meld('RAND HANGT ER NAAST', `${label}: ${Math.round(naarBinnen)}`);
-    keurOrnament(label, d.delen ?? []);
-  });
-}
-
-// Een hoekornament volgt dezelfde regels als een meubelstuk, op één na: het
-// staat niet op een vloer, dus de eis "onderkant onderin het vierkant" geldt
-// er niet voor.
-function keurOrnament(label, delen) {
-  if (delen.length < 3) meld('HOEK TE KAAL', `${label}: ${delen.length} onderdelen`);
-  let staan = 0;
-  for (const { d, lijn, stof, grond } of delen) {
-    if (grond) staan++;
-    if (!lijn && !/[Zz]\s*$/.test(d)) meld('HOEK ZONDER VLAK', `${label}: ${d}`);
-    if (stof != null && !STOFFEN[stof]) meld('HOEK MATERIAAL BESTAAT NIET', `${label}: ${stof}`);
-    const b = omhulsel(d);
-    if (b.minX < -1 || b.minY < -1 || b.maxX > 49 || b.maxY > 49) {
-      meld('HOEK BUITEN HET VAKJE', `${label}: ${d}`);
-    }
-  }
-  // Een hoekstuk staat ergens op; een hangplant hangt. Nul mag dus, twee niet.
-  if (staan > 1) meld('HOEK CONTACT', `${label}: ${staan} onderdelen op de grond`);
+  // De band is nacht. Dat is geen smaak maar rekenwerk: een gloed is licht
+  // dat erbij opgeteld wordt, en op een lichte ondergrond telt er niets bij
+  // op. Een lantaarn op beige is een gele vlek. De grens lag eerst op 0.40,
+  // en bij die grens zag de hele rand eruit als een plank met een lampje.
+  // De lichtste die nu nog werkt is de lambrisering van het landhuis, op
+  // 0.084; alles daarboven slikt zijn eigen licht in.
+  if (helder(stijl.kern) > 0.14) meld('RAND TE LICHT', `${id}: ${stijl.kern}`);
+  // En het licht dat erop valt moet wel warm of fel zijn, anders is er niets
+  // om naar te kijken.
+  if (helder(stijl.gloed ?? '#000000') < 0.3) meld('RANDLICHT TE FLAUW', `${id}: ${stijl.gloed}`);
 }
 
 console.log('');
 console.log(`plekken            ${plekken.size}, allemaal met een soort`);
 console.log(`soorten ruimte     ${soorten.size}, elk met vloer en meubilair`);
-console.log(`meubelstukken      ${paren.length} namen, ${Object.keys(MEUBELKUNST).length} eigen tekeningen`);
-const opDeRand = Object.values(ORNAMENTEN).reduce((a, l) => a + l.length, 0);
-console.log(`bordranden         ${Object.keys(RANDSTIJLEN).length}, één per wereld, met ${opDeRand} dingen erop`);
+console.log(`meubelstukken      ${paren.length} namen, ${Object.keys(GESCHILDERD).length} eigen tekeningen`);
+console.log(`eigen meubelnamen  ${wereldenMetLaag} werelden dopen het meubilair om`);
+console.log(`bordranden         ${Object.keys(RANDSTIJLEN).length}, één per wereld, elk een eigen nacht`);
 
 if (fouten.length) {
   console.log('');

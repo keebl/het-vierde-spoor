@@ -7,7 +7,11 @@ import { WORLDS } from '../src/content/worlds.js';
 import { ICOON_VAN } from '../src/content/iconen.js';
 import { ICONS } from '../src/ui/icons.js';
 
-const VELDEN = ['persons', 'objects', 'places', 'times', 'hidden', 'meubels'];
+// personenXL en plekkenXL zijn de namen en kamers die pas meedoen op het
+// bord van zestien bij zestien. Ze staan apart omdat ze de trekking van de
+// bestaande puzzels niet mogen verschuiven, maar een icoon hebben ze net zo
+// hard nodig - en zonder ze hier zou de keuring hun iconen overbodig noemen.
+const VELDEN = ['persons', 'personenXL', 'objects', 'places', 'plekkenXL', 'times', 'hidden', 'meubels'];
 
 const woorden = new Set();
 for (const w of WORLDS) for (const v of VELDEN) for (const x of (w[v] ?? [])) woorden.add(x);

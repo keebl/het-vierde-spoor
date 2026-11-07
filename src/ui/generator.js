@@ -3,8 +3,8 @@
 
 import { el } from './boards.js';
 import { WORLDS } from '../content/worlds.js';
-import { ASSIGNMENTS, MECHANICS, MECHANIC_BY_ID } from '../content/assignments.js';
-import { LEVELS, LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
+import { ASSIGNMENTS, MECHANIC_BY_ID, ZICHTBARE_MECHANICS } from '../content/assignments.js';
+import { LEVELS, ZICHTBARE_LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
 import { randomSeed } from '../engine/rng.js';
 import { puzzleId } from '../puzzle.js';
 import { aiEnabled, setAiEnabled } from '../ai/flavour.js';
@@ -20,9 +20,19 @@ const keuze = {
   seed: randomSeed(),
 };
 
+// Welke opdrachten je nog kunt kiezen: alleen die met een soort spel dat te
+// zien is. Zolang dat alleen het Speurdoku is, blijft 'Wie was het?' over.
+// Zonder deze zeef kies je een opdracht waar geen Speurdoku bij kan, en krijg
+// je stilzwijgend een ander soort puzzel dan je ziet staan.
+const TEKIEZEN = ASSIGNMENTS.filter(
+  (a) => a.mechanics.some((m) => ZICHTBARE_MECHANICS.some((z) => z.id === m)),
+);
+
 export function renderGenerator(mount) {
+  if (!TEKIEZEN.some((a) => a.id === keuze.opdracht)) keuze.opdracht = TEKIEZEN[0].id;
   const assignment = ASSIGNMENTS.find((a) => a.id === keuze.opdracht);
-  if (!assignment.mechanics.includes(keuze.mechaniek)) keuze.mechaniek = assignment.mechanics[0];
+  const kanZien = assignment.mechanics.filter((m) => ZICHTBARE_MECHANICS.some((z) => z.id === m));
+  if (!kanZien.includes(keuze.mechaniek)) keuze.mechaniek = kanZien[0];
 
   mount.replaceChildren();
   mount.append(
@@ -58,13 +68,18 @@ export function renderGenerator(mount) {
   const field = (label, kids, cls = 'options') =>
     el('div', { class: 'field' }, [el('span', { class: 'label', text: label }), el('div', { class: cls }, kids)]);
 
-  form.append(field('Opdracht', ASSIGNMENTS.map((a) => optButton('opdracht', a.id, a.name, a.blurb))));
+  form.append(field('Opdracht', TEKIEZEN.map((a) => optButton('opdracht', a.id, a.name, a.blurb))));
   form.append(field('Genre', WORLDS.map((w) => optButton('wereld', w.id, `${w.icon} ${w.name}`, w.blurb))));
-  form.append(field('Soort spel', MECHANICS.map((m) => {
-    const can = assignment.mechanics.includes(m.id);
-    return optButton('mechaniek', m.id, m.name, can ? m.blurb : `Niet mogelijk bij ${assignment.name.toLowerCase()}`, !can);
-  })));
-  form.append(field('Niveau', LEVEL_IDS.map((l) => {
+  // Het soort spel staat er niet meer bij: voorlopig is alles een Speurdoku.
+  // Zie ZICHTBARE_MECHANICS in assignments.js. Zodra er meer dan één soort
+  // te zien is, komt dit veld terug.
+  if (ZICHTBARE_MECHANICS.length > 1) {
+    form.append(field('Soort spel', ZICHTBARE_MECHANICS.map((m) => {
+      const can = assignment.mechanics.includes(m.id);
+      return optButton('mechaniek', m.id, m.name, can ? m.blurb : `Niet mogelijk bij ${assignment.name.toLowerCase()}`, !can);
+    })));
+  }
+  form.append(field('Niveau', ZICHTBARE_LEVEL_IDS.map((l) => {
     const p = LEVELS[l];
     const b = el('button', {
       class: 'opt level-btn',

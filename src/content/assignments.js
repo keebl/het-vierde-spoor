@@ -279,3 +279,13 @@ export const MECHANICS = [
 ];
 
 export const MECHANIC_BY_ID = new Map(MECHANICS.map((m) => [m.id, m]));
+
+// ------------------------------------------------------- wat je te zien krijgt
+//
+// Voorlopig staat alleen het Speurdoku in de etalage. De andere drie soorten
+// spel blijven gewoon bestaan - de generator maakt ze, de keuring rekent ze
+// na, de links blijven werken - maar ze staan niet meer in de lijst, niet op
+// de voorpagina en niet in het formulier waarmee je er zelf een maakt. Eén
+// soort spel dat helemaal af is, is meer waard dan vier die half zijn.
+export const ZICHTBARE_MECHANICS = MECHANICS.filter((m) => m.id === 'kamer');
+export const mechaniekZichtbaar = (id) => ZICHTBARE_MECHANICS.some((m) => m.id === id);

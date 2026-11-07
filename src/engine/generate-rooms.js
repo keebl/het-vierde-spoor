@@ -36,9 +36,15 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten) {
     // Waar het lichaam ligt moet je uitpuzzelen, dus van het slachtoffer
     // mag niet rechtstreeks gezegd worden in welke kamer het lag. Ontkenningen
     // ("niet in de bibliotheek") mogen wel: die helpen zonder te verklappen.
+    // 'kamer' is de directe aanwijzing - "Bram stond in de keuken" - en
+    // daarmee de grootste weggever die er is: daar is geen redenering voor
+    // nodig. De uitsluiting "Bram stond niet in de keuken" is het
+    // tegenovergestelde en juist het nuttigste gereedschap. Ze hebben
+    // daarom elk hun eigen gewicht, zodat een hoog niveau de ene kan
+    // schrappen zonder de andere kwijt te raken.
     if (p !== slachtofferIdx) zet('kamer', { p, kamerIdx: mijnKamer, ja: true });
     for (let k = 0; k < kamers; k++) {
-      if (k !== mijnKamer) zet('kamer', { p, kamerIdx: k, ja: false });
+      if (k !== mijnKamer) zet('kamerNiet', { p, kamerIdx: k, ja: false });
     }
 
     for (let m = 0; m < meubelAantal; m++) {

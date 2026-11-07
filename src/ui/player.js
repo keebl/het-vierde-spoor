@@ -11,7 +11,8 @@ import { CATALOG, catalogSettings } from '../content/catalog.js';
 import { puzzleId } from '../puzzle.js';
 import { sceneVoor } from './scenes.js';
 import { renderKamerbord, renderLegenda, PENNING } from './board-rooms.js';
-import { portretElement } from './personenkunst-geschilderd.js';
+import { portretElement, slachtofferElement } from './personenkunst-geschilderd.js';
+import { LEVEL_IDS } from '../engine/difficulty.js';
 
 export function renderPlayer(puzzle, mount) {
   const saved = loadProgress(puzzle.id) ?? {};
@@ -250,7 +251,7 @@ function head(puzzle) {
     sep(),
     deel(mech?.name ?? puzzle.mechaniek),
     sep(),
-    deel(`${puzzle.niveauLabel} (${puzzle.niveau}/5)`),
+    deel(`${puzzle.niveauLabel} (${puzzle.niveau}/${LEVEL_IDS.length})`),
     sep(),
     deel(puzzle.depth === 1 ? 'doorstrepen volstaat' : 'aanname nodig'),
   ]);
@@ -400,10 +401,10 @@ function personenPalet(puzzle, state, onCell) {
       'aria-pressed': String(state.gekozen === i),
       'data-geplaatst': geplaatst ? '1' : null,
     }, [
-      isLijk
-        ? el('span', { class: 'palet-fiche', text: '✝' })
-        : el('span', { class: 'palet-portret' }, portretElement(i, naam.charAt(0).toUpperCase(), 26)),
-      el('span', { text: isLijk ? `${naam} (het lichaam)` : naam }),
+      el('span', { class: 'palet-portret' }, isLijk
+        ? slachtofferElement(i, naam.charAt(0).toUpperCase(), 26)
+        : portretElement(i, naam.charAt(0).toUpperCase(), 26)),
+      el('span', { text: naam }),
     ]);
     knop.addEventListener('click', () => onCell(null, i));
     balk.append(knop);

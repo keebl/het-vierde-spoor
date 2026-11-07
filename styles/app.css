@@ -2,8 +2,15 @@
    Een ontwerpsysteem in plaats van losse opmaak:
    - EEN accentkleur (goud), uitsluitend voor dingen waar je op klikt
    - een vaste ruimtemaat en een vaste letterschaal
-   - werelden hebben geen eigen kleur meer; dat gaf zes kleuren die elkaar
-     beconcurreerden. Ze krijgen hooguit hun pictogram.
+   - de hele pagina neemt de kleur van de wereld aan zodra je een zaak
+     opent: in het woud is de site een nachtbos, in Regenstad een natte
+     straat. Dat is een omkering van een eerdere keuze - toen kreeg elke
+     wereld alleen een accentkleur, en dat gaf zes kleuren die elkaar
+     beconcurreerden op een crème pagina. Het verschil zit hem erin dat
+     het nu niet een accent is maar het hele palet: achtergrond, vlak,
+     tekst en lijn verschuiven samen, dus er valt niets te beconcurreren.
+     De lijst en de bibliotheek blijven crème; daar staan alle werelden
+     naast elkaar en zou een kleur partij kiezen.
    - serif voor koppen en verhalende tekst, schreefloos voor bediening */
 
 :root {
@@ -1140,9 +1147,15 @@ table.latin td.cell { width: 78px; height: 46px; }
 
 .palet-schets .palet-fiche { background: var(--surface-3); color: var(--text-2); }
 
-.kruisje { stroke: #6b533a; stroke-width: 3; stroke-linecap: round; opacity: 0.8; }
-/* Kruisjes die het bord zelf zet staan er lichter in dan die van jezelf. */
-.kruisje-vanzelf { opacity: 0.32; stroke-width: 2.5; }
+/* Een kruisje moet je zien op een tegelvloer, op gras en op parket. Het was
+   lichtbruin op 0.8 en verdween in alle drie. Nu staat er een lichte baan
+   onder, zodat het kruis zelf diep mag zijn zonder dat het vuil wordt. */
+.kruisbaan { stroke: #fff6e4; stroke-width: 7.5; stroke-linecap: round; opacity: 0.6; fill: none; }
+.kruisbaan-vanzelf { opacity: 0.4; stroke-width: 6.5; }
+.kruisje { stroke: #3a2516; stroke-width: 4; stroke-linecap: round; opacity: 0.95; fill: none; }
+/* Kruisjes die het bord zelf zet staan er lichter in dan die van jezelf,
+   maar nog altijd zo dat je ze in een oogopslag ziet. */
+.kruisje-vanzelf { opacity: 0.55; stroke-width: 3.2; }
 
 .randletter { fill: #6b5a42; font: 600 11px var(--sans); }
 .kompasnaald { fill: #a3551f; }
@@ -1302,7 +1315,9 @@ table.latin td.cell { width: 78px; height: 46px; }
      afdruk, maar als je halverwege bent wil je ze juist wel. Ze blijven dus
      staan; alleen de kruisjes die het bord zelf zet gaan eruit, want die
      zet je op papier zelf. */
-  .kruisje-vanzelf { display: none; }
+  .kruisje-vanzelf,
+  .kruisbaan-vanzelf { display: none; }
+  .kruisbaan { display: none; }
 
   /* De sfeer is voor het scherm. Op papier wordt elk verloop grijs en elk
      plantje een vlek, en dan kun je er niet meer in schrijven. De vloer, de
@@ -1336,8 +1351,184 @@ table.latin td.cell { width: 78px; height: 46px; }
      staat erbinnen en blijft dus gewoon staan. */
   .bordrand,
   .bordhoeken,
+  .bordschijn,
   .bordhangers { display: none; }
 
   /* Zonder lijst hoeft het bord ook niet op een blad te liggen. */
   .bordblad { fill: #fff; }
 }
+
+
+/* ===================================================== de wereld als thema
+   Zodra er een zaak openstaat, neemt de pagina de kleur van die wereld aan.
+   Niet als accentje erbij maar als heel palet: de crème ondergrond wordt
+   nacht, de vlakken worden dieper, de tekst draait mee naar licht. Het bord
+   zelf blijft licht - dat is bewust, want daar moet je op kunnen lezen en
+   schrijven, en een gloed telt alleen op bij donker eromheen.
+
+   De tokens hieronder zijn dezelfde namen als in :root, dus alles wat al
+   netjes van de tokens gebruikmaakt kleurt vanzelf mee. */
+
+body[data-wereld] {
+  color-scheme: dark;
+  --surface-3: color-mix(in srgb, var(--surface-2) 70%, #ffffff 8%);
+  --line-soft: color-mix(in srgb, var(--line) 60%, var(--bg) 40%);
+  --accent-ink: #120d08;
+  --good: #6fdc9a;
+  --bad: #ff7b6b;
+}
+
+/* Nachtbos: diep groen met warm lantaarnlicht. */
+body[data-wereld="woud"] {
+  --bg: #0c1a13; --surface: #14271c; --surface-2: #1b3324; --line: #2f5338;
+  --text: #e9f2de; --text-2: #b4c9a8; --text-3: #7e967a;
+  --accent: #ffc168; --accent-soft: #23402a;
+}
+/* Regenstad: nat asfalt en neon. */
+body[data-wereld="noir"] {
+  --bg: #0a0f17; --surface: #121b27; --surface-2: #192536; --line: #2c3f58;
+  --text: #e2ecf7; --text-2: #a9bed6; --text-3: #74889f;
+  --accent: #ff4fa3; --accent-soft: #221a2c;
+}
+/* Huize Valkenhorst: donker hout bij kaarslicht. */
+body[data-wereld="landhuis"] {
+  --bg: #15100b; --surface: #211811; --surface-2: #2d2016; --line: #4b3824;
+  --text: #f3e7d3; --text-2: #cdb795; --text-3: #94806a;
+  --accent: #ffbe63; --accent-soft: #2e2113;
+}
+/* Ruimtestation Meridiaan: bijna zwart met neon en nevel. */
+body[data-wereld="station"] {
+  --bg: #070b14; --surface: #0f1726; --surface-2: #162134; --line: #2a3f5e;
+  --text: #dff0ff; --text-2: #9fc0dd; --text-3: #6b88a6;
+  --accent: #2fd9ff; --accent-soft: #10263a;
+}
+/* De Catacomben: steen, aarde en kaarsvlam. */
+body[data-wereld="catacomben"] {
+  --bg: #100d15; --surface: #1a1622; --surface-2: #241f2e; --line: #3c3448;
+  --text: #e8e0d2; --text-2: #bcb09e; --text-3: #867c6e;
+  --accent: #ffb84d; --accent-soft: #2a2032;
+}
+/* Academie Morgenstond: sterrennacht en tovenaarspaars. */
+body[data-wereld="academie"] {
+  --bg: #0c0a1b; --surface: #15122a; --surface-2: #1d1938; --line: #342c58;
+  --text: #e8e2ff; --text-2: #b7aede; --text-3: #817aa8;
+  --accent: #b58cff; --accent-soft: #221c3e;
+}
+/* Kerstavond: dennengroen met gekleurde lampjes. */
+body[data-wereld="kerst"] {
+  --bg: #091710; --surface: #11241a; --surface-2: #173022; --line: #2b5038;
+  --text: #ecf5ec; --text-2: #b6cdb9; --text-3: #7e9a84;
+  --accent: #ff6b6b; --accent-soft: #2a1d1d;
+}
+/* Halloweennacht: pompoenoranje tegen paarsbruin. */
+body[data-wereld="halloween"] {
+  --bg: #130b11; --surface: #1f141c; --surface-2: #2a1b25; --line: #44293a;
+  --text: #f4e6da; --text-2: #c9ab9c; --text-3: #917a70;
+  --accent: #ff8a1f; --accent-soft: #2c1a14;
+}
+
+/* Wat er in het donker nog bijgeregeld moet worden. */
+body[data-wereld] .kop,
+body[data-wereld] header { background: color-mix(in srgb, var(--surface) 86%, transparent); }
+body[data-wereld] .btn { border-color: var(--line); }
+body[data-wereld] .btn-hoofd { color: #120d08; }
+body[data-wereld] .inleiding { border-left-color: var(--accent); }
+/* De namen op het bord en de legenda houden hun eigen licht; het bord is
+   met opzet geen onderdeel van het thema. */
+body[data-wereld] .kamerbord,
+body[data-wereld] .legenda-tegel { color: initial; }
+
+/* De sfeertekening boven de puzzel hoort bij de wereld, dus die draait mee
+   naar nacht. De lagen keren om: in daglicht is de verste laag het lichtst
+   omdat hij in de nevel staat, 's nachts is hij dat ook - maar dan omdat de
+   lucht erachter oplicht en de voorgrond zwart is. Elk lichtpunt krijgt de
+   kleur van de wereld, want dat is het enige warme in het beeld. */
+body[data-wereld] .sc-ver { fill: color-mix(in srgb, var(--line) 80%, var(--bg)); }
+body[data-wereld] .sc-mid { fill: color-mix(in srgb, var(--line) 55%, var(--bg)); }
+body[data-wereld] .sc-near { fill: color-mix(in srgb, var(--line) 30%, var(--bg)); }
+body[data-wereld] .sc-diep,
+body[data-wereld] .sc-deur { fill: color-mix(in srgb, var(--bg) 80%, #000000); }
+body[data-wereld] .sc-grond { fill: color-mix(in srgb, var(--bg) 92%, #000000); }
+body[data-wereld] .sc-planeet { fill: color-mix(in srgb, var(--line) 70%, var(--bg)); }
+body[data-wereld] .sc-horizon { stroke: color-mix(in srgb, var(--line) 60%, var(--bg)); }
+body[data-wereld] .sc-lijn { stroke: color-mix(in srgb, var(--line) 40%, var(--bg)); }
+body[data-wereld] .sc-nat { fill: color-mix(in srgb, var(--bg) 70%, var(--accent) 10%); }
+body[data-wereld] .sc-boom { fill: color-mix(in srgb, var(--line) 35%, var(--bg)); }
+body[data-wereld] .sc-takken { stroke: color-mix(in srgb, var(--bg) 60%, #000000); }
+body[data-wereld] .sc-mist { fill: var(--accent); opacity: 0.1; }
+body[data-wereld] .sc-ster { fill: #f2f6ff; }
+body[data-wereld] .sc-maan { fill: #fff8e4; }
+body[data-wereld] .sc-sneeuw { fill: #ffffff; opacity: 0.9; }
+body[data-wereld] .sc-regenlijn { stroke: color-mix(in srgb, var(--accent) 50%, #ffffff); opacity: 0.35; }
+body[data-wereld] .sc-raam,
+body[data-wereld] .sc-licht { fill: var(--accent); }
+body[data-wereld] .sc-schijn,
+body[data-wereld] .sc-weerschijn { fill: var(--accent); opacity: 0.35; }
+body[data-wereld] .sc-pompoen { fill: var(--accent); }
+
+/* De tekening loopt in de pagina over in plaats van ertegenaan te stoppen. */
+body[data-wereld] .scene-wrap::after {
+  background: linear-gradient(to bottom, transparent, var(--bg));
+}
+
+/* Het slachtoffer: dezelfde figuur als de anderen, met een kruis erdoorheen.
+   Rood en dik, zodat het niet te verwarren is met de donkere kruisjes
+   waarmee je zelf vakjes wegstreept. */
+.lijkbaan { fill: none; stroke: #fff6e4; stroke-width: 5; stroke-linecap: round; opacity: 0.5; }
+.lijkkruis { fill: none; stroke: #9c1f23; stroke-width: 2.8; stroke-linecap: round; opacity: 0.95; }
+.palet-lijk .lijkbaan { stroke-width: 4.5; }
+.palet-lijk .lijkkruis { stroke-width: 3.4; }
+
+/* De muren horen net zo goed bij de wereld als de vloer en het meubilair.
+   Deze klassen stonden vast op warm hout, en daardoor liepen er houten
+   balken door een ruimtestation en door een crypte. De werelden die in een
+   huis spelen - landhuis, Regenstad, kerst, halloween, academie - houden het
+   hout; de drie die dat niet doen krijgen hun eigen materiaal. */
+body[data-wereld="station"] .muurvoet,
+body[data-wereld="station"] .buitenmuur-voet { stroke: #28313c; }
+body[data-wereld="station"] .muurtop,
+body[data-wereld="station"] .buitenmuur-top { stroke: #74828f; }
+body[data-wereld="station"] .muurglans { stroke: #bccbd6; }
+body[data-wereld="station"] .muurnerf { stroke: rgba(30, 44, 58, 0.4); }
+body[data-wereld="station"] .muur { stroke: #5d6a76; }
+body[data-wereld="station"] .muur-buiten { stroke: #38434f; }
+
+body[data-wereld="catacomben"] .muurvoet,
+body[data-wereld="catacomben"] .buitenmuur-voet { stroke: #2c2730; }
+body[data-wereld="catacomben"] .muurtop,
+body[data-wereld="catacomben"] .buitenmuur-top { stroke: #837e74; }
+body[data-wereld="catacomben"] .muurglans { stroke: #b0aa9c; }
+body[data-wereld="catacomben"] .muurnerf { stroke: rgba(40, 34, 44, 0.4); }
+body[data-wereld="catacomben"] .muur { stroke: #6d675e; }
+body[data-wereld="catacomben"] .muur-buiten { stroke: #413c39; }
+
+body[data-wereld="woud"] .muurvoet,
+body[data-wereld="woud"] .buitenmuur-voet { stroke: #26281a; }
+body[data-wereld="woud"] .muurtop,
+body[data-wereld="woud"] .buitenmuur-top { stroke: #76834f; }
+body[data-wereld="woud"] .muurglans { stroke: #aec280; }
+body[data-wereld="woud"] .muurnerf { stroke: rgba(40, 44, 24, 0.42); }
+body[data-wereld="woud"] .muur { stroke: #5f6a44; }
+body[data-wereld="woud"] .muur-buiten { stroke: #39412a; }
+
+/* Het licht in een kamer. Warm kaarslicht is de standaard - dat klopt voor
+   een landhuis, een detectiveverhaal, een kerstavond - maar niet overal:
+   een warme gloed over een stalen vloer maakt er weer hout van. */
+.gloedkern { stop-color: #fff3d2; }
+.gloedmid { stop-color: #ffe9b8; }
+.gloedrand { stop-color: #2e2112; }
+body[data-wereld="station"] .gloedkern { stop-color: #e4f6ff; }
+body[data-wereld="station"] .gloedmid { stop-color: #bfe4f6; }
+body[data-wereld="station"] .gloedrand { stop-color: #101a28; }
+body[data-wereld="catacomben"] .gloedkern { stop-color: #ffe9c0; }
+body[data-wereld="catacomben"] .gloedmid { stop-color: #d9c8a8; }
+body[data-wereld="catacomben"] .gloedrand { stop-color: #1a1620; }
+body[data-wereld="woud"] .gloedkern { stop-color: #f0ffd8; }
+body[data-wereld="woud"] .gloedmid { stop-color: #cfe9ac; }
+body[data-wereld="woud"] .gloedrand { stop-color: #16281a; }
+body[data-wereld="kerst"] .gloedkern { stop-color: #fff0cf; }
+body[data-wereld="kerst"] .gloedmid { stop-color: #dcecf4; }
+body[data-wereld="kerst"] .gloedrand { stop-color: #16282c; }
+body[data-wereld="academie"] .gloedkern { stop-color: #f4ecff; }
+body[data-wereld="academie"] .gloedmid { stop-color: #d8cdf2; }
+body[data-wereld="academie"] .gloedrand { stop-color: #191432; }

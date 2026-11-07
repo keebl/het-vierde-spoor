@@ -85,6 +85,24 @@ export const STOFFEN = {
   touw: { kern: '#c0a068', koel: '#33261f', warm: '#ffe9bb', rand: 0.45, textuur: 'weefsel' },
 };
 
+// -------------------------------------------------------- stof per wereld
+//
+// Een kast is een kast, maar waar hij van gemaakt is hangt van de wereld af.
+// Dezelfde tekening in grenen hoort in een landhuis en is onzin in een
+// ruimtestation: daar is het een stalen kast met een gelakte deur. Zolang
+// elke tekening zijn materiaal vast in zich had, liep je in een scifi-puzzel
+// een willekeurige huiskamer binnen - houten tafels, een houten ton, een
+// houten kist.
+//
+// Daarom staat hier een ruiltabel per wereld: welk materiaal wordt welk
+// materiaal. De tekeningen zelf veranderen niet; alleen waar ze van gemaakt
+// zijn. Het bord zet de ruil aan het begin van het tekenen en haalt hem er
+// daarna weer af, want het palet in de legenda en de voorpagina horen
+// gewoon in hun eigen kleur te staan.
+let ruiltabel = null;
+export function zetWereldstof(tabel) { ruiltabel = tabel ?? null; }
+const ruil = (naam) => (ruiltabel && naam ? (ruiltabel[naam] ?? naam) : naam);
+
 // ------------------------------------------------------------------ de defs
 //
 // Per materiaal één verloop voor het vlak, en twee maskers die voor alles
@@ -307,12 +325,13 @@ export function tekenGeschilderd(ouder, delen, { x = 0, y = 0, grootte = 48 } = 
   const fijn = grootte >= 34;
   let eerste = true;
   for (const vorm of delen) {
-    const stof = vorm.kleur ? stofVanKleur(vorm.kleur) : (STOFFEN[vorm.stof] ?? STOFFEN.hout);
+    const naam = ruil(vorm.stof);
+    const stof = vorm.kleur ? stofVanKleur(vorm.kleur) : (STOFFEN[naam] ?? STOFFEN.hout);
     if (vorm.lijn) {
       zetLijn(g, vorm, stof);
       continue;
     }
-    const verloop = vorm.kleur ? zorgVoorKleur(vorm.kleur) : (STOFFEN[vorm.stof] ? vorm.stof : 'hout');
+    const verloop = vorm.kleur ? zorgVoorKleur(vorm.kleur) : (STOFFEN[naam] ? naam : 'hout');
     zetVorm(g, vorm, stof, { fijn, eerste, verloop });
     eerste = false;
   }

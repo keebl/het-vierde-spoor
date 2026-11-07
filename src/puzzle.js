@@ -11,7 +11,7 @@ import { generateLatin, latinDepth } from './engine/latin.js';
 import { genereerKamerpuzzel } from './engine/generate-rooms.js';
 import { kamerParams } from './engine/difficulty.js';
 import { zinVoor, namenIn } from './content/rooms-text.js';
-import { soortVan, meubelsVoor } from './content/kamersoorten.js';
+import { soortVan, meubelsVoor, vormVan } from './content/kamersoorten.js';
 import { makeRng } from './engine/rng.js';
 
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
@@ -205,6 +205,79 @@ const OPDRACHT_ZINNEN = [
 
 const opdrachtZin = (naam, zelfde, rng) => rng.pick(OPDRACHT_ZINNEN)(naam, zelfde);
 
+// ---------------------------------------------------- namen die kloppen
+//
+// De generator tekent eerst een plattegrond en plakt er daarna namen op.
+// Deden we dat willekeurig, dan heette een vierkante klodder van tien
+// vakjes "het verzonken bruggetje" en een lange strook "de droge put".
+//
+// Daarom meten we elke kamer eerst op - hoeveel vakjes, en hoe langgerekt
+// is zijn omhullende rechthoek - en delen we de namen uit naar vorm: de
+// langste kamers krijgen de namen van stroken (gang, trap, pad, brug), de
+// grootste die van zalen, de kleinste die van putten en nissen. Namen
+// zonder uitgesproken vorm vullen de rest.
+function meetKamers(rooster) {
+  const { n, kamerVan, kamers } = rooster;
+  const maten = Array.from({ length: kamers }, (_, k) => ({
+    k, cellen: 0, minR: n, maxR: -1, minC: n, maxC: -1,
+  }));
+  for (let cel = 0; cel < n * n; cel++) {
+    const m = maten[kamerVan[cel]];
+    if (!m) continue;
+    const r = Math.floor(cel / n);
+    const c = cel % n;
+    m.cellen += 1;
+    if (r < m.minR) m.minR = r;
+    if (r > m.maxR) m.maxR = r;
+    if (c < m.minC) m.minC = c;
+    if (c > m.maxC) m.maxC = c;
+  }
+  for (const m of maten) {
+    const hoog = m.maxR - m.minR + 1;
+    const breed = m.maxC - m.minC + 1;
+    m.lang = Math.max(hoog, breed) / Math.max(1, Math.min(hoog, breed));
+  }
+  return maten;
+}
+
+function noemKamers(rooster, voorraad, rng) {
+  const maten = meetKamers(rooster);
+  const emmer = { smal: [], groot: [], klein: [], vrij: [] };
+  for (const naam of rng.shuffle(voorraad)) emmer[vormVan(naam)].push(naam);
+
+  const namen = new Array(maten.length);
+  let open = maten.slice();
+  const deel = (vorm, sorteer, hoeveel) => {
+    open.sort(sorteer);
+    const pak = Math.max(0, Math.min(hoeveel, emmer[vorm].length, open.length));
+    for (let i = 0; i < pak; i++) namen[open[i].k] = emmer[vorm].shift();
+    open = open.slice(pak);
+  };
+
+  // Een strook heet alleen naar een strook als er ook echt een strook ligt.
+  // 1.8 is gemeten: daaronder leest een kamer als een vlak, daarboven als
+  // een gang.
+  const stroken = open.filter((m) => m.lang >= 1.8).length;
+  deel('smal', (a, b) => b.lang - a.lang || a.k - b.k, stroken);
+  const over = open.length;
+  deel('groot', (a, b) => b.cellen - a.cellen || a.k - b.k, Math.ceil(over * 0.4));
+  deel('klein', (a, b) => a.cellen - b.cellen || a.k - b.k, Math.ceil(over * 0.3));
+  // Wat overblijft krijgt een naam die overal past. Raken die op, dan komen
+  // de overgebleven zaal- en hoeknamen alsnog aan de beurt - maar niet
+  // lukraak: de grootste kamers die nog open liggen krijgen de zaalnamen en
+  // de kleinste de hoeknamen, zodat een zaal nooit kleiner uitvalt dan een
+  // nis. Strooknamen die over zijn gaan naar de langste kamers die er nog
+  // zijn, en dus nooit naar een vlak terwijl er nog een gang ligt.
+  const tekort = open.length - (emmer.vrij.length + emmer.groot.length + emmer.klein.length);
+  if (tekort > 0) deel('smal', (a, b) => b.lang - a.lang || a.k - b.k, tekort);
+  open.sort((a, b) => b.cellen - a.cellen || a.k - b.k);
+  const rest = [...emmer.groot, ...emmer.vrij, ...emmer.smal, ...emmer.klein];
+  for (const m of open) namen[m.k] = rest.shift();
+  return namen;
+}
+
+
+
 function buildKamerPuzzle({ world, settings }) {
   const { seed, niveau } = settings;
   const params = kamerParams(niveau);
@@ -212,7 +285,7 @@ function buildKamerPuzzle({ world, settings }) {
   // zijn; meer dan dat kan de motor niet gebruiken.
   const gen = genereerKamerpuzzel(seed, {
     ...params,
-    kamers: Math.min(params.kamers, world.places.length),
+    kamers: Math.min(params.kamers, world.places.length + (world.plekkenXL?.length ?? 0)),
     maxMeubels: 20,
   });
   const rng = makeRng(`${seed}:kamerwoorden`);
@@ -221,7 +294,17 @@ function buildKamerPuzzle({ world, settings }) {
   // die staat niet in de verdachtenlijst, maar wel op het bord - want waar
   // het lichaam ligt moet je zelf uitpuzzelen.
   const aantal = gen.rooster.n;
-  const namen = rng.sample(world.persons, aantal);
+  // De vijver waaruit getrokken wordt groeit alleen als het bord hem nodig
+  // heeft. Dat is geen zuinigheid maar noodzaak: trek je uit zestien namen
+  // in plaats van twaalf, dan komt er een andere trekking uit en verandert
+  // elke bestaande puzzel - inclusief de vijftig vooraf geschreven teksten
+  // die eraan vastzitten. Alleen het bord van zestien bij zestien put dus
+  // uit de extra namen, en alleen een puzzel met meer kamers dan de wereld
+  // van oudsher had uit de extra plekken.
+  const namen = rng.sample(
+    aantal <= world.persons.length ? world.persons : [...world.persons, ...(world.personenXL ?? [])],
+    aantal,
+  );
   // Het slachtoffer staat tussen de verdachten op het bord, met zijn
   // beginletter op een penning. Die letter moet dus van hem alleen zijn:
   // daarom een eigen namenlijst met beginletters die de verdachten niet
@@ -229,7 +312,11 @@ function buildKamerPuzzle({ world, settings }) {
   const slachtofferNaam = rng.pick(world.slachtoffers);
   namen[gen.slachtofferIdx] = slachtofferNaam;
 
-  const kamerNamen = rng.sample(world.places, gen.rooster.kamers);
+  const kamerNamen = noemKamers(
+    gen.rooster,
+    gen.rooster.kamers <= world.places.length ? world.places : [...world.places, ...(world.plekkenXL ?? [])],
+    rng,
+  );
   // Een meubelstuk krijgt zijn naam van de kamer waarin het staat: in de
   // keuken een koelkast, in het grafvertrek een sarcofaag. Namen blijven
   // binnen een puzzel uniek, want de aanwijzingen verwijzen ernaar.
@@ -242,7 +329,7 @@ function buildKamerPuzzle({ world, settings }) {
     if (mi == null) continue;
     const soort = soortVan(kamerNamen[gen.rooster.kamerVan[cel]]);
     if (!voorraad.has(soort)) {
-      const [eigen, verwant] = meubelsVoor(soort);
+      const [eigen, verwant] = meubelsVoor(soort, world.id);
       // Eerst alles wat in deze soort ruimte hoort, daarna pas wat in een
       // verwante ruimte past. Een keuken levert nooit meubilair voor een bos.
       voorraad.set(soort, [...rng.shuffle(eigen), ...rng.shuffle(verwant)]);
@@ -317,7 +404,7 @@ export function puzzleId(settings) {
 
 export function parsePuzzleId(id) {
   const [opdracht, wereld, mechaniek, niveau, ...rest] = id.split('.');
-  // Een link met niveau 9 moet niet "Meesterlijk (9/5)" opleveren.
-  const begrensd = Math.min(5, Math.max(1, Number(niveau) || 1));
+  // Een link met niveau 9 moet niet "Monsterlijk (9/6)" opleveren.
+  const begrensd = Math.min(6, Math.max(1, Number(niveau) || 1));
   return { opdracht, wereld, mechaniek, niveau: begrensd, seed: rest.join('.') };
 }

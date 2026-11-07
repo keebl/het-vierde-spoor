@@ -46,15 +46,67 @@ function rasterBuren(n, i) {
 // Buurvakjes binnen dezelfde kamer. Dit is wat "naast" betekent: door een
 // muur heen sta je niet naast iets. Elke aanwijzing met het woord "naast"
 // erin rekent hiermee, zodat de zin klopt met het plaatje.
-export function kamerBuren(rooster, i) {
+// Deze stond bovenaan in de meting: hij werd voor elk vakje van elke
+// aanwijzing opnieuw uitgerekend, en maakte daarbij twee lijstjes aan. De
+// plattegrond verandert tijdens het bouwen nooit, dus nu rekenen we hem een
+// keer per rooster uit en kijken we daarna alleen nog op.
+function burenTabel(rooster) {
+  if (rooster._buren) return rooster._buren;
   const { n, kamerVan } = rooster;
-  return rasterBuren(n, i).filter((b) => kamerVan[b] === kamerVan[i]);
+  const tabel = new Array(n * n);
+  for (let i = 0; i < n * n; i++) {
+    tabel[i] = rasterBuren(n, i).filter((b) => kamerVan[b] === kamerVan[i]);
+  }
+  rooster._buren = tabel;
+  return tabel;
+}
+
+export function kamerBuren(rooster, i) {
+  return burenTabel(rooster)[i];
+}
+
+// Welke meubelstukken naast dit vakje staan, ook een keer per rooster.
+function meubelBurenTabel(rooster) {
+  if (rooster._meubelBuren) return rooster._meubelBuren;
+  const { n, meubelOp } = rooster;
+  const buren = burenTabel(rooster);
+  const tabel = new Array(n * n);
+  for (let i = 0; i < n * n; i++) {
+    const uit = [];
+    for (const b of buren[i]) {
+      const m = meubelOp[b];
+      if (m != null && !uit.includes(m)) uit.push(m);
+    }
+    tabel[i] = uit;
+  }
+  rooster._meubelBuren = tabel;
+  return tabel;
 }
 
 // Staat dit vakje naast dit meubelstuk? Een meubelstuk aan de andere kant van
 // de muur telt niet mee.
 export function naastMeubel(rooster, cel, m) {
-  return kamerBuren(rooster, cel).some((b) => rooster.meubelOp[b] === m);
+  return meubelBurenTabel(rooster)[cel].includes(m);
+}
+
+// Op welke rijen en kolommen staat een meubelstuk? Hiermee is "staat op
+// dezelfde rij als" een opzoeking in plaats van een scan over het hele
+// rooster, en dat scheelt bij zestien bij zestien zestien keer zoveel werk.
+function meubelAssen(rooster) {
+  if (rooster._meubelAssen) return rooster._meubelAssen;
+  const { n, meubelOp } = rooster;
+  const rijen = new Map();
+  const kolommen = new Map();
+  for (let i = 0; i < n * n; i++) {
+    const m = meubelOp[i];
+    if (m == null) continue;
+    if (!rijen.has(m)) rijen.set(m, new Set());
+    if (!kolommen.has(m)) kolommen.set(m, new Set());
+    rijen.get(m).add(rijVan(n, i));
+    kolommen.get(m).add(kolVan(n, i));
+  }
+  rooster._meubelAssen = { rijen, kolommen };
+  return rooster._meubelAssen;
 }
 
 // ------------------------------------------------------------- het rooster
@@ -172,7 +224,18 @@ export function tekenPlaatsing(rooster, rng) {
 // ------------------------------------------------------------ aanwijzingen
 
 export const SOORTEN = {
+  // 'kamer' zegt in welke kamer iemand stond, 'kamerNiet' in welke niet. Het
+  // is dezelfde berekening; ze staan los van elkaar omdat de generator de
+  // directe variant op hoge niveaus wil kunnen schrappen zonder de
+  // uitsluiting kwijt te raken. Zie KAMER_LEVELS in engine/difficulty.js.
   kamer: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      return (ctx.rooster.kamerVan[cel] === c.kamerIdx) === c.ja;
+    },
+  },
+  kamerNiet: {
     eval(c, ctx) {
       const cel = ctx.plaats[c.p];
       if (cel == null) return null;
@@ -417,9 +480,13 @@ function beginDomeinen(rooster) {
   return dom;
 }
 
+// Tijdens het lopen uit een Set verwijderen mag: wat al weg is wordt niet
+// meer bezocht. Hier stond eerst `[...set]`, en dat maakte bij elke aanroep
+// een lijst van maximaal tweehonderdzesenvijftig vakjes aan - per aanwijzing,
+// per ronde. Dat was de derde hete plek in de meting.
 function filter(set, test) {
   let veranderd = false;
-  for (const v of [...set]) if (!test(v)) { set.delete(v); veranderd = true; }
+  for (const v of set) if (!test(v)) { set.delete(v); veranderd = true; }
   return veranderd;
 }
 
@@ -428,11 +495,14 @@ function propageerAanwijzing(rooster, dom, c) {
   let veranderd = false;
   switch (c.soort) {
     case 'kamer':
+    case 'kamerNiet':
       veranderd = filter(dom[c.p], (cel) => (kamerVan[cel] === c.kamerIdx) === c.ja) || veranderd;
       break;
     case 'zelfdeKamer': {
-      const kamersQ = new Set([...dom[c.q]].map((cel) => kamerVan[cel]));
-      const kamersP = new Set([...dom[c.p]].map((cel) => kamerVan[cel]));
+      const kamersQ = new Set();
+      for (const cel of dom[c.q]) kamersQ.add(kamerVan[cel]);
+      const kamersP = new Set();
+      for (const cel of dom[c.p]) kamersP.add(kamerVan[cel]);
       if (c.ja) {
         veranderd = filter(dom[c.p], (cel) => kamersQ.has(kamerVan[cel])) || veranderd;
         veranderd = filter(dom[c.q], (cel) => kamersP.has(kamerVan[cel])) || veranderd;
@@ -468,34 +538,34 @@ function propageerAanwijzing(rooster, dom, c) {
         return ((r === 0 || r === n - 1) && (k === 0 || k === n - 1)) === c.ja;
       }) || veranderd;
       break;
-    case 'opKolom':
-      veranderd = filter(dom[c.p], (cel) => {
-        const k = kolVan(n, cel);
-        for (let r = 0; r < n; r++) if (meubelOp[idx(n, r, k)] === c.m) return true;
-        return false;
-      }) || veranderd;
+    case 'opKolom': {
+      const kolommen = meubelAssen(rooster).kolommen.get(c.m) ?? new Set();
+      veranderd = filter(dom[c.p], (cel) => kolommen.has(kolVan(n, cel))) || veranderd;
       break;
+    }
     case 'naast':
       veranderd = filter(dom[c.p], (cel) =>
         naastMeubel(rooster, cel, c.m) === c.ja) || veranderd;
       break;
-    case 'opRij':
-      veranderd = filter(dom[c.p], (cel) => {
-        const r = rijVan(n, cel);
-        for (let k = 0; k < n; k++) if (meubelOp[idx(n, r, k)] === c.m) return true;
-        return false;
-      }) || veranderd;
+    case 'opRij': {
+      const rijen = meubelAssen(rooster).rijen.get(c.m) ?? new Set();
+      veranderd = filter(dom[c.p], (cel) => rijen.has(rijVan(n, cel))) || veranderd;
       break;
+    }
     case 'noord': {
-      const maxQ = Math.max(...[...dom[c.q]].map((cel) => rijVan(n, cel)));
-      const minP = Math.min(...[...dom[c.p]].map((cel) => rijVan(n, cel)));
+      let maxQ = -Infinity;
+      for (const cel of dom[c.q]) { const r = rijVan(n, cel); if (r > maxQ) maxQ = r; }
+      let minP = Infinity;
+      for (const cel of dom[c.p]) { const r = rijVan(n, cel); if (r < minP) minP = r; }
       veranderd = filter(dom[c.p], (cel) => rijVan(n, cel) < maxQ) || veranderd;
       veranderd = filter(dom[c.q], (cel) => rijVan(n, cel) > minP) || veranderd;
       break;
     }
     case 'west': {
-      const maxQ = Math.max(...[...dom[c.q]].map((cel) => kolVan(n, cel)));
-      const minP = Math.min(...[...dom[c.p]].map((cel) => kolVan(n, cel)));
+      let maxQ = -Infinity;
+      for (const cel of dom[c.q]) { const k = kolVan(n, cel); if (k > maxQ) maxQ = k; }
+      let minP = Infinity;
+      for (const cel of dom[c.p]) { const k = kolVan(n, cel); if (k < minP) minP = k; }
       veranderd = filter(dom[c.p], (cel) => kolVan(n, cel) < maxQ) || veranderd;
       veranderd = filter(dom[c.q], (cel) => kolVan(n, cel) > minP) || veranderd;
       break;
@@ -528,21 +598,39 @@ function propageerRijenKolommen(rooster, dom) {
   }
 
   // Kan maar een persoon op deze rij staan, dan staat die daar ook.
+  //
+  // Dit telde per rij en per kolom opnieuw, en maakte daarbij voor elke
+  // persoon een lijst van al zijn vakjes aan: bij zestien bij zestien zijn
+  // dat zestien rijen keer zestien personen keer een lijst van maximaal
+  // tweehonderdzesenvijftig. Het telt nog steeds per rij opnieuw - een rij
+  // die hierboven is dichtgetrokken moet de volgende rij wél zien, anders
+  // komt er een ronde bij en verandert de moeilijkheidsgraad - maar nu
+  // zonder lijstjes en met afbreken zodra er een tweede kandidaat is.
   for (let r = 0; r < n; r++) {
-    const kandidaten = [];
-    for (let p = 0; p < n; p++) if ([...dom[p]].some((cel) => rijVan(n, cel) === r)) kandidaten.push(p);
-    if (kandidaten.length === 1) {
-      const p = kandidaten[0];
-      veranderd = filter(dom[p], (cel) => rijVan(n, cel) === r) || veranderd;
+    let enige = -1;
+    let aantal = 0;
+    for (let p = 0; p < n; p++) {
+      let heeft = false;
+      for (const cel of dom[p]) if (rijVan(n, cel) === r) { heeft = true; break; }
+      if (!heeft) continue;
+      aantal++;
+      enige = p;
+      if (aantal > 1) break;
     }
+    if (aantal === 1) veranderd = filter(dom[enige], (cel) => rijVan(n, cel) === r) || veranderd;
   }
   for (let k = 0; k < n; k++) {
-    const kandidaten = [];
-    for (let p = 0; p < n; p++) if ([...dom[p]].some((cel) => kolVan(n, cel) === k)) kandidaten.push(p);
-    if (kandidaten.length === 1) {
-      const p = kandidaten[0];
-      veranderd = filter(dom[p], (cel) => kolVan(n, cel) === k) || veranderd;
+    let enige = -1;
+    let aantal = 0;
+    for (let p = 0; p < n; p++) {
+      let heeft = false;
+      for (const cel of dom[p]) if (kolVan(n, cel) === k) { heeft = true; break; }
+      if (!heeft) continue;
+      aantal++;
+      enige = p;
+      if (aantal > 1) break;
     }
+    if (aantal === 1) veranderd = filter(dom[enige], (cel) => kolVan(n, cel) === k) || veranderd;
   }
   return veranderd;
 }
