@@ -151,7 +151,7 @@ export const SOORT_VAN = {
   'de receptie': 'gang',
   'het archiefdepot': 'bibliotheek',
   // Het Openluchtbad
-  'het ondiepe bad': 'buiten',
+  'het ondiepe bad': 'bad',
   'de ligweide': 'buiten',
   'de kiosk': 'keuken',
   'de kleedhokjes': 'slaapkamer',
@@ -160,7 +160,7 @@ export const SOORT_VAN = {
   'het zonneterras': 'zaal',
   'de materiaalberging': 'kelder',
   'de EHBO-post': 'laboratorium',
-  'het diepe bad': 'buiten',
+  'het diepe bad': 'bad',
   'de fietsenstalling': 'werkplaats',
   'de tribune': 'zaal',
   // Dierenpark De Wildhoek
@@ -168,7 +168,7 @@ export const SOORT_VAN = {
   'de giraffenstal': 'kelder',
   'het vlindertuintje': 'serre',
   'de kinderboerderij': 'buiten',
-  'het pinguïnbad': 'buiten',
+  'het pinguïnbad': 'bad',
   'de speeltuin': 'buiten',
   'het parkrestaurant': 'keuken',
   'de dierenkliniek': 'laboratorium',
@@ -199,6 +199,10 @@ export const VLOER_VAN = {
   // Een serre is binnen. Terracotta tegels, geen gras - en al helemaal
   // geen kampvuur, zie MEUBELS_VAN.serre.
   serre:        { vul: '#c9a584', lijn: '#a38163', dessin: 'tegels' },
+  // Een bad is water. De drie baden hadden hiervoor de soort `buiten`, en
+  // kregen hun water alleen via VLOER_VAN_PLEK - terwijl hun meubilair van
+  // het gazon bleef komen. Nu is het een soort op zichzelf.
+  bad:          { vul: '#4fb4d4', lijn: '#3391b3', dessin: 'water' },
 };
 
 // Wat staat er in zo'n ruimte? Naam plus de tekening die erbij hoort.
@@ -265,6 +269,16 @@ export const MEUBELS_VAN = {
     ['de oppotbak', 'oppotbak'], ['de gieterplank', 'gieterplank'],
     ['de marmeren bank', 'marmerbank'], ['de citrusboom', 'citrusboom'],
   ],
+  // Tien, en geen uitwijkroute (zie VERWANTE_SOORTEN). Een soort moet er
+  // tien kunnen leveren, anders raakt een vol bord door zijn namen heen -
+  // en alles wat van een andere soort leent, staat hier in het water.
+  bad: [
+    ['het startblok', 'startblok'], ['het zwemtrapje', 'zwemtrapje'],
+    ['de duikplank', 'duikplank'], ['de reddingsboei', 'reddingsboei'],
+    ['de reddingshaak', 'reddingshaak'], ['de peilpaal', 'peilpaal'],
+    ['de badmeesterstoel', 'badmeesterstoel'], ['de lijnenhaspel', 'lijnenhaspel'],
+    ['de kickplankbak', 'kickplankbak'], ['de wedstrijdklok', 'wedstrijdklok'],
+  ],
 };
 
 export const soortVan = (plek) => SOORT_VAN[plek] ?? 'zaal';
@@ -281,6 +295,9 @@ export const VERWANTE_SOORTEN = {
   gang: ['zaal', 'slaapkamer'],
   werkplaats: ['kelder', 'buiten'],
   buiten: ['werkplaats', 'kelder'],
+  // Een bad wijkt naar niets uit. Elke andere soort zou iets opleveren
+  // dat niet in het water hoort te staan, en daar begon dit mee.
+  bad: [],
   grafkelder: ['kelder', 'buiten'],
   laboratorium: ['werkplaats', 'bibliotheek'],
   sterrenwacht: ['bibliotheek', 'zaal'],
@@ -969,6 +986,11 @@ export const WERELDMEUBELS = {
     zelfde: [
       'de kapstok', 'de stapel kratten', 'de gereedschapskist',
       'het schakelpaneel', 'de kuipplant',
+      // De soort `bad` is al in zwembadtaal geschreven; hier valt niets
+      // om te dopen.
+      'het startblok', 'het zwemtrapje', 'de duikplank', 'de reddingsboei',
+      'de reddingshaak', 'de peilpaal', 'de badmeesterstoel',
+      'de lijnenhaspel', 'de kickplankbak', 'de wedstrijdklok',
     ],
     anders: {
       'het fornuis': ['de frituur'],
@@ -982,7 +1004,7 @@ export const WERELDMEUBELS = {
       'de staande klok': ['de klokzuil', 'klokzuil'],
       'de vleugel': ['het scorebord', 'beeldscherm'],
       'de wandspiegel': ['het mededelingenbord', 'whiteboard'],
-      'het borstbeeld': ['de badmeesterstoel', 'badmeesterstoel'],
+      'het borstbeeld': ['de zwembandenmand', 'zwembandenmand'],
       'het wijnrek': ['de voorraadstelling', 'dossierrek'],
       'het eikenhouten vat': ['de chloorton'],
       'de kolenbunker': ['de afvalcontainer', 'afvalcontainer'],
@@ -1011,7 +1033,7 @@ export const WERELDMEUBELS = {
       'de mosrichel': ['de bank bij de ingang', 'marmerbank'],
       'de regenton': ['de prullenbak', 'prullenbak'],
       'de kruiwagen': ['de schoonmaakkar', 'rolkar'],
-      'de boomstronk': ['het startblok', 'zitblok'],
+      'de boomstronk': ['het zitblok bij de ingang', 'zitblok'],
       'de vogelverschrikker': ['de vlaggenmast', 'vlaggenmast'],
       'de kweekbak': ['de brancard', 'ziekenhuisbed'],
       'het kruidenkabinet': ['het verbandkabinet'],
@@ -1031,6 +1053,7 @@ export const WERELDMEUBELS = {
       'de gootsteen',
       'de palmkuip', 'de rieten stoel', 'de gieterplank', 'de marmeren bank',
       'de citrusboom',
+      'de reddingsboei', 'de peilpaal',
     ],
     anders: {
       'het fornuis': ['de grill'],
@@ -1049,6 +1072,17 @@ export const WERELDMEUBELS = {
       'de werktafel': ['de verzorgingstafel'],
       'de touwhaspel': ['de slanghaspel'],
       'de boekenkast': ['het souvenirrek'],
+      // Het pinguinbad deelt de soort `bad` met het zwembad, maar niet zijn
+      // taal: een wedstrijdklok hangt niet bij de pinguins. Zelfde tekening,
+      // andere naam - en elke naam moet nog steeds kloppen met wat je ziet.
+      'het startblok': ['het opstapblok', 'startblok'],
+      'het zwemtrapje': ['de klimtrap', 'zwemtrapje'],
+      'de duikplank': ['de voerplank', 'duikplank'],
+      'de reddingshaak': ['de vangstok', 'reddingshaak'],
+      'de badmeesterstoel': ['de uitkijkstoel', 'badmeesterstoel'],
+      'de lijnenhaspel': ['de netrol', 'lijnenhaspel'],
+      'de kickplankbak': ['de speelgoedbak', 'kickplankbak'],
+      'de wedstrijdklok': ['de voerklok', 'wedstrijdklok'],
       'de katheder': ['de kassazuil'],
       'de commode': ['de ladenkast', 'archiefkast'],
       'de leesstoel': ['de winkelkruk'],

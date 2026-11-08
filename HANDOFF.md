@@ -72,6 +72,16 @@ Daarbij vier dingen die moesten meeveranderen:
   als de generator (`30000 * n`) en melden "niet uit te rekenen" apart.
 - **De `findLead` van het zwembad noemde een kamer.** Bij de opdracht
   "vinden" is dat het antwoord weggeven; de keuring viel er terecht over.
+- **Een bad is geen gazon.** De twee baden en het pinguïnbad hadden de
+  soort `buiten`, net als de ligweide: hun vloer was apart geregeld, hun
+  meubilair niet, en dus stond er een plantenbak midden in het water. Nu is
+  `bad` een soort op zichzelf, met tien eigen meubelstukken (startblok,
+  zwemtrapje, duikplank, reddingsboei, reddingshaak, peilpaal,
+  badmeesterstoel, lijnenhaspel, kickplankbak, wedstrijdklok), eigen
+  aankleding (rimpels, schuim, een baanlijn) en géén uitwijkroute - want
+  elke andere soort levert iets dat niet in het water hoort. De dierentuin
+  doopt diezelfde tien om voor het pinguïnbad. `check-kamers.mjs` faalt nu
+  zodra een kamer die op "bad" eindigt een andere soort krijgt.
 - **Een nieuwe wereld is 37 nieuwe woorden, en elk woord wil een icoon.**
   Namen, voorwerpen, plekken, tijden, sporen: `check-iconen.mjs` telde er
   74 zonder plaatje. Hergebruikt is alleen wat echt hetzelfde ding is (een
@@ -111,15 +121,6 @@ Ook klaar en niet gecommit: `ARCHITECTUUR.md` en dit bestand.
   heeft dat opgemerkt. De eerlijke oplossing is die stukken echt tekenen,
   niet de naam verder verbuigen. **Les voor de volgende keer: als een
   tekening liegt, teken hem. Een wereldlaag kan namen omdopen, geen beeld.**
-
-- *Een plantenbak in het ondiepe bad.* De twee baden en het pinguïnbad
-  hebben de soort `buiten`, net als de ligweide, dus alles wat op een
-  grasveld mag staan kan ook in het water belanden. De vloer is wel apart
-  geregeld (`VLOER_VAN_PLEK`), het meubilair niet. De nette oplossing is een
-  eigen soort `bad` met een eigen lijst - maar `check-kamers.mjs` eist tien
-  namen per soort, dus dat zijn tien zwembadmeubels met elk een eerlijke
-  tekening (startblok, zwemtrapje, lijnenhaspel, reddingsboei, duikplank,
-  peilpaal…). Een paar uur werk, geen kwartier.
 
 **Eerder opgemerkt, nog niet opgelost**
 

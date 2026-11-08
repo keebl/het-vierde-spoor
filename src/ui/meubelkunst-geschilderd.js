@@ -1465,6 +1465,106 @@ export const GESCHILDERD = {
     streep('blad', 0.8, 'M13.4 15 L11 10.6 M20 13.4 L18.4 9 M27 11.6 L25.6 7.4 M33 11 L35.4 7'),
   ],
 
+  // Een mand met zwembanden. Hier stond het borstbeeld uit de zaal; die
+  // naam is naar de badmeesterstoel gegaan toen die een eigen plaats kreeg
+  // in soort `bad`.
+  zwembandenmand: [
+    vloer('metaal', bak(24, 27, 28, 23, 14)),
+    v('stofblauw', ring(14.4, 21.4, 6.4, 2.2), { gat: true }),
+    v('houtrood', ring(24, 18.4, 7, 2.4), { gat: true }),
+    v('stofgroen', ring(33.4, 21.4, 6.4, 2.2), { gat: true }),
+    streep('donker', 0.9, 'M12.4 31 H35.6'),
+  ],
+
+  // ------------------------------------------------------------ in het bad
+  //
+  // De twee baden en het pinguinbad hadden de soort `buiten`, net als de
+  // ligweide. Daardoor kon alles wat op een grasveld hoort ook in het water
+  // staan: een barbecue, een prullenbak, een plantenbak. De vloer was wel
+  // apart geregeld, het meubilair niet. Deze tien horen in of aan het water,
+  // en soort `bad` wijkt naar niets uit - er lekt dus niets van de kant in.
+  startblok: [
+    vloer('steenkoel', romp(10, 32, 28, 9, { taps: 0.02 })),
+    v('steenkoel', romp(13, 25, 22, 7.4, { taps: 0.03 })),
+    v('stofblauw', plaat(11.4, 22.4, 25.2, 3, { zak: 0.4 })),
+    v('metaal', staaf(16.4, 23, 16.4, 11.4, 2.2)),
+    v('metaal', staaf(31.6, 23, 31.6, 11.4, 2.2)),
+    v('houtrood', staaf(14.6, 10.4, 33.4, 10.4, 3)),
+    streep('donker', 0.8, 'M13 32.4 H37'),
+  ],
+
+  zwemtrapje: [
+    vloer('steenkoel', plaat(9, 38.4, 30, 3, { zak: 0.5 })),
+    v('metaal', staaf(15, 12.4, 15, 38.6, 2.2)),
+    v('metaal', staaf(33, 12.4, 33, 38.6, 2.2)),
+    v('metaal', staaf(15, 12.4, 20, 7.4, 2.2)),
+    v('metaal', staaf(33, 12.4, 28, 7.4, 2.2)),
+    v('metaal', staaf(20, 7.4, 28, 7.4, 2.2)),
+    v('metaal', plaat(15.4, 20.4, 17.2, 2, { zak: 0.3 })),
+    v('metaal', plaat(15.4, 27.4, 17.2, 2, { zak: 0.3 })),
+    v('metaal', plaat(15.4, 34.4, 17.2, 2, { zak: 0.3 })),
+  ],
+
+  duikplank: [
+    vloer('metaal', romp(10, 26, 10, 15, { taps: 0.04 })),
+    v('metaal', staaf(15, 26.4, 15, 20.4, 1.8)),
+    v('papier', plaat(11, 17, 31, 3.4, { zak: 0.6 })),
+    v('metaal', staaf(12.4, 20.6, 12.4, 26.4, 1.6)),
+    streep('donker', 0.8, 'M14 21 H41'),
+  ],
+
+  reddingsboei: [
+    vloer('metaal', romp(18, 36, 12, 5, { taps: 0.05 })),
+    v('metaal', staaf(24, 36.4, 24, 16.4, 2.2)),
+    v('houtrood', ring(24, 15.4, 10.4, 3.4), { gat: true }),
+    streep('papier', 2.4, 'M16.6 9.6 L20 13.4 M28 17.4 L31.4 21.2'),
+  ],
+
+  reddingshaak: [
+    vloer('steenkoel', plaat(10, 37.4, 28, 3.6, { zak: 0.5 })),
+    v('metaal', staaf(16, 37.6, 16, 14, 2.4)),
+    v('metaal', staaf(16, 24, 33, 24, 2)),
+    v('houtrood', staaf(16, 14, 27, 7.4, 2.6)),
+    v('houtrood', staaf(27, 7.4, 33.4, 12.4, 2.6)),
+    v('houtrood', staaf(33.4, 12.4, 29.4, 16.4, 2.6)),
+    streep('donker', 0.8, 'M18 30 H31'),
+  ],
+
+  peilpaal: [
+    vloer('steenkoel', romp(16, 36.4, 16, 5, { taps: 0.05 })),
+    v('metaal', staaf(24, 37, 24, 15.4, 3.4)),
+    v('papier', romp(12.4, 4.4, 23.2, 11, { taps: 0.02 })),
+    streep('donker', 2.4, 'M16 9 H32'),
+    streep('donker', 1.6, 'M16 12.6 H27'),
+    streep('stofblauw', 2.8, 'M20.6 19 H27.4 M20.6 25 H27.4 M20.6 31 H27.4'),
+  ],
+
+  lijnenhaspel: [
+    vloer('metaal', plaat(9, 38.4, 30, 3, { zak: 0.5 })),
+    v('metaal', staaf(13, 38.6, 16.4, 24, 2.2)),
+    v('metaal', staaf(35, 38.6, 31.6, 24, 2.2)),
+    v('stofblauw', ovaal(24, 23, 11.4, 11)),
+    v('papier', ovaal(24, 23, 4, 3.8)),
+    streep('donker', 1, 'M14.6 18.6 Q24 15 33.4 18.6 M14.6 27.4 Q24 31 33.4 27.4'),
+  ],
+
+  kickplankbak: [
+    vloer('metaal', bak(24, 24, 26, 21, 17)),
+    v('stofblauw', romp(14.4, 14, 5, 11, { taps: 0.02 })),
+    v('houtrood', romp(20.4, 12.4, 5, 12.6, { taps: 0.02 })),
+    v('papier', romp(26.4, 13.4, 5, 11.6, { taps: 0.02 })),
+    v('stofgroen', romp(32, 15, 5, 10, { taps: 0.02 })),
+    streep('donker', 0.9, 'M12.4 28 H35.6'),
+  ],
+
+  wedstrijdklok: [
+    vloer('metaal', romp(17.4, 36.4, 13.2, 5, { taps: 0.06 })),
+    v('metaal', staaf(24, 37, 24, 22.4, 2.6)),
+    v('papier', bol(24, 14.4, 11.4)),
+    streep('donker', 1.1, 'M24 14.4 L24 7.6 M24 14.4 L29.2 17'),
+    streep('donker', 0.8, 'M24 4.6 V6.2 M34.2 14.4 H32.6 M24 24.2 V22.6 M13.8 14.4 H15.4'),
+  ],
+
   automaat: [
     vloer('donker', romp(7, 4, 34, 37)),
     v('glas', romp(9.4, 6.4, 20, 27, { taps: 0.004 }), { glans: 1 }),

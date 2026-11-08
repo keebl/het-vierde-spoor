@@ -538,6 +538,19 @@ for (const [plek, wereldId] of wereldVanPlek) {
   }
 }
 
+// ------------------------------------------------- een bad is geen gazon
+//
+// De drie baden stonden te boek als `buiten`, net als de ligweide. Hun vloer
+// was wel apart geregeld, maar hun meubilair kwam van het gazon: er stond een
+// plantenbak midden in het ondiepe bad, en een barbecue kon er net zo goed
+// staan. Soort `bad` lost dat op - en deze regel zorgt dat een volgend bad
+// hem ook krijgt, in plaats van opnieuw bij `buiten` te belanden.
+for (const [plek, wereldId] of wereldVanPlek) {
+  if (!/bad$/.test(plek.toLowerCase())) continue;
+  const s = soortVan(plek);
+  if (s !== 'bad') meld('BAD IS GEEN GAZON', `${wereldId}/${plek}: soort is "${s}"`);
+}
+
 // Een plek die een eigen vloer heeft, moet ook echt bestaan - anders staat
 // er een uitzondering voor een kamer die er niet meer is.
 for (const plek of Object.keys(VLOER_VAN_PLEK)) {

@@ -336,6 +336,48 @@ const brievenbakje = prop([
 ], 0.5);
 // ------------------------------------------------- wat hoort bij welke ruimte
 
+// ------------------------------------------------------------- in het bad
+//
+// Water heeft geen kleed en geen voetsporen. Wat er drijft of op de bodem
+// ligt: rimpels, schuim, een baanlijn, een afvoerrooster, een vergeten
+// duikring. Platte dingen blijven plat, zie de opmerking bovenaan.
+const rimpeling = (g, cx, cy) => {
+  for (let i = 0; i < 3; i++) {
+    g.append(el('path', {
+      d: `M${cx - 15} ${cy - 7 + i * 7} q 7 -3.4 15 0 q 8 3.4 15 0`,
+      class: 'plasglans',
+    }));
+  }
+};
+
+const schuim = (g, cx, cy) => {
+  const stippen = [[-12, -3, 4], [-3, 2, 5.4], [7, -4, 4.6], [13, 3, 3.4], [2, 7, 3.6]];
+  for (const [dx, dy, r] of stippen) {
+    g.append(el('circle', { cx: cx + dx, cy: cy + dy, r, class: 'plas' }));
+  }
+};
+
+const baanlijn = prop([
+  vloer('stofblauw', bol(9, 32, 3.4)),
+  v('papier', bol(16, 32, 3.4)),
+  v('stofblauw', bol(23, 32, 3.4)),
+  v('papier', bol(30, 32, 3.4)),
+  v('stofblauw', bol(37, 32, 3.4)),
+  streep('donker', 0.8, 'M6 32 H40'),
+], 0.5);
+
+const duikring = prop([
+  vloer('houtrood', ovaal(24, 34, 11, 5)),
+  v('donker', ovaal(24, 34, 7.4, 3)),
+  streep('papier', 1, 'M15 31.4 Q24 29.4 33 31.4'),
+], 0.52);
+
+const afvoerrooster = prop([
+  vloer('metaal', ovaal(24, 33, 12, 5.4)),
+  v('donker', ovaal(24, 33, 9.4, 3.6)),
+  streep('metaal', 1, 'M16 31.4 H32 M15.4 33.4 H32.6 M16 35.4 H32'),
+], 0.55);
+
 const MOTIEVEN = {
   zaal: [
     kleed('#a8543c'), kamerplant, kandelaarvlek, kruk, kleed('#7a4a66', 0.5),
@@ -356,6 +398,10 @@ const MOTIEVEN = {
   keuken: [kruimels, emmer, plas, jutezak, voetsporen, kruk, kruimels, flessen],
   kelder: [putdeksel, flessen, spinnenweb, jutezak, plas, keien, flessen, emmer],
   werkplaats: [olievlek, gereedschap, bouten, emmer, putdeksel, jutezak, gereedschap],
+  bad: [
+    rimpeling, schuim, baanlijn, bladeren, duikring, afvoerrooster,
+    rimpeling, schuim, rimpeling,
+  ],
   buiten: [
     struik, bladeren, varens, keien, bloempol, paddenstoelen, wortels,
     plas, struik, varens, bladeren, bloempol,
