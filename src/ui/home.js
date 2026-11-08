@@ -7,9 +7,10 @@
 // Dat scheelt niet alleen knoppen: het haalt ook het gevoel weg dat je
 // eerst iets moet uitzoeken voordat je mag beginnen.
 //
-// De bibliotheek bestaat nog wel. Hij staat alleen nergens meer in het
-// zicht: #/puzzels doet het nog, en een link die iemand bewaard heeft komt
-// gewoon uit. Zie ook de opmerking bij VERBORGEN_ROUTES in main.js.
+// De bibliotheek staat er weer wel bij, maar als tweede keuze: eerst de
+// knop die je een nieuwe zaak geeft, daarnaast de lijst voor wie liever
+// zelf kiest. Daar staan de vaste zaken per moeilijkheidsgraad, met
+// daaronder de puzzels die je zelf begonnen bent.
 
 import { el } from './boards.js';
 import { ZICHTBARE_LEVEL_IDS, LEVELS, KAMER_LEVELS } from '../engine/difficulty.js';
@@ -105,7 +106,10 @@ export function renderHome(mount) {
       ]),
       el('p', { class: 'label', text: 'Hoe zwaar wil je het hebben?' }),
       niveaus,
-      el('div', { class: 'hero-actions' }, [start]),
+      el('div', { class: 'hero-actions' }, [
+        start,
+        el('a', { class: 'btn', href: '#/puzzels', text: 'Of kies er een uit de lijst' }),
+      ]),
       el('p', {
         class: 'hero-note',
         text: 'Elke keer een nieuw decor en een nieuwe zaak. Geen account nodig; je voortgang blijft in deze browser bewaard.',

@@ -1768,3 +1768,9 @@ body[data-wereld="kantoor"] .gloedrand { stop-color: #16182a; }
   .paneel > summary::before { display: none; }
   .paneel-binnen { display: block !important; }
 }
+
+
+/* De zelfgemaakte puzzels onder de vaste zaken van hetzelfde niveau. Ze
+   staan als regels en niet als kaarten: ze hebben geen titel en geen
+   omslag, alleen een decor en hoe ver je bent. */
+.eigen-kop { margin: var(--s5) 0 var(--s2); }

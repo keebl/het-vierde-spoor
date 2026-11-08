@@ -387,7 +387,6 @@ export const ICOON_VAN = {
   "Hind": "pStrik",
   "Isa": "pGeleerde",
   "Joep": "pJager",
-  "Kim": "pMagier",
   "Lars": "pHoed",
   "Rachid": "pHelm",
   "Sofie": "pDame",

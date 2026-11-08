@@ -90,11 +90,8 @@ function route() {
 
   if (path === 'maken') { markNav('maken'); renderGenerator(app); return; }
   if (path === 'uitleg') { markNav('uitleg'); renderUitleg(app); return; }
-  // De bibliotheek staat nergens meer in het menu of op de voorpagina: je
-  // krijgt voortaan elke keer een nieuwe puzzel in plaats van er een uit te
-  // zoeken. De vierenzeventig zaken zijn niet weg - daar zit te veel werk
-  // in - ze zijn alleen onzichtbaar. Deze route blijft dus werken, zodat
-  // een bewaarde link nog uitkomt.
+  // De bibliotheek: de vierenzeventig vaste zaken per moeilijkheidsgraad,
+  // met onder elk niveau de puzzels die deze browser zelf begonnen is.
   if (path.startsWith('puzzels')) {
     markNav('puzzels');
     renderLibrary(app, leesQuery(path));

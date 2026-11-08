@@ -6,8 +6,10 @@ import { puzzelKaart } from './home.js';
 import { CATALOG } from '../content/catalog.js';
 import { ASSIGNMENTS, mechaniekZichtbaar } from '../content/assignments.js';
 import { LEVELS, LEVEL_IDS, ZICHTBARE_LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
-import { solvedIds, onthuldIds } from './state.js';
-import { puzzleId } from '../puzzle.js';
+import { solvedIds, onthuldIds, bewaardePuzzels } from './state.js';
+import { puzzleId, parsePuzzleId } from '../puzzle.js';
+import { WORLD_BY_ID } from '../content/worlds.js';
+import { catalogSettings } from '../content/catalog.js';
 
 // Twee keuzelijsten is genoeg. 'Soort spel' is eruit omdat er voorlopig maar
 // één soort te zien is, en 'Wat je uitzoekt' omdat dat bijna altijd hetzelfde
@@ -25,6 +27,38 @@ const TEZIEN = CATALOG.filter((p) => mechaniekZichtbaar(p.mechaniek) && ZICHTBAR
 // Het decorfilter blijft wel werken via de link (#/puzzels?wereld=noir), want
 // de tegels op de voorpagina wijzen daarheen.
 const EXTRA_FILTERS = ['opdracht', 'wereld'];
+
+// Wat deze browser van zelfgemaakte puzzels heeft bewaard, op niveau
+// gesorteerd. Een puzzel die je zelf begint is nu nergens meer terug te
+// vinden zodra je hem sluit - de link had je moeten bewaren. Hier staan ze
+// alsnog, naast de vaste zaken van hetzelfde niveau.
+function eigenPerNiveau() {
+  const vast = new Set(CATALOG.map((e) => puzzleId(catalogSettings(e))));
+  const per = new Map();
+  for (const p of bewaardePuzzels()) {
+    if (vast.has(p.id)) continue;
+    if (!p.bezig && !p.solved && !p.onthuld) continue;
+    const { niveau, wereld, mechaniek } = parsePuzzleId(p.id);
+    if (!mechaniekZichtbaar(mechaniek)) continue;
+    if (!per.has(niveau)) per.set(niveau, []);
+    per.get(niveau).push({ ...p, wereld: WORLD_BY_ID.get(wereld) });
+  }
+  return per;
+}
+
+// Een zelfgemaakte puzzel als regel: welk decor, hoe ver je bent.
+function eigenRij(p) {
+  const merk = p.solved ? '✓ opgelost' : p.onthuld ? 'oplossing bekeken' : 'mee bezig';
+  return el('a', { class: 'row-item plain', href: `#/puzzel/${p.id}` }, [
+    el('span', { class: 'row-body' }, [
+      el('span', { class: 'row-title', text: `${p.wereld?.icon ?? ''} ${p.wereld?.name ?? 'Onbekend decor'}`.trim() }),
+      el('span', { class: 'row-sub', text: p.titel || 'Zelf begonnen' }),
+    ]),
+    el('span', { class: 'row-meta' }, [
+      el('span', { class: p.solved ? 'done-mark' : 'bekeken-mark', text: merk }),
+    ]),
+  ]);
+}
 
 export function renderLibrary(mount, query = {}) {
   const done = solvedIds();
@@ -50,7 +84,7 @@ export function renderLibrary(mount, query = {}) {
     el('h1', { text: 'Alle puzzels' }),
     el('p', {
       class: 'lede',
-      text: `${TEZIEN.length} zaken in ${ZICHTBARE_LEVEL_IDS.length} moeilijkheidsgraden, van vijf verdachten tot zestien. Hoe hoger het niveau, hoe verder je moet doorredeneren voordat er iets vastligt.`,
+      text: `${TEZIEN.length} vaste zaken in ${ZICHTBARE_LEVEL_IDS.length} moeilijkheidsgraden, van vijf verdachten tot zestien. Hoe hoger het niveau, hoe verder je moet doorredeneren voordat er iets vastligt. Puzzels die je zelf begonnen bent staan bij hun eigen niveau onderaan.`,
     })
   );
 
@@ -119,14 +153,18 @@ export function renderLibrary(mount, query = {}) {
   // is "iets van mijn niveau", niet "nog een keer dat decor". Dus staan de
   // niveaus nu onder elkaar en lopen de decors er doorheen: in één kop zie
   // je een woud naast een ruimtestation naast een crypte.
+  const eigen = eigenPerNiveau();
+
   if (actief.niveau) {
     mount.append(el('div', { class: 'kaarten' }, lijst.map((e) => puzzelKaart(e, done, bekeken))));
+    mount.append(...eigenBlok(eigen.get(Number(actief.niveau)) ?? []));
     return;
   }
 
   for (const niveau of ZICHTBARE_LEVEL_IDS) {
     const vanNiveau = lijst.filter((p) => p.niveau === niveau);
-    if (!vanNiveau.length) continue;
+    const mijn = eigen.get(niveau) ?? [];
+    if (!vanNiveau.length && !mijn.length) continue;
     const L = LEVELS[niveau];
     const K = KAMER_LEVELS[niveau];
     mount.append(
@@ -136,9 +174,18 @@ export function renderLibrary(mount, query = {}) {
           el('p', { text: `${K.n} verdachten op een plattegrond van ${K.n} bij ${K.n}, in ${K.kamers} kamers.` }),
         ]),
         el('div', { class: 'kaarten' }, vanNiveau.map((e) => puzzelKaart(e, done, bekeken))),
+        ...eigenBlok(mijn),
       ])
     );
   }
+}
+
+function eigenBlok(mijn) {
+  if (!mijn.length) return [];
+  return [
+    el('p', { class: 'label eigen-kop', text: `Zelf begonnen (${mijn.length})` }),
+    el('div', { class: 'rows' }, mijn.map(eigenRij)),
+  ];
 }
 
 function toQuery(obj) {

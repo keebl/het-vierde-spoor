@@ -145,3 +145,23 @@ export function zetKruisjesVanzelf(aan) {
     /* geen opslag: dan geldt de keuze alleen deze sessie */
   }
 }
+
+// Alle puzzels waar in deze browser iets van bewaard is: aangeraakt,
+// opgelost, of de oplossing van opgevraagd. De bibliotheek gebruikt dit om
+// naast de vaste zaken ook te laten zien wat iemand zelf is begonnen -
+// anders is een zelfgemaakte puzzel na één keer sluiten onvindbaar, en dat
+// was hij.
+export function bewaardePuzzels() {
+  const all = readAll();
+  return Object.entries(all).map(([id, d]) => ({
+    id,
+    titel: d?.titel ?? '',
+    solved: !!d?.solved && !d?.onthuld,
+    onthuld: !!d?.onthuld,
+    // Of er al iets op het bord staat. Puzzels die je alleen hebt geopend
+    // en meteen weer weggeklikt, zijn geen zaak om naar terug te keren.
+    bezig: Object.keys(d?.plaats ?? {}).length > 0
+      || Object.keys(d?.marks ?? {}).length > 0
+      || (d?.struck ?? []).length > 0,
+  }));
+}
