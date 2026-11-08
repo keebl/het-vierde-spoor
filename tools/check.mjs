@@ -46,8 +46,15 @@ for (const { a, m, w, l } of combos) {
 
     const problems = [];
     if (p.kind === 'kamer') {
-      const { count } = telPlaatsingen(p._rooster, p._ruwe, 3);
-      if (count !== 1) problems.push(`${count} oplossingen`);
+      // Het budget schaalt mee met het bord, net als in de generator zelf
+      // (zie poging() in generate-rooms.js). Op de standaard honderdtwintig-
+      // duizend stappen gaf de teller het bij twaalf bij twaalf op, en
+      // "opgegeven" kwam er als count 0 uit: de keuring meldde dan "0
+      // oplossingen" voor een puzzel die er gewoon één had. Een teller die
+      // het niet weet, moet dat zeggen.
+      const uit = telPlaatsingen(p._rooster, p._ruwe, 3, 30000 * p.n);
+      if (uit.opgegeven) problems.push('niet uit te rekenen binnen het budget');
+      else if (uit.count !== 1) problems.push(`${uit.count} oplossingen`);
       if (p.personen[p.dader] !== p.question.answer) problems.push('antwoord wijkt af');
       // Waar het lichaam ligt moet je uitpuzzelen: geen aanwijzing mag de
       // kamer van het slachtoffer rechtstreeks noemen, en geen aanwijzing mag

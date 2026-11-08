@@ -13,6 +13,7 @@ import { kamerParams } from './engine/difficulty.js';
 import { zinVoor, namenIn } from './content/rooms-text.js';
 import { soortVan, meubelsVoor, vormVan } from './content/kamersoorten.js';
 import { makeRng } from './engine/rng.js';
+import { ZAKEN } from './content/zaken.js';
 import { geslachtVan } from './content/namen.js';
 
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
@@ -189,28 +190,6 @@ function clueNames(clue, spec) {
   return out;
 }
 
-// De opdracht van een speurdoku, in vijf toonaarden.
-//
-// Elke zaak in hetzelfde genre kreeg woordelijk dezelfde zin, en dan leest
-// de tweede puzzel als een herhaling van de eerste. Alle vijf zeggen
-// precies hetzelfde: er is iemand vermoord, waar het lichaam ligt weet
-// niemand meer, je zet iedereen terug, en wie als enige bij het
-// slachtoffer overblijft is de dader. Alleen de toon verschilt.
-//
-// Dat eerste stond er eerder niet in. De inleiding vertelde dat de
-// stroom uitviel of dat het brandalarm afging, en daarna stond er ineens
-// "heeft het gedaan" - terwijl nergens gezegd was dát er iets gedaan was.
-// Nu staat in elke variant wie er dood is en wat hij was.
-const OPDRACHT_ZINNEN = [
-  (naam, rol, zelfde) => `${naam}, ${rol}, is dood aangetroffen. Niemand weet meer wie waar stond, en zelfs waar ${naam} lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij ${naam} ${zelfde} blijkt te staan, is de dader.`,
-  (naam, rol, zelfde) => `Er is die avond iemand omgebracht: ${naam}, ${rol}. Van wat er gebeurde is geen plattegrond gemaakt. Zet iedereen terug op de plek waar hij stond, ${naam} incluis - want wie als enige bij ${naam} ${zelfde} eindigt, heeft het gedaan.`,
-  (naam, rol, zelfde) => `${naam} is vermoord. ${cap(rol)} werd gevonden toen het al te laat was, en niemand weet meer waar iemand stond. Zet ze allemaal neer; de enige die daarna bij ${naam} ${zelfde} staat, is de dader.`,
-  (naam, rol, zelfde) => `Het lichaam van ${naam} is gevonden - ${rol}. De plattegrond is leeg gebleven: wie waar stond is niet opgeschreven, ook niet waar ${naam} lag. Vul hem in en kijk wie er als enige bij ${naam} ${zelfde} overblijft.`,
-  (naam, rol, zelfde) => `Dit is een moordzaak. ${naam}, ${rol}, heeft het niet gehaald. Reconstrueer wie waar stond, ${naam} zelf incluis, want zelfs dat is niet meer bekend. Wie dan als enige bij ${naam} ${zelfde} staat, is de dader.`,
-];
-
-const opdrachtZin = (naam, rol, zelfde, rng) => rng.pick(OPDRACHT_ZINNEN)(naam, rol, zelfde);
-
 // ---------------------------------------------------- namen die kloppen
 //
 // De generator tekent eerst een plattegrond en plakt er daarna namen op.
@@ -289,10 +268,28 @@ function buildKamerPuzzle({ world, settings }) {
   const params = kamerParams(niveau);
   // De wereld bepaalt hoeveel verschillende meubels en kamers er benoembaar
   // zijn; meer dan dat kan de motor niet gebruiken.
+  // Hoeveel meubelstukken er hoogstens op het bord mogen.
+  //
+  // Dit stond op twintig, en dat was een gok. De namen worden per soort
+  // ruimte uitgedeeld en een naam wordt maar één keer gebruikt, dus een
+  // bord dat toevallig veel meubels in ruimtes van één soort legt, raakt
+  // door die soort heen - en dan valt de hele puzzel om met "geen
+  // meubilair meer voor zaal". Dat gebeurde bij het zwembad en de
+  // dierentuin, maar het kon overal.
+  //
+  // Dus vragen we er nooit meer dan de krapste soort in deze wereld er
+  // kan leveren. Dat is twee of drie minder dan voorheen; een bord met
+  // achttien meubelstukken is geen leger bord dan een met twintig.
+  const soortenHier = new Set(
+    [...world.places, ...(world.plekkenXL ?? [])].map(soortVan),
+  );
+  const krapste = Math.min(
+    ...[...soortenHier].map((s) => meubelsVoor(s, world.id).flat().length),
+  );
   const gen = genereerKamerpuzzel(seed, {
     ...params,
     kamers: Math.min(params.kamers, world.places.length + (world.plekkenXL?.length ?? 0)),
-    maxMeubels: 20,
+    maxMeubels: Math.min(20, krapste),
   });
   const rng = makeRng(`${seed}:kamerwoorden`);
 
@@ -336,6 +333,17 @@ function buildKamerPuzzle({ world, settings }) {
   const slachtofferRol = rng.pick(
     world.rollen?.[geslachtVan(slachtofferNaam)] ?? world.victims,
   );
+
+  // Wat voor zaak het is: een moord, een verdwijning of een diefstal. Dat
+  // verandert niets aan de logica - de motor zoekt nog steeds wie er met
+  // z'n tweeën in één kamer staat - alleen aan de woorden eromheen en aan
+  // het merk dat die figuur op het bord krijgt. Zie src/content/zaken.js.
+  //
+  // Met een eigen trekking, zodat de namen en de kamers hierboven niet
+  // verschuiven: anders geeft een bestaande link ineens een ander bord.
+  const zRng = makeRng(`${seed}:zaak`);
+  const zaak = zRng.pick(ZAKEN);
+  const zin = zRng.pick(zaak.opdracht);
 
   const kamerNamen = noemKamers(
     gen.rooster,
@@ -393,15 +401,21 @@ function buildKamerPuzzle({ world, settings }) {
     settings: { ...settings },
     title: `${world.name}: Wie stond er alleen?`,
     world: { id: world.id, name: world.name, icon: world.icon, accent: world.accent },
-    opdracht: { id: 'dader', name: 'Wie deed het?' },
+    opdracht: { id: 'dader', name: `Wie is ${zaak.antwoordwoord}?` },
     mechaniek: 'kamer',
     niveau: Number(niveau),
     niveauLabel: levelParams(niveau).label,
     depth: gen.graad.opgelost ? 1 : 2,
-    intro: `${world.lead} ${opdrachtZin(slachtofferNaam, slachtofferRol, zelfde, rng)}`,
+    intro: `${world.lead} ${zin(slachtofferNaam, slachtofferRol, zelfde, world.gestolen)}`,
     question: {
-      text: `Wie stond er als enige bij ${slachtofferNaam} ${zelfde}?`,
+      text: zaak.vraag(slachtofferNaam, zelfde),
       answer: namen[gen.dader],
+    },
+    // Welke zaak het is, zodat het bord het merk kan tekenen en de
+    // spelregels de goede zin kunnen laten zien.
+    zaak: {
+      id: zaak.id, merk: zaak.merk, rolwoord: zaak.rolwoord,
+      antwoordwoord: zaak.antwoordwoord, regel: zaak.regel,
     },
     // het bord
     n: gen.rooster.n,

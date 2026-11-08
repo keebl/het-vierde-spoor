@@ -12,7 +12,7 @@ import { tekenIcoon } from './icons.js';
 import { tekenGeschilderd, meng, zetWereldstof } from './geschilderd.js';
 import { tekenBordrand, tekenBordhangers } from './bordrand.js';
 import { GESCHILDERD } from './meubelkunst-geschilderd.js';
-import { tekenPersoon, tekenSlachtofferkruis, slachtofferElement } from './personenkunst-geschilderd.js';
+import { tekenPersoon, tekenMerk, slachtofferElement } from './personenkunst-geschilderd.js';
 import { icoonVan } from '../content/iconen.js';
 import { geslachtVan } from '../content/namen.js';
 import { soortVan, VLOER_VAN, VLOER_VAN_PLEK, WERELDVLOER, WERELDSTOF } from '../content/kamersoorten.js';
@@ -581,7 +581,7 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
       grootte: maat,
     });
     if (pi === puzzle.slachtofferIdx) {
-      tekenSlachtofferkruis(g, { x: cx - maat / 2, y: cy - maat / 2, grootte: maat });
+      tekenMerk(g, { teken: puzzle.zaak?.merk, x: cx - maat / 2, y: cy - maat / 2, grootte: maat });
     }
     // Na een controle: een ring om de penning. Rood om wat verkeerd staat,
     // groen om wat klopt. Alleen rood zou je laten zoeken naar wat je mag
@@ -1013,6 +1013,35 @@ export function dessins() {
   }
   defs.append(sneeuw);
 
+  // Water: het ondiepe bad, het pinguïnbad. Rimpels die in één richting
+  // lopen met een lichtstreep erop, en een paar vlekken waar de zon op
+  // staat. Een egaal blauw vlak leest als verf, niet als water.
+  const watermaat = CEL * 2;
+  const water = el('pattern', {
+    id: 'dessin-water', width: watermaat, height: watermaat, patternUnits: 'userSpaceOnUse',
+  });
+  const wk = (k) => {
+    const v = Math.sin(k * 9.317 + 1.7) * 23157.1;
+    return v - Math.floor(v);
+  };
+  for (let t = 0; t < 26; t++) {
+    const x = wk(t) * watermaat;
+    const y = wk(t + 40) * watermaat;
+    const b = 16 + wk(t + 80) * 22;
+    water.append(el('path', {
+      d: `M${x.toFixed(1)} ${y.toFixed(1)} q${(b / 2).toFixed(1)} ${(-2.4 - wk(t) * 2.4).toFixed(1)} ${b.toFixed(1)} 0`,
+      class: 'dessinrimpel',
+    }));
+  }
+  for (let t = 0; t < 9; t++) {
+    water.append(el('ellipse', {
+      cx: (wk(t + 130) * watermaat).toFixed(1), cy: (wk(t + 170) * watermaat).toFixed(1),
+      rx: (10 + wk(t + 200) * 14).toFixed(1), ry: (3 + wk(t + 230) * 3).toFixed(1),
+      class: 'dessinglans',
+    }));
+  }
+  defs.append(water);
+
   // Warm licht in elke kamer: een zachte gloed vanuit het midden. Zonder dat
   // is een vloer een egaal vlak, en daar komt "kil" vandaan.
   const gloed = el('radialGradient', { id: 'kamergloed' });
@@ -1081,7 +1110,7 @@ export const DESSINS = [
   // 'plaat' stond hier niet in terwijl hij wel bestaat en wel gebruikt
   // wordt - alleen niet door een soort maar door de wereldlaag van het
   // ruimtestation. De keuring keek dus langs een heel dessin heen.
-  'plaat', 'bestrating', 'sneeuw',
+  'plaat', 'bestrating', 'sneeuw', 'water',
 ];
 
 export { CEL, PENNING };
@@ -1124,6 +1153,8 @@ export function renderLegenda(puzzle) {
     puzzle.slachtofferIdx,
     (puzzle.slachtofferNaam ?? '?').charAt(0).toUpperCase(),
     30,
+    geslachtVan(puzzle.slachtofferNaam ?? ''),
+    puzzle.zaak?.merk,
   ));
   const lijkNaam = document.createElement('span');
   lijkNaam.textContent = puzzle.slachtofferNaam;

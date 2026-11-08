@@ -21,7 +21,7 @@ const FILTERS = [
   { key: 'niveau', label: 'Moeilijkheidsgraad', opties: () => ZICHTBARE_LEVEL_IDS.map((l) => [String(l), `${l} - ${LEVELS[l].label}`]) },
 ];
 
-// Alleen de Speurdoku's. Zie ZICHTBARE_MECHANICS in assignments.js.
+// Alleen de Reconstructies. Zie ZICHTBARE_MECHANICS in assignments.js.
 const TEZIEN = CATALOG.filter((p) => mechaniekZichtbaar(p.mechaniek) && ZICHTBARE_LEVEL_IDS.includes(p.niveau));
 
 // Het decorfilter blijft wel werken via de link (#/puzzels?wereld=noir), want

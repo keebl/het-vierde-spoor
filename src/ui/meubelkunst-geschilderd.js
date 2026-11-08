@@ -1663,4 +1663,52 @@ export const GESCHILDERD = {
     v('vuur', bol(24.4, 15.6, 1.9), { glans: 1 }),
     vloer('houtrood', plaat(12.4, 38.6, 23.2, 2.6, { zak: 0.4 })),
   ],
+
+  // ============================================== zomer, zon en plastic
+  // Drie dingen voor het openluchtbad. De rest van het terrein leent van
+  // de moderne set hierboven: een prullenbak is een prullenbak.
+
+  parasol: [
+    v('metaal', zuilvorm(24, 14, 2, 3, 25)),
+    v('houtrood', kap(24, 2.4, 34, 11)),
+    streep('papier', 1, 'M24 4 L8 13 M24 4 L17 13.4 M24 4 L31 13.4 M24 4 L40 13'),
+    v('papier', kap(24, 3.4, 17, 5.4)),
+    v('metaal', bol(24, 2, 1.4)),
+    v('steenkoel', plaat(17.4, 36.6, 13, 3, { zak: 0.3 })),
+    vloer('steenkoel', ovaal(24, 40.4, 10.6, 2.6)),
+  ],
+
+  ligbed: [
+    v('stofblauw', 'M8 30 L19 30 L27 14.6 L21.4 12.6 Z'),
+    streep('papier', 0.9, 'M11.6 27.4 L22 27.4 M13.6 23 L23.6 23 M15.6 18.6 L25.4 18.6'),
+    v('stofblauw', plaat(7, 29.4, 33, 4.6, { zak: 0.4 })),
+    streep('papier', 0.9, 'M14 31.6 H36 M14 33 H36'),
+    v('metaal', staaf(10, 34, 10, 40, 1.8)),
+    v('metaal', staaf(37, 34, 37, 40, 1.8)),
+    v('metaal', staaf(22, 12.4, 26.4, 13.6, 1.6)),
+    vloer('metaal', plaat(8.6, 39.4, 30, 2.2, { zak: 0.4 })),
+  ],
+
+  badmeesterstoel: [
+    v('metaal', staaf(13, 18, 11, 40, 2.2)),
+    v('metaal', staaf(35, 18, 37, 40, 2.2)),
+    streep('metaal', 1.4, 'M12 26 H36 M11.6 33 H36.4'),
+    v('houtrood', romp(13, 5, 22, 13, { taps: 0.04 })),
+    streep('houtdonker', 0.8, 'M15.4 9 H32.6 M15.4 12.4 H32.6'),
+    v('houtrood', plaat(11.6, 17.4, 24.8, 3.4, { zak: 0.4 })),
+    v('metaal', staaf(11.6, 20.4, 11.6, 25, 1.4)),
+    v('metaal', staaf(36.4, 20.4, 36.4, 25, 1.4)),
+    vloer('metaal', plaat(10, 39.4, 28, 2.4, { zak: 0.5 })),
+  ],
+
+  douchepaal: [
+    v('metaal', zuilvorm(24, 12, 2.6, 4, 27)),
+    v('metaal', staaf(24, 11, 31, 11, 2.2)),
+    v('metaal', kap(31, 9.4, 11, 4.4)),
+    streep('water', 0.9, 'M28 15 V21 M31 15 V23 M34 15 V21'),
+    v('water', bol(31, 24.4, 1.2), { glans: 1 }),
+    v('metaal', romp(21.4, 20, 5.2, 5, { taps: 0.04 })),
+    v('metaal', plaat(17.6, 37, 13, 2.6, { zak: 0.3 })),
+    vloer('steenkoel', ovaal(24, 40.4, 10, 2.4)),
+  ],
 };

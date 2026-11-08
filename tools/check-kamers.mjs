@@ -337,16 +337,32 @@ for (const [id, stijl] of Object.entries(RANDSTIJLEN)) {
     const n = parseInt(hex.slice(1), 16);
     return (((n >> 16) & 255) * 0.299 + ((n >> 8) & 255) * 0.587 + (n & 255) * 0.114) / 255;
   };
-  // De band is nacht. Dat is geen smaak maar rekenwerk: een gloed is licht
-  // dat erbij opgeteld wordt, en op een lichte ondergrond telt er niets bij
-  // op. Een lantaarn op beige is een gele vlek. De grens lag eerst op 0.40,
-  // en bij die grens zag de hele rand eruit als een plank met een lampje.
-  // De lichtste die nu nog werkt is de lambrisering van het landhuis, op
-  // 0.084; alles daarboven slikt zijn eigen licht in.
-  if (helder(stijl.kern) > 0.14) meld('RAND TE LICHT', `${id}: ${stijl.kern}`);
-  // En het licht dat erop valt moet wel warm of fel zijn, anders is er niets
-  // om naar te kijken.
-  if (helder(stijl.gloed ?? '#000000') < 0.3) meld('RANDLICHT TE FLAUW', `${id}: ${stijl.gloed}`);
+  // Een band is nacht óf dag, en allebei hebben hun eigen eis.
+  //
+  // NACHT. De band is donker en het licht erop is het onderwerp: elke
+  // lantaarn is een warme kern met een halo. Dat werkt alleen tegen
+  // donker, want een gloed is licht dat erbij opgeteld wordt en op een
+  // lichte ondergrond telt er niets bij op - een lantaarn op beige is een
+  // gele vlek. De grens lag eerst op 0.40 en toen zag elke rand eruit als
+  // een plank met een lampje. De lichtste die nog werkt is de lambrisering
+  // van het landhuis, op 0.084.
+  //
+  // DAG. Een zwembad in juli is geen nacht, en die werelden kwamen er
+  // onder de oude regel niet in. Bij daglicht komt de diepte niet uit
+  // gloed maar uit schaduw: een lichte band moet dus licht genoeg zijn om
+  // als daglicht te lezen, én een schaduwkleur hebben die donker genoeg is
+  // om vorm te geven. Zonder dat tweede is het een vlak pastelvlak.
+  if (stijl.dag) {
+    if (helder(stijl.kern) < 0.5) meld('DAGRAND TE DONKER', `${id}: ${stijl.kern}`);
+    if (helder(stijl.koel ?? '#ffffff') > 0.3) {
+      meld('DAGRAND ZONDER SCHADUW', `${id}: ${stijl.koel}`);
+    }
+  } else {
+    if (helder(stijl.kern) > 0.14) meld('RAND TE LICHT', `${id}: ${stijl.kern}`);
+    // En het licht dat erop valt moet wel warm of fel zijn, anders is er
+    // niets om naar te kijken.
+    if (helder(stijl.gloed ?? '#000000') < 0.3) meld('RANDLICHT TE FLAUW', `${id}: ${stijl.gloed}`);
+  }
 }
 
 // ------------------------------------------- namen die op elkaar lijken
@@ -391,6 +407,22 @@ for (const w of WORLDS) {
       if (namen.size < 2) continue;
       meld('NAMEN LIJKEN OP ELKAAR', `${w.id}/${soort} -${suf}: ${[...namen].sort().join(' + ')}`);
     }
+  }
+}
+
+// ------------------------------------- genoeg namen voor een vol bord
+//
+// De namen worden per soort ruimte uitgedeeld en elke naam wordt maar één
+// keer gebruikt. Legt een bord toevallig veel meubels in ruimtes van één
+// soort, dan raakt die soort door zijn namen heen en valt de puzzel om.
+// buildKamerPuzzle vraagt daarom nooit meer meubels dan de krapste soort
+// in die wereld kan leveren - maar daar moet wel iets zinnigs uitkomen.
+// Onder de tien wordt een bord kaal.
+for (const w of WORLDS) {
+  const soortenHier = new Set([...w.places, ...(w.plekkenXL ?? [])].map(soortVan));
+  for (const s of soortenHier) {
+    const hoeveel = meubelsVoor(s, w.id).flat().length;
+    if (hoeveel < 10) meld('TE WEINIG MEUBELNAMEN', `${w.id}/${s}: ${hoeveel}`);
   }
 }
 

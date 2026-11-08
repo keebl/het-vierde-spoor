@@ -150,6 +150,32 @@ export const SOORT_VAN = {
   'de stiltecabine': 'slaapkamer',
   'de receptie': 'gang',
   'het archiefdepot': 'bibliotheek',
+  // Het Openluchtbad
+  'het ondiepe bad': 'buiten',
+  'de ligweide': 'buiten',
+  'de kiosk': 'keuken',
+  'de kleedhokjes': 'slaapkamer',
+  'de doucheruimte': 'gang',
+  'de glijbaan': 'buiten',
+  'het zonneterras': 'zaal',
+  'de materiaalberging': 'kelder',
+  'de EHBO-post': 'laboratorium',
+  'het diepe bad': 'buiten',
+  'de fietsenstalling': 'werkplaats',
+  'de tribune': 'zaal',
+  // Dierenpark De Wildhoek
+  'het apenverblijf': 'buiten',
+  'de giraffenstal': 'kelder',
+  'het vlindertuintje': 'serre',
+  'de kinderboerderij': 'buiten',
+  'het pinguïnbad': 'buiten',
+  'de speeltuin': 'buiten',
+  'het parkrestaurant': 'keuken',
+  'de dierenkliniek': 'laboratorium',
+  'het voerhok': 'kelder',
+  'de uilenvolière': 'buiten',
+  'de picknickweide': 'buiten',
+  'de souvenirwinkel': 'bibliotheek',
 };
 
 // De vloer per soort. dessin verwijst naar een patroon in board-rooms.js.
@@ -341,6 +367,22 @@ export const VORM_VAN = {
   'de kelderberging': 'klein',
   'de linnenkamer': 'klein',
   'de postkamer': 'klein',
+  // Het Openluchtbad en Dierenpark De Wildhoek
+  'de glijbaan': 'smal',
+  'de doucheruimte': 'smal',
+  'de tribune': 'smal',
+  'de ligweide': 'groot',
+  'het ondiepe bad': 'groot',
+  'het diepe bad': 'groot',
+  'de picknickweide': 'groot',
+  'de speeltuin': 'groot',
+  'het apenverblijf': 'groot',
+  'de kinderboerderij': 'groot',
+  'de kleedhokjes': 'klein',
+  'de EHBO-post': 'klein',
+  'de materiaalberging': 'klein',
+  'het voerhok': 'klein',
+  'het vlindertuintje': 'klein',
   'het natte steegje': 'smal',
   'de dienstgang': 'smal',
   'de dienstbodentrap': 'smal',
@@ -462,6 +504,10 @@ export const WERELDVLOER = {
   },
   // Tapijttegels op de werkvloer, beton in de kelder. Grijs met een koele
   // zweem, want alles hier wordt van bovenaf verlicht.
+  // Zomer: alles een slag lichter en warmer, zonder de kleuren plat te
+  // slaan. Dit is het enige waar "lichter" letterlijk licht betekent.
+  zwembad: { tint: '#cfe7ef', kracht: 0.3 },
+  dierentuin: { tint: '#cfe0b4', kracht: 0.24 },
   kantoor: {
     tint: '#8d8fa0',
     kracht: 0.44,
@@ -511,6 +557,22 @@ export const VLOER_VAN_PLEK = {
   // Een gymzaal heeft een houten vloer. De school ruilt planken normaal om
   // voor tegels, en dat klopt overal behalve hier.
   'de gymzaal': { vul: '#c9a469', lijn: '#a38248', dessin: 'planken' },
+  // Water waar water hoort. Zonder dit is een zwembad een grasveld.
+  'het ondiepe bad': { vul: '#5ec4e0', lijn: '#3ea2bf', dessin: 'water' },
+  'het diepe bad': { vul: '#2f9fc4', lijn: '#1f7e9e', dessin: 'water' },
+  'het pinguïnbad': { vul: '#6ec8dd', lijn: '#4aa6bd', dessin: 'water' },
+  // Natte tegels bij het bad, en bestrating waar je op je slippers loopt.
+  'de doucheruimte': { vul: '#bcd3d6', lijn: '#93aeb3', dessin: 'tegels' },
+  'de kleedhokjes': { vul: '#cfd8d2', lijn: '#a6b1ac', dessin: 'tegels' },
+  'de glijbaan': { vul: '#b7bcbd', lijn: '#93989a', dessin: 'bestrating' },
+  'het zonneterras': { vul: '#c9bea8', lijn: '#a4997f', dessin: 'bestrating' },
+  'de fietsenstalling': { vul: '#aab0b2', lijn: '#878d90', dessin: 'bestrating' },
+  'de tribune': { vul: '#bdb6a6', lijn: '#98917f', dessin: 'bestrating' },
+  'de materiaalberging': { vul: '#b1b5b7', lijn: '#8d9194', dessin: 'beton' },
+  // Stro op de staldeel, net als bij de koetshuisstal.
+  'de giraffenstal': { vul: '#cfae63', lijn: '#a78a44', dessin: 'gras' },
+  'het voerhok': { vul: '#c0a673', lijn: '#9a8454', dessin: 'planken' },
+  'de speeltuin': { vul: '#d8c48e', lijn: '#b09d6b', dessin: 'gras' },
 };
 
 // Waar het meubilair van gemaakt is, per wereld. De namen zijn de materialen
@@ -549,6 +611,11 @@ export const WERELDSTOF = {
   school: { houtrood: 'hout', goud: 'metaal', steen: 'steenkoel' },
   // Kantoor: donker fineer, staal, en nergens iets dat glimt.
   kantoor: { houtrood: 'houtdonker', goud: 'metaal', steen: 'steenkoel' },
+  // Een zwembad is kunststof en roestvrij staal. Hout rot er weg, en dat
+  // zie je: een eikenhouten vat naast een glijbaan klopt niet.
+  zwembad: { hout: 'metaal', houtdonker: 'donker', houtrood: 'stofblauw', goud: 'metaal' },
+  // Een dierentuin mag juist wél hout hebben - hekken, stallen, bakken -
+  // dus die staat hier met opzet niet in.
 };
 
 // ------------------------------------------------ hetzelfde meubel, andere wereld
@@ -766,7 +833,7 @@ export const WERELDMEUBELS = {
       'de vuurplaats': ['de lantaarnpaal', 'lantaarnpaal'],
       'de omgevallen stam': ['de omgevallen boom'],
       'de waterput': ['de prullenbak', 'prullenbak'],
-      'de mosrichel': ['de bank bij de ingang', 'wachtbank'],
+      'de mosrichel': ['de bank bij de ingang', 'marmerbank'],
       'de regenton': ['het regenvat'],
       'de vogelverschrikker': ['de vlaggenmast', 'vlaggenmast'],
       'het kruidenkabinet': ['het stoffenkabinet'],
@@ -895,7 +962,107 @@ export const WERELDMEUBELS = {
       'de vogelverschrikker': ['de vlaggenmast', 'vlaggenmast'],
     },
   },
+  // ------------------------------------------------------ Het Openluchtbad
+  // Zomer, chloor en plastic. Niets van hout, niets van vroeger.
+  zwembad: {
+    volledig: true,
+    zelfde: [
+      'de kapstok', 'de stapel kratten', 'de gereedschapskist',
+      'het schakelpaneel', 'de kuipplant',
+    ],
+    anders: {
+      'het fornuis': ['de frituur'],
+      'de gootsteen': ['de spoelbak'],
+      'de koelkast': ['de ijskast'],
+      'het aanrecht': ['de uitgiftebalie', 'balie'],
+      'de spinde': ['de snoepautomaat', 'automaat'],
+      'het serviesbuffet': ['de koffiemachine', 'koffieautomaat'],
+      'de haard': ['de parasol', 'parasol'],
+      'de leren fauteuil': ['het ligbed', 'ligbed'],
+      'de staande klok': ['de klokzuil', 'klokzuil'],
+      'de vleugel': ['het scorebord', 'beeldscherm'],
+      'de wandspiegel': ['het mededelingenbord', 'whiteboard'],
+      'het borstbeeld': ['de badmeesterstoel', 'badmeesterstoel'],
+      'het wijnrek': ['de voorraadstelling', 'dossierrek'],
+      'het eikenhouten vat': ['de chloorton'],
+      'de kolenbunker': ['de afvalcontainer', 'afvalcontainer'],
+      'de werktafel': ['de montagetafel'],
+      'de touwhaspel': ['de slanghaspel'],
+      'het bed': ['de kleedbank', 'wachtbank'],
+      'de kleerkast': ['de lockerkast', 'lockerkast'],
+      'het nachtkastje': ['het muntkluisje'],
+      'het wasstel': ['de wasbak'],
+      'de hutkoffer': ['de zwemtas'],
+      'de voetenbank': ['het opstapbankje'],
+      'de paraplubak': ['de slippersmand'],
+      'de console': ['de handdoekplank'],
+      'de spiegelstandaard': ['de douchepaal', 'douchepaal'],
+      'het uurwerk': ['de radiator', 'radiator'],
+      'het harnas': ['de brandblusser', 'brandblusser'],
+      'de stookpot': ['de boiler'],
+      'de magazijnstelling': ['het fietsenrek', 'fietsenrek'],
+      'het slijpwiel': ['de fietspomp'],
+      'de draaibank': ['de reparatiebank'],
+      'de houtstapel': ['de stapel ligbedden'],
+      'de drinkbak': ['de drinkfontein'],
+      'de vuurplaats': ['de barbecue'],
+      'de omgevallen stam': ['de omgevallen bank', 'mosbank'],
+      'de waterput': ['de ronde plantenbak', 'plantenbakrond'],
+      'de mosrichel': ['de bank bij de ingang', 'marmerbank'],
+      'de regenton': ['de prullenbak', 'prullenbak'],
+      'de kruiwagen': ['de schoonmaakkar', 'rolkar'],
+      'de boomstronk': ['het startblok', 'zitblok'],
+      'de vogelverschrikker': ['de vlaggenmast', 'vlaggenmast'],
+      'de kweekbak': ['de brancard', 'ziekenhuisbed'],
+      'het kruidenkabinet': ['het verbandkabinet'],
+      'de distilleerketel': ['de infuusstandaard', 'infuusstandaard'],
+      'de weegschaal': ['de weegschaal', 'massameter'],
+      'de kolvenrij': ['de medicijntafel'],
+    },
+  },
+
+  // --------------------------------------------- Dierenpark De Wildhoek
+  // Hout en gaas en emmers, maar van nu: een dierentuin is geen landhuis.
+  dierentuin: {
+    volledig: true,
+    zelfde: [
+      'de drinkbak', 'de omgevallen stam', 'de regenton', 'de kruiwagen',
+      'de boomstronk', 'de stapel kratten', 'de globe', 'de kuipplant',
+      'de gootsteen',
+      'de palmkuip', 'de rieten stoel', 'de gieterplank', 'de marmeren bank',
+      'de citrusboom',
+    ],
+    anders: {
+      'het fornuis': ['de grill'],
+      'de koelkast': ['de ijsvitrine'],
+      'het aanrecht': ['de uitgiftebalie', 'balie'],
+      'de spinde': ['de drankautomaat', 'automaat'],
+      'het serviesbuffet': ['de dienbladenkar', 'rolkar'],
+      'de houtstapel': ['de stapel balen stro'],
+      'de vuurplaats': ['de lantaarnpaal', 'lantaarnpaal'],
+      'de waterput': ['de waterpomp'],
+      'de mosrichel': ['de picknickbank', 'wachtbank'],
+      'de vogelverschrikker': ['de vlaggenmast', 'vlaggenmast'],
+      'het wijnrek': ['het hooirek', 'dossierrek'],
+      'het eikenhouten vat': ['het watervat'],
+      'de kolenbunker': ['de voederkist'],
+      'de werktafel': ['de verzorgingstafel'],
+      'de touwhaspel': ['de slanghaspel'],
+      'de boekenkast': ['het souvenirrek'],
+      'de katheder': ['de kassazuil'],
+      'de commode': ['de ladenkast', 'archiefkast'],
+      'de leesstoel': ['de winkelkruk'],
+      'de kaartentafel': ['de uitstaltafel'],
+      'de kweekbak': ['de behandelbank', 'ziekenhuisbed'],
+      'het kruidenkabinet': ['het medicijnkabinet'],
+      'de distilleerketel': ['de sterilisator'],
+      'de weegschaal': ['de dierenweegschaal'],
+      'de kolvenrij': ['de monsterplank'],
+      'de oppotbak': ['de potgrondzak'],
+    },
+  },
 };
+
 
 
 // Welke soorten een wereld aanspreekt als zijn eigen meubilair opraakt.
@@ -925,6 +1092,22 @@ export const WERELDVERWANT = {
   school: { bibliotheek: ['zaal', 'gang'] },
   ziekenhuis: { bibliotheek: ['zaal', 'gang'] },
   kantoor: { bibliotheek: ['zaal', 'gang'] },
+  // Bij deze twee snoeien we het bereik stevig terug. Een zwembad heeft
+  // geen bibliotheek en een dierentuin geen werkplaats; laat je de
+  // standaarduitwijk staan, dan komt er via een omweg alsnog een
+  // boekenkast of een draaibank op het terrein.
+  zwembad: {
+    zaal: ['gang', 'slaapkamer'],
+    laboratorium: ['werkplaats', 'keuken'],
+  },
+  dierentuin: {
+    bibliotheek: ['serre', 'keuken'],
+    kelder: ['buiten', 'keuken'],
+    keuken: ['kelder', 'buiten'],
+    buiten: ['kelder', 'serre'],
+    laboratorium: ['keuken', 'bibliotheek'],
+    serre: ['keuken', 'bibliotheek'],
+  },
 };
 
 // De naam en de tekening die in deze wereld bij een meubelstuk horen.

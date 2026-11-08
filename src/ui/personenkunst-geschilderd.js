@@ -371,20 +371,49 @@ export function portretElement(index, letter, grootte = 24, geslacht = 'm') {
 // de andere elf. Nu is het slachtoffer gewoon een van de figuren, met een
 // kruis erdoorheen. Het kruis is rood en dik, en daarmee iets anders dan de
 // donkere kruisjes waarmee je zelf vakjes wegstreept.
-export function tekenSlachtofferkruis(ouder, { x = 0, y = 0, grootte = 48 } = {}) {
+// Het merk over de figuur waar de zaak om draait.
+//
+// Dat was altijd een kruis, want er lag altijd een lijk. Nu is niet elke
+// zaak een moord (zie src/content/zaken.js): bij een verdwijning past een
+// vraagteken en bij een diefstal een opengebroken slot. Alle drie in
+// dezelfde zware hand, met een lichte baan eronder zodat ze op elke vloer
+// leesbaar blijven.
+const MERKEN = {
+  kruis: (cx, cy, r) =>
+    `M${(cx - r).toFixed(1)} ${(cy - r).toFixed(1)} L${(cx + r).toFixed(1)} ${(cy + r).toFixed(1)}`
+    + ` M${(cx + r).toFixed(1)} ${(cy - r).toFixed(1)} L${(cx - r).toFixed(1)} ${(cy + r).toFixed(1)}`,
+  // Een vraagteken: de haak, de steel, en een punt eronder. De punt is een
+  // lijntje van niets met een ronde kop - dat tekent een stip.
+  vraag: (cx, cy, r) =>
+    `M${(cx - r * 0.62).toFixed(1)} ${(cy - r * 0.42).toFixed(1)}`
+    + ` q0 ${(-r * 0.78).toFixed(1)} ${(r * 0.62).toFixed(1)} ${(-r * 0.78).toFixed(1)}`
+    + ` q${(r * 0.66).toFixed(1)} 0 ${(r * 0.66).toFixed(1)} ${(r * 0.6).toFixed(1)}`
+    + ` q0 ${(r * 0.5).toFixed(1)} ${(-r * 0.66).toFixed(1)} ${(r * 0.76).toFixed(1)}`
+    + ` l0 ${(r * 0.3).toFixed(1)}`
+    + ` M${cx.toFixed(1)} ${(cy + r * 0.78).toFixed(1)} l0 0.1`,
+  // Een hangslot waarvan de beugel aan één kant uit het huis is: open, dus
+  // er is iets weggenomen.
+  slot: (cx, cy, r) =>
+    `M${(cx - r * 0.6).toFixed(1)} ${(cy - r * 0.02).toFixed(1)}`
+    + ` h${(r * 1.2).toFixed(1)} v${(r * 0.8).toFixed(1)} h${(-r * 1.2).toFixed(1)} Z`
+    + ` M${(cx - r * 0.34).toFixed(1)} ${(cy - r * 0.02).toFixed(1)} v${(-r * 0.4).toFixed(1)}`
+    + ` a${(r * 0.34).toFixed(1)} ${(r * 0.34).toFixed(1)} 0 0 1 ${(r * 0.68).toFixed(1)} 0`
+    + ` v${(-r * 0.22).toFixed(1)}`,
+};
+
+export function tekenMerk(ouder, { teken = 'kruis', x = 0, y = 0, grootte = 48 } = {}) {
   const r = grootte * 0.4;
   const cx = x + grootte / 2;
   const cy = y + grootte / 2;
-  const d = `M${(cx - r).toFixed(1)} ${(cy - r).toFixed(1)} L${(cx + r).toFixed(1)} ${(cy + r).toFixed(1)}`
-    + ` M${(cx + r).toFixed(1)} ${(cy - r).toFixed(1)} L${(cx - r).toFixed(1)} ${(cy + r).toFixed(1)}`;
+  const d = (MERKEN[teken] ?? MERKEN.kruis)(cx, cy, r);
   ouder.append(el('path', { d, class: 'lijkbaan' }));
   ouder.append(el('path', { d, class: 'lijkkruis' }));
 }
 
-// Hetzelfde portretje als de anderen, maar doorgekruist.
-export function slachtofferElement(index, letter, grootte = 24) {
+// Hetzelfde portretje als de anderen, maar met het merk van de zaak erover.
+export function slachtofferElement(index, letter, grootte = 24, geslacht = 'm', teken = 'kruis') {
   const svg = el('svg', { viewBox: '0 0 48 48', width: grootte, height: grootte, 'aria-hidden': 'true' });
-  tekenPersoon(svg, { index, letter, grootte: 48, metLetter: false });
-  tekenSlachtofferkruis(svg, { grootte: 48 });
+  tekenPersoon(svg, { index, letter, grootte: 48, metLetter: false, geslacht });
+  tekenMerk(svg, { teken, grootte: 48 });
   return svg;
 }

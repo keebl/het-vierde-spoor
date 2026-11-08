@@ -1,8 +1,14 @@
 # Het Vierde Spoor
 
-Deductiepuzzels in elf werelden en zes moeilijkheidsgraden. Je kiest alleen
-hoe zwaar je het wilt hebben; het decor krijg je. Elke druk op de knop levert
-een nieuwe zaak op, ter plekke gebouwd en ter plekke nagerekend.
+Deductiepuzzels in dertien werelden en zes moeilijkheidsgraden. Je kiest
+alleen hoe zwaar je het wilt hebben; het decor krijg je. Elke druk op de knop
+levert een nieuwe zaak op, ter plekke gebouwd en ter plekke nagerekend.
+
+**Waarom dit bestaat.** Mijn dochter is fan van het puzzelboek *Murdoku* van
+Manuel Garand, en toen ze dat uit had wilde ze meer. Die zijn er niet, dus
+staan ze hier: een machine die er net zo veel maakt als ze wil, elk met
+precies één oplossing. Dat is de maatstaf waaraan alles hier gemeten wordt -
+niet of de code mooi is, maar of zij er een uur zoet mee is.
 
 De bibliotheek met vierenzeventig vaste zaken bestaat nog wel, maar staat
 nergens meer in het zicht: `#/puzzels` werkt, het menu wijst er niet heen.
@@ -10,6 +16,13 @@ nergens meer in het zicht: `#/puzzels` werkt, het menu wijst er niet heen.
 Elke puzzel heeft gegarandeerd **precies een oplossing**, en die is altijd
 met logica te vinden — nooit met gokken. Dat is machinaal gecontroleerd
 voordat een puzzel bij de speler komt.
+
+## Verder lezen
+
+- **[ARCHITECTUUR.md](ARCHITECTUUR.md)** — de kaart van de code: waar wat
+  staat, welke tabellen elkaar overrulen, en welke afspraken er gelden.
+- **[HANDOFF.md](HANDOFF.md)** — de stand van zaken, wat er open staat, en
+  de valkuilen. Begin hier als je nieuw aanschuift.
 
 ## Starten
 
@@ -95,10 +108,10 @@ wat je ziet; de motor eronder is voor alles hetzelfde.
 |---|---|---|
 | **Opdracht** | wat je uitzoekt (dader, vinden, toewijzing, reconstructie) | `src/content/assignments.js` |
 | **Genre** | het decor en alle woorden | `src/content/worlds.js` |
-| **Soort spel** | Speurdoku, Kruisverhoor, Rondgang, Dienstrooster | `src/ui/board-rooms.js`, `src/ui/boards.js` |
+| **Soort spel** | Reconstructie, Kruisverhoor, Rondgang, Dienstrooster | `src/ui/board-rooms.js`, `src/ui/boards.js` |
 | **Moeilijkheidsgraad** | omvang, soort aanwijzingen, redeneerdiepte | `src/engine/difficulty.js` |
 
-### De Speurdoku
+### De Reconstructie
 
 Het hoofdspel. Je zet figuren op een plattegrond: één per rij, één per kolom,
 nooit op een meubelstuk. Het slachtoffer is zelf een van die figuren, dus waar
@@ -379,7 +392,7 @@ tools/                  keuringsscripts
   `localStorage`, dus per browser.
 - Bediening met het toetsenbord op het bord zelf: de vakjes zijn nog geen
   knoppen, dus met alleen een toetsenbord of een schermlezer kun je een
-  Speurdoku niet spelen.
+  Reconstructie niet spelen.
 - Een dagelijkse puzzel.
 - Een afsluiting als je het goed hebt: nu staat er alleen "Opgelost". Daar
   hoort de dader in beeld te komen, met een slotzin en een knop naar de

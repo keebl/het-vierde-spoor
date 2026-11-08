@@ -346,6 +346,64 @@ const SCENES = {
     g.append(rechthoek(0, 138, B, 12, 'sc-nat'));
     g.append(rechthoek(486, 138, 48, 12, 'sc-weerschijn'));
   },
+
+  // Een openluchtbad op de warmste dag van het jaar. Dit is de eerste
+  // scene die geen nacht is: geen sterren, geen enkel lichtje, maar lucht
+  // en water en te veel mensen.
+  zwembad(g) {
+    const ver = maak('g');
+    ver.append(rechthoek(0, 0, B, 64, 'sc-ver'));
+    [[40, 26, 60], [150, 18, 44], [300, 30, 70], [470, 20, 52], [640, 28, 64]].forEach(([x, y, w]) => {
+      ver.append(pad(`M ${x} ${y + 14} q ${w / 4} -14 ${w / 2} 0 q ${w / 4} -10 ${w / 2} 0 Z`, 'sc-sneeuw'));
+    });
+    g.append(ver);
+
+    const mid = maak('g');
+    mid.append(rechthoek(0, 62, B, 56, 'sc-nat'));
+    for (let x = 10; x < B; x += 38) {
+      mid.append(pad(`M ${x} ${72 + (x % 3) * 9} q 9 -5 18 0`, 'sc-lijn'));
+    }
+    for (let x = 20; x < B; x += 26) {
+      mid.append(cirkel(x, 92, 3, (x / 26) % 2 ? 'sc-licht' : 'sc-sneeuw'));
+    }
+    g.append(mid);
+
+    // De rand van het bad, met handdoeken erover.
+    g.append(rechthoek(0, 114, B, H - 114, 'sc-near'));
+    [[60, '#e8453c'], [190, '#f2a93b'], [330, '#3fb6d8'], [470, '#7cc24a'], [620, '#e05c9e'], [720, '#f4e04d']]
+      .forEach(([x], i) => {
+        const h = maak('rect', { x, y: 110, width: 46, height: 40, class: i % 2 ? 'sc-licht' : 'sc-pompoen' });
+        g.append(h);
+      });
+  },
+
+  // Een dierenpark op zondagmiddag: een haag, een hek, en net achter het
+  // gaas iets groots dat wegkijkt.
+  dierentuin(g) {
+    const ver = maak('g');
+    ver.append(rechthoek(0, 0, B, 58, 'sc-ver'));
+    [[80, 22, 70], [280, 16, 54], [520, 26, 66], [690, 18, 48]].forEach(([x, y, w]) => {
+      ver.append(pad(`M ${x} ${y + 12} q ${w / 4} -12 ${w / 2} 0 q ${w / 4} -9 ${w / 2} 0 Z`, 'sc-sneeuw'));
+    });
+    g.append(ver);
+
+    // De giraf: een hals en een kop die boven de haag uitsteken.
+    const dier = maak('g');
+    dier.append(pad('M 596 128 L 604 56 q 2 -12 14 -14 l 10 -2 l 3 10 l -11 3 q -5 1 -6 7 L 610 128 Z', 'sc-mid'));
+    dier.append(pad('M 620 44 l 4 -9 M 629 42 l 2 -9', 'sc-takken'));
+    g.append(dier);
+
+    // De haag en het hek.
+    const mid = maak('g');
+    for (let x = -10; x < B + 20; x += 40) {
+      mid.append(pad(`M ${x} 126 q 20 -34 40 0 Z`, 'sc-mid'));
+    }
+    g.append(mid);
+    g.append(rechthoek(0, 124, B, 7, 'sc-near'));
+    g.append(rechthoek(0, 140, B, 7, 'sc-near'));
+    for (let x = 16; x < B; x += 84) g.append(rechthoek(x, 112, 9, H - 112, 'sc-near'));
+    g.append(cirkel(140, 100, 3.5, 'sc-licht'));
+  },
 };
 
 export function sceneVoor(wereldId, accent) {

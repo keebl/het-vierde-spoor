@@ -68,7 +68,7 @@ export const LEVELS = {
     maxClues: 20,
   },
   // Niveau zes is er op verzoek gekomen: "te makkelijk, en graag zestien bij
-  // zestien". Bij het Speurdoku is dat letterlijk zo - zie KAMER_LEVELS. Bij
+  // zestien". Bij de Reconstructie is dat letterlijk zo - zie KAMER_LEVELS. Bij
   // de andere mechanieken kan het rooster niet groter: er zijn maar zes
   // tijdstippen in een wereld, dus een zevende slot bestaat niet. Daar wordt
   // niveau zes moeilijker op de tweede knop in plaats van op de eerste:

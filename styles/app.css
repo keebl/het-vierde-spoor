@@ -1519,6 +1519,19 @@ body[data-thema="donker"][data-wereld="kantoor"] {
   --accent: #a78bfa; --accent-soft: #1f1b30;
 }
 
+/* Het Openluchtbad: chloorblauw en wit, ook in het donker nog zomers. */
+body[data-thema="donker"][data-wereld="zwembad"] {
+  --bg: #07161c; --surface: #0e2229; --surface-2: #142e38; --line: #245263;
+  --text: #ddf2f8; --text-2: #a2c9d6; --text-3: #6f93a0;
+  --accent: #3fd0f0; --accent-soft: #0f2c38;
+}
+/* Dierenpark De Wildhoek: bladgroen en zand. */
+body[data-thema="donker"][data-wereld="dierentuin"] {
+  --bg: #0b1409; --surface: #142010; --surface-2: #1c2d16; --line: #2f4a26;
+  --text: #e8f3e0; --text-2: #b4caa6; --text-3: #7f9a74;
+  --accent: #9ede6a; --accent-soft: #1b2c14;
+}
+
 /* Wat er in het donker nog bijgeregeld moet worden. */
 body[data-thema="donker"] .kop,
 body[data-thema="donker"] header { background: color-mix(in srgb, var(--surface) 86%, transparent); }
@@ -1597,6 +1610,24 @@ body[data-wereld="catacomben"] .muur-buiten { stroke: #413c39; }
 /* Een school, een ziekenhuis en een kantoortoren hebben geen eikenhouten
    binnenmuren. Zonder deze regels staat er geschilderd steen naast een
    lambrisering, en dan is het hele thema voor niets. */
+body[data-wereld="zwembad"] .muurvoet,
+body[data-wereld="zwembad"] .buitenmuur-voet { stroke: #2b4a52; }
+body[data-wereld="zwembad"] .muurtop,
+body[data-wereld="zwembad"] .buitenmuur-top { stroke: #a8c8cf; }
+body[data-wereld="zwembad"] .muurglans { stroke: #e4f3f6; }
+body[data-wereld="zwembad"] .muurnerf { stroke: rgba(34, 58, 64, 0.26); }
+body[data-wereld="zwembad"] .muur { stroke: #86a7ae; }
+body[data-wereld="zwembad"] .muur-buiten { stroke: #3c5e66; }
+
+body[data-wereld="dierentuin"] .muurvoet,
+body[data-wereld="dierentuin"] .buitenmuur-voet { stroke: #43361f; }
+body[data-wereld="dierentuin"] .muurtop,
+body[data-wereld="dierentuin"] .buitenmuur-top { stroke: #c9a76c; }
+body[data-wereld="dierentuin"] .muurglans { stroke: #e8d4a8; }
+body[data-wereld="dierentuin"] .muurnerf { stroke: rgba(58, 44, 24, 0.3); }
+body[data-wereld="dierentuin"] .muur { stroke: #a2874f; }
+body[data-wereld="dierentuin"] .muur-buiten { stroke: #5a4728; }
+
 body[data-wereld="school"] .muurvoet,
 body[data-wereld="school"] .buitenmuur-voet { stroke: #2d3a42; }
 body[data-wereld="school"] .muurtop,
@@ -1660,6 +1691,12 @@ body[data-wereld="school"] .gloedrand { stop-color: #16222c; }
 body[data-wereld="ziekenhuis"] .gloedkern { stop-color: #eafff8; }
 body[data-wereld="ziekenhuis"] .gloedmid { stop-color: #bfe8da; }
 body[data-wereld="ziekenhuis"] .gloedrand { stop-color: #12241e; }
+body[data-wereld="zwembad"] .gloedkern { stop-color: #f0fcff; }
+body[data-wereld="zwembad"] .gloedmid { stop-color: #c6e9f4; }
+body[data-wereld="zwembad"] .gloedrand { stop-color: #12303a; }
+body[data-wereld="dierentuin"] .gloedkern { stop-color: #f6ffe8; }
+body[data-wereld="dierentuin"] .gloedmid { stop-color: #d2e8b4; }
+body[data-wereld="dierentuin"] .gloedrand { stop-color: #16240f; }
 body[data-wereld="kantoor"] .gloedkern { stop-color: #f2eeff; }
 body[data-wereld="kantoor"] .gloedmid { stop-color: #cfd2ef; }
 body[data-wereld="kantoor"] .gloedrand { stop-color: #16182a; }
@@ -1774,3 +1811,50 @@ body[data-wereld="kantoor"] .gloedrand { stop-color: #16182a; }
    staan als regels en niet als kaarten: ze hebben geen titel en geen
    omslag, alleen een decor en hoe ver je bent. */
 .eigen-kop { margin: var(--s5) 0 var(--s2); }
+
+
+/* ------------------------------------------------ schakelaars in het palet
+   Naast Uitsluiten en Schetsen, maar met opzet anders van vorm. Die twee
+   zijn standen: er staat er altijd één aan en ze bepalen wat een klik op
+   het bord doet. Deze twee veranderen niets aan je klik, ze zetten iets
+   aan of uit. Daarom een streepje ertussen, rechte hoeken in plaats van
+   rond, en het woord 'aan' of 'uit' in de knop zelf. */
+.palet-scheiding {
+  width: 1px;
+  align-self: stretch;
+  margin: 2px var(--s2);
+  background: var(--line);
+}
+.palet-schakel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text-3);
+  border-radius: var(--r-sm);
+  padding: 5px var(--s2) 5px var(--s3);
+  font-size: var(--t-xs);
+  cursor: pointer;
+}
+.palet-schakel:hover { color: var(--text-2); border-color: var(--text-3); }
+.palet-schakel-stand {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  padding: 1px 5px;
+  background: var(--surface-3);
+  color: var(--text-3);
+}
+.palet-schakel[aria-pressed='true'] { color: var(--text-2); border-color: var(--line); }
+.palet-schakel[aria-pressed='true'] .palet-schakel-stand {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+@media (max-width: 680px) { .palet-scheiding { display: none; } }
+
+
+/* Rimpels in het water. Dunner en lichter dan een voeg: het is beweging,
+   geen naad. */
+.dessinrimpel { fill: none; stroke: #ffffff; stroke-width: 1.1; opacity: 0.34; }

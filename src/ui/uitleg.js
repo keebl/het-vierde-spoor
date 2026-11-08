@@ -46,10 +46,10 @@ export function renderUitleg(mount) {
   mount.append(
     sectie('Het spel', [
       el('div', { class: 'prose' }, [
-        el('p', { text: 'Je ziet een plattegrond met kamers en meubels. Daar zet je de figuren op: één per rij en één per kolom, en nooit op een meubelstuk. Een van de figuren is het slachtoffer; waar dat lichaam ligt moet je dus net zo goed uitzoeken.' }),
+        el('p', { text: 'Je ziet een plattegrond met kamers en meubels. Daar zet je de figuren op: één per rij en één per kolom, en nooit op een meubelstuk. Eén van die figuren is waar de zaak om draait, en die staat gemerkt op het bord: met een kruis als er iemand vermoord is, een vraagteken als er iemand verdwenen is, een opengebroken slot als er iets gestolen is. Waar die figuur stond moet je dus net zo goed uitzoeken.' }),
         el('p', {}, [
-          el('b', { text: 'Wie als enige bij het slachtoffer in de kamer blijkt te staan, is de dader. ' }),
-          el('span', { text: 'Dat weet je pas als alles op zijn plek staat, en daarom moet je eerst de hele plattegrond rondkrijgen.' }),
+          el('b', { text: 'Wie als enige bij die figuur in de kamer blijkt te staan, is het antwoord. ' }),
+          el('span', { text: 'De dader, de dief, of degene die hem het laatst zag — boven de puzzel staat welke van de drie het is. Dat weet je pas als alles op zijn plek staat, en daarom moet je eerst de hele plattegrond rondkrijgen.' }),
         ]),
         el('p', {}, [
           el('b', { text: 'Naast is naast. ' }),
@@ -135,10 +135,13 @@ export function renderUitleg(mount) {
       el('div', { class: 'prose' }, [
         vraag('Moet ik ooit gokken?', 'Nee. Op de eerste drie moeilijkheidsgraden kom je er door stap voor stap uit te sluiten. Op de drie zwaarste moet je soms een mogelijkheid aannemen en laten zien dat die tot een tegenspraak leidt — dat is nog steeds redeneren.'),
         vraag('Hoe weet ik dat een puzzel klopt?', 'Voordat een puzzel bij jou komt, is geteld hoeveel oplossingen hij heeft, en zijn de aanwijzingen die je kunt missen weggesneden. Je krijgt er dus geen die je niet rond kunt krijgen, en geen aanwijzing die er voor de sier staat.'),
-        vraag('Kan ik kiezen waar het speelt?', 'Nee. Je kiest hoe zwaar je het wilt hebben; het decor krijg je. Elke nieuwe puzzel speelt ergens anders.'),
+        vraag('Kan ik kiezen waar het speelt?', 'Nee. Je kiest hoe zwaar je het wilt hebben; het decor krijg je. Elke nieuwe puzzel speelt ergens anders, en is ook niet altijd een moord: het kan net zo goed een verdwijning of een diefstal zijn.'),
         vraag('Blijft mijn voortgang bewaard?', 'In deze browser wel, zonder account. Op een ander apparaat of in een andere browser begin je opnieuw. Puzzels die je zelf begonnen bent staan onder "Alle puzzels", bij hun eigen moeilijkheidsgraad.'),
         vraag('Wat is die code in de link?', 'De seed. Dezelfde seed levert altijd exact dezelfde puzzel op, dus wie jouw link opent krijgt jouw puzzel en niet een andere.'),
-        vraag('Is dit een kopie van een bestaand puzzelboek?', 'Nee. Logische deductiepuzzels op een raster bestaan sinds de jaren zestig en de techniek erachter is wiskunde, vrij van rechten. Wat beschermd is — merknamen, personages, illustraties, teksten — is hier allemaal eigen werk.'),
+        vraag('Lijkt dit niet op Murdoku?',
+          'Ja, en dat is geen toeval. Murdoku is het puzzelboek van Manuel Garand waarin je verdachten in een sudokuraster zet en degene die bij het slachtoffer overblijft de dader is. Mijn dochter is er dol op, en toen het boek uit was wilde ze meer. Daar is deze site voor gemaakt: om er zelf nieuwe te kunnen maken, zo veel als ze wil.'),
+        vraag('Mag dat zomaar?',
+          'De vorm wel. Logische deductiepuzzels op een raster bestaan sinds de jaren zestig, en de techniek erachter — een latijns vierkant met aanwijzingen die precies één invulling overlaten — is wiskunde en vrij van rechten. Wat niet vrij is, zijn de dingen die een boek tot dát boek maken: de naam, de teksten, de personages, de illustraties. Die zijn hier allemaal eigen werk, tot aan elke getekende stoel toe.'),
       ]),
     ])
   );

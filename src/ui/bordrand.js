@@ -2745,6 +2745,149 @@ export const RANDSTIJLEN = {
       voor.spikkels(n(150), ['#cdd7ff'], { y0: 0, y1: d * 0.7, groot: 0.8, halo: 0.18 });
     },
   },
+  // -------------------------------------------------- Het Openluchtbad
+  //
+  // De eerste band die geen nacht is. Dat betekent dat de zes regels
+  // hierboven hier anders uitpakken: er is geen gloed om naar te kijken,
+  // want bij daglicht telt licht niet bij - het is er al. De diepte komt
+  // uit schaduw in plaats van uit licht, en het contrast uit kleur: wit
+  // tegel, hard blauw water, handdoeken die veel te fel zijn.
+  //
+  // Wat de band herkenbaar maakt is de rand van het bad zelf, die over de
+  // hele lengte doorloopt, met handdoeken eroverheen en slippers ernaast.
+  zwembad: {
+    dag: true,
+    kern: '#cfe9f2', koel: '#2a4a57', warm: '#ffffff', textuur: 'korrel', ruw: 0.1, stap: 40,
+    gloed: '#ffe08a',
+    verf(b) {
+      const { d, L, R, K, n } = b;
+      const s = d / 100;
+      const ver = b.laag('randver', 0.8);
+      const mid = b.laag('randmid');
+      const voor = b.laag('randvoor');
+
+      // Lucht, en wolken die alleen uit wit bestaan.
+      ver.vlak(`M0 0 H${L.toFixed(1)} V${(d * 0.34).toFixed(1)} H0 Z`, '#a9d9ea');
+      for (let i = 0; i < n(150); i++) {
+        const x = R(L, 0);
+        const y = d * R(0.26, 0.03);
+        ver.vlak(ver.klont(x, y, R(90, 44) * s, R(16, 8) * s, 4), '#ffffff', 0.9);
+      }
+
+      // Het water: een brede baan met rimpels en een paar banen erin.
+      mid.vlak(`M0 ${(d * 0.3).toFixed(1)} H${L.toFixed(1)} V${(d * 0.68).toFixed(1)} H0 Z`, '#2f9fc4');
+      mid.vlak(`M0 ${(d * 0.3).toFixed(1)} H${L.toFixed(1)} V${(d * 0.42).toFixed(1)} H0 Z`, '#55bcd9');
+      for (let i = 0; i < n(26); i++) {
+        const x = R(L, 0);
+        const y = d * R(0.64, 0.33);
+        mid.streek(
+          `M${x.toFixed(1)} ${y.toFixed(1)} q${(10 * s).toFixed(1)} ${(-3 * s).toFixed(1)} ${(20 * s).toFixed(1)} 0`,
+          '#ffffff', 1.2 * s, R(0.5, 0.2),
+        );
+      }
+      // Lijnbanen: twee rijen drijvers in rood en wit.
+      for (const yf of [0.44, 0.6]) {
+        for (let x = R(14, 2); x < L; x += 11 * s) {
+          mid.stip(x, d * yf, 2.4 * s, (Math.round(x / (11 * s)) % 2) ? '#e8453c' : '#ffffff');
+        }
+      }
+
+      // De rand van het bad: witte tegels met een voeg, over de hele lengte.
+      voor.vlak(`M0 ${(d * 0.68).toFixed(1)} H${L.toFixed(1)} V${(d + 4).toFixed(1)} H0 Z`, '#eef2f0');
+      voor.streek(`M0 ${(d * 0.68).toFixed(1)} H${L.toFixed(1)}`, '#9fb3b8', 1.6 * s, 0.8);
+      voor.streek(`M0 ${(d * 0.72).toFixed(1)} H${L.toFixed(1)}`, '#c9d6d8', 1 * s, 0.7);
+      for (let x = R(20, 4); x < L; x += 26 * s) {
+        voor.streek(`M${x.toFixed(1)} ${(d * 0.68).toFixed(1)} V${(d + 4).toFixed(1)}`, '#c9d6d8', 1 * s, 0.6);
+      }
+
+      // Handdoeken over de rand. Dit is waar de kleur vandaan komt; zonder
+      // deze is de hele band blauw en wit en verder niets.
+      for (let i = 0; i < n(130); i++) {
+        const x = R(L, 0);
+        const br = R(34, 20) * s;
+        const kl = K(['#e8453c', '#f2a93b', '#3fb6d8', '#7cc24a', '#e05c9e', '#f4e04d']);
+        voor.vlak(
+          `M${x.toFixed(1)} ${(d * 0.62).toFixed(1)} h${br.toFixed(1)} v${(d * 0.34).toFixed(1)}`
+          + ` q${(-br / 2).toFixed(1)} ${(4 * s).toFixed(1)} ${(-br).toFixed(1)} 0 Z`,
+          kl,
+        );
+        voor.streek(
+          `M${(x + 2 * s).toFixed(1)} ${(d * 0.68).toFixed(1)} v${(d * 0.26).toFixed(1)}`,
+          '#ffffff', 1.2 * s, 0.4,
+        );
+        voor.vlak(`M${x.toFixed(1)} ${(d * 0.62).toFixed(1)} h${br.toFixed(1)} v${(3 * s).toFixed(1)} h${(-br).toFixed(1)} Z`, '#ffffff', 0.35);
+      }
+
+      // Slippers en een paar natte voetstappen op de tegels.
+      for (let i = 0; i < n(200); i++) {
+        const x = R(L, 0);
+        const y = d * R(0.95, 0.78);
+        voor.ovaal(x, y, 5 * s, 2.6 * s, K(['#2a4a57', '#1f6e86']), 0.22);
+      }
+      const px = L * R(0.8, 0.5);
+      voor.ovaal(px, d * 0.9, 4.4 * s, 7 * s, '#e8453c');
+      voor.ovaal(px + 9 * s, d * 0.86, 4.4 * s, 7 * s, '#e8453c');
+      voor.streek(`M${(px - 1.4 * s).toFixed(1)} ${(d * 0.87).toFixed(1)} l${(2.8 * s).toFixed(1)} ${(-2 * s).toFixed(1)}`, '#ffffff', 1.2 * s);
+    },
+  },
+
+  // ---------------------------------------------- Dierenpark De Wildhoek
+  //
+  // Ook dag, ook zonder gloed. Een pad langs een haag met een houten hek
+  // ervoor, en daarachter iets wat je net niet goed ziet - dat is wat een
+  // dierentuin is: je staat altijd aan de verkeerde kant van het gaas.
+  dierentuin: {
+    dag: true,
+    kern: '#d6e8bd', koel: '#2d4426', warm: '#ffffff', textuur: 'vezel', ruw: 0.18, stap: 44,
+    gloed: '#ffe08a',
+    verf(b) {
+      const { d, L, R, K, n } = b;
+      const s = d / 100;
+      const ver = b.laag('randver', 0.82);
+      const mid = b.laag('randmid');
+      const voor = b.laag('randvoor');
+
+      ver.vlak(`M0 0 H${L.toFixed(1)} V${(d * 0.3).toFixed(1)} H0 Z`, '#b5ddea');
+      for (let i = 0; i < n(170); i++) {
+        ver.vlak(ver.klont(R(L, 0), d * R(0.24, 0.04), R(80, 40) * s, R(14, 7) * s, 4), '#ffffff', 0.85);
+      }
+
+      // De haag: één doorlopende massa met bladkoppen erbovenop. Zonder
+      // die doorlopende laag blijft het losse struikjes naast elkaar.
+      ver.vlak(ver.kam(d * 0.52, d * 0.12, 70 * s, 0.1), '#4e7a3a');
+      mid.vlak(mid.kam(d * 0.62, d * 0.1, 54 * s, 0.1), '#3f6630');
+      for (let i = 0; i < n(13); i++) {
+        const x = R(L, 0);
+        const y = d * R(0.56, 0.34);
+        mid.loof(x, y, R(13, 7) * s, R(6, 3.4) * s, R(360, 0), K(['#6aa048', '#4e7a3a', '#7cb850']), R(1, 0.7));
+      }
+
+      // Het hek: twee liggers en palen, over de hele lengte.
+      voor.vlak(`M0 ${(d * 0.66).toFixed(1)} H${L.toFixed(1)} V${(d * 0.72).toFixed(1)} H0 Z`, '#a97f4a');
+      voor.vlak(`M0 ${(d * 0.82).toFixed(1)} H${L.toFixed(1)} V${(d * 0.88).toFixed(1)} H0 Z`, '#a97f4a');
+      voor.streek(`M0 ${(d * 0.67).toFixed(1)} H${L.toFixed(1)}`, '#d6b183', 0.9 * s, 0.6);
+      voor.streek(`M0 ${(d * 0.83).toFixed(1)} H${L.toFixed(1)}`, '#d6b183', 0.9 * s, 0.6);
+      for (let x = R(26, 6); x < L; x += 62 * s) {
+        voor.vlak(`M${x.toFixed(1)} ${(d * 0.58).toFixed(1)} h${(6 * s).toFixed(1)} V${(d + 4).toFixed(1)} h${(-6 * s).toFixed(1)} Z`, '#8a6436');
+        voor.streek(`M${(x + 1.2 * s).toFixed(1)} ${(d * 0.58).toFixed(1)} V${(d + 4).toFixed(1)}`, '#c49a63', 1 * s, 0.5);
+      }
+
+      // Het pad eronder: zand met keitjes en een paar schaduwen.
+      voor.vlak(`M0 ${(d * 0.88).toFixed(1)} H${L.toFixed(1)} V${(d + 4).toFixed(1)} H0 Z`, '#cdb988');
+      for (let i = 0; i < n(90); i++) {
+        voor.stip(R(L, 0), d * R(1, 0.9), R(1.8, 0.7) * s, K(['#a8946a', '#e0d2ae']), 0.8);
+      }
+
+      // En wat gras dat door het hek heen groeit, zodat er niets kaal is.
+      for (let i = 0; i < n(40); i++) {
+        const x = R(L, 0);
+        voor.streek(
+          `M${x.toFixed(1)} ${(d * 0.92).toFixed(1)} q${(2 * s).toFixed(1)} ${(-7 * s).toFixed(1)} ${(5 * s).toFixed(1)} ${(-9 * s).toFixed(1)}`,
+          K(['#5f8f3a', '#79a84c']), 1.2 * s, R(1, 0.6),
+        );
+      }
+    },
+  },
 };
 
 // Geen wereld herkend? Dan het landhuis: donker hout doet nergens pijn.

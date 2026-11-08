@@ -8,7 +8,7 @@ import { randomSeed } from '../engine/rng.js';
 import { puzzleId, wereldVoorSeed } from '../puzzle.js';
 import { laatsteNiveau, zetNiveau } from './state.js';
 
-// Speurdoku staat voorop: dat is het hoofdspel, en dan hoort het ook de
+// De Reconstructie staat voorop: dat is het hoofdspel, en dan hoort het ook de
 // stand te zijn waar je op uitkomt als je niets kiest.
 //
 // Het decor staat hier niet meer bij. Je koos uit acht genres, en dat is
@@ -27,8 +27,8 @@ const keuze = {
 
 
 // Welke opdrachten je nog kunt kiezen: alleen die met een soort spel dat te
-// zien is. Zolang dat alleen het Speurdoku is, blijft 'Wie was het?' over.
-// Zonder deze zeef kies je een opdracht waar geen Speurdoku bij kan, en krijg
+// zien is. Zolang dat alleen de Reconstructie is, blijft 'Wie was het?' over.
+// Zonder deze zeef kies je een opdracht waar geen Reconstructie bij kan, en krijg
 // je stilzwijgend een ander soort puzzel dan je ziet staan.
 const TEKIEZEN = ASSIGNMENTS.filter(
   (a) => a.mechanics.some((m) => ZICHTBARE_MECHANICS.some((z) => z.id === m)),
@@ -79,7 +79,7 @@ export function renderGenerator(mount) {
   if (TEKIEZEN.length > 1) {
     form.append(field('Opdracht', TEKIEZEN.map((a) => optButton('opdracht', a.id, a.name, a.blurb))));
   }
-  // Het soort spel staat er niet meer bij: voorlopig is alles een Speurdoku.
+  // Het soort spel staat er niet meer bij: voorlopig is alles een Reconstructie.
   // Zie ZICHTBARE_MECHANICS in assignments.js. Zodra er meer dan één soort
   // te zien is, komt dit veld terug.
   if (ZICHTBARE_MECHANICS.length > 1) {
@@ -97,7 +97,7 @@ export function renderGenerator(mount) {
     }, [
       el('b', { text: String(l) }),
       el('span', { class: 'opt-name', text: p.label }),
-      // Bij een Speurdoku zegt "vier rijen" niets: daar gaat het om de maat
+      // Bij een Reconstructie zegt "vier rijen" niets: daar gaat het om de maat
       // van het bord. Dus staat er bij dat speltype wat er echt verandert.
       el('small', {
         text: keuze.mechaniek === 'kamer'

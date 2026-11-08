@@ -175,16 +175,35 @@ export function bouwRooster(n, rng, { kamers, meubelDeel = 0.22, maxMeubels = In
     const vrij = new Array(n * n).fill(true);
 
     const aantalMeubels = Math.min(maxMeubels, Math.max(2, Math.round(n * n * meubelDeel)));
+
+    // Hoeveel meubels er hoogstens in één kamer mogen.
+    //
+    // Hiervoor werden ze alleen over het hele bord uitgestrooid, en dan
+    // komt er bij toeval een kamer van drie vakjes met vier dingen erin.
+    // Dat ziet eruit als een rommelhok, en erger: een aanwijzing als "Bram
+    // stond naast de weegschaal" helpt je niet meer als er drie dingen
+    // naast elkaar staan. Een meubelstuk moet een herkenningspunt zijn,
+    // geen stapel.
+    //
+    // Eén per vier vakjes, en nooit meer dan drie. Dat laat een grote zaal
+    // nog steeds gevuld ogen en houdt een nis leeg.
+    const grootte = new Array(kamers).fill(0);
+    for (let i = 0; i < n * n; i++) grootte[kamerVan[i]]++;
+    const ruimteVoor = grootte.map((g) => Math.min(3, Math.max(1, Math.floor(g / 4))));
+    const inKamer = new Array(kamers).fill(0);
+
     const volgorde = rng.shuffle([...Array(n * n).keys()]);
     let gezet = 0;
     for (const cel of volgorde) {
       if (gezet >= aantalMeubels) break;
-      // Niet elke kamer volbouwen: elke kamer houdt minstens twee vrije vakjes.
       const kamer = kamerVan[cel];
+      if (inKamer[kamer] >= ruimteVoor[kamer]) continue;
+      // Niet elke kamer volbouwen: elke kamer houdt minstens twee vrije vakjes.
       const vrijInKamer = vrij.filter((v, i) => v && kamerVan[i] === kamer).length;
       if (vrijInKamer <= 2) continue;
       meubelOp[cel] = gezet;
       vrij[cel] = false;
+      inKamer[kamer]++;
       gezet++;
     }
     if (gezet < 2) continue;

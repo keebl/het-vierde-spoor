@@ -90,7 +90,7 @@ export function renderPlayer(puzzle, mount) {
     clueCol.replaceChildren(klepje(
       'aanwijzingen', `Aanwijzingen (${aantal})`, true, [cluePanel(puzzle, state, draw, persist)],
     ));
-    boards.replaceChildren(...boardNodes(puzzle, state, onCell, toonMeubel));
+    boards.replaceChildren(...boardNodes(puzzle, state, onCell, toonMeubel, actions));
     notes.replaceChildren(toolbar(puzzle, state, actions), noteNode(state));
   };
 
@@ -300,6 +300,9 @@ function spelregelBlok(puzzle) {
   if (!regels) return el('span', {});
   const lijst = el('ul', { class: 'regellijst' });
   for (const r of regels.regels) lijst.append(el('li', { text: r }));
+  // De zin over de figuur waar het om draait, hangt af van wat voor zaak
+  // het is: een moord, een verdwijning of een diefstal.
+  if (puzzle.zaak?.regel) lijst.append(el('li', { text: puzzle.zaak.regel }));
 
   // Wat "tegen de rotswand" betekent.
   //
@@ -447,7 +450,9 @@ function perNaam(puzzle, extraClues, knopVoor) {
     if (!mijn.length && !verwijzingen.length) continue;
     const kop = el('p', { class: 'clue-kop' }, [
       el('span', { class: 'clue-kop-naam', text: puzzle.personen[p] }),
-      p === puzzle.slachtofferIdx ? el('span', { class: 'clue-kop-merk', text: 'het slachtoffer' }) : null,
+      p === puzzle.slachtofferIdx
+        ? el('span', { class: 'clue-kop-merk', text: puzzle.zaak?.rolwoord ?? 'het slachtoffer' })
+        : null,
     ]);
     const lijst = el('div', { class: 'clues' });
     for (const clue of mijn) lijst.append(knopVoor(clue));
@@ -489,11 +494,14 @@ function klepje(sleutel, kop, standaard, inhoud) {
   return blok;
 }
 
-function boardNodes(puzzle, state, onCell, toonMeubel) {
+function boardNodes(puzzle, state, onCell, toonMeubel, actions) {
   if (puzzle.kind === 'kamer') {
     const vanzelf = kruisjesVanzelf();
     return [
-      personenPalet(puzzle, state, onCell),
+      personenPalet(puzzle, state, onCell, {
+        kruisjes: actions.kruisjes, rand: actions.rand,
+        kruisjesAan: vanzelf, randAan: randAan(),
+      }),
       el('div', { class: 'board-wrap' }, renderKamerbord(
         puzzle, state, { klikCel: onCell, klikMeubel: toonMeubel },
         { rand: randAan(), kruisjesVanzelf: vanzelf },
@@ -551,7 +559,7 @@ function boardNodes(puzzle, state, onCell, toonMeubel) {
 // De hele balk plakt bovenaan vast zodra je naar beneden scrolt (zie .palet
 // in de opmaak). Daarmee staan de namen en het bord altijd samen op één
 // scherm, ook op een telefoon.
-function personenPalet(puzzle, state, onCell) {
+function personenPalet(puzzle, state, onCell, acties) {
   const balk = el('div', { class: 'palet' });
   const namen = el('div', { class: 'palet-namen' });
   const standen = el('div', { class: 'palet-standen' });
@@ -566,7 +574,7 @@ function personenPalet(puzzle, state, onCell) {
       'data-geplaatst': geplaatst ? '1' : null,
     }, [
       el('span', { class: 'palet-portret' }, isLijk
-        ? slachtofferElement(i, naam.charAt(0).toUpperCase(), 26)
+        ? slachtofferElement(i, naam.charAt(0).toUpperCase(), 26, geslachtVan(naam), puzzle.zaak?.merk)
         : portretElement(i, naam.charAt(0).toUpperCase(), 26, geslachtVan(naam))),
       el('span', { text: naam }),
     ]);
@@ -592,6 +600,33 @@ function personenPalet(puzzle, state, onCell) {
   schets.addEventListener('click', () => onCell(null, -2));
   standen.append(schets);
 
+  // En daarnaast twee schakelaars. Ze horen bij het bord en niet in de
+  // werkbalk onderaan - daar stonden ze tussen Controleer en Printen, en
+  // dan vind je ze niet terwijl je aan het puzzelen bent.
+  //
+  // Ze zien er met opzet anders uit dan Uitsluiten en Schetsen. Die twee
+  // zijn standen: er staat er altijd precies één aan, en ze bepalen wat
+  // een klik op het bord dóét. Deze twee veranderen niets aan je klik, ze
+  // zetten iets aan of uit. Vandaar het streepje ertussen, de hoekige
+  // vorm en het woordje "aan" of "uit" erin.
+  standen.append(el('span', { class: 'palet-scheiding', 'aria-hidden': 'true' }));
+  const schakel = (naam, aan, fn) => {
+    const b = el('button', {
+      class: 'palet-schakel',
+      type: 'button',
+      'aria-pressed': String(aan),
+    }, [
+      el('span', { class: 'palet-schakel-naam', text: naam }),
+      el('span', { class: 'palet-schakel-stand', text: aan ? 'aan' : 'uit' }),
+    ]);
+    b.addEventListener('click', fn);
+    return b;
+  };
+  standen.append(
+    schakel('Kruisjes vanzelf', acties.kruisjesAan, acties.kruisjes),
+    schakel('Lijst om het bord', acties.randAan, acties.rand),
+  );
+
   return balk;
 }
 
@@ -606,11 +641,6 @@ function toolbar(puzzle, state, actions) {
   add('Hint', actions.hint);
   add('Oplossing', actions.reveal);
   add('Begin opnieuw', actions.reset);
-  // Alleen bij het speurdoku: de andere borden hebben geen sierlijst.
-  if (puzzle.kind === 'kamer') {
-    add(kruisjesVanzelf() ? 'Kruisjes vanzelf: aan' : 'Kruisjes vanzelf: uit', actions.kruisjes);
-    add(randAan() ? 'Lijst eraf' : 'Lijst eromheen', actions.rand);
-  }
   add('Printen', actions.print);
   add('Bewaar deze puzzel', actions.share);
   return bar;

@@ -140,7 +140,12 @@ function keurKamer(p, waar) {
   }
 
   // Regel 5: de oplossing is de enige die aan alle aanwijzingen voldoet.
-  const uit = telPlaatsingen(rooster, p._ruwe, 3);
+  // Het budget schaalt mee met het bord, net als in de generator (zie
+  // poging() in generate-rooms.js). Op het standaardbudget gaf de teller
+  // het op bij zestien bij zestien, en dan staat er "1 (solver gaf op)" -
+  // wat betekent: hij vond er één maar kan niet bewijzen dat het de enige
+  // is. Dat is geen fout van de puzzel maar van de vraag die we stelden.
+  const uit = telPlaatsingen(rooster, p._ruwe, 3, 30000 * p.n);
   eis('precies een oplossing', !uit.opgegeven && uit.count === 1, waar,
     `gevonden: ${uit.count}${uit.opgegeven ? ' (solver gaf op)' : ''}`);
 
@@ -662,7 +667,7 @@ for (const a of ASSIGNMENTS) {
             `  ${a.id}/${w.id}/${m.id}/n${niveau}/seed regel-${s}`);
         }
       }
-      // Niveau zes krijgt bij het Speurdoku een eigen, dunnere ronde. Een
+      // Niveau zes krijgt bij de Reconstructie een eigen, dunnere ronde. Een
       // bord van zestien bij zestien kost zeven tot elf seconden om te
       // bouwen; alles wat voor de andere niveaus geldt zou hier uren duren.
       // Daarom hier een seed per wereld in plaats van per combinatie - de
@@ -685,7 +690,7 @@ for (const w of WORLDS) {
     `  ${a.id}/${w.id}/kamer/n6/seed regel-xl`);
 }
 console.log(`  ${combinaties} combinaties, ${seedsPerCombinatie} seeds elk`);
-console.log('  (niveau zes bij het Speurdoku: een seed per wereld, want');
+console.log('  (niveau zes bij de Reconstructie: een seed per wereld, want');
 console.log('   zestien bij zestien kost zeven tot elf seconden per stuk)');
 
 console.log(`\n${regelsGeraakt.size} regels nagerekend over ${gekeurd} puzzels:`);

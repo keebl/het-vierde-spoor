@@ -23,8 +23,8 @@ export const CATALOG = [
   { seed: 'kamer-7', titel: 'Het uur van de butler', sub: 'Terug naar Valkenhorst, nu met negen verdachten.', opdracht: 'dader', wereld: 'landhuis', mechaniek: 'kamer', niveau: 4 },
   { seed: 'kamer-8', titel: 'Laatste wacht', sub: 'Twaalf bemanningsleden en een gesloten sluis.', opdracht: 'dader', wereld: 'station', mechaniek: 'kamer', niveau: 5 },
 
-  // ---- Nog meer Speurdoku's, van vijf bij vijf tot zestien bij zestien ---
-  // Sinds alleen het Speurdoku te zien is, is dit de hele etalage. Vijf per
+  // ---- Nog meer Reconstructies, van vijf bij vijf tot zestien bij zestien ---
+  // Sinds alleen de Reconstructie te zien is, is dit de hele etalage. Vijf per
   // niveau, en de decors lopen er doorheen: je kiest hoe zwaar je het wilt,
   // niet in welk decor je nog een keer wilt rondlopen.
   { seed: 'kamer-9', titel: 'Vijf bij de bron', sub: 'Vijf wandelaars, vier plekken, en eentje stond er alleen.', opdracht: 'dader', wereld: 'woud', mechaniek: 'kamer', niveau: 1 },

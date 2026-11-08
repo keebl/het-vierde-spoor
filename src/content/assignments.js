@@ -261,7 +261,7 @@ export const ASSIGNMENTS = [
   {
     id: 'reconstructie',
     name: 'Wie was waar wanneer?',
-    short: 'Reconstructie',
+    short: 'Tijdlijn',
     blurb: 'Een tijdlijn met gaten: iedereen komt op elke plek en op elk moment precies één keer voor.',
     mechanics: ['latin'],
     buildSpec: null,
@@ -272,7 +272,13 @@ export const ASSIGNMENTS = [
 export const ASSIGNMENT_BY_ID = new Map(ASSIGNMENTS.map((a) => [a.id, a]));
 
 export const MECHANICS = [
-  { id: 'kamer', name: 'Speurdoku', icon: '▣', blurb: 'Zet de figuren zelf op de plattegrond: één per rij, één per kolom, zoals bij sudoku.' },
+  // Dit heette het Speurdoku. Die naam zette het spel in dezelfde familie
+  // als Murdoku - een puzzelboek dat precies dit doet, met verdachten in
+  // een sudokuraster, en dat sinds oktober 2025 in het Nederlands
+  // verkrijgbaar is. De vorm is onafhankelijk uit sudoku afgeleid, maar
+  // dat leg je niet uit op een voorpagina. "Reconstructie" zegt bovendien
+  // letterlijk wat de opdracht vraagt: reconstrueer wie waar stond.
+  { id: 'kamer', name: 'Reconstructie', icon: '▣', blurb: 'Zet de figuren zelf op de plattegrond: één per rij, één per kolom.' },
   { id: 'grid', name: 'Kruisverhoor', icon: '▦', blurb: 'Kruisjes en vinkjes in een raster tot er een naam overblijft.' },
   { id: 'map', name: 'Rondgang', icon: '🗺', blurb: 'Een kaart met deuren; de aanwijzingen gaan over wat waaraan grenst.' },
   { id: 'latin', name: 'Dienstrooster', icon: '◧', blurb: 'Rijen zijn plekken, kolommen zijn momenten, en iedereen komt er één keer in voor.' },
@@ -282,7 +288,7 @@ export const MECHANIC_BY_ID = new Map(MECHANICS.map((m) => [m.id, m]));
 
 // ------------------------------------------------------- wat je te zien krijgt
 //
-// Voorlopig staat alleen het Speurdoku in de etalage. De andere drie soorten
+// Voorlopig staat alleen de Reconstructie in de etalage. De andere drie soorten
 // spel blijven gewoon bestaan - de generator maakt ze, de keuring rekent ze
 // na, de links blijven werken - maar ze staan niet meer in de lijst, niet op
 // de voorpagina en niet in het formulier waarmee je er zelf een maakt. Eén
