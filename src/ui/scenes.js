@@ -32,28 +32,59 @@ function ramen(groep, x, y, kolommen, rijen, stap, gouden) {
   }
 }
 
-function sterren(groep, aantal, zaad) {
+// Een zaadje in plaats van Math.random: een tekening die bij elke keer anders
+// is, is geen tekening. Met een vast zaad blijft hij zichzelf, en kan een
+// scherm­afdruk ergens over gaan.
+const zaadje = (zaad) => {
   let s = zaad;
-  const volgende = () => ((s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+  return () => ((s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+};
+
+function sterren(groep, aantal, zaad) {
+  const volgende = zaadje(zaad);
   for (let i = 0; i < aantal; i++) {
     groep.append(cirkel(volgende() * B, volgende() * 80 + 6, volgende() * 1.1 + 0.5, 'sc-ster'));
   }
 }
 
+// De schaduwkant van een silhouet: hetzelfde vlak, maar de helft die van het
+// licht af ligt. Zonder dit is een berg een driehoek en een boom een puntje;
+// met dit krijgt het een kant.
+const flank = (d) => pad(d, 'sc-flank');
+
 const SCENES = {
   // Natte straten, neon dat uitloopt in de plassen.
   noir(g) {
     sterren(g, 10, 7);
-    const ver = maak('g', { class: 'sc-ver' });
+
+    // Een skyline van kale rechthoeken is een staafdiagram. Een dak heeft een
+    // terugsprong, een watertoren of een mast - daar herken je een stad aan,
+    // en het kost drie regels per gebouw.
+    const r = zaadje(13);
+    const gebouw = (grp, x, y, w, klasse) => {
+      grp.append(rechthoek(x, y, w, H - y, klasse));
+      const soort = Math.floor(r() * 3);
+      if (soort === 0) {
+        grp.append(rechthoek(x + w * 0.18, y - 7, w * 0.44, 7, klasse));
+      } else if (soort === 1) {
+        grp.append(rechthoek(x + w * 0.3, y - 9, w * 0.32, 9, klasse));
+        grp.append(rechthoek(x + w * 0.44, y - 19, 2, 10, klasse));
+      } else {
+        grp.append(pad(`M ${x} ${y} L ${x + w * 0.5} ${y - 9} L ${x + w} ${y} Z`, klasse));
+      }
+      grp.append(flank(`M ${x + w * 0.66} ${y} L ${x + w} ${y} L ${x + w} ${H} L ${x + w * 0.66} ${H} Z`));
+    };
+
+    const ver = maak('g');
     [[0, 70, 90], [80, 50, 70], [150, 82, 60], [210, 44, 80], [300, 74, 110],
      [420, 56, 64], [500, 88, 90], [590, 48, 74], [670, 78, 130]].forEach(([x, y, w]) => {
-      ver.append(rechthoek(x, y, w, H - y, 'sc-ver'));
+      gebouw(ver, x, y, w, 'sc-ver');
     });
     g.append(ver);
 
     const mid = maak('g');
     [[40, 92, 120], [260, 100, 150], [470, 96, 140], [640, 104, 160]].forEach(([x, y, w]) => {
-      mid.append(rechthoek(x, y, w, H - y, 'sc-mid'));
+      gebouw(mid, x, y, w, 'sc-mid');
     });
     g.append(mid);
     ramen(mid, 60, 104, 5, 3, 9, 7);
@@ -90,18 +121,33 @@ const SCENES = {
 
     const huis = maak('g');
     huis.append(pad('M 300 150 L 300 74 L 400 40 L 500 74 L 500 150 Z', 'sc-mid'));
-    huis.append(pad('M 288 78 L 400 34 L 512 78 Z', 'sc-near'));
+    // Het dak steekt over, en de rechterhelft ligt van de maan af. Zonder
+    // die twee is een landhuis een vijfhoek.
+    huis.append(pad('M 284 80 L 400 34 L 516 80 L 500 80 L 400 44 L 300 80 Z', 'sc-near'));
+    huis.append(flank('M 400 44 L 500 80 L 500 150 L 400 150 Z'));
     huis.append(rechthoek(330, 20, 10, 22, 'sc-near'));
     huis.append(rechthoek(452, 24, 10, 18, 'sc-near'));
-    // Zijvleugels. (Een rechthoek met negatieve hoogte bestaat niet in SVG,
-    // dus rekenen vanaf de bovenkant.)
-    huis.append(rechthoek(240, 104, 60, 46, 'sc-mid'));
-    huis.append(rechthoek(500, 104, 60, 46, 'sc-mid'));
+    // Zijvleugels, met hun eigen daklijn - anders zijn het twee dozen.
+    huis.append(rechthoek(240, 108, 60, 42, 'sc-mid'));
+    huis.append(pad('M 232 110 L 270 96 L 308 110 Z', 'sc-near'));
+    huis.append(flank('M 270 96 L 308 110 L 308 150 L 270 150 Z'));
+    huis.append(rechthoek(500, 108, 60, 42, 'sc-mid'));
+    huis.append(pad('M 492 110 L 530 96 L 568 110 Z', 'sc-near'));
+    huis.append(flank('M 530 96 L 568 110 L 568 150 L 530 150 Z'));
+    // Een portiek met twee zuilen over de voordeur.
+    huis.append(pad('M 376 118 L 400 106 L 424 118 Z', 'sc-near'));
     g.append(huis);
 
     ramen(g, 318, 92, 5, 2, 18, 6);
     ramen(g, 436, 92, 4, 2, 18, 9);
+    ramen(g, 250, 120, 3, 1, 16, 1);
+    ramen(g, 512, 120, 3, 1, 16, 2);
     g.append(rechthoek(392, 118, 16, 32, 'sc-deur'));
+    g.append(rechthoek(378, 118, 4, 32, 'sc-near'));
+    g.append(rechthoek(418, 118, 4, 32, 'sc-near'));
+    // Het licht uit de deur valt op het grind. Een huis waar iemand is
+    // scheelt een wereld met een huis waar een lamp brandt.
+    g.append(cirkel(400, 136, 3, 'sc-licht'));
     g.append(rechthoek(0, 146, B, 4, 'sc-grond'));
   },
 
@@ -126,18 +172,27 @@ const SCENES = {
 
   // Bos in drie lagen, met vuurvliegen.
   woud(g) {
-    const laag = (basis, hoogte, breedte, klasse, stap) => {
+    // Hier stond een rij gelijke driehoeken op gelijke afstand. Dat is geen
+    // bos maar een zaagblad. Nu heeft elke boom zijn eigen hoogte, zijn eigen
+    // breedte, een punt die niet in het midden staat, en een schaduwkant.
+    const laag = (basis, hoogte, breedte, klasse, stap, zaad) => {
       const grp = maak('g');
-      for (let x = -20; x < B + 40; x += stap) {
-        grp.append(pad(`M ${x} ${basis} L ${x + breedte / 2} ${basis - hoogte} L ${x + breedte} ${basis} Z`, klasse));
+      const r = zaadje(zaad);
+      for (let x = -30; x < B + 40; x += stap * (0.74 + r() * 0.6)) {
+        const h = hoogte * (0.66 + r() * 0.66);
+        const b = breedte * (0.78 + r() * 0.5);
+        const top = x + b * (0.32 + r() * 0.36);
+        const voet = basis + r() * 5 - 2;
+        grp.append(pad(`M ${x} ${voet} L ${top} ${voet - h} L ${x + b} ${voet} Z`, klasse));
+        grp.append(flank(`M ${top} ${voet - h} L ${x + b} ${voet} L ${top} ${voet} Z`));
       }
       return grp;
     };
-    g.append(laag(118, 56, 58, 'sc-ver', 46));
+    g.append(laag(118, 56, 58, 'sc-ver', 46, 5));
     g.append(rechthoek(0, 112, B, 8, 'sc-mist'));
-    g.append(laag(136, 72, 76, 'sc-mid', 62));
+    g.append(laag(136, 72, 76, 'sc-mid', 62, 17));
     g.append(rechthoek(0, 130, B, 8, 'sc-mist'));
-    g.append(laag(152, 54, 64, 'sc-near', 54));
+    g.append(laag(152, 54, 64, 'sc-near', 54, 29));
 
     [[180, 92], [250, 74], [520, 86], [600, 70], [410, 100], [690, 94]].forEach(([x, y], i) => {
       g.append(cirkel(x, y, i === 2 ? 3.5 : 2, 'sc-licht'));
@@ -150,9 +205,15 @@ const SCENES = {
     const boog = (x, b, h, klasse) =>
       pad(`M ${x} 150 L ${x} ${150 - h} a ${b / 2} ${b / 2} 0 0 1 ${b} 0 L ${x + b} 150 Z`, klasse);
     g.append(rechthoek(0, 0, B, H, 'sc-ver'));
-    g.append(boog(250, 300, 118, 'sc-mid'));
-    g.append(boog(300, 200, 96, 'sc-near'));
-    g.append(boog(340, 120, 74, 'sc-diep'));
+    // Vijf bogen die naar een punt lopen in plaats van drie die op elkaar
+    // staan: dat is het verschil tussen een gang en een poort.
+    g.append(boog(230, 340, 126, 'sc-mid'));
+    g.append(boog(272, 256, 110, 'sc-near'));
+    g.append(boog(308, 184, 92, 'sc-near'));
+    g.append(boog(338, 124, 76, 'sc-diep'));
+    g.append(boog(362, 76, 60, 'sc-diep'));
+    // De vloer loopt mee naar achteren.
+    g.append(pad('M 0 150 L 230 150 L 362 118 L 438 118 L 570 150 L 800 150 L 800 150 Z', 'sc-grond'));
 
     // Stalactieten.
     for (let x = 20; x < B; x += 37) {
@@ -232,10 +293,19 @@ const SCENES = {
     g.append(tak(120, 140, 86), tak(300, 140, 64), tak(520, 140, 78), tak(720, 140, 58));
     g.append(rechthoek(0, 136, B, 14, 'sc-near'));
 
-    // Een hek.
-    for (let x = 20; x < B; x += 26) {
-      g.append(pad(`M ${x} 140 L ${x} 112 L ${x + 5} 106 L ${x + 10} 112 L ${x + 10} 140 Z`, 'sc-mid'));
+    // Een hek dat er al een paar winters staat: planken van ongelijke lengte,
+    // eentje scheef, hier en daar een die eruit is. Een rij identieke latjes
+    // op gelijke afstand is een streepjescode.
+    const h = zaadje(41);
+    for (let x = 14; x < B; x += 22 + h() * 10) {
+      if (h() < 0.12) continue;
+      const top = 100 + h() * 18;
+      const scheef = (h() - 0.5) * 7;
+      g.append(pad(
+        `M ${x} 142 L ${x + scheef * 0.4} ${top + 6} L ${x + 5 + scheef} ${top} `
+        + `L ${x + 10 + scheef * 0.4} ${top + 6} L ${x + 10} 142 Z`, 'sc-mid'));
     }
+    g.append(pad('M 10 124 L 790 121', 'sc-takken'));
 
     // Pompoenen met licht erin.
     [[220, 134, 16], [410, 136, 13], [600, 133, 18]].forEach(([x, y, r], i) => {
@@ -406,7 +476,95 @@ const SCENES = {
   },
 };
 
+// ---------------------------------------------------------------- de verf
+//
+// Hier stonden dertien tekeningen van platte vlakken: één kleur per
+// dieptelaag, en klaar. Dat is precies waarom ze er stram uitzagen - niet
+// omdat er te weinig in stond, maar omdat alles even plat was. Dezelfde
+// klacht als bij het meubilair, en dezelfde oplossing: licht.
+//
+// Drie dingen doen het werk, en ze gelden voor alle dertien tegelijk, zodat
+// er geen dertien handschriften ontstaan:
+//
+//   1. Elke dieptelaag krijgt een verloop in plaats van een kleur. Naar de
+//      horizon toe lichter, want daar hangt de nevel. Dat is luchtperspectief
+//      en het is de helft van het verschil.
+//   2. Elk goudlichtje krijgt een echte gloed: een ronde uitdoving in plaats
+//      van een schijf met 30% dekking. Dit gebeurt vanzelf, voor elk lichtje
+//      in elke tekening - daar hoeft geen scene iets voor te doen.
+//   3. Over het geheel een korrel en een vignet. Een vlak zonder korrel leest
+//      als vectorwerk; met korrel leest het als iets dat geschilderd is.
+//
+// De kleuren zelf staan in de stylesheet, als variabelen, zodat donker en
+// licht allebei kloppen zonder dat hier iets van een thema af weet.
+const VERLOPEN = ['ver', 'mid', 'near', 'diep', 'grond', 'boom'];
+
+function scenePalet() {
+  let defs = document.querySelector('defs.sc-defs');
+  if (defs) return defs;
+
+  const houder = maak('svg', { class: 'sc-palet', 'aria-hidden': 'true', focusable: 'false' });
+  houder.setAttribute('style', 'position:absolute;width:0;height:0;overflow:hidden');
+  defs = maak('defs', { class: 'sc-defs' });
+
+  for (const naam of VERLOPEN) {
+    const grad = maak('linearGradient', { id: `sc-v-${naam}`, x1: '0', y1: '0', x2: '0', y2: '1' });
+    grad.append(maak('stop', { offset: '0%', 'stop-color': `var(--sc-${naam}-top)` }));
+    grad.append(maak('stop', { offset: '100%', 'stop-color': `var(--sc-${naam}-voet)` }));
+    defs.append(grad);
+  }
+
+  // De gloed. Vol in het hart, en in het laatste stuk helemaal weg - een
+  // gloed die aan de rand nog iets is, is een schijf.
+  const gloed = maak('radialGradient', { id: 'sc-gloed' });
+  gloed.append(maak('stop', { offset: '0%', 'stop-color': 'var(--sc-gloed)', 'stop-opacity': '0.75' }));
+  gloed.append(maak('stop', { offset: '35%', 'stop-color': 'var(--sc-gloed)', 'stop-opacity': '0.3' }));
+  gloed.append(maak('stop', { offset: '100%', 'stop-color': 'var(--sc-gloed)', 'stop-opacity': '0' }));
+  defs.append(gloed);
+
+  // Nevel op de horizon: onderin wit, naar boven weg.
+  const nevel = maak('linearGradient', { id: 'sc-nevel', x1: '0', y1: '0', x2: '0', y2: '1' });
+  nevel.append(maak('stop', { offset: '0%', 'stop-color': 'var(--sc-nevel)', 'stop-opacity': '0' }));
+  nevel.append(maak('stop', { offset: '100%', 'stop-color': 'var(--sc-nevel)', 'stop-opacity': '0.5' }));
+  defs.append(nevel);
+
+  // Het vignet: de hoeken een tikje donkerder, zodat het midden naar voren
+  // komt. Rond, niet vierkant, anders zie je de rand van het verloop.
+  const vignet = maak('radialGradient', { id: 'sc-vignet' });
+  vignet.append(maak('stop', { offset: '55%', 'stop-color': '#000000', 'stop-opacity': '0' }));
+  vignet.append(maak('stop', { offset: '100%', 'stop-color': '#000000', 'stop-opacity': '0.22' }));
+  defs.append(vignet);
+
+  // De korrel. feTurbulence met een grove frequentie, daarna bijna helemaal
+  // weggedraaid - je moet hem niet zien, je moet hem missen als hij weg is.
+  const korrel = maak('filter', { id: 'sc-korrel', x: '0', y: '0', width: '100%', height: '100%' });
+  korrel.append(maak('feTurbulence', { type: 'fractalNoise', baseFrequency: '0.9', numOctaves: '3', stitchTiles: 'stitch' }));
+  const grijs = maak('feColorMatrix', { type: 'matrix', values: '0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.6 0' });
+  korrel.append(grijs);
+  defs.append(korrel);
+
+  houder.append(defs);
+  document.body.append(houder);
+  return defs;
+}
+
+// Elk lichtje krijgt zijn gloed, waar het ook staat en in welke tekening ook.
+// Achter het lichtje, niet erover: anders kijk je door mist naar een lamp.
+function gloedAchterLichtjes(g) {
+  for (const licht of [...g.querySelectorAll('.sc-licht')]) {
+    const cx = Number(licht.getAttribute('cx'));
+    const cy = Number(licht.getAttribute('cy'));
+    const r = Number(licht.getAttribute('r'));
+    if (!Number.isFinite(cx) || !Number.isFinite(cy) || !Number.isFinite(r)) continue;
+    const halo = maak('circle', { cx, cy, r: Math.max(r * 7, 16), fill: 'url(#sc-gloed)' });
+    licht.parentNode.insertBefore(halo, licht);
+  }
+  // De oude platte schijf is nu dubbelop.
+  for (const schijf of [...g.querySelectorAll('.sc-schijn')]) schijf.remove();
+}
+
 export function sceneVoor(wereldId, accent) {
+  scenePalet();
   const teken = SCENES[wereldId] ?? SCENES.noir;
   const svg = maak('svg', {
     viewBox: `0 0 ${B} ${H}`,
@@ -429,6 +587,23 @@ export function sceneVoor(wereldId, accent) {
 
   const g = maak('g');
   teken(g);
+  gloedAchterLichtjes(g);
   svg.append(g);
+
+  // De wereldkleur over het geheel.
+  //
+  // Hiervoor zat die kleur alleen in de lucht, en waren alle dertien
+  // tekeningen daaronder hetzelfde grijsblauw. Daardoor leken ze op elkaar,
+  // en dat las als saai - terecht. Nu kleurt het licht de hele tekening: een
+  // nachtbos is groen, een regenstad blauw, een pompoenavond oranje. Met
+  // soft-light, want een dekvlak dooft de diepte die er net in zit.
+  svg.append(maak('rect', { x: 0, y: 0, width: B, height: H, fill: accent, class: 'sc-tint' }));
+
+  // Nevel over de onderste helft, dan het vignet, dan de korrel. In die
+  // volgorde: nevel hoort bij de tekening, het vignet bij het beeld, en de
+  // korrel ligt over allebei.
+  svg.append(maak('rect', { x: 0, y: H * 0.42, width: B, height: H * 0.58, fill: 'url(#sc-nevel)' }));
+  svg.append(maak('rect', { x: 0, y: 0, width: B, height: H, fill: 'url(#sc-vignet)' }));
+  svg.append(maak('rect', { x: 0, y: 0, width: B, height: H, filter: 'url(#sc-korrel)', class: 'sc-korrel' }));
   return svg;
 }

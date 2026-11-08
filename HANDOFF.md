@@ -72,6 +72,25 @@ Daarbij vier dingen die moesten meeveranderen:
   als de generator (`30000 * n`) en melden "niet uit te rekenen" apart.
 - **De `findLead` van het zwembad noemde een kamer.** Bij de opdracht
   "vinden" is dat het antwoord weggeven; de keuring viel er terecht over.
+- **De pagina's waren plat, niet leeg.** Guus noemde de bibliotheek en de
+  voordeur "saai, statisch, minimalistisch". De verleiding is dan om er
+  dingen bij te zetten; dat was het niet. De sfeertekeningen op de kaartjes
+  waren dertien tekeningen van effen vlakken - één kleur per dieptelaag, en
+  alle dertien hetzelfde grijsblauw. Wat er nu overheen ligt (scenes.js):
+  een verloop per laag, de wereldkleur over de hele tekening in plaats van
+  alleen in de lucht, een echte gloed rond elk lichtje, nevel, een vignet
+  en een korrel. Daarnaast zijn vier silhouetten opnieuw getekend omdat ze
+  mechanisch lazen: het bos (gelijke driehoeken op gelijke afstand), de
+  skyline (kale rechthoeken), het hek (identieke latjes) en het landhuis
+  (een vijfhoek). De gewelven hebben vijf bogen naar een punt in plaats van
+  drie op elkaar.
+- **Laten zien in plaats van opschrijven.** Op de voordeur stonden zes lege
+  vakjes met "16 bij 16, aanname nodig". Daar staat nu een plattegrondje in
+  van dat niveau, gebouwd met dezelfde motor als het bord
+  (`bordminiatuur.js`), dus het kan niet iets anders tonen dan wat je krijgt.
+  Onder "Zo werkt het" staat bij elke stap het plaatje van die stap. En de
+  voorbeeldplattegrond stond op een smal scherm ónder de knoppen, dus buiten
+  beeld; die staat nu meteen onder de inleiding.
 - **Een bad is geen gazon.** De twee baden en het pinguïnbad hadden de
   soort `buiten`, net als de ligweide: hun vloer was apart geregeld, hun
   meubilair niet, en dus stond er een plantenbak midden in het water. Nu is

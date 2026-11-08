@@ -4,6 +4,7 @@
 import { el } from './boards.js';
 import { ASSIGNMENTS, MECHANIC_BY_ID, ZICHTBARE_MECHANICS } from '../content/assignments.js';
 import { LEVELS, ZICHTBARE_LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
+import { bordminiatuur } from './bordminiatuur.js';
 import { randomSeed } from '../engine/rng.js';
 import { puzzleId, wereldVoorSeed } from '../puzzle.js';
 import { laatsteNiveau, zetNiveau } from './state.js';
@@ -95,6 +96,9 @@ export function renderGenerator(mount) {
       type: 'button',
       'aria-pressed': String(keuze.niveau === l),
     }, [
+      // Het plattegrondje staat bovenaan de knop: je ziet eerst hoe groot het
+      // bord is en leest daarna pas hoe het heet.
+      keuze.mechaniek === 'kamer' ? bordminiatuur(l, KAMER_LEVELS[l]) : null,
       el('b', { text: String(l) }),
       el('span', { class: 'opt-name', text: p.label }),
       // Bij een Reconstructie zegt "vier rijen" niets: daar gaat het om de maat

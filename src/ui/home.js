@@ -18,6 +18,7 @@ import { laatsteNiveau, zetNiveau } from './state.js';
 import { puzzleId, buildPuzzle, wereldVoorSeed } from '../puzzle.js';
 import { renderKamerbord } from './board-rooms.js';
 import { randomSeed } from '../engine/rng.js';
+import { bordminiatuur, stapplaatje } from './bordminiatuur.js';
 import { genreStijl } from './genre.js';
 import { WORLD_BY_ID } from '../content/worlds.js';
 import { LEVEL_IDS } from '../engine/difficulty.js';
@@ -74,6 +75,9 @@ export function renderHome(mount) {
       type: 'button',
       'aria-pressed': String(niveau === l),
     }, [
+      // Een plattegrondje van dat niveau, uit dezelfde motor als het bord.
+      // "Zestien bij zestien" is een getal; dit is wat je krijgt.
+      bordminiatuur(l, k),
       el('b', { text: String(l) }),
       el('span', { class: 'opt-name', text: p.label }),
       el('small', { text: `${k.n} bij ${k.n}, ${p.style === 'shallow' ? 'doorstrepen' : 'aanname nodig'}` }),
@@ -125,6 +129,7 @@ export function renderHome(mount) {
       el('div', { class: 'steps' },
         STAPPEN.map((s, i) =>
           el('div', { class: 'step' }, [
+            stapplaatje(i),
             el('div', { class: 'step-n', text: String(i + 1) }),
             el('h3', { text: s.kop }),
             el('p', { text: s.tekst }),
