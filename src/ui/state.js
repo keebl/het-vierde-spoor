@@ -50,3 +50,62 @@ export function onthuldIds() {
   const all = readAll();
   return new Set(Object.keys(all).filter((k) => all[k]?.onthuld));
 }
+
+// ----------------------------------------------------------- voorkeuren
+// Kleine keuzes die over alle puzzels heen gelden, niet per puzzel. Nu
+// alleen de sierlijst om het bord; hij staat apart van de voortgang omdat
+// hij niet mag verdwijnen als de voortgangslijst wordt opgeschoond.
+const VOORKEUR = 'vierdespoor.voorkeuren';
+
+function leesVoorkeuren() {
+  try {
+    return JSON.parse(localStorage.getItem(VOORKEUR) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+// De lijst om het bord staat standaard aan op een breed scherm en uit op een
+// smal. Bij vijf bij vijf is de lijst ruim een derde van de breedte, en op
+// een telefoon gaat dat ten koste van de vakjes waar je in moet klikken.
+// Wie hem toch wil, zet hem aan; die keuze blijft dan staan.
+function randStandaard() {
+  try {
+    return !window.matchMedia('(max-width: 760px)').matches;
+  } catch {
+    return true;
+  }
+}
+
+export function randAan() {
+  const v = leesVoorkeuren().rand;
+  return typeof v === 'boolean' ? v : randStandaard();
+}
+
+export function zetRand(aan) {
+  const v = leesVoorkeuren();
+  v.rand = !!aan;
+  try {
+    localStorage.setItem(VOORKEUR, JSON.stringify(v));
+  } catch {
+    /* geen opslag: dan geldt de keuze alleen deze sessie */
+  }
+}
+
+// Het laatst gekozen niveau. Je kiest op de voorpagina niet meer wát voor
+// decor je krijgt, alleen hoe zwaar - en dan hoort de site te onthouden
+// waar je gebleven was.
+export function laatsteNiveau(standaard = 3) {
+  const v = leesVoorkeuren().niveau;
+  return Number.isInteger(v) ? v : standaard;
+}
+
+export function zetNiveau(n) {
+  const v = leesVoorkeuren();
+  v.niveau = Number(n);
+  try {
+    localStorage.setItem(VOORKEUR, JSON.stringify(v));
+  } catch {
+    /* geen opslag: dan geldt de keuze alleen deze sessie */
+  }
+}

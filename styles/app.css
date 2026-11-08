@@ -52,6 +52,9 @@
   --schrift: "Patrick Hand", "Bradley Hand", "Segoe Print", cursive;
   --display: "Fredoka", "Avenir Next", var(--sans);
 
+  /* Hoe hoog de kop is. De namenbalk plakt hieronder vast. */
+  --kop-hoogte: 53px;
+
   --page: 1080px;
   --prose: 62ch;
 }
@@ -730,6 +733,15 @@ input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: -1p
 
 .play { display: grid; gap: var(--s6); align-items: start; }
 @media (min-width: 920px) { .play { grid-template-columns: 300px 1fr; gap: var(--s7); } }
+/* Op een smal scherm staat het bord bovenaan en komen de aanwijzingen
+   eronder. Naast elkaar past niet, en onder elkaar in de volgorde van de
+   code betekende: eerst veertien zinnen voorbij scrollen voordat je het
+   bord ziet. Nu staan de namenbalk en het bord meteen in beeld, en blijft
+   de balk daar plakken terwijl je verder naar beneden leest. */
+@media (max-width: 919px) {
+  .play > :first-child { order: 2; }
+  .play > :last-child { order: 1; }
+}
 .play > *, .boards > * { min-width: 0; }
 
 /* Wat vaststaat staat boven de aanwijzingen, en ziet er anders uit: je kunt
@@ -1138,11 +1150,21 @@ table.latin td.cell { width: 78px; height: 46px; }
   stroke-width: 2px;
 }
 .penningfout { fill: none; stroke: #ff5a5a; stroke-width: 3; }
+/* Groen om wat goed staat. Dunner en rustiger dan het rood: fout is wat je
+   moet zien, goed is wat je mag overslaan. */
+.penninggoed { fill: none; stroke: #2fa86a; stroke-width: 2.6; opacity: 0.85; }
 
+/* Een schetsletter is een potloodnotitie, maar hij moet wel te lezen zijn.
+   Hij stond op lichtbruin met doorzichtigheid 0.72 en verdween daarmee in
+   een tegelvloer of een stuk gras. Nu met dezelfde truc als de kruisjes: een
+   lichte baan achter de letter, zodat de letter zelf diep mag zijn. */
 .schetsletter {
-  fill: #6b533a;
-  font: 600 12px var(--sans);
-  opacity: 0.72;
+  fill: #2d2013;
+  font: 700 14px var(--sans);
+  paint-order: stroke;
+  stroke: rgba(255, 250, 238, 0.85);
+  stroke-width: 3.5;
+  stroke-linejoin: round;
 }
 
 .palet-schets .palet-fiche { background: var(--surface-3); color: var(--text-2); }
@@ -1195,21 +1217,46 @@ table.latin td.cell { width: 78px; height: 46px; }
 
 .legenda-item svg { flex: none; }
 
-/* het palet met verdachten */
-.palet { display: flex; gap: var(--s2); flex-wrap: wrap; margin-bottom: var(--s4); }
+/* het palet met verdachten
+   Twee rijen: de namen boven, de twee standen (Uitsluiten, Schetsen)
+   eronder. En hij plakt vast onder de kop, zodat de namen en het bord
+   altijd samen op één scherm staan - op een telefoon stond je anders
+   steeds te scrollen tussen de naam die je wilt pakken en het vakje waar
+   hij moet komen. */
+.palet {
+  position: sticky;
+  /* Onder de kop, niet eronder vandaan: die plakt zelf ook bovenaan (zie
+     .top). Met top:0 schoof de namenrij er precies achter weg en zag je
+     alleen Uitsluiten en Schetsen nog staan. */
+  top: var(--kop-hoogte);
+  z-index: 5;
+  margin-bottom: var(--s4);
+  padding: var(--s2) 0;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line-soft);
+}
+.palet-namen { display: flex; gap: var(--s2); flex-wrap: wrap; }
+.palet-standen {
+  display: flex;
+  gap: var(--s2);
+  margin-top: var(--s2);
+  padding-top: var(--s2);
+  border-top: 1px dashed var(--line-soft);
+}
 
-/* Op een telefoon nam het palet met twaalf verdachten een derde van het
-   scherm. Eén rij die je opzij schuift laat het bord heel. */
+/* Op een telefoon nemen zestien verdachten het halve scherm. Eén rij die je
+   opzij schuift laat het bord heel; de twee standen eronder schuiven niet
+   mee, want die moet je blind kunnen vinden. */
 @media (max-width: 680px) {
-  .palet {
+  .palet-namen {
     flex-wrap: nowrap;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity;
-    padding-bottom: var(--s2);
+    padding-bottom: var(--s1);
     -webkit-overflow-scrolling: touch;
   }
-  .palet-knop { flex: none; scroll-snap-align: start; }
+  .palet-namen .palet-knop { flex: none; scroll-snap-align: start; }
 }
 
 .palet-knop {
@@ -1369,7 +1416,39 @@ table.latin td.cell { width: 78px; height: 46px; }
    De tokens hieronder zijn dezelfde namen als in :root, dus alles wat al
    netjes van de tokens gebruikmaakt kleurt vanzelf mee. */
 
-body[data-wereld] {
+/* Donker zonder zaak: de voorpagina en de uitleg.
+   Hiervoor gold het donker alleen binnen een zaak, omdat de wereld de kleur
+   gaf. Nu de speler zelf kiest, moet de hele site mee kunnen - anders klik
+   je op "altijd donker" en blijft de voordeur crème. Neutrale inkt, want
+   buiten een zaak hoort geen enkele wereld partij te krijgen. */
+body[data-thema="donker"] {
+  color-scheme: dark;
+  --bg: #11131a; --surface: #1a1d26; --surface-2: #222631; --surface-3: #2c313e;
+  --line: #363c4b; --line-soft: #262b36;
+  --text: #ecebe6; --text-2: #b6b7b8; --text-3: #83868d;
+  --accent: #e8a35c; --accent-soft: #2a2119; --accent-ink: #120d08;
+  --good: #6fdc9a; --bad: #ff7b6b;
+}
+
+/* Licht mét een zaak open.
+   Niet acht lichte paletten met de hand, maar één dat de wereldkleur als
+   --wkleur meekrijgt (gezet in main.js) en er een vleugje van neemt. Zo
+   blijft Regenstad blauwig en het woud groenig, terwijl je op papier leest.
+   De tekst houdt bewust de donkere inkt van :root: dat is het contrast
+   waar het om begonnen was. */
+body[data-thema="licht"][data-wereld] {
+  color-scheme: light;
+  --bg: color-mix(in srgb, var(--wkleur, #a3551f) 9%, #f7f2e8);
+  --surface: color-mix(in srgb, var(--wkleur, #a3551f) 4%, #fffdf7);
+  --surface-2: color-mix(in srgb, var(--wkleur, #a3551f) 11%, #f1eade);
+  --surface-3: color-mix(in srgb, var(--wkleur, #a3551f) 18%, #e7decd);
+  --line: color-mix(in srgb, var(--wkleur, #a3551f) 32%, #cfc0a6);
+  --line-soft: color-mix(in srgb, var(--wkleur, #a3551f) 15%, #ece4d5);
+  --accent: color-mix(in srgb, var(--wkleur, #a3551f) 32%, #8a4316);
+  --accent-soft: color-mix(in srgb, var(--wkleur, #a3551f) 16%, #f8e8d4);
+}
+
+body[data-thema="donker"][data-wereld] {
   color-scheme: dark;
   --surface-3: color-mix(in srgb, var(--surface-2) 70%, #ffffff 8%);
   --line-soft: color-mix(in srgb, var(--line) 60%, var(--bg) 40%);
@@ -1379,95 +1458,114 @@ body[data-wereld] {
 }
 
 /* Nachtbos: diep groen met warm lantaarnlicht. */
-body[data-wereld="woud"] {
+body[data-thema="donker"][data-wereld="woud"] {
   --bg: #0c1a13; --surface: #14271c; --surface-2: #1b3324; --line: #2f5338;
   --text: #e9f2de; --text-2: #b4c9a8; --text-3: #7e967a;
   --accent: #ffc168; --accent-soft: #23402a;
 }
 /* Regenstad: nat asfalt en neon. */
-body[data-wereld="noir"] {
+body[data-thema="donker"][data-wereld="noir"] {
   --bg: #0a0f17; --surface: #121b27; --surface-2: #192536; --line: #2c3f58;
   --text: #e2ecf7; --text-2: #a9bed6; --text-3: #74889f;
   --accent: #ff4fa3; --accent-soft: #221a2c;
 }
 /* Huize Valkenhorst: donker hout bij kaarslicht. */
-body[data-wereld="landhuis"] {
+body[data-thema="donker"][data-wereld="landhuis"] {
   --bg: #15100b; --surface: #211811; --surface-2: #2d2016; --line: #4b3824;
   --text: #f3e7d3; --text-2: #cdb795; --text-3: #94806a;
   --accent: #ffbe63; --accent-soft: #2e2113;
 }
 /* Ruimtestation Meridiaan: bijna zwart met neon en nevel. */
-body[data-wereld="station"] {
+body[data-thema="donker"][data-wereld="station"] {
   --bg: #070b14; --surface: #0f1726; --surface-2: #162134; --line: #2a3f5e;
   --text: #dff0ff; --text-2: #9fc0dd; --text-3: #6b88a6;
   --accent: #2fd9ff; --accent-soft: #10263a;
 }
 /* De Catacomben: steen, aarde en kaarsvlam. */
-body[data-wereld="catacomben"] {
+body[data-thema="donker"][data-wereld="catacomben"] {
   --bg: #100d15; --surface: #1a1622; --surface-2: #241f2e; --line: #3c3448;
   --text: #e8e0d2; --text-2: #bcb09e; --text-3: #867c6e;
   --accent: #ffb84d; --accent-soft: #2a2032;
 }
 /* Academie Morgenstond: sterrennacht en tovenaarspaars. */
-body[data-wereld="academie"] {
+body[data-thema="donker"][data-wereld="academie"] {
   --bg: #0c0a1b; --surface: #15122a; --surface-2: #1d1938; --line: #342c58;
   --text: #e8e2ff; --text-2: #b7aede; --text-3: #817aa8;
   --accent: #b58cff; --accent-soft: #221c3e;
 }
 /* Kerstavond: dennengroen met gekleurde lampjes. */
-body[data-wereld="kerst"] {
+body[data-thema="donker"][data-wereld="kerst"] {
   --bg: #091710; --surface: #11241a; --surface-2: #173022; --line: #2b5038;
   --text: #ecf5ec; --text-2: #b6cdb9; --text-3: #7e9a84;
   --accent: #ff6b6b; --accent-soft: #2a1d1d;
 }
 /* Halloweennacht: pompoenoranje tegen paarsbruin. */
-body[data-wereld="halloween"] {
+body[data-thema="donker"][data-wereld="halloween"] {
   --bg: #130b11; --surface: #1f141c; --surface-2: #2a1b25; --line: #44293a;
   --text: #f4e6da; --text-2: #c9ab9c; --text-3: #917a70;
   --accent: #ff8a1f; --accent-soft: #2c1a14;
 }
 
+/* Het Rietveld College: schemer buiten, tl binnen. */
+body[data-thema="donker"][data-wereld="school"] {
+  --bg: #0b1218; --surface: #121c25; --surface-2: #1a2834; --line: #2c4254;
+  --text: #e3eef5; --text-2: #a9c2d2; --text-3: #74909f;
+  --accent: #ffd166; --accent-soft: #1f2a33;
+}
+/* Sint-Joris: nachtgroen vinyl en één lamp die aanblijft. */
+body[data-thema="donker"][data-wereld="ziekenhuis"] {
+  --bg: #08130f; --surface: #0f1f1a; --surface-2: #152b24; --line: #26473c;
+  --text: #e2f2ec; --text-2: #a5c9bd; --text-3: #6f8f85;
+  --accent: #49e0b4; --accent-soft: #0f2a22;
+}
+/* De Spiegeltoren: glas, nacht, en het blauwe schijnsel van een scherm. */
+body[data-thema="donker"][data-wereld="kantoor"] {
+  --bg: #0c0c14; --surface: #15151f; --surface-2: #1d1d2b; --line: #343447;
+  --text: #e9e8f2; --text-2: #b2b0c6; --text-3: #7d7b92;
+  --accent: #a78bfa; --accent-soft: #1f1b30;
+}
+
 /* Wat er in het donker nog bijgeregeld moet worden. */
-body[data-wereld] .kop,
-body[data-wereld] header { background: color-mix(in srgb, var(--surface) 86%, transparent); }
-body[data-wereld] .btn { border-color: var(--line); }
-body[data-wereld] .btn-hoofd { color: #120d08; }
-body[data-wereld] .inleiding { border-left-color: var(--accent); }
+body[data-thema="donker"] .kop,
+body[data-thema="donker"] header { background: color-mix(in srgb, var(--surface) 86%, transparent); }
+body[data-thema="donker"] .btn { border-color: var(--line); }
+body[data-thema="donker"] .btn-hoofd { color: #120d08; }
+body[data-thema="donker"] .inleiding { border-left-color: var(--accent); }
 /* De namen op het bord en de legenda houden hun eigen licht; het bord is
    met opzet geen onderdeel van het thema. */
-body[data-wereld] .kamerbord,
-body[data-wereld] .legenda-tegel { color: initial; }
+body[data-thema="donker"] .kamerbord,
+body[data-thema="donker"] .legenda-tegel { color: initial; }
 
 /* De sfeertekening boven de puzzel hoort bij de wereld, dus die draait mee
    naar nacht. De lagen keren om: in daglicht is de verste laag het lichtst
    omdat hij in de nevel staat, 's nachts is hij dat ook - maar dan omdat de
    lucht erachter oplicht en de voorgrond zwart is. Elk lichtpunt krijgt de
    kleur van de wereld, want dat is het enige warme in het beeld. */
-body[data-wereld] .sc-ver { fill: color-mix(in srgb, var(--line) 80%, var(--bg)); }
-body[data-wereld] .sc-mid { fill: color-mix(in srgb, var(--line) 55%, var(--bg)); }
-body[data-wereld] .sc-near { fill: color-mix(in srgb, var(--line) 30%, var(--bg)); }
-body[data-wereld] .sc-diep,
-body[data-wereld] .sc-deur { fill: color-mix(in srgb, var(--bg) 80%, #000000); }
-body[data-wereld] .sc-grond { fill: color-mix(in srgb, var(--bg) 92%, #000000); }
-body[data-wereld] .sc-planeet { fill: color-mix(in srgb, var(--line) 70%, var(--bg)); }
-body[data-wereld] .sc-horizon { stroke: color-mix(in srgb, var(--line) 60%, var(--bg)); }
-body[data-wereld] .sc-lijn { stroke: color-mix(in srgb, var(--line) 40%, var(--bg)); }
-body[data-wereld] .sc-nat { fill: color-mix(in srgb, var(--bg) 70%, var(--accent) 10%); }
-body[data-wereld] .sc-boom { fill: color-mix(in srgb, var(--line) 35%, var(--bg)); }
-body[data-wereld] .sc-takken { stroke: color-mix(in srgb, var(--bg) 60%, #000000); }
-body[data-wereld] .sc-mist { fill: var(--accent); opacity: 0.1; }
-body[data-wereld] .sc-ster { fill: #f2f6ff; }
-body[data-wereld] .sc-maan { fill: #fff8e4; }
-body[data-wereld] .sc-sneeuw { fill: #ffffff; opacity: 0.9; }
-body[data-wereld] .sc-regenlijn { stroke: color-mix(in srgb, var(--accent) 50%, #ffffff); opacity: 0.35; }
-body[data-wereld] .sc-raam,
-body[data-wereld] .sc-licht { fill: var(--accent); }
-body[data-wereld] .sc-schijn,
-body[data-wereld] .sc-weerschijn { fill: var(--accent); opacity: 0.35; }
-body[data-wereld] .sc-pompoen { fill: var(--accent); }
+body[data-thema="donker"] .sc-ver { fill: color-mix(in srgb, var(--line) 80%, var(--bg)); }
+body[data-thema="donker"] .sc-mid { fill: color-mix(in srgb, var(--line) 55%, var(--bg)); }
+body[data-thema="donker"] .sc-near { fill: color-mix(in srgb, var(--line) 30%, var(--bg)); }
+body[data-thema="donker"] .sc-diep,
+body[data-thema="donker"] .sc-deur { fill: color-mix(in srgb, var(--bg) 80%, #000000); }
+body[data-thema="donker"] .sc-grond { fill: color-mix(in srgb, var(--bg) 92%, #000000); }
+body[data-thema="donker"] .sc-planeet { fill: color-mix(in srgb, var(--line) 70%, var(--bg)); }
+body[data-thema="donker"] .sc-horizon { stroke: color-mix(in srgb, var(--line) 60%, var(--bg)); }
+body[data-thema="donker"] .sc-lijn { stroke: color-mix(in srgb, var(--line) 40%, var(--bg)); }
+body[data-thema="donker"] .sc-nat { fill: color-mix(in srgb, var(--bg) 70%, var(--accent) 10%); }
+body[data-thema="donker"] .sc-boom { fill: color-mix(in srgb, var(--line) 35%, var(--bg)); }
+body[data-thema="donker"] .sc-takken { stroke: color-mix(in srgb, var(--bg) 60%, #000000); }
+body[data-thema="donker"] .sc-mist { fill: var(--accent); opacity: 0.1; }
+body[data-thema="donker"] .sc-ster { fill: #f2f6ff; }
+body[data-thema="donker"] .sc-maan { fill: #fff8e4; }
+body[data-thema="donker"] .sc-sneeuw { fill: #ffffff; opacity: 0.9; }
+body[data-thema="donker"] .sc-regenlijn { stroke: color-mix(in srgb, var(--accent) 50%, #ffffff); opacity: 0.35; }
+body[data-thema="donker"] .sc-raam,
+body[data-thema="donker"] .sc-licht { fill: var(--accent); }
+body[data-thema="donker"] .sc-schijn,
+body[data-thema="donker"] .sc-weerschijn { fill: var(--accent); opacity: 0.35; }
+body[data-thema="donker"] .sc-pompoen { fill: var(--accent); }
 
 /* De tekening loopt in de pagina over in plaats van ertegenaan te stoppen. */
-body[data-wereld] .scene-wrap::after {
+body[data-thema="donker"] .scene-wrap::after {
   background: linear-gradient(to bottom, transparent, var(--bg));
 }
 
@@ -1502,6 +1600,36 @@ body[data-wereld="catacomben"] .muurnerf { stroke: rgba(40, 34, 44, 0.4); }
 body[data-wereld="catacomben"] .muur { stroke: #6d675e; }
 body[data-wereld="catacomben"] .muur-buiten { stroke: #413c39; }
 
+/* Een school, een ziekenhuis en een kantoortoren hebben geen eikenhouten
+   binnenmuren. Zonder deze regels staat er geschilderd steen naast een
+   lambrisering, en dan is het hele thema voor niets. */
+body[data-wereld="school"] .muurvoet,
+body[data-wereld="school"] .buitenmuur-voet { stroke: #2d3a42; }
+body[data-wereld="school"] .muurtop,
+body[data-wereld="school"] .buitenmuur-top { stroke: #8fa3ab; }
+body[data-wereld="school"] .muurglans { stroke: #cfdde2; }
+body[data-wereld="school"] .muurnerf { stroke: rgba(36, 50, 58, 0.34); }
+body[data-wereld="school"] .muur { stroke: #6f8089; }
+body[data-wereld="school"] .muur-buiten { stroke: #3e4d55; }
+
+body[data-wereld="ziekenhuis"] .muurvoet,
+body[data-wereld="ziekenhuis"] .buitenmuur-voet { stroke: #2b3b36; }
+body[data-wereld="ziekenhuis"] .muurtop,
+body[data-wereld="ziekenhuis"] .buitenmuur-top { stroke: #9db8ae; }
+body[data-wereld="ziekenhuis"] .muurglans { stroke: #dceee6; }
+body[data-wereld="ziekenhuis"] .muurnerf { stroke: rgba(34, 52, 46, 0.3); }
+body[data-wereld="ziekenhuis"] .muur { stroke: #7b958c; }
+body[data-wereld="ziekenhuis"] .muur-buiten { stroke: #3c514a; }
+
+body[data-wereld="kantoor"] .muurvoet,
+body[data-wereld="kantoor"] .buitenmuur-voet { stroke: #30313c; }
+body[data-wereld="kantoor"] .muurtop,
+body[data-wereld="kantoor"] .buitenmuur-top { stroke: #9a9cab; }
+body[data-wereld="kantoor"] .muurglans { stroke: #d8dae6; }
+body[data-wereld="kantoor"] .muurnerf { stroke: rgba(40, 41, 54, 0.3); }
+body[data-wereld="kantoor"] .muur { stroke: #7c7e8e; }
+body[data-wereld="kantoor"] .muur-buiten { stroke: #42434f; }
+
 body[data-wereld="woud"] .muurvoet,
 body[data-wereld="woud"] .buitenmuur-voet { stroke: #26281a; }
 body[data-wereld="woud"] .muurtop,
@@ -1532,3 +1660,76 @@ body[data-wereld="kerst"] .gloedrand { stop-color: #16282c; }
 body[data-wereld="academie"] .gloedkern { stop-color: #f4ecff; }
 body[data-wereld="academie"] .gloedmid { stop-color: #d8cdf2; }
 body[data-wereld="academie"] .gloedrand { stop-color: #191432; }
+body[data-wereld="school"] .gloedkern { stop-color: #fff6da; }
+body[data-wereld="school"] .gloedmid { stop-color: #d9e6f0; }
+body[data-wereld="school"] .gloedrand { stop-color: #16222c; }
+body[data-wereld="ziekenhuis"] .gloedkern { stop-color: #eafff8; }
+body[data-wereld="ziekenhuis"] .gloedmid { stop-color: #bfe8da; }
+body[data-wereld="ziekenhuis"] .gloedrand { stop-color: #12241e; }
+body[data-wereld="kantoor"] .gloedkern { stop-color: #f2eeff; }
+body[data-wereld="kantoor"] .gloedmid { stop-color: #cfd2ef; }
+body[data-wereld="kantoor"] .gloedrand { stop-color: #16182a; }
+
+
+/* ------------------------------------------------------------- themaknop
+   Eén knop in de kop die door drie standen loopt. Met een "A" ernaast als
+   hij het apparaat volgt, zodat je ziet dat je zelf niets hebt gekozen. */
+.themaknop {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text-2);
+  border-radius: 999px;
+  cursor: pointer;
+  font: 600 var(--t-sm)/1 var(--sans);
+  padding: 7px 11px;
+  min-width: 38px;
+  letter-spacing: 0.02em;
+}
+.themaknop:hover { color: var(--text); border-color: var(--accent); }
+.themaknop:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.themaknop[data-stand="vanzelf"] { color: var(--text-3); }
+
+@media print {
+  .themaknop { display: none; }
+  .palet { position: static; }
+}
+
+
+/* ------------------------------------------- aanwijzingen per naam
+   Een lijst van vierenvijftig zinnen onder elkaar is niet te overzien. Per
+   naam gegroepeerd zoek je terug wat er over iemand gezegd is, en zie je in
+   één oogopslag over wie er weinig bekend is. */
+.clue-groep { margin-bottom: var(--s4); }
+.clue-kop {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  margin: 0 0 var(--s1);
+  padding-bottom: var(--s1);
+  border-bottom: 1px solid var(--line-soft);
+}
+.clue-kop-naam {
+  font: 600 var(--t-sm)/1.4 var(--sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.clue-kop-merk { font-size: var(--t-xs); color: var(--text-3); font-style: italic; }
+.clue-ook {
+  margin: var(--s1) 0 0;
+  font-size: var(--t-xs);
+  color: var(--text-3);
+}
+
+
+/* ----------------------------------------------- de niveaukiezer op de voordeur
+   Dezelfde knoppen als in de generator, maar dan als enige keuze op de
+   voorpagina - want dit is sinds kort het enige wat je nog kiest. */
+.niveaukiezer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--s2);
+  margin: var(--s2) 0 var(--s4);
+}
+.btn-groot { font-size: var(--t-md); padding: var(--s3) var(--s5); }

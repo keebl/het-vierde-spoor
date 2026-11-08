@@ -3,7 +3,7 @@
 
 import { el, renderBlok, renderMap, renderLatin, latinLegenda, cellKey } from './boards.js';
 import { blokkenVan } from './blokken.js';
-import { loadProgress, saveProgress, clearProgress } from './state.js';
+import { loadProgress, saveProgress, clearProgress, randAan, zetRand } from './state.js';
 import { MECHANIC_BY_ID } from '../content/assignments.js';
 import { spelregelsVan } from '../content/spelregels.js';
 import { genreStijl } from './genre.js';
@@ -13,6 +13,10 @@ import { sceneVoor } from './scenes.js';
 import { renderKamerbord, renderLegenda, PENNING } from './board-rooms.js';
 import { portretElement, slachtofferElement } from './personenkunst-geschilderd.js';
 import { LEVEL_IDS } from '../engine/difficulty.js';
+import { telwoord, hoofdletter } from '../content/woorden.js';
+import { extraAanwijzing, bekendAlsAanwijzingen } from '../engine/generate-rooms.js';
+import { zinVoor } from '../content/rooms-text.js';
+import { makeRng } from '../engine/rng.js';
 
 export function renderPlayer(puzzle, mount) {
   const saved = loadProgress(puzzle.id) ?? {};
@@ -32,40 +36,22 @@ export function renderPlayer(puzzle, mount) {
     struck: new Set(saved.struck ?? []),
     note: null,
     wrong: new Set(),
+    // Na een controle: welke vakjes goed staan en welke niet. Het bord leest
+    // deze twee. Ze heetten eerder allebei 'wrong', en het kamerbord keek
+    // naar 'fout' - dat bestond niet, dus kwam er na "drie kloppen niet"
+    // geen enkele markering op het bord te staan. Daar was de controle dus
+    // een mededeling in plaats van een aanwijzing.
+    fout: new Set(),
+    goed: new Set(),
+    // Hints zijn extra aanwijzingen. Ze staan hier als ruwe aanwijzing en
+    // niet als zin, want de zin kan de puzzel altijd opnieuw maken en de
+    // ruwe vorm is wat de volgende hint nodig heeft om zichzelf niet te
+    // herhalen. Ze blijven bewaard: wie terugkomt is zijn hints niet kwijt.
+    extra: Array.isArray(saved.extra) ? saved.extra : [],
     solved: !!saved.solved,
     // Wie de oplossing opvraagt heeft hem niet zelf gevonden. Dat houden we
     // apart bij, zodat de lijst niet doet alsof je hem hebt opgelost.
     onthuld: !!saved.onthuld,
-  };
-
-  // Ongedaan maken. Op een bord van twaalf bij twaalf is één misklik anders
-  // tien zetten werk. We bewaren hele toestanden in plaats van losse zetten:
-  // dat is een paar honderd bytes per stap en het kan niet uit de pas lopen
-  // met wat er op het bord staat.
-  const terug = [];
-  const vooruit = [];
-
-  const momentopname = () => JSON.stringify({
-    marks: state.marks,
-    plaats: state.plaats,
-    kruis: [...state.kruis],
-    schets: state.schets,
-  });
-
-  const herstel = (tekst) => {
-    const d = JSON.parse(tekst);
-    state.marks = d.marks;
-    state.plaats = d.plaats;
-    state.kruis = new Set(d.kruis);
-    state.schets = d.schets;
-    state.wrong = new Set();
-    state.note = null;
-  };
-
-  const onthoud = () => {
-    terug.push(momentopname());
-    if (terug.length > 80) terug.shift();
-    vooruit.length = 0;
   };
 
   const persist = () => {
@@ -75,6 +61,7 @@ export function renderPlayer(puzzle, mount) {
       kruis: [...state.kruis],
       schets: state.schets,
       struck: [...state.struck],
+      extra: state.extra,
       solved: state.solved,
       onthuld: state.onthuld,
       titel: puzzle.title,
@@ -91,21 +78,6 @@ export function renderPlayer(puzzle, mount) {
   const play = el('div', { class: 'play' }, [clueCol, el('div', {}, [boards, notes])]);
   mount.append(play);
 
-  // Het toetsenbord erbij: ctrl+z en cmd+z. De vorige luisteraar gaat eraf,
-  // anders stapelen ze op bij elke keer dat de speler opnieuw getekend wordt.
-  if (renderPlayer.luisteraar) {
-    document.removeEventListener('keydown', renderPlayer.luisteraar);
-  }
-  renderPlayer.luisteraar = (e) => {
-    if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== 'z') return;
-    const veld = e.target?.tagName;
-    if (veld === 'INPUT' || veld === 'TEXTAREA') return;
-    e.preventDefault();
-    if (e.shiftKey) actions.overdoen();
-    else actions.ongedaan();
-  };
-  document.addEventListener('keydown', renderPlayer.luisteraar);
-
   const draw = () => {
     clueCol.replaceChildren(cluePanel(puzzle, state, draw, persist));
     boards.replaceChildren(...boardNodes(puzzle, state, onCell));
@@ -113,11 +85,12 @@ export function renderPlayer(puzzle, mount) {
   };
 
   function onCell(...args) {
-    onthoud();
     if (puzzle.kind === 'latin') cycleLatin(puzzle, state, ...args);
     else if (puzzle.kind === 'kamer') zetNeer(puzzle, state, ...args);
     else cycleMark(puzzle, state, ...args);
     state.wrong = new Set();
+    state.fout = new Set();
+    state.goed = new Set();
     state.note = null;
     if (isSolved(puzzle, state)) {
       state.solved = true;
@@ -129,12 +102,27 @@ export function renderPlayer(puzzle, mount) {
 
   const actions = {
     check() {
-      const { wrong, filled, total } = inspect(puzzle, state);
+      const { wrong, goed, filled, total } = inspect(puzzle, state);
       state.wrong = wrong;
+      state.fout = wrong;
+      state.goed = goed;
+      // Een controle hoort te laten zien wat er aan de hand is, niet het
+      // alleen te tellen. Groen om wat klopt, rood om wat niet klopt, en in
+      // het bericht staan beide aantallen - anders weet je na "vier kloppen
+      // niet" nog steeds niet welke van je twaalf je mag laten staan.
+      const juist = goed.size;
       if (wrong.size) {
-        state.note = { kind: 'bad', text: wrong.size === 1 ? 'Een markering klopt niet. Die staat omlijnd.' : `${wrong.size} markeringen kloppen niet. Ze staan omlijnd.` };
+        state.note = {
+          kind: 'bad',
+          text: juist
+            ? hoofdletter(`${telwoord(juist)} ${juist === 1 ? 'staat' : 'staan'} goed (groen omcirkeld), ${telwoord(wrong.size)} ${wrong.size === 1 ? 'staat' : 'staan'} verkeerd (rood).`)
+            : hoofdletter(`${telwoord(wrong.size)} ${wrong.size === 1 ? 'staat' : 'staan'} verkeerd. ${wrong.size === 1 ? 'Die is' : 'Die zijn'} rood omcirkeld.`),
+        };
       } else if (filled < total) {
-        state.note = { kind: 'ok', text: `Tot hier klopt alles. Nog ${total - filled} van ${total} in te vullen.` };
+        state.note = {
+          kind: 'ok',
+          text: `Alles wat er staat is goed: ${telwoord(juist)} van de ${total}. Nog ${telwoord(total - filled)} te gaan.`,
+        };
       } else {
         state.solved = true;
         state.note = { kind: 'good', text: `Helemaal goed. Het antwoord: ${puzzle.question.answer}.` };
@@ -143,52 +131,32 @@ export function renderPlayer(puzzle, mount) {
       draw();
     },
     hint() {
-      const hint = nextHint(puzzle, state);
       state.wrong = new Set();
+      state.fout = new Set();
+      state.goed = new Set();
+      const hint = puzzle.kind === 'kamer' ? kamerHint(puzzle, state) : nextHint(puzzle, state);
       state.note = hint
         ? { kind: 'ok', text: hint.text }
-        : { kind: 'ok', text: 'Er is niets meer te hinten: het bord is vol.' };
+        : { kind: 'ok', text: 'Er valt niets meer bij te zeggen: alles wat waar is, staat er al.' };
       if (isSolved(puzzle, state)) state.solved = true;
       persist();
       draw();
     },
     reveal() {
-      onthoud();
       // Eén misklik mag een puzzel niet verpesten.
       const bezig = Object.keys(state.plaats).length || Object.keys(state.marks).length;
       if (bezig && !window.confirm('De hele oplossing invullen? Daarmee is de puzzel voorbij.')) return;
       fillSolution(puzzle, state);
       state.onthuld = true;
       state.wrong = new Set();
+      state.fout = new Set();
+      state.goed = new Set();
       state.solved = true;
       state.note = { kind: 'ok', text: `De oplossing staat op het bord. Het antwoord: ${puzzle.question.answer}.` };
       persist();
       draw();
     },
-    ongedaan() {
-      if (!terug.length) {
-        state.note = { kind: 'ok', text: 'Er is niets om ongedaan te maken.' };
-        draw();
-        return;
-      }
-      vooruit.push(momentopname());
-      herstel(terug.pop());
-      persist();
-      draw();
-    },
-    overdoen() {
-      if (!vooruit.length) {
-        state.note = { kind: 'ok', text: 'Er is niets om over te doen.' };
-        draw();
-        return;
-      }
-      terug.push(momentopname());
-      herstel(vooruit.pop());
-      persist();
-      draw();
-    },
     reset() {
-      onthoud();
       const bezig = Object.keys(state.plaats).length || Object.keys(state.marks).length || state.kruis.size;
       if (bezig && !window.confirm('Alles wissen en opnieuw beginnen?')) return;
       state.onthuld = false;
@@ -198,9 +166,24 @@ export function renderPlayer(puzzle, mount) {
       state.schets = {};
       state.struck = new Set();
       state.wrong = new Set();
+      state.fout = new Set();
+      state.goed = new Set();
       state.solved = false;
       state.note = null;
       clearProgress(puzzle.id);
+      draw();
+    },
+    rand() {
+      // De sierlijst eromheen aan of uit. Hij kost bij een klein bord ruim
+      // een derde van de breedte; op een telefoon staat hij daarom vanzelf
+      // uit, en wie hem wil kan hem aanzetten.
+      zetRand(!randAan());
+      state.note = {
+        kind: 'ok',
+        text: randAan()
+          ? 'De lijst staat weer om het bord.'
+          : 'De lijst is eraf; het bord mag de hele breedte hebben.',
+      };
       draw();
     },
     print() {
@@ -261,7 +244,10 @@ function head(puzzle) {
     el('div', { class: 'puzzle-head' }, [
       crumbs,
       el('h1', { text: kop }),
-      el('p', { class: 'puzzel-ondertitel', text: puzzle.title }),
+      // De ondertitel is de algemene naam van de zaak ("Regenstad: Wie stond
+      // er alleen?"). Bij een zelfgemaakte puzzel is dat precies wat er al
+      // boven staat, en dan stond er twee keer dezelfde regel.
+      kop === puzzle.title ? null : el('p', { class: 'puzzel-ondertitel', text: puzzle.title }),
       el('p', { class: 'intro', text: puzzle.intro }),
       el('div', { class: 'question' }, [
         el('span', { class: 'label', text: 'De vraag' }),
@@ -313,8 +299,7 @@ function cluePanel(puzzle, state, draw, persist) {
     ])
     : null;
 
-  const list = el('div', { class: 'clues' });
-  for (const clue of puzzle.clues) {
+  const knopVoor = (clue) => {
     const done = state.struck.has(clue.n);
     const btn = el('button', {
       class: 'clue',
@@ -330,15 +315,115 @@ function cluePanel(puzzle, state, draw, persist) {
       persist();
       draw();
     });
-    list.append(btn);
+    return btn;
+  };
+
+  // De hints die de speler heeft opgevraagd, als gewone aanwijzingen achter
+  // de andere. Ze krijgen doorlopende nummers, want ze zijn niet minder waar
+  // dan de rest - je hebt ze alleen zelf gevraagd.
+  const extraClues = (state.extra ?? []).map((c, i) => ({
+    n: puzzle.clues.length + i + 1,
+    text: zinVoor(c, puzzle.woorden),
+    ruw: c,
+  }));
+
+  const blokken = [feitenBlok];
+
+  if (puzzle.kind === 'kamer') {
+    blokken.push(...perNaam(puzzle, extraClues, knopVoor));
+  } else {
+    const list = el('div', { class: 'clues' });
+    for (const clue of puzzle.clues) list.append(knopVoor(clue));
+    blokken.push(
+      el('p', { class: 'label', text: `Aanwijzingen (${puzzle.clues.length})` }),
+      list,
+    );
   }
 
-  return el('div', {}, [
-    feitenBlok,
-    el('p', { class: 'label', text: `Aanwijzingen (${puzzle.clues.length})` }),
-    list,
-    el('p', { class: 'legend', text: 'Klik een aanwijzing weg als je hem hebt gebruikt.' }),
-  ]);
+  // Bij het speurdoku staan de extra aanwijzingen al bij de naam waar ze
+  // over gaan; nog een keer apart eronder zou dezelfde zin twee keer zijn.
+  if (extraClues.length && puzzle.kind !== 'kamer') {
+    const lijst = el('div', { class: 'clues' });
+    for (const clue of extraClues) lijst.append(knopVoor(clue));
+    blokken.push(
+      el('p', { class: 'label', text: `Extra aanwijzingen (${extraClues.length})` }),
+      lijst,
+    );
+  }
+
+  blokken.push(el('p', { class: 'legend', text: 'Klik een aanwijzing weg als je hem hebt gebruikt.' }));
+  return el('div', {}, blokken);
+}
+
+// De aanwijzingen op een hoop was bij zestien bij zestien een lijst van
+// vierenvijftig zinnen waarin je niet terugvond wat er over Hendrik gezegd
+// was. Nu staan ze onder de naam waar ze over gaan.
+//
+// Elke aanwijzing staat één keer, onder de eerste naam die erin voorkomt, en
+// houdt zijn eigen nummer. Komt iemand als tweede naam voor - "Ada stond ten
+// noorden van Bram" staat bij Ada - dan krijgt Bram eronder een verwijzing
+// naar dat nummer. Zonder dat zou je bij Bram de helft missen.
+//
+// Tellingen ("in de keuken stonden precies twee mensen") gaan over niemand
+// in het bijzonder en staan apart, onderaan.
+function perNaam(puzzle, extraClues, knopVoor) {
+  const ruw = puzzle._ruwe ?? [];
+  const alle = [...puzzle.clues.map((c, i) => ({ clue: c, r: ruw[i] })),
+                ...extraClues.map((c) => ({ clue: c, r: c.ruw }))];
+
+  const groepen = new Map();
+  const ookIn = new Map();
+  const algemeen = [];
+  for (const { clue, r } of alle) {
+    if (!r || r.p == null) {
+      algemeen.push(clue);
+      continue;
+    }
+    if (!groepen.has(r.p)) groepen.set(r.p, []);
+    groepen.get(r.p).push(clue);
+    if (r.q != null) {
+      if (!ookIn.has(r.q)) ookIn.set(r.q, []);
+      ookIn.get(r.q).push(clue.n);
+    }
+  }
+
+  const uit = [];
+  const totaal = puzzle.clues.length + extraClues.length;
+  uit.push(el('p', { class: 'label', text: `Aanwijzingen (${totaal})` }));
+
+  // Iedereen op het bord langs, in de volgorde van het palet, zodat de
+  // lijst dezelfde volgorde heeft als de penningen erboven.
+  for (let p = 0; p < puzzle.personen.length; p++) {
+    const mijn = groepen.get(p) ?? [];
+    const verwijzingen = ookIn.get(p) ?? [];
+    if (!mijn.length && !verwijzingen.length) continue;
+    const kop = el('p', { class: 'clue-kop' }, [
+      el('span', { class: 'clue-kop-naam', text: puzzle.personen[p] }),
+      p === puzzle.slachtofferIdx ? el('span', { class: 'clue-kop-merk', text: 'het slachtoffer' }) : null,
+    ]);
+    const lijst = el('div', { class: 'clues' });
+    for (const clue of mijn) lijst.append(knopVoor(clue));
+    uit.push(el('div', { class: 'clue-groep' }, [
+      kop,
+      lijst,
+      verwijzingen.length
+        ? el('p', {
+          class: 'clue-ook',
+          text: `Staat ook in ${verwijzingen.length === 1 ? 'aanwijzing' : 'de aanwijzingen'} ${verwijzingen.join(', ')}.`,
+        })
+        : null,
+    ]));
+  }
+
+  if (algemeen.length) {
+    const lijst = el('div', { class: 'clues' });
+    for (const clue of algemeen) lijst.append(knopVoor(clue));
+    uit.push(el('div', { class: 'clue-groep' }, [
+      el('p', { class: 'clue-kop' }, [el('span', { class: 'clue-kop-naam', text: 'Over iedereen' })]),
+      lijst,
+    ]));
+  }
+  return uit;
 }
 
 
@@ -347,7 +432,7 @@ function boardNodes(puzzle, state, onCell) {
   if (puzzle.kind === 'kamer') {
     return [
       personenPalet(puzzle, state, onCell),
-      el('div', { class: 'board-wrap' }, renderKamerbord(puzzle, state, { klikCel: onCell })),
+      el('div', { class: 'board-wrap' }, renderKamerbord(puzzle, state, { klikCel: onCell }, { rand: randAan() })),
       renderLegenda(puzzle),
       el('p', {
         class: 'legend',
@@ -390,8 +475,20 @@ function boardNodes(puzzle, state, onCell) {
 }
 
 // De verdachten als penningen om op te pakken. De gekozen penning licht op.
+//
+// Twee rijen, niet één. Uitsluiten en Schetsen stonden achter de laatste
+// verdachte aan, en op een bord met zestien namen betekende dat: eerst
+// zestien penningen voorbij schuiven voordat je bij je potlood bent. Nu
+// staan de namen boven en de twee standen eronder, altijd op dezelfde plek.
+//
+// De hele balk plakt bovenaan vast zodra je naar beneden scrolt (zie .palet
+// in de opmaak). Daarmee staan de namen en het bord altijd samen op één
+// scherm, ook op een telefoon.
 function personenPalet(puzzle, state, onCell) {
   const balk = el('div', { class: 'palet' });
+  const namen = el('div', { class: 'palet-namen' });
+  const standen = el('div', { class: 'palet-standen' });
+  balk.append(namen, standen);
   puzzle.personen.forEach((naam, i) => {
     const geplaatst = state.plaats[i] != null;
     const isLijk = i === puzzle.slachtofferIdx;
@@ -407,7 +504,7 @@ function personenPalet(puzzle, state, onCell) {
       el('span', { text: naam }),
     ]);
     knop.addEventListener('click', () => onCell(null, i));
-    balk.append(knop);
+    namen.append(knop);
   });
 
   const kruis = el('button', {
@@ -416,7 +513,7 @@ function personenPalet(puzzle, state, onCell) {
     'aria-pressed': String(state.gekozen === -1),
   }, [el('span', { class: 'palet-fiche', text: '✕' }), el('span', { text: 'Uitsluiten' })]);
   kruis.addEventListener('click', () => onCell(null, -1));
-  balk.append(kruis);
+  standen.append(kruis);
 
   // Schetsstand: klikken zet dan de beginletter van de gekozen figuur in het
   // vakje in plaats van de figuur zelf.
@@ -426,7 +523,7 @@ function personenPalet(puzzle, state, onCell) {
     'aria-pressed': String(state.schetsAan),
   }, [el('span', { class: 'palet-fiche', text: '✎' }), el('span', { text: 'Schetsen' })]);
   schets.addEventListener('click', () => onCell(null, -2));
-  balk.append(schets);
+  standen.append(schets);
 
   return balk;
 }
@@ -439,11 +536,13 @@ function toolbar(puzzle, state, actions) {
     bar.append(b);
   };
   add('Controleer', actions.check, true);
-  add('Ongedaan', actions.ongedaan);
-  add('Overdoen', actions.overdoen);
   add('Hint', actions.hint);
   add('Oplossing', actions.reveal);
   add('Begin opnieuw', actions.reset);
+  // Alleen bij het speurdoku: de andere borden hebben geen sierlijst.
+  if (puzzle.kind === 'kamer') {
+    add(randAan() ? 'Lijst eraf' : 'Lijst eromheen', actions.rand);
+  }
   add('Printen', actions.print);
   add('Link kopiëren', actions.share);
   return bar;
@@ -558,6 +657,7 @@ function fillSolution(puzzle, state) {
 // Wat staat er fout, en hoe vol is het bord?
 function inspect(puzzle, state) {
   const wrong = new Set();
+  const goed = new Set();
   let filled = 0;
   let total = 0;
   if (puzzle.kind === 'kamer') {
@@ -567,8 +667,9 @@ function inspect(puzzle, state) {
       if (cel == null) continue;
       filled++;
       if (cel !== puzzle.oplossing[p]) wrong.add(cel);
+      else goed.add(cel);
     }
-    return { wrong, filled, total };
+    return { wrong, goed, filled, total };
   }
   if (puzzle.kind === 'latin') {
     const n = puzzle.rows.length;
@@ -580,9 +681,10 @@ function inspect(puzzle, state) {
         if (v == null) continue;
         filled++;
         if (v !== puzzle.full[r][c]) wrong.add(`${r},${c}`);
+        else goed.add(`${r},${c}`);
       }
     }
-    return { wrong, filled, total };
+    return { wrong, goed, filled, total };
   }
   const n = puzzle.anchor.items.length;
   for (const blok of blokkenVan(puzzle)) {
@@ -602,9 +704,10 @@ function inspect(puzzle, state) {
       }
       if (telt) filled++;
       if (picked !== correct) wrong.add(`${blok.id}:${cellKey(slot, picked)}`);
+      else if (telt) goed.add(`${blok.id}:${cellKey(slot, picked)}`);
     }
   }
-  return { wrong, filled, total };
+  return { wrong, goed, filled, total };
 }
 
 function isSolved(puzzle, state) {
@@ -612,25 +715,38 @@ function isSolved(puzzle, state) {
   return wrong.size === 0 && filled === total;
 }
 
+// Een hint bij het speurdoku: een extra aanwijzing, geen stukje oplossing.
+//
+// Hiervoor zette de hint de eerstvolgende figuur voor je neer. Dat werkt
+// wel, maar je leert er niets van en je houdt er een kortere puzzel aan
+// over in plaats van een begrijpelijkere. Nu komt er een zin bij, onderaan
+// de lijst, net zo waar als de andere - en gekozen op wat hij jou oplevert
+// vanaf de stand van jouw bord. De motor doet die afweging; zie
+// extraAanwijzing in generate-rooms.js.
+function kamerHint(puzzle, state) {
+  if (!puzzle._rooster) return null;
+  const bekend = bekendAlsAanwijzingen(puzzle._rooster, puzzle.oplossing, state.plaats);
+  const bestaand = [...(puzzle._ruwe ?? []), ...state.extra];
+  const extra = extraAanwijzing(
+    puzzle._rooster,
+    puzzle.oplossing,
+    puzzle.slachtofferIdx,
+    bestaand,
+    bekend,
+    makeRng(`${puzzle.id}:hint${state.extra.length}`),
+  );
+  if (!extra) return null;
+  state.extra = [...state.extra, extra];
+  const nummer = puzzle.clues.length + state.extra.length;
+  return {
+    text: `Erbij als aanwijzing ${nummer}: ${zinVoor(extra, puzzle.woorden)}`,
+  };
+}
+
 // De eerstvolgende stap verklappen, met de aanwijzing die erover gaat.
+// Dit is nog de hint van de andere soorten puzzels; het speurdoku heeft
+// sinds kort een echte extra aanwijzing (zie kamerHint hierboven).
 function nextHint(puzzle, state) {
-  if (puzzle.kind === 'kamer') {
-    for (let p = 0; p < puzzle.n; p++) {
-      if (state.plaats[p] === puzzle.oplossing[p]) continue;
-      const cel = puzzle.oplossing[p];
-      const bezet = state.plaatsVanCel(cel);
-      if (bezet != null) delete state.plaats[bezet];
-      state.plaats[p] = cel;
-      const i = (puzzle._ruwe ?? []).findIndex((c) => c.p === p || c.q === p);
-      const kamer = puzzle.kamerNamen[puzzle.kamerVan[cel]];
-      return {
-        text: i >= 0
-          ? `${puzzle.personen[p]} stond in ${kamer}. Dat volgt uit aanwijzing ${i + 1}, samen met wat er al staat.`
-          : `${puzzle.personen[p]} stond in ${kamer}.`,
-      };
-    }
-    return null;
-  }
   if (puzzle.kind === 'latin') {
     const n = puzzle.rows.length;
     for (let r = 0; r < n; r++) {

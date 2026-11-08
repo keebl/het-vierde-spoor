@@ -114,7 +114,7 @@ export function renderUitleg(mount) {
   );
 
   mount.append(
-    sectie('Genres', tabel(WORLDS.map((w) => [`${w.icon} ${w.name}`, w.blurb])), 'Hetzelfde spel, een ander decor en een ander verhaal.')
+    sectie('De decors', tabel(WORLDS.map((w) => [`${w.icon} ${w.name}`, w.blurb])), `Hetzelfde spel, een ander decor en een ander verhaal. Je kiest het decor niet: elke nieuwe puzzel speelt ergens anders, en er zijn er ${WORLDS.length}.`)
   );
 
   mount.append(

@@ -1291,4 +1291,294 @@ export const GESCHILDERD = {
     vloer('houtdonker', poot(12, 40, 5, 3.4)),
     v('houtdonker', poot(31, 40, 5, 3.4)),
   ],
+
+  // ======================================= wat er in een gebouw van nu staat
+  //
+  // Twintig stukken voor het Rietveld College, Sint-Joris en De
+  // Spiegeltoren. Ze staan hier bij elkaar en niet bij een soort ruimte,
+  // omdat die drie werelden ze delen: een locker, een bureaustoel en een
+  // brandblusser zien er op een school, in een ziekenhuis en in een
+  // kantoortoren hetzelfde uit.
+  //
+  // Ze zijn er omdat omdopen alleen niet genoeg is. Een haard die "de
+  // radiator" gaat heten is nog steeds een haard met vuur erin, en dat zie
+  // je. Waar het silhouet liegt, komt er een nieuwe tekening; waar het niet
+  // liegt - een koelkast, een fornuis, een bureaustoel bij een boekenkast -
+  // blijft de oude staan.
+
+  radiator: [
+    v('metaal', plaat(7, 18, 34, 3)),
+    v('papier', romp(8, 20, 32, 17, { taps: 0.01 })),
+    streep('metaal', 1.5, 'M12 21 V36 M17 21 V36 M22 21 V36 M27 21 V36 M32 21 V36 M36.6 21 V36'),
+    v('metaal', plaat(7.4, 36, 33.2, 2.6, { zak: 0.3 })),
+    v('metaal', staaf(11, 38.6, 11, 41, 2)),
+    v('metaal', staaf(37, 38.6, 37, 41, 2)),
+    vloer('metaal', plaat(8, 41, 32, 2.6, { zak: 0.4 })),
+  ],
+
+  bureaustoel: [
+    v('stofblauw', romp(14, 8, 20, 16, { taps: 0.04 })),
+    v('donker', plaat(13.4, 7, 21.2, 2.4, { zak: 0.5 })),
+    v('stofblauw', kussen(12, 23, 24, 6)),
+    v('donker', plaat(11.6, 28, 24.8, 2.2, { zak: 0.4 })),
+    v('metaal', staaf(24, 30, 24, 37, 2.6)),
+    v('metaal', staaf(13, 39.4, 35, 39.4, 2.2)),
+    v('metaal', staaf(17, 40.6, 31, 37.6, 2)),
+    v('metaal', staaf(17, 37.6, 31, 40.6, 2)),
+    v('donker', bol(13, 40.6, 1.6)),
+    v('donker', bol(35, 40.6, 1.6)),
+    vloer('metaal', ovaal(24, 41.6, 13, 2.2)),
+  ],
+
+  klokzuil: [
+    v('metaal', zuilvorm(24, 14, 5, 8, 24)),
+    v('donker', bol(24, 11, 10)),
+    v('papier', bol(24, 11, 8.2)),
+    streep('donker', 1.3, 'M24 11 V5.6 M24 11 L28.4 13.6'),
+    v('donker', bol(24, 11, 1.2)),
+    streep('donker', 0.8, 'M24 3.4 V4.8 M32 11 H30.6 M24 19 V17.6 M16 11 H17.4'),
+    v('metaal', plaat(15, 37.4, 18, 3, { zak: 0.4 })),
+    vloer('donker', ovaal(24, 41, 11, 2.4)),
+  ],
+
+  whiteboard: [
+    v('papier', romp(7, 6, 34, 23, { taps: 0.005 })),
+    v('metaal', plaat(6, 4.6, 36, 2.6)),
+    streep('water', 1.2, 'M12 12 H26 M12 16 L21 16 M12 20 H30 M28 23.4 H34'),
+    streep('vuur', 1.2, 'M12 24.6 H19'),
+    v('metaal', plaat(10, 28.4, 28, 2.4, { zak: 0.4 })),
+    v('metaal', staaf(14, 30, 11, 40, 2.2)),
+    v('metaal', staaf(34, 30, 37, 40, 2.2)),
+    v('donker', bol(11, 41, 1.8)),
+    v('donker', bol(37, 41, 1.8)),
+    vloer('metaal', plaat(10, 40.4, 28, 2.4, { zak: 0.5 })),
+  ],
+
+  archiefkast: [
+    vloer('metaal', romp(12, 8, 24, 33)),
+    v('donker', romp(13.6, 10, 20.8, 6.6, { taps: 0.01 })),
+    v('donker', romp(13.6, 17.6, 20.8, 6.6, { taps: 0.01 })),
+    v('donker', romp(13.6, 25.2, 20.8, 6.6, { taps: 0.01 })),
+    v('donker', romp(13.6, 32.8, 20.8, 6.6, { taps: 0.01 })),
+    v('metaal', plaat(20, 12.6, 8, 1.8)),
+    v('metaal', plaat(20, 20.2, 8, 1.8)),
+    v('metaal', plaat(20, 27.8, 8, 1.8)),
+    v('metaal', plaat(20, 35.4, 8, 1.8)),
+    v('metaal', plaat(11, 6.4, 26, 2.6)),
+  ],
+
+  lockerkast: [
+    vloer('stofblauw', romp(9, 6, 30, 35)),
+    v('donker', romp(11, 8, 12.6, 14.6, { taps: 0.01 })),
+    v('donker', romp(24.4, 8, 12.6, 14.6, { taps: 0.01 })),
+    v('donker', romp(11, 24, 12.6, 14.6, { taps: 0.01 })),
+    v('donker', romp(24.4, 24, 12.6, 14.6, { taps: 0.01 })),
+    streep('metaal', 0.9, 'M13.4 10.4 H21 M13.4 12 H21 M26.8 10.4 H34.4 M26.8 12 H34.4 M13.4 26.4 H21 M13.4 28 H21 M26.8 26.4 H34.4 M26.8 28 H34.4'),
+    v('metaal', bol(21.4, 17.4, 1.3)),
+    v('metaal', bol(34.8, 17.4, 1.3)),
+    v('metaal', bol(21.4, 33.4, 1.3)),
+    v('metaal', bol(34.8, 33.4, 1.3)),
+  ],
+
+  brandblusser: [
+    v('vuur', ton(24, 14, 15, 11.6, 22)),
+    v('donker', romp(21.6, 9.4, 4.8, 5, { taps: 0.04 })),
+    v('metaal', staaf(23, 10, 30.6, 12.4, 1.8)),
+    v('donker', staaf(30.6, 12.4, 31.4, 24, 1.6)),
+    v('papier', romp(19.6, 22, 9, 7, { taps: 0.01 })),
+    streep('donker', 0.7, 'M21.2 24.4 H27.4 M21.2 26.2 H25.8'),
+    v('metaal', plaat(16.6, 36, 15, 2.4, { zak: 0.3 })),
+    vloer('donker', ovaal(24, 40, 10.6, 2.4)),
+  ],
+
+  lantaarnpaal: [
+    v('metaal', zuilvorm(24, 13, 2.2, 3.8, 26)),
+    v('donker', romp(18, 6, 12, 8, { taps: 0.14 })),
+    v('vuur', romp(19.4, 7.4, 9.2, 5.6, { taps: 0.12 }), { glans: 1 }),
+    v('goud', ovaal(24, 10.4, 3.2, 2), { glans: 1 }),
+    v('donker', kap(24, 2.4, 14, 4)),
+    v('metaal', bol(24, 2.2, 1.2)),
+    v('metaal', plaat(19.6, 37, 9, 2.6, { zak: 0.3 })),
+    vloer('steen', ovaal(24, 40.4, 8.6, 2.4)),
+  ],
+
+  wachtbank: [
+    v('stofblauw', romp(6, 14, 11, 11, { taps: 0.03 })),
+    v('stofblauw', romp(18.6, 14, 11, 11, { taps: 0.03 })),
+    v('stofblauw', romp(31.2, 14, 11, 11, { taps: 0.03 })),
+    v('stofblauw', kussen(5, 25.4, 38, 5.4)),
+    v('metaal', plaat(4, 30.4, 40, 2.2, { zak: 0.3 })),
+    v('metaal', staaf(9, 32, 9, 40, 2.2)),
+    v('metaal', staaf(39, 32, 39, 40, 2.2)),
+    vloer('metaal', plaat(5, 39.8, 38, 2.4, { zak: 0.5 })),
+  ],
+
+  afvalcontainer: [
+    vloer('stofgroen', bak(24, 12, 34, 27, 26)),
+    v('donker', plaat(6.6, 9.6, 34.8, 3.4, { zak: 0.5 })),
+    v('metaal', staaf(16, 9.6, 16, 7, 1.6)),
+    v('metaal', staaf(32, 9.6, 32, 7, 1.6)),
+    streep('donker', 1.1, 'M12 20 H36 M12.8 27 H35.2'),
+    v('donker', bol(13.4, 40, 2.6)),
+    v('donker', bol(34.6, 40, 2.6)),
+  ],
+
+  vlaggenmast: [
+    v('metaal', zuilvorm(14, 3, 1.8, 3, 35)),
+    v('metaal', bol(14, 2.2, 1.6)),
+    v('stofblauw', doek(15.4, 4.4, 21, 13)),
+    streep('papier', 1.1, 'M18 9 L33 8.4 M18 13 L32.6 12.4'),
+    streep('touw', 0.7, 'M13 5 Q11.4 20 12.6 33'),
+    v('steen', plaat(7.4, 36.6, 14, 3.2, { zak: 0.3 })),
+    vloer('steen', ovaal(14.4, 40.4, 11.6, 2.6)),
+  ],
+
+  dossierrek: [
+    v('metaal', staaf(9, 7, 9, 41, 2.2)),
+    v('metaal', staaf(39, 7, 39, 41, 2.2)),
+    v('metaal', plaat(8, 17.4, 32, 2.2, { zak: 0.3 })),
+    v('metaal', plaat(8, 28.4, 32, 2.2, { zak: 0.3 })),
+    v('papier', romp(11, 9, 3.4, 8.4)),
+    v('houtrood', romp(15, 8.4, 3.4, 9)),
+    v('stofblauw', romp(19, 9.4, 3.4, 8)),
+    v('papier', romp(23, 8.6, 3.4, 8.8)),
+    v('houtrood', romp(27.4, 9.6, 3.4, 7.8)),
+    v('stofblauw', romp(12, 20.4, 3.4, 8)),
+    v('papier', romp(16, 19.6, 3.4, 8.8)),
+    v('houtrood', romp(20, 20.6, 3.4, 7.8)),
+    v('stofgroen', romp(24.4, 19.8, 3.4, 8.6)),
+    vloer('metaal', plaat(8, 40.6, 32, 2.6, { zak: 0.4 })),
+  ],
+
+  automaat: [
+    vloer('donker', romp(7, 4, 34, 37)),
+    v('glas', romp(9.4, 6.4, 20, 27, { taps: 0.004 }), { glans: 1 }),
+    v('metaal', plaat(9.4, 13.4, 20, 1.4, { zak: 0.2 })),
+    v('metaal', plaat(9.4, 20.4, 20, 1.4, { zak: 0.2 })),
+    v('metaal', plaat(9.4, 27.4, 20, 1.4, { zak: 0.2 })),
+    v('vuur', romp(11, 8.6, 4, 4.6)),
+    v('water', romp(16.4, 8.6, 4, 4.6)),
+    v('stofgroen', romp(21.8, 8.6, 4, 4.6)),
+    v('papier', romp(11, 15.6, 4, 4.6)),
+    v('houtrood', romp(16.4, 15.6, 4, 4.6)),
+    v('water', romp(21.8, 15.6, 4, 4.6)),
+    v('stofgroen', romp(11, 22.6, 4, 4.6)),
+    v('papier', romp(16.4, 22.6, 4, 4.6)),
+    v('metaal', romp(31.4, 7, 7.6, 16, { taps: 0.01 })),
+    v('vuur', bol(35.2, 9.6, 1.1), { glans: 1 }),
+    streep('donker', 0.8, 'M33 13 H37.4 M33 15.6 H37.4 M33 18.2 H37.4'),
+    v('donker', romp(31.4, 25.4, 7.6, 5.4, { taps: 0.01 })),
+    v('donker', romp(9.4, 34.6, 20, 4.6, { taps: 0.01 })),
+  ],
+
+  beeldscherm: [
+    v('donker', romp(5, 7, 38, 22, { taps: 0.004 })),
+    v('glas', romp(6.6, 8.6, 34.8, 18.8, { taps: 0.004 }), { glans: 1 }),
+    streep('water', 1.2, 'M11 14 H24 M11 18 H31 M11 22 H19'),
+    v('vuur', bol(39.6, 27.6, 1)),
+    v('metaal', staaf(24, 29, 24, 37.4, 3)),
+    v('metaal', plaat(15, 37.4, 18, 2.6, { zak: 0.3 })),
+    vloer('donker', ovaal(24, 40.8, 12.6, 2.4)),
+  ],
+
+  fietsenrek: [
+    v('metaal', 'M7 41 V26 Q7 21 12 21 Q17 21 17 26 V41 L15 41 V26 Q15 23 12 23 Q9 23 9 26 V41 Z'),
+    v('metaal', 'M19 41 V26 Q19 21 24 21 Q29 21 29 26 V41 L27 41 V26 Q27 23 24 23 Q21 23 21 26 V41 Z'),
+    v('metaal', 'M31 41 V26 Q31 21 36 21 Q41 21 41 26 V41 L39 41 V26 Q39 23 36 23 Q33 23 33 26 V41 Z'),
+    v('donker', ring(24, 30, 8, 1.6)),
+    streep('metaal', 0.8, 'M24 23 V37 M17 30 H31 M19 25.4 L29 34.6 M19 34.6 L29 25.4'),
+    vloer('steen', plaat(5, 40.6, 38, 2.4, { zak: 0.4 })),
+  ],
+
+  prullenbak: [
+    vloer('metaal', bak(24, 16, 22, 17, 23)),
+    v('donker', plaat(12, 13.6, 24, 3)),
+    v('donker', romp(21.6, 10.6, 4.8, 3.2, { taps: 0.04 })),
+    streep('metaal', 0.9, 'M15.6 22 V36 M24 21.4 V37 M32.4 22 V36'),
+    v('metaal', staaf(13, 38, 15, 41.4, 1.6)),
+  ],
+
+  ziekenhuisbed: [
+    v('metaal', romp(4, 12, 4.4, 15, { taps: 0.01 })),
+    v('papier', kussen(9.4, 13.6, 14, 7)),
+    v('stofblauw', plaat(6.6, 20.4, 35, 6.4, { zak: 0.5 })),
+    v('papier', plaat(21, 20.8, 20.4, 2.8, { zak: 0.3 })),
+    v('metaal', plaat(6, 26.6, 36, 2.2, { zak: 0.4 })),
+    streep('metaal', 1.5, 'M12 26.6 V19.4 M18 26.6 V19.4 M12 19.4 H18'),
+    streep('metaal', 1.5, 'M30 26.6 V19.4 M36 26.6 V19.4 M30 19.4 H36'),
+    v('metaal', staaf(9.4, 28.6, 9.4, 38.4, 2.2)),
+    v('metaal', staaf(38.6, 28.6, 38.6, 38.4, 2.2)),
+    v('donker', bol(9.4, 40, 2.2)),
+    v('donker', bol(38.6, 40, 2.2)),
+    vloer('metaal', plaat(8, 38, 32, 2, { zak: 0.5 })),
+  ],
+
+  infuusstandaard: [
+    v('metaal', staaf(24, 5, 24, 37, 1.6)),
+    v('metaal', staaf(24, 5.6, 30.4, 5.6, 1.6)),
+    v('metaal', 'M29.4 6.4 q1.4 1.6 0 3 q-1.4 -1.4 0 -3 Z'),
+    v('water', 'M25.6 9 H34 L33 22.4 Q29.8 26 26.6 22.4 Z', { glans: 1 }),
+    v('papier', romp(27.4, 11.4, 2.4, 8)),
+    v('glas', romp(28.4, 24.4, 3.2, 4.6), { glans: 1 }),
+    streep('water', 0.9, 'M30 29 Q33 33 29.6 36'),
+    v('metaal', staaf(16, 40, 32, 40, 2),),
+    v('metaal', staaf(19, 41.2, 29, 38.4, 1.8)),
+    vloer('metaal', ovaal(24, 41, 9.6, 2)),
+  ],
+
+  balie: [
+    vloer('houtdonker', romp(5, 18, 38, 23)),
+    v('papier', plaat(3.6, 15, 40.8, 3.6)),
+    v('metaal', plaat(5, 22.4, 38, 1.6, { zak: 0.3 })),
+    v('donker', romp(8, 26, 14, 13, { taps: 0.01 })),
+    v('donker', romp(26, 26, 14, 13, { taps: 0.01 })),
+    v('glas', romp(28, 7.4, 13, 7.4, { taps: 0.01 }), { glans: 1 }),
+    v('donker', staaf(34.4, 14.8, 34.4, 15.4, 2.6)),
+  ],
+
+  koffieautomaat: [
+    vloer('donker', romp(11, 10, 26, 31)),
+    v('metaal', plaat(9.6, 8, 28.8, 3)),
+    v('glas', romp(13.4, 12, 9, 8, { taps: 0.01 }), { glans: 1 }),
+    streep('vuur', 1.1, 'M15 15 H20 M15 17.4 H18.6'),
+    v('donker', romp(25, 12, 9, 8, { taps: 0.01 })),
+    v('metaal', bol(29.4, 14.4, 1.6)),
+    v('metaal', bol(29.4, 18, 1.2)),
+    v('metaal', plaat(14, 22.4, 20, 2.2)),
+    v('papier', romp(20.4, 24.6, 7, 8, { taps: 0.03 })),
+    v('metaal', plaat(13, 34, 22, 2.4, { zak: 0.4 })),
+  ],
+
+  // Drie stukken voor buiten in een gebouw van nu: een binnentuin en een
+  // dakterras hebben geen waterput en geen boomstronk.
+
+  plantenbakrond: [
+    vloer('steen', bak(24, 22, 30, 24, 19)),
+    v('steenkoel', plaat(8.4, 20.4, 31.2, 3.4)),
+    v('blad', hoop(24, 20.4, 26, 9)),
+    v('blad', blad(16, 14.6, 11, 4.4, 212)),
+    v('blad', blad(31, 13.4, 12, 4.6, 332)),
+    v('blad', blad(24, 10.6, 10, 4, 268)),
+    streep('steenkoel', 0.9, 'M12 29 H36 M13 35 H35'),
+  ],
+
+  rolkar: [
+    v('metaal', staaf(13, 7, 13, 36, 2.4)),
+    v('metaal', staaf(13, 7, 25, 7, 2.2)),
+    v('metaal', plaat(11, 33, 28, 3, { zak: 0.4 })),
+    v('houtdonker', romp(16, 20, 20, 13, { taps: 0.02 })),
+    v('houtdonker', romp(18, 11, 16, 9, { taps: 0.02 })),
+    streep('metaal', 0.9, 'M17.4 24 H34.6 M19 15 H33'),
+    v('donker', bol(15.6, 38.6, 3.4)),
+    v('donker', bol(35.4, 38.6, 3.4)),
+    vloer('metaal', plaat(12, 36, 26, 2.2, { zak: 0.3 })),
+  ],
+
+  zitblok: [
+    vloer('hout', romp(10, 22, 28, 19)),
+    v('houtdonker', plaat(8.6, 19.4, 30.8, 3.6)),
+    v('hout', plaat(10.4, 23.4, 27.2, 2, { zak: 0.2 })),
+    streep('houtdonker', 0.8, 'M16 24.4 V40 M24 24 V40.6 M32 24.4 V40'),
+    v('houtdonker', plaat(11, 38.6, 26, 2.4, { zak: 0.3 })),
+  ],
 };

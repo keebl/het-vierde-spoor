@@ -107,13 +107,18 @@ const LICHTBRONNEN = new Set([
   'haard', 'fornuis', 'vuur', 'kaarsentafel', 'distilleerketel', 'ketel',
 ]);
 
-export function renderKamerbord(puzzle, state, acties) {
+export function renderKamerbord(puzzle, state, acties, opties = {}) {
   // Waar het meubilair in deze wereld van gemaakt is. Zie WERELDSTOF; de
   // ruil gaat er aan het eind van deze functie weer af, zodat de portretjes
   // in het palet en de tegels op de voorpagina hun eigen kleur houden.
   zetWereldstof(WERELDSTOF[puzzle.world?.id]);
   const n = puzzle.n;
-  const RAND = randVan(n);
+  // De sierlijst eromheen kost ruimte: bij vijf bij vijf is hij ruim een
+  // derde van de breedte. Op een breed scherm is dat sfeer, op een telefoon
+  // eet hij het bord op. Daarom kun je hem uitzetten; dan blijft er een
+  // smalle kader over waar de rij- en kolomletters in passen.
+  const metRand = opties.rand !== false;
+  const RAND = metRand ? randVan(n) : 6;
   // Het bord zelf, en daaromheen de lucht waar de ornamenten in steken.
   const bordB = n * CEL + RAND * 2 + BAND;
   const bordH = n * CEL + RAND * 2 + BAND;
@@ -140,10 +145,12 @@ export function renderKamerbord(puzzle, state, acties) {
     rx: 12, class: 'bordblad',
   }));
 
-  tekenBordrand(svg, {
-    wereld: puzzle.world?.id,
-    x0: LUCHT_ZIJ, y0: LUCHT_BOVEN, breedte: bordB, hoogte: bordH, dikte: RAND,
-  });
+  if (metRand) {
+    tekenBordrand(svg, {
+      wereld: puzzle.world?.id,
+      x0: LUCHT_ZIJ, y0: LUCHT_BOVEN, breedte: bordB, hoogte: bordH, dikte: RAND,
+    });
+  }
 
   const x = (c) => LUCHT_ZIJ + RAND + BAND + c * CEL;
   const y = (r) => LUCHT_BOVEN + RAND + BAND + r * CEL;
@@ -460,12 +467,26 @@ export function renderKamerbord(puzzle, state, acties) {
       regels = splits(naam);
       groot = (breedKamer - 10) / (Math.max(...regels.map((t) => t.length)) * BREED);
     }
-    groot = Math.max(7, Math.min(17, groot));
+    // Kleiner dan het was, en in stappen van een halve punt. Zeventien was
+    // zo groot dat de naam het bord ging regeren in plaats van het te
+    // dienen; en doordat elke kamer zijn eigen uitgerekende maat kreeg,
+    // stonden er op één bord acht verschillende lettergroottes door elkaar.
+    // Afronden op een halve punt geeft er in de praktijk nog drie of vier.
+    groot = Math.max(7, Math.min(12.5, groot));
+    groot = Math.round(groot * 2) / 2;
 
+    // Recht op de middellijn van de rij vakjes waar de naam op ligt. Hier
+    // kreeg elke naam een eigen scheve hoek van een paar graden - bedoeld
+    // als handschrift, maar met tien namen op een bord ziet het eruit als
+    // tien stickers die scheef zijn opgeplakt. Zonder die draai lopen alle
+    // namen met de vakjes mee.
     const cx = x(run.c) + (run.lengte * CEL) / 2;
-    const cy = y(run.r) + CEL / 2;
-    const draai = (((k * 37) % 9) - 4) * 0.8;
-    const groep = el('g', { transform: `rotate(${draai.toFixed(2)} ${cx} ${cy})` });
+    // Bovenin het vakje, niet in het midden. Een kruisje staat midden in
+    // een vakje, en een naam die daar ook staat wordt doormidden gesneden:
+    // "DE HOO✕DGANG". Boven de kruisjes langs blijft hij heel, en onderin
+    // is al bezet door de schetsletters.
+    const cy = y(run.r) + CEL * 0.2;
+    const groep = el('g');
     // De letterbreedte van een geschreven letter laat zich niet uitrekenen,
     // dus leggen we hem vast: nooit breder dan de vrije rij waar hij op
     // staat. Zo loopt een lange naam niet de buurkamer in.
@@ -555,7 +576,11 @@ export function renderKamerbord(puzzle, state, acties) {
     if (pi === puzzle.slachtofferIdx) {
       tekenSlachtofferkruis(g, { x: cx - maat / 2, y: cy - maat / 2, grootte: maat });
     }
+    // Na een controle: een ring om de penning. Rood om wat verkeerd staat,
+    // groen om wat klopt. Alleen rood zou je laten zoeken naar wat je mag
+    // laten staan; met allebei lees je de uitslag in één oogopslag af.
     if (state.fout?.has(cel)) g.append(el('circle', { cx, cy, r: 30, class: 'penningfout' }));
+    else if (state.goed?.has(cel)) g.append(el('circle', { cx, cy, r: 30, class: 'penninggoed' }));
     geplaatst.append(g);
   }
   svg.append(geplaatst);
@@ -610,8 +635,8 @@ export function renderKamerbord(puzzle, state, acties) {
     figuren.forEach((fi, k) => {
       // Onderin het vakje: het naambordje van de kamer zit bovenin.
       const t = el('text', {
-        x: x(kol(cel)) + 10 + (k % 4) * 15,
-        y: y(rij(cel)) + CEL - 24 + Math.floor(k / 4) * 14,
+        x: x(kol(cel)) + 11 + (k % 4) * 16,
+        y: y(rij(cel)) + CEL - 23 + Math.floor(k / 4) * 15,
         class: 'schetsletter',
       });
       t.textContent = (puzzle.personen[fi] ?? '?').charAt(0).toUpperCase();
@@ -643,11 +668,13 @@ export function renderKamerbord(puzzle, state, acties) {
   svg.append(klik);
 
   // Als laatste, zodat het over het speelveld heen valt.
-  tekenBordhangers(svg, {
-    wereld: puzzle.world?.id,
-    x0: LUCHT_ZIJ, y0: LUCHT_BOVEN, breedte: bordB, hoogte: bordH, dikte: RAND,
-    luchtBoven: LUCHT_BOVEN, luchtZij: LUCHT_ZIJ,
-  });
+  if (metRand) {
+    tekenBordhangers(svg, {
+      wereld: puzzle.world?.id,
+      x0: LUCHT_ZIJ, y0: LUCHT_BOVEN, breedte: bordB, hoogte: bordH, dikte: RAND,
+      luchtBoven: LUCHT_BOVEN, luchtZij: LUCHT_ZIJ,
+    });
+  }
 
   zetWereldstof(null);
   return svg;

@@ -9,6 +9,8 @@ import { renderPlayer } from './ui/player.js';
 import { buildPuzzle, parsePuzzleId } from './puzzle.js';
 import { el } from './ui/boards.js';
 import { dressUp } from './ai/flavour.js';
+import { pasToe as pasThemaToe, hangThemaknopOp } from './ui/thema.js';
+import { WORLD_BY_ID } from './content/worlds.js';
 
 const app = document.getElementById('app');
 
@@ -42,6 +44,12 @@ function leesQuery(path) {
 export function zetWereldThema(wereldId) {
   if (wereldId) document.body.dataset.wereld = wereldId;
   else delete document.body.dataset.wereld;
+  // De kleur van de wereld als los getal, zodat het lichte palet er een
+  // vleugje van kan nemen. Zonder dit zou elke wereld een tweede, met de
+  // hand geschreven lichtpalet nodig hebben.
+  const kleur = wereldId ? WORLD_BY_ID.get(wereldId)?.accent : null;
+  if (kleur) document.body.style.setProperty('--wkleur', kleur);
+  else document.body.style.removeProperty('--wkleur');
 }
 
 function route() {
@@ -82,6 +90,11 @@ function route() {
 
   if (path === 'maken') { markNav('maken'); renderGenerator(app); return; }
   if (path === 'uitleg') { markNav('uitleg'); renderUitleg(app); return; }
+  // De bibliotheek staat nergens meer in het menu of op de voorpagina: je
+  // krijgt voortaan elke keer een nieuwe puzzel in plaats van er een uit te
+  // zoeken. De vierenzeventig zaken zijn niet weg - daar zit te veel werk
+  // in - ze zijn alleen onzichtbaar. Deze route blijft dus werken, zodat
+  // een bewaarde link nog uitkomt.
   if (path.startsWith('puzzels')) {
     markNav('puzzels');
     renderLibrary(app, leesQuery(path));
@@ -89,6 +102,25 @@ function route() {
   }
   markNav(null);
   renderHome(app);
+}
+
+pasThemaToe();
+hangThemaknopOp(document.getElementById('themaknop'));
+
+// Hoe hoog de kop werkelijk is. De namenbalk plakt daaronder vast (zie
+// .palet in de opmaak), en een vast getal klopt niet: de kop groeit mee
+// met de lettergrootte van het systeem en met de knop erin.
+function meetKop() {
+  const kop = document.querySelector('header.top');
+  if (!kop) return;
+  document.documentElement.style.setProperty('--kop-hoogte', `${Math.round(kop.getBoundingClientRect().height)}px`);
+}
+meetKop();
+addEventListener('resize', meetKop);
+try {
+  new ResizeObserver(meetKop).observe(document.querySelector('header.top'));
+} catch {
+  /* geen ResizeObserver: dan blijft de gemeten hoogte van het begin staan */
 }
 
 addEventListener('hashchange', route);

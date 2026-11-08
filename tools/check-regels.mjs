@@ -575,9 +575,26 @@ console.log(`  ${herschreven} puzzels met een herschreven tekst`);
 console.log('\nDe werelden');
 for (const w of WORLDS) {
   const waar = `  ${w.name}`;
-  const letters = [...w.persons, ...(w.personenXL ?? []), ...w.slachtoffers].map((x) => x.charAt(0).toUpperCase());
-  eis('verdachten en slachtoffers hebben elk een eigen beginletter',
-    new Set(letters).size === letters.length, waar, letters.join(''));
+  // De beginletter staat op de penning op het bord, en elke figuur in een
+  // puzzel hoort er een eigen te hebben (zie regel 9 hierboven, die dat per
+  // puzzel narekent). Hier staat wat de wereld daarvoor moet aanleveren.
+  //
+  // Eerder stond hier: alle namen samen hebben een eigen beginletter. Dat
+  // klopte toen er precies twaalf verdachten en drie slachtoffers waren en
+  // ze allemaal tegelijk op het bord konden staan. Sinds de namen per
+  // beginletter getrokken worden - eerst welke letters, dan per letter een
+  // naam - zijn er juist meerdere namen achter dezelfde letter, en dat is
+  // precies de bedoeling: daar komt de variatie vandaan. Wat moet kloppen
+  // is tweeërlei.
+  const verdachtenletters = new Set(
+    [...w.persons, ...(w.personenXL ?? []), ...(w.personenExtra ?? [])]
+      .map((x) => x.charAt(0).toUpperCase()),
+  );
+  const slachtofferletters = new Set(w.slachtoffers.map((x) => x.charAt(0).toUpperCase()));
+  const botsendeLetters = [...slachtofferletters].filter((l) => verdachtenletters.has(l));
+  eis('een slachtoffer begint nooit als een verdachte',
+    botsendeLetters.length === 0, waar,
+    `${botsendeLetters.join('')} komt aan beide kanten voor`);
   // Het grootste rooster is zestien bij zestien, met elf kamers. Zet je
   // daar een wereld naast die twaalf namen heeft, dan valt de generator om
   // op een plek waar je het pas merkt als iemand niveau zes kiest.
@@ -591,6 +608,12 @@ for (const w of WORLDS) {
   const allePlekken = [...w.places, ...(w.plekkenXL ?? [])];
   eis('genoeg verdachten voor het grootste rooster',
     alleNamen.length >= grootste.n, waar, `${alleNamen.length} namen`);
+  // Het bord van zestien bij zestien zet zestien figuren neer, en er wordt
+  // één naam per beginletter getrokken. Zijn er minder dan zestien letters,
+  // dan loopt de trekking leeg en valt de puzzel om.
+  eis('genoeg verschillende beginletters voor het grootste rooster',
+    verdachtenletters.size >= grootste.n, waar,
+    `${verdachtenletters.size} letters: ${[...verdachtenletters].sort().join('')}`);
   eis('genoeg plekken voor het grootste aantal kamers',
     allePlekken.length >= grootste.kamers, waar, `${allePlekken.length} plekken`);
   eis('genoeg voorwerpen, tijden en sporen voor zes slots',

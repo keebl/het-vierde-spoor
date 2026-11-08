@@ -12,7 +12,7 @@
 // "X stond in dezelfde kamer als het slachtoffer" is daarom verboden - dat is
 // letterlijk de vraag.
 
-import { bouwRooster, tekenPlaatsing, telPlaatsingen, graad, idx, rijVan, kolVan, kamerBuren, naastMeubel } from './rooms.js';
+import { bouwRooster, tekenPlaatsing, telPlaatsingen, graad, domeinenVan, idx, rijVan, kolVan, kamerBuren, naastMeubel } from './rooms.js';
 import { makeRng } from './rng.js';
 
 // Een poging die de solver niet binnen zijn budget rond krijgt, gooien we weg.
@@ -146,6 +146,10 @@ function groeiTotVast(rooster, vijver, stijl, budget) {
 
 function snoei(rooster, aanwijzingen, stijl, rng, budget) {
   const houd = aanwijzingen.slice();
+  // Aanwijzingen die we hier overslaan om tijd te sparen. Ze krijgen hun
+  // eerlijke beurt in naSnoei, maar dan één keer en niet bij elke poging.
+  const overgeslagen = [];
+
   for (const i of rng.shuffle(houd.map((_, j) => j))) {
     if (!houd[i]) continue;
     const proef = houd.filter((c, j) => c && j !== i);
@@ -155,12 +159,45 @@ function snoei(rooster, aanwijzingen, stijl, rng, budget) {
     } else {
       // Blijven er na doorstrepen te veel figuren open, dan is deze
       // aanwijzing bijna zeker nodig en hoeft de dure teller er niet aan.
-      if (graad(rooster, proef).open > 4) continue;
+      if (graad(rooster, proef).open > 4) {
+        overgeslagen.push(i);
+        continue;
+      }
       const uit = telPlaatsingen(rooster, proef, 2, budget);
       if (uit.opgegeven) throw new TeZwaar();
       ok = uit.count === 1;
     }
     if (ok) houd[i] = null;
+  }
+  return { aanwijzingen: houd.filter(Boolean), overgeslagen: overgeslagen.map((i) => houd[i]).filter(Boolean) };
+}
+
+// De tweede snoeironde, over de aanwijzingen die hierboven zijn
+// overgeslagen.
+//
+// Zonder deze ronde bleven er aanwijzingen in staan die je gewoon kon
+// weglaten - ze waren alleen overgeslagen omdat de goedkope voorselectie er
+// geen uitsluitsel over gaf. Gemeten over vierentwintig puzzels tot en met
+// niveau vier: twaalf van de tweehonderdvierenzestig.
+//
+// Twee dingen houden hem betaalbaar. Hij draait één keer, op de poging die
+// het geworden is, en niet bij elk van de vierentwintig pogingen - dat
+// scheelt het verschil tussen drie en zevenentwintig seconden op een bord
+// van zestien bij zestien. En er staat een klok omheen: elke beurt is een
+// volledige telling, en die kost op zestien bij zestien ruim een seconde.
+// Wat binnen de tijd past wordt nagerekend, de rest blijft staan.
+function naSnoei(rooster, aanwijzingen, overgeslagen, budget) {
+  if (!overgeslagen.length) return aanwijzingen;
+  const houd = aanwijzingen.slice();
+  const tot = Date.now() + 900;
+  for (const c of overgeslagen) {
+    const i = houd.indexOf(c);
+    if (i < 0) continue;
+    if (Date.now() > tot) break;
+    const proef = houd.filter((x, j) => x && j !== i);
+    const uit = telPlaatsingen(rooster, proef, 2, budget);
+    if (uit.opgegeven) continue;
+    if (uit.count === 1) houd[i] = null;
   }
   return houd.filter(Boolean);
 }
@@ -199,9 +236,22 @@ function poging(params, rng) {
   const controle = telPlaatsingen(rooster, gegroeid, 2, budget);
   if (controle.opgegeven || controle.count !== 1) return null;
 
-  const aanwijzingen = snoei(rooster, gegroeid, params.style, rng, budget);
+  const gesnoeid = snoei(rooster, gegroeid, params.style, rng, budget);
+  const aanwijzingen = gesnoeid.aanwijzingen;
   const g = graad(rooster, aanwijzingen);
-  return { rooster, plaats, slachtofferIdx, dader, kamerIdx, aanwijzingen, graad: g };
+  return {
+    rooster, plaats, slachtofferIdx, dader, kamerIdx, aanwijzingen, graad: g,
+    overgeslagen: gesnoeid.overgeslagen, budget,
+  };
+}
+
+// Pas als vaststaat welke poging het wordt, gaat de dure tweede snoeironde
+// eroverheen. Daarvoor zou hij vierentwintig keer voor niets draaien.
+function afronden(kandidaat) {
+  const aanwijzingen = naSnoei(
+    kandidaat.rooster, kandidaat.aanwijzingen, kandidaat.overgeslagen ?? [], kandidaat.budget,
+  );
+  return { ...kandidaat, aanwijzingen, graad: graad(kandidaat.rooster, aanwijzingen) };
 }
 
 export function genereerKamerpuzzel(seed, params, pogingen = null) {
@@ -221,9 +271,90 @@ export function genereerKamerpuzzel(seed, params, pogingen = null) {
     const mis = params.style === 'deep'
       ? (kandidaat.graad.opgelost ? 10 : 0)
       : (kandidaat.graad.opgelost ? Math.max(0, kandidaat.aanwijzingen.length - (params.maxClues ?? 99)) : 10);
-    if (mis === 0) return { ...kandidaat, poging: t };
+    if (mis === 0) return afronden({ ...kandidaat, poging: t });
     if (!beste || mis < beste.mis) beste = { ...kandidaat, mis, poging: t };
   }
   if (!beste) throw new Error('kon geen kamerpuzzel bouwen voor deze instellingen');
-  return beste;
+  return afronden(beste);
+}
+
+
+// ------------------------------------------------------------------- hint
+//
+// Een hint was: het bord vult de eerstvolgende figuur voor je in. Dat is
+// geen hint maar een stukje oplossing - je leert er niets van en de rest
+// van de puzzel wordt er niet makkelijker van, alleen korter.
+//
+// Nu krijg je een extra aanwijzing: een zin die net zo waar is als de
+// andere, die er nog niet bij stond, en waar je vanaf je eigen bord ook
+// echt mee verder kunt. Drie eisen:
+//
+//   - nooit "X stond in de keuken". Dat is de grootste weggever die er is
+//     (zie het commentaar bij bouwVijver) en daarmee precies wat een hint
+//     niet hoort te zijn.
+//   - hij gaat over iemand die nog niet goed op het bord staat. Een
+//     aanwijzing over iemand die je al hebt staan, is geen hulp.
+//   - van de kandidaten wint degene die, gegeven wat er al goed staat, de
+//     meeste mogelijkheden wegstreept. Dat is gemeten en niet geraden: we
+//     rekenen de domeinen door mét en zonder de kandidaat.
+//
+// 'bekend' zijn de figuren die de speler al goed heeft neergezet. Die gaan
+// als gewone aanwijzingen mee in de meting, zodat de hint beoordeeld wordt
+// vanaf de stand van het bord en niet vanaf nul.
+const HINTGEWICHTEN = {
+  kamerNiet: 1, naast: 1, opRij: 1, opKolom: 1, zelfdeKamer: 1,
+  noord: 1, west: 1, buren: 1, rand: 1, hoek: 1,
+  aantalKamer: 1, aantalNaast: 1,
+};
+
+// Niet elke kandidaat doorrekenen: bij zestien bij zestien zijn het er
+// duizenden en dan staat de browser te wachten. Een greep van veertig is
+// ruim genoeg om een goede te vinden.
+const PROEFGREEP = 40;
+
+const maatVan = (dom) => dom.reduce((som, d) => som + d.size, 0);
+
+export function extraAanwijzing(rooster, plaats, slachtofferIdx, bestaand, bekend, rng) {
+  const vijver = bouwVijver(rooster, plaats, slachtofferIdx, rng, HINTGEWICHTEN);
+  const al = new Set(bestaand.map(sleutel));
+  const staatGoed = new Set(bekend.map((c) => c.p));
+
+  const kandidaten = vijver.filter((c) => {
+    if (al.has(sleutel(c))) return false;
+    // Een aanwijzing over twee mensen die allebei al goed staan, vertelt je
+    // niets meer. Een telling gaat over iedereen en mag altijd mee.
+    if (c.p == null) return true;
+    if (staatGoed.has(c.p) && (c.q == null || staatGoed.has(c.q))) return false;
+    return true;
+  });
+  if (!kandidaten.length) return null;
+
+  const basis = domeinenVan(rooster, bekend).dom;
+  const vanaf = maatVan(basis);
+
+  let beste = null;
+  let besteWinst = -1;
+  for (const c of kandidaten.slice(0, PROEFGREEP)) {
+    const winst = vanaf - maatVan(domeinenVan(rooster, [...bekend, c]).dom);
+    if (winst > besteWinst) {
+      besteWinst = winst;
+      beste = c;
+    }
+  }
+  // Levert geen enkele kandidaat iets op, dan geven we de eerste terug: een
+  // ware zin die er nog niet stond is nog altijd beter dan "geen hint".
+  return beste ?? kandidaten[0];
+}
+
+// De figuren die al goed staan, als aanwijzingen die de meting kan lezen.
+// Exact welk vakje kent de solver niet als aanwijzing, de kamer wel - en
+// voor het afwegen van een hint is dat nauwkeurig genoeg.
+export function bekendAlsAanwijzingen(rooster, plaats, geplaatst) {
+  const uit = [];
+  for (const [p, cel] of Object.entries(geplaatst)) {
+    const pi = Number(p);
+    if (cel == null || cel !== plaats[pi]) continue;
+    uit.push({ soort: 'kamer', p: pi, kamerIdx: rooster.kamerVan[cel], ja: true });
+  }
+  return uit;
 }

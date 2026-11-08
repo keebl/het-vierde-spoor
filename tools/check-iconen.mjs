@@ -11,6 +11,12 @@ import { ICONS } from '../src/ui/icons.js';
 // bord van zestien bij zestien. Ze staan apart omdat ze de trekking van de
 // bestaande puzzels niet mogen verschuiven, maar een icoon hebben ze net zo
 // hard nodig - en zonder ze hier zou de keuring hun iconen overbodig noemen.
+//
+// personenExtra staat er bewust niet bij. Dat zijn de tweede namen achter
+// elke beginletter, en die komen alleen op het speurdokubord terecht - daar
+// wordt een figuur als portretje getekend (personenkunst-geschilderd.js) en
+// niet als pictogram. Nagelopen: icoonVan wordt alleen aangeroepen voor
+// meubel- en kamernamen, in boards.js en board-rooms.js.
 const VELDEN = ['persons', 'personenXL', 'objects', 'places', 'plekkenXL', 'times', 'hidden', 'meubels'];
 
 const woorden = new Set();

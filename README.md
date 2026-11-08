@@ -1,8 +1,11 @@
 # Het Vierde Spoor
 
-Deductiepuzzels in zes werelden, vier soorten opdracht, drie mechanieken en
-vijf moeilijkheidsgraden. Veertig kant-en-klare puzzels, plus een generator
-waarmee je er zelf een maakt.
+Deductiepuzzels in elf werelden en zes moeilijkheidsgraden. Je kiest alleen
+hoe zwaar je het wilt hebben; het decor krijg je. Elke druk op de knop levert
+een nieuwe zaak op, ter plekke gebouwd en ter plekke nagerekend.
+
+De bibliotheek met vierenzeventig vaste zaken bestaat nog wel, maar staat
+nergens meer in het zicht: `#/puzzels` werkt, het menu wijst er niet heen.
 
 Elke puzzel heeft gegarandeerd **precies een oplossing**, en die is altijd
 met logica te vinden — nooit met gokken. Dat is machinaal gecontroleerd
@@ -376,15 +379,16 @@ tools/                  keuringsscripts
   `localStorage`, dus per browser.
 - Bediening met het toetsenbord op het bord zelf: de vakjes zijn nog geen
   knoppen, dus met alleen een toetsenbord of een schermlezer kun je een
-  Speurdoku niet spelen. Ongedaan maken kan wel (ctrl+Z).
+  Speurdoku niet spelen.
 - Een dagelijkse puzzel.
 - Een afsluiting als je het goed hebt: nu staat er alleen "Opgelost". Daar
   hoort de dader in beeld te komen, met een slotzin en een knop naar de
   volgende zaak.
-- Twaalf bij twaalf is op een telefoon niet te spelen: de vakjes worden te
-  klein om te raken. Dat vraagt om een volledig scherm met zoom.
+- Twaalf bij twaalf is op een telefoon nog krap. De sierlijst om het bord
+  staat op een smal scherm vanzelf uit (knop: "Lijst eromheen"), wat ruim een
+  derde aan breedte scheelt, maar zestien bij zestien vraagt nog om zoom.
 - De oplossing zit in de pagina: wie de ontwikkelaarsconsole opent kan hem
   lezen. Voor een wedstrijdvorm moet dat naar een server.
-- Meer feestdaggenres dan kerst en halloween.
+- Meer feestdagwerelden dan kerst en halloween.
 - Een laadmelding terwijl een twaalf-bij-twaalf wordt gebouwd. Dat duurt
   ongeveer een seconde, en in die seconde staat het scherm stil.

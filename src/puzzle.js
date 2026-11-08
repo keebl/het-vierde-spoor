@@ -1,7 +1,7 @@
 // Van instellingen naar een speelbare puzzel. Dit is de enige plek die
 // content, motor en formulering bij elkaar brengt.
 
-import { WORLD_BY_ID } from './content/worlds.js';
+import { WORLD_BY_ID, WORLDS } from './content/worlds.js';
 import { ASSIGNMENT_BY_ID } from './content/assignments.js';
 import { levelParams } from './engine/difficulty.js';
 import { generateAssignment } from './engine/generate.js';
@@ -294,21 +294,33 @@ function buildKamerPuzzle({ world, settings }) {
   // die staat niet in de verdachtenlijst, maar wel op het bord - want waar
   // het lichaam ligt moet je zelf uitpuzzelen.
   const aantal = gen.rooster.n;
-  // De vijver waaruit getrokken wordt groeit alleen als het bord hem nodig
-  // heeft. Dat is geen zuinigheid maar noodzaak: trek je uit zestien namen
-  // in plaats van twaalf, dan komt er een andere trekking uit en verandert
-  // elke bestaande puzzel - inclusief de vijftig vooraf geschreven teksten
-  // die eraan vastzitten. Alleen het bord van zestien bij zestien put dus
-  // uit de extra namen, en alleen een puzzel met meer kamers dan de wereld
-  // van oudsher had uit de extra plekken.
-  const namen = rng.sample(
-    aantal <= world.persons.length ? world.persons : [...world.persons, ...(world.personenXL ?? [])],
-    aantal,
-  );
+  // Wie staan er op het bord?
+  //
+  // Hier werd een greep gedaan uit de twaalf namen van de wereld. Bij vijf
+  // bij vijf trek je er dan vijf uit twaalf, en dan kom je Albert, Bep en
+  // Cor om de haverklap tegen - er zijn simpelweg niet genoeg namen om een
+  // avond puzzelen mee te vullen.
+  //
+  // Nu gaat het in twee stappen: eerst de beginletters, dan per letter een
+  // naam. Dat moet in die volgorde, want de beginletter is wat op de
+  // penning staat en elke figuur hoort er een eigen te hebben (regel: alle
+  // figuren hebben een eigen beginletter). Met twee namen achter elke
+  // letter zijn dat bij vijf bij vijf geen twaalf maar honderdduizenden
+  // mogelijke bezettingen.
+  const vijver = [...world.persons, ...(world.personenXL ?? []), ...(world.personenExtra ?? [])];
+  const perLetter = new Map();
+  for (const naam of vijver) {
+    const letter = naam.charAt(0).toUpperCase();
+    if (!perLetter.has(letter)) perLetter.set(letter, []);
+    perLetter.get(letter).push(naam);
+  }
+  const namen = rng
+    .sample([...perLetter.keys()], aantal)
+    .map((letter) => rng.pick(perLetter.get(letter)));
   // Het slachtoffer staat tussen de verdachten op het bord, met zijn
   // beginletter op een penning. Die letter moet dus van hem alleen zijn:
   // daarom een eigen namenlijst met beginletters die de verdachten niet
-  // gebruiken.
+  // gebruiken (M, N en O; de verdachten gaan van A tot L en van P tot S).
   const slachtofferNaam = rng.pick(world.slachtoffers);
   namen[gen.slachtofferIdx] = slachtofferNaam;
 
@@ -392,9 +404,28 @@ function buildKamerPuzzle({ world, settings }) {
     oplossing: gen.plaats,
     dader: gen.dader,
     clues,
+    // De woorden waarmee een aanwijzing tot een zin wordt. De speler heeft
+    // ze nodig: als hij om een hint vraagt, krijgt hij een extra aanwijzing
+    // die ter plekke geformuleerd moet worden.
+    woorden,
     _rooster: gen.rooster,
     _ruwe: gen.aanwijzingen,
   };
+}
+
+// Welk decor hoort bij deze seed?
+//
+// Je kiest het genre niet meer zelf. Maar "dan maar willekeurig bij elke
+// klik" breekt iets anders: typ je een seed opnieuw in, dan hoor je dezelfde
+// puzzel terug te krijgen, en dat lukt niet als het decor ondertussen
+// omgegooid wordt. Dus volgt de wereld uit de seed. Een nieuwe seed geeft
+// een nieuw decor, dezelfde seed altijd hetzelfde.
+export function wereldVoorSeed(seed) {
+  let som = 0;
+  for (let i = 0; i < String(seed).length; i++) {
+    som = (som * 31 + String(seed).charCodeAt(i)) % 1000003;
+  }
+  return WORLDS[som % WORLDS.length].id;
 }
 
 export function puzzleId(settings) {

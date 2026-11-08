@@ -347,12 +347,58 @@ for (const [id, stijl] of Object.entries(RANDSTIJLEN)) {
   if (helder(stijl.gloed ?? '#000000') < 0.3) meld('RANDLICHT TE FLAUW', `${id}: ${stijl.gloed}`);
 }
 
+// ------------------------------------------- namen die op elkaar lijken
+//
+// "Ada stond naast de provisiekast" en "Bram stond niet naast de vaatkast"
+// staan in dezelfde puzzel, en dan lees je de tweede als de eerste. Er
+// stonden in één keuken drie kasten; in een laboratorium twee bakken.
+//
+// De regel: van twee meubelstukken die in dezelfde puzzel naast elkaar
+// kunnen staan, mag er maar één op hetzelfde woord eindigen. Alleen namen
+// uit één woord tellen mee - "de stapel kratten" en "de omgevallen stam"
+// verwar je niet met iets anders, hoe ze ook eindigen.
+//
+// "In dezelfde puzzel" is eng bedoeld: de meubels van één soort ruimte plus
+// de soorten waar die naar uitwijkt, in die ene wereld. Verder reikt het
+// niet, en een regel die verder reikt dan de fout zou alleen maar namen
+// kosten.
+const ACHTERVOEGSELS = [
+  'bankje', 'kastje', 'kast', 'kist', 'bak', 'rek', 'tafel', 'ton', 'stoel',
+  'bank', 'steen', 'plaat', 'zuil', 'spiegel', 'lessenaar', 'kabinet', 'klok',
+  'kaart', 'console', 'meter', 'bol', 'standaard', 'paneel', 'stelling',
+  'haspel', 'ketel', 'schaal', 'pot', 'nis', 'vat',
+].sort((a, b) => b.length - a.length);
+
+const achtervoegselVan = (naam) => {
+  const kern = naam.replace(/^(de|het) /, '');
+  if (kern.includes(' ')) return null;
+  return ACHTERVOEGSELS.find((suf) => kern.endsWith(suf)) ?? null;
+};
+
+for (const w of WORLDS) {
+  const eigenSoorten = new Set([...w.places, ...(w.plekkenXL ?? [])].map(soortVan));
+  for (const soort of eigenSoorten) {
+    const perSuffix = new Map();
+    for (const [naam] of meubelsVoor(soort, w.id).flat()) {
+      const suf = achtervoegselVan(naam);
+      if (!suf) continue;
+      if (!perSuffix.has(suf)) perSuffix.set(suf, new Set());
+      perSuffix.get(suf).add(naam);
+    }
+    for (const [suf, namen] of perSuffix) {
+      if (namen.size < 2) continue;
+      meld('NAMEN LIJKEN OP ELKAAR', `${w.id}/${soort} -${suf}: ${[...namen].sort().join(' + ')}`);
+    }
+  }
+}
+
 console.log('');
 console.log(`plekken            ${plekken.size}, allemaal met een soort`);
 console.log(`soorten ruimte     ${soorten.size}, elk met vloer en meubilair`);
 console.log(`meubelstukken      ${paren.length} namen, ${Object.keys(GESCHILDERD).length} eigen tekeningen`);
 console.log(`eigen meubelnamen  ${wereldenMetLaag} werelden dopen het meubilair om`);
 console.log(`bordranden         ${Object.keys(RANDSTIJLEN).length}, één per wereld, elk een eigen nacht`);
+console.log('gelijkende namen   geen twee die in dezelfde puzzel op hetzelfde woord eindigen');
 
 if (fouten.length) {
   console.log('');

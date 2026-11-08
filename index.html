@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Het Vierde Spoor</title>
-<meta name="description" content="Deductiepuzzels in vier vormen: zet verdachten op een plattegrond, of streep een raster leeg tot er een naam overblijft. Of maak er zelf een.">
+<meta name="description" content="Deductiepuzzels die je uitredeneert: zet de verdachten op de plattegrond, één per rij en één per kolom, tot er één antwoord overblijft. Elke keer een nieuwe zaak in een ander decor.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <!-- Zodat een gedeelde link in WhatsApp of Slack niet kaal is. Een
      voorbeeldplaatje ontbreekt nog; dat moet een png worden. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Het Vierde Spoor">
 <meta property="og:title" content="Het Vierde Spoor — deductiepuzzels">
-<meta property="og:description" content="Zet verdachten op een plattegrond of streep een raster leeg tot er een naam overblijft. Zevenenvijftig puzzels, of maak er zelf een.">
+<meta property="og:description" content="Zet de verdachten op de plattegrond tot er één antwoord overblijft. Gokken hoeft nooit. Elke keer een nieuwe zaak in een ander decor.">
 <meta property="og:url" content="https://keebl.github.io/het-vierde-spoor/">
 <meta property="og:locale" content="nl_NL">
 <meta name="twitter:card" content="summary">
@@ -39,9 +39,11 @@
     <span class="brand-text">Het Vierde Spoor</span>
   </a>
   <nav class="nav">
-    <a href="#/puzzels" data-route="puzzels">Puzzels</a>
-    <a href="#/maken" data-route="maken">Zelf maken</a>
+    <a href="#/maken" data-route="maken">Nieuwe puzzel</a>
     <a href="#/uitleg" data-route="uitleg">Uitleg</a>
+    <!-- Licht of donker. De knop wordt in src/ui/thema.js gevuld, want hij
+         moet laten zien welke stand er aan staat. -->
+    <button class="themaknop" id="themaknop" type="button"></button>
   </nav>
 </header>
 

@@ -4,7 +4,6 @@
 import { el } from './boards.js';
 import { puzzelKaart } from './home.js';
 import { CATALOG } from '../content/catalog.js';
-import { WORLDS } from '../content/worlds.js';
 import { ASSIGNMENTS, mechaniekZichtbaar } from '../content/assignments.js';
 import { LEVELS, LEVEL_IDS, ZICHTBARE_LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
 import { solvedIds, onthuldIds } from './state.js';
@@ -13,8 +12,10 @@ import { puzzleId } from '../puzzle.js';
 // Twee keuzelijsten is genoeg. 'Soort spel' is eruit omdat er voorlopig maar
 // één soort te zien is, en 'Wat je uitzoekt' omdat dat bijna altijd hetzelfde
 // is. Minder knoppen boven de lijst, meer lijst.
+// Het genrefilter is eruit: je kiest nergens op de site meer een decor, en
+// dan hoort hier ook geen lijst met acht genres te staan. Via de link
+// (#/puzzels?wereld=noir) werkt het nog wel - zie EXTRA_FILTERS.
 const FILTERS = [
-  { key: 'wereld', label: 'Genre', opties: () => WORLDS.map((w) => [w.id, `${w.icon} ${w.name}`]) },
   { key: 'niveau', label: 'Moeilijkheidsgraad', opties: () => ZICHTBARE_LEVEL_IDS.map((l) => [String(l), `${l} - ${LEVELS[l].label}`]) },
 ];
 
@@ -23,7 +24,7 @@ const TEZIEN = CATALOG.filter((p) => mechaniekZichtbaar(p.mechaniek) && ZICHTBAR
 
 // Het decorfilter blijft wel werken via de link (#/puzzels?wereld=noir), want
 // de tegels op de voorpagina wijzen daarheen.
-const EXTRA_FILTERS = ['opdracht'];
+const EXTRA_FILTERS = ['opdracht', 'wereld'];
 
 export function renderLibrary(mount, query = {}) {
   const done = solvedIds();

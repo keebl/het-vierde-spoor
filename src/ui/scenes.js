@@ -245,6 +245,107 @@ const SCENES = {
       if (i === 2) g.append(cirkel(x, y, r + 8, 'sc-schijn'));
     });
   },
+
+  // Een laag schoolgebouw op een avond: fietsenstalling, verlichte gangen,
+  // en één lokaal waar nog iemand zit.
+  school(g) {
+    sterren(g, 14, 23);
+    const ver = maak('g');
+    [[0, 96, 150], [170, 88, 120], [300, 100, 200], [520, 84, 140], [670, 94, 160]].forEach(([x, y, w]) => {
+      ver.append(rechthoek(x, y, w, H - y, 'sc-ver'));
+    });
+    g.append(ver);
+
+    // Het gebouw zelf: twee lagen, een plat dak en een glazen entree.
+    const mid = maak('g');
+    mid.append(rechthoek(60, 70, 420, H - 70, 'sc-mid'));
+    mid.append(rechthoek(480, 86, 260, H - 86, 'sc-mid'));
+    mid.append(pad('M 60 70 L 480 70 M 480 86 L 740 86', 'sc-lijn'));
+    g.append(mid);
+    ramen(mid, 80, 80, 12, 2, 18, 9);
+    ramen(mid, 500, 96, 6, 1, 20, 4);
+
+    // De entree: een luifel met licht eronder.
+    const voor = maak('g');
+    voor.append(rechthoek(250, 112, 90, 38, 'sc-near'));
+    voor.append(rechthoek(244, 108, 102, 5, 'sc-near'));
+    g.append(voor);
+    g.append(cirkel(295, 120, 3.5, 'sc-licht'));
+    g.append(cirkel(295, 120, 14, 'sc-schijn'));
+
+    // Een fietsenrek in silhouet en een vlaggenmast.
+    const beugels = maak('g');
+    for (let x = 580; x < 700; x += 16) {
+      beugels.append(pad(`M ${x} 150 L ${x} 134 q 0 -6 6 -6 q 6 0 6 6 L ${x + 12} 150`, 'sc-takken'));
+    }
+    g.append(beugels);
+    g.append(rechthoek(150, 56, 2, 94, 'sc-near'));
+    g.append(pad('M 152 58 L 178 64 L 152 72 Z', 'sc-near'));
+  },
+
+  // Een ziekenhuisvleugel bij nacht: verlichte gangen die doorlopen, en de
+  // luifel boven de spoedingang die als enige echt brandt.
+  ziekenhuis(g) {
+    sterren(g, 10, 41);
+    const ver = maak('g');
+    [[0, 62, 190], [230, 50, 160], [430, 66, 150], [620, 44, 180]].forEach(([x, y, w]) => {
+      ver.append(rechthoek(x, y, w, H - y, 'sc-ver'));
+    });
+    g.append(ver);
+
+    const mid = maak('g');
+    mid.append(rechthoek(100, 54, 300, H - 54, 'sc-mid'));
+    mid.append(rechthoek(400, 74, 320, H - 74, 'sc-mid'));
+    g.append(mid);
+    // Hele verdiepingen die aan staan: een ziekenhuis dooft nooit helemaal.
+    for (let r = 0; r < 4; r++) {
+      mid.append(rechthoek(108, 64 + r * 20, 284, 6, r === 1 ? 'sc-licht' : 'sc-raam'));
+    }
+    for (let r = 0; r < 3; r++) {
+      mid.append(rechthoek(408, 84 + r * 20, 304, 5, 'sc-raam'));
+    }
+
+    const voor = maak('g');
+    voor.append(rechthoek(170, 112, 150, 38, 'sc-near'));
+    voor.append(rechthoek(160, 106, 172, 7, 'sc-near'));
+    g.append(voor);
+    g.append(cirkel(245, 122, 4, 'sc-licht'));
+    g.append(cirkel(245, 122, 17, 'sc-schijn'));
+    // Een ambulance die met zijn neus naar de ingang staat.
+    g.append(pad('M 380 150 L 380 128 L 404 128 L 414 136 L 448 136 L 448 150 Z', 'sc-near'));
+    g.append(cirkel(452, 132, 2.5, 'sc-licht'));
+  },
+
+  // Een kantoorwijk na sluitingstijd. Alle torens donker op één verdieping
+  // na - daar brandt het nog, en daar gaat dit over.
+  kantoor(g) {
+    sterren(g, 18, 59);
+    const ver = maak('g');
+    [[0, 48, 70], [90, 30, 60], [360, 36, 64], [600, 26, 72], [700, 54, 100]].forEach(([x, y, w]) => {
+      ver.append(rechthoek(x, y, w, H - y, 'sc-ver'));
+    });
+    g.append(ver);
+
+    const mid = maak('g');
+    [[160, 18, 110], [290, 44, 80], [450, 10, 120], [580, 50, 90]].forEach(([x, y, w]) => {
+      mid.append(rechthoek(x, y, w, H - y, 'sc-mid'));
+    });
+    g.append(mid);
+    // Rasters van ramen: bijna allemaal uit.
+    ramen(mid, 172, 30, 6, 8, 16, 99);
+    ramen(mid, 300, 56, 4, 6, 17, 99);
+    ramen(mid, 462, 22, 6, 9, 17, 99);
+    ramen(mid, 592, 62, 4, 5, 18, 99);
+
+    // Eén verdieping die nog aan staat, over de volle breedte van de toren.
+    g.append(rechthoek(462, 90, 96, 9, 'sc-licht'));
+    g.append(rechthoek(452, 86, 116, 17, 'sc-schijn'));
+    g.append(cirkel(510, 94, 20, 'sc-schijn'));
+
+    // Een natte straat ervoor die het licht terugkaatst.
+    g.append(rechthoek(0, 138, B, 12, 'sc-nat'));
+    g.append(rechthoek(486, 138, 48, 12, 'sc-weerschijn'));
+  },
 };
 
 export function sceneVoor(wereldId, accent) {

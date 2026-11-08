@@ -1,61 +1,100 @@
 // De voordeur. Wie hier voor het eerst komt moet binnen een scherm weten:
-// wat is dit, wat ga ik doen, en waar begin ik. Pas daarna het aanbod.
+// wat is dit, wat ga ik doen, en waar begin ik.
+//
+// Er stond hier een muur met keuzes: acht genretegels, een instaplijst en
+// een link naar de bibliotheek. Dat is eraf. Je kiest nog maar één ding -
+// hoe zwaar - en drukt op de knop; het decor krijg je, je kiest het niet.
+// Dat scheelt niet alleen knoppen: het haalt ook het gevoel weg dat je
+// eerst iets moet uitzoeken voordat je mag beginnen.
+//
+// De bibliotheek bestaat nog wel. Hij staat alleen nergens meer in het
+// zicht: #/puzzels doet het nog, en een link die iemand bewaard heeft komt
+// gewoon uit. Zie ook de opmerking bij VERBORGEN_ROUTES in main.js.
 
 import { el } from './boards.js';
-import { CATALOG } from '../content/catalog.js';
-import { mechaniekZichtbaar } from '../content/assignments.js';
-import { WORLDS } from '../content/worlds.js';
-import { LEVELS, LEVEL_IDS, ZICHTBARE_LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
-import { solvedIds, onthuldIds } from './state.js';
-import { puzzleId, buildPuzzle } from '../puzzle.js';
+import { ZICHTBARE_LEVEL_IDS, LEVELS, KAMER_LEVELS } from '../engine/difficulty.js';
+import { laatsteNiveau, zetNiveau } from './state.js';
+import { puzzleId, buildPuzzle, wereldVoorSeed } from '../puzzle.js';
 import { renderKamerbord } from './board-rooms.js';
-import { catalogSettings } from '../content/catalog.js';
-import { sceneVoor } from './scenes.js';
+import { randomSeed } from '../engine/rng.js';
 import { genreStijl } from './genre.js';
 import { WORLD_BY_ID } from '../content/worlds.js';
+import { LEVEL_IDS } from '../engine/difficulty.js';
 import { MECHANIC_BY_ID } from '../content/assignments.js';
+import { sceneVoor } from './scenes.js';
 
 const STAPPEN = [
   {
     kop: 'Lees de aanwijzingen',
-    tekst: 'Elke aanwijzing is waar. Los van elkaar zeggen ze weinig; samen sluiten ze alles uit op één mogelijkheid na.',
+    tekst: 'Elke aanwijzing is waar. Los van elkaar zeggen ze weinig; samen sluiten ze alles uit op één mogelijkheid na. Ze staan gegroepeerd onder de naam waar ze over gaan.',
   },
   {
     kop: 'Sluit uit wat niet kan',
-    tekst: 'Bij een Speurdoku zet je de verdachten zelf op de plattegrond, één per rij en één per kolom. Bij een Kruisverhoor zet je kruisjes en vinkjes in een raster.',
+    tekst: 'Je zet de verdachten zelf op de plattegrond, één per rij en één per kolom. Met Uitsluiten zet je kruisjes, met Schetsen krabbel je een beginletter in een vakje waar iemand nog zou kunnen staan.',
   },
   {
     kop: 'Hou over wat moet',
-    tekst: 'Wat overblijft is het antwoord. Vastgelopen? De hint vult één vakje in en zegt erbij uit welke aanwijzing dat volgde.',
+    tekst: 'Wat overblijft is het antwoord. Vastgelopen? Een hint geeft je geen stukje oplossing maar een extra aanwijzing, gekozen op wat je er vanaf jouw bord mee kunt.',
   },
 ];
 
-// Alleen de Speurdoku's; zie ZICHTBARE_MECHANICS in assignments.js.
-const TEZIEN = CATALOG.filter((p) => mechaniekZichtbaar(p.mechaniek) && ZICHTBARE_LEVEL_IDS.includes(p.niveau));
+// Elke druk op de knop een ander decor. Welke dat wordt volgt uit de seed
+// en niet uit een tweede loting - zo geeft dezelfde link altijd dezelfde
+// puzzel terug. Zie wereldVoorSeed in puzzle.js.
+function nieuwePuzzel(niveau) {
+  const seed = randomSeed();
+  return puzzleId({
+    opdracht: 'dader',
+    wereld: wereldVoorSeed(seed),
+    mechaniek: 'kamer',
+    niveau,
+    seed,
+  });
+}
 
 export function renderHome(mount) {
-  const done = solvedIds();
-  const bekeken = onthuldIds();
-  // Het instappad was de reeks met seeds die met 'start-' beginnen, en die
-  // liep door alle vier de soorten spel heen. Nu alleen het Speurdoku te
-  // zien is, bleef daar één zaak van over. Dus is het pad nu wat het altijd
-  // had moeten zijn: de eerste zaak van elk niveau, van vijf bij vijf tot
-  // zestien bij zestien. Dat loopt echt op, en het loopt vanzelf mee als er
-  // een niveau bij komt.
-  const instap = ZICHTBARE_LEVEL_IDS
-    .map((niveau) => TEZIEN.find((p) => p.niveau === niveau))
-    .filter(Boolean);
+  let niveau = laatsteNiveau();
+  if (!ZICHTBARE_LEVEL_IDS.includes(niveau)) niveau = ZICHTBARE_LEVEL_IDS[0];
 
   mount.replaceChildren();
+
+  const start = el('a', { class: 'btn btn-primary btn-groot', href: `#/puzzel/${nieuwePuzzel(niveau)}` });
+  const vernieuw = () => {
+    start.setAttribute('href', `#/puzzel/${nieuwePuzzel(niveau)}`);
+    const k = KAMER_LEVELS[niveau];
+    start.textContent = `Nieuwe puzzel · ${k.n} bij ${k.n}`;
+  };
+
+  const niveaus = el('div', { class: 'niveaukiezer' }, ZICHTBARE_LEVEL_IDS.map((l) => {
+    const p = LEVELS[l];
+    const k = KAMER_LEVELS[l];
+    const b = el('button', {
+      class: 'opt level-btn',
+      type: 'button',
+      'aria-pressed': String(niveau === l),
+    }, [
+      el('b', { text: String(l) }),
+      el('span', { class: 'opt-name', text: p.label }),
+      el('small', { text: `${k.n} bij ${k.n}, ${p.style === 'shallow' ? 'doorstrepen' : 'aanname nodig'}` }),
+    ]);
+    b.addEventListener('click', () => {
+      niveau = l;
+      zetNiveau(l);
+      for (const knop of niveaus.children) {
+        knop.setAttribute('aria-pressed', String(knop === b));
+      }
+      vernieuw();
+    });
+    return b;
+  }));
+  vernieuw();
 
   // ---------------------------------------------------------------- hero
   // Een echte plattegrond naast de tekst, geen plaatje van een plattegrond:
   // het eerste wat je ziet is waar het spel over gaat. Hij wordt hier
-  // gebouwd uit de eerste instappuzzel, dus hij klopt ook echt.
-  const voorbeeld = instap[0] ? bordVoorbeeld(instap[0]) : null;
-
+  // gebouwd, dus hij klopt ook echt.
   mount.append(
-    el('section', { class: voorbeeld ? 'hero hero-met-bord' : 'hero' }, [
+    el('section', { class: 'hero hero-met-bord' }, [
       el('div', {}, [
         el('p', { class: 'eyebrow', text: 'Deductiepuzzels' }),
         el('h1', { text: 'Puzzels die je uitredeneert' }),
@@ -64,19 +103,14 @@ export function renderHome(mount) {
           text: 'Een handvol verdachten, een paar aanwijzingen, en één antwoord dat past. Je komt er door te schrappen wat niet kan. Gokken hoeft nooit, ook niet bij de moeilijkste.',
         }),
       ]),
-      el('div', { class: 'hero-actions' }, [
-        el('a', {
-          class: 'btn btn-primary',
-          href: `#/puzzel/${puzzleId(instap[0])}`,
-          text: 'Begin bij de eerste zaak',
-        }),
-        el('a', { class: 'btn', href: '#/puzzels', text: `Alle ${TEZIEN.length} puzzels` }),
-      ]),
+      el('p', { class: 'label', text: 'Hoe zwaar wil je het hebben?' }),
+      niveaus,
+      el('div', { class: 'hero-actions' }, [start]),
       el('p', {
         class: 'hero-note',
-        text: 'Geen account nodig. Je voortgang blijft in deze browser bewaard.',
+        text: 'Elke keer een nieuw decor en een nieuwe zaak. Geen account nodig; je voortgang blijft in deze browser bewaard.',
       }),
-      voorbeeld,
+      bordVoorbeeld(),
     ])
   );
 
@@ -95,55 +129,38 @@ export function renderHome(mount) {
       ),
     ])
   );
-
-  // ------------------------------------------------------------ instap
-  mount.append(
-    el('section', { class: 'section' }, [
-      el('div', { class: 'section-head' }, [
-        el('h2', { text: 'Begin hier' }),
-        el('p', { text: `Eén zaak per niveau, van ${KAMER_LEVELS[ZICHTBARE_LEVEL_IDS[0]].n} bij ${KAMER_LEVELS[ZICHTBARE_LEVEL_IDS[0]].n} tot ${KAMER_LEVELS[ZICHTBARE_LEVEL_IDS.at(-1)].n} bij ${KAMER_LEVELS[ZICHTBARE_LEVEL_IDS.at(-1)].n}.` }),
-      ]),
-      el('div', { class: 'rows' }, instap.map((entry, i) => puzzelRij(entry, done, i + 1, bekeken))),
-    ])
-  );
-
-  // ------------------------------------------------------------ werelden
-  mount.append(
-    el('section', { class: 'section' }, [
-      el('div', { class: 'section-head' }, [
-        el('h2', { text: 'Of kies een genre' }),
-        el('a', { class: 'link-more', href: '#/puzzels', text: 'Alle puzzels bekijken' }),
-      ]),
-      el('div', { class: 'tiles' },
-        WORLDS.map((w) => {
-          const aantal = TEZIEN.filter((p) => p.wereld === w.id).length;
-          return el('a', { class: 'tile', href: `#/puzzels?wereld=${w.id}` }, [
-            el('span', { class: 'tile-scene' }, sceneVoor(w.id, w.accent)),
-            el('span', { class: 'tile-body' }, [
-              el('span', { class: 'tile-name', text: `${w.icon} ${w.name}` }),
-              el('span', { class: 'tile-sub', text: w.blurb }),
-              el('span', { class: 'tile-count', text: `${aantal} puzzels` }),
-            ]),
-          ]);
-        })
-      ),
-    ])
-  );
-
-  // ----------------------------------------------------------- zelf maken
-  mount.append(
-    el('section', { class: 'section' }, [
-      el('div', { class: 'section-head' }, [el('h2', { text: 'Of maak er zelf een' })]),
-      el('p', {
-        class: 'lede',
-        text: 'Kies wat je uitzoekt, waar het speelt, in welke vorm en hoe moeilijk. De puzzel wordt ter plekke gebouwd, en je kunt hem met een link delen.',
-      }),
-      el('a', { class: 'btn', href: '#/maken', text: 'Zelf een puzzel maken' }),
-    ])
-  );
 }
 
-// Een puzzel als rij: nummer, titel met ondertitel, en rechts de zwaarte.
+// Een plattegrond om naar te kijken, niet om in te spelen: hij staat op de
+// voordeur als voorproefje. Daarom een leeg bord - niemand neergezet, geen
+// kruisjes. Vaste instellingen, want een voorbeeld hoort er elke keer
+// hetzelfde uit te zien; de puzzel die je krijgt is wél steeds een andere.
+function bordVoorbeeld() {
+  let puzzle;
+  try {
+    puzzle = buildPuzzle({
+      opdracht: 'dader', wereld: 'landhuis', mechaniek: 'kamer', niveau: 1, seed: 'voordeur',
+    });
+  } catch {
+    return null;
+  }
+
+  const leeg = {
+    plaats: {},
+    kruis: new Set(),
+    schets: {},
+    gekozen: -1,
+    plaatsVanCel: () => null,
+    fout: new Set(),
+    goed: new Set(),
+  };
+  const bord = renderKamerbord(puzzle, leeg, { klikCel: () => {} });
+  return el('span', { class: 'hero-bord' }, [bord]);
+}
+
+// ------------------------------------------------- nog in gebruik door de
+// verborgen bibliotheek (#/puzzels). Zie de opmerking boven aan dit bestand.
+
 export function puzzelRij(entry, done, nummer, bekeken = new Set()) {
   const id = puzzleId(entry);
   const niveau = LEVELS[entry.niveau];
@@ -170,41 +187,6 @@ export function puzzelRij(entry, done, nummer, bekeken = new Set()) {
       bolletjes,
     ]),
   ]);
-}
-
-
-// Een puzzel als kaart in plaats van als regel.
-//
-// De bibliotheek was een lijst met tekst en verder niets. Een kaart laat
-// meteen zien in welke wereld je terechtkomt: de sfeertekening van dat genre
-// als omslag, de kleur van dat genre eromheen, en het teken van het speltype
-// op een penning in de hoek. Opgelost staat erop als stempel.
-// Een plattegrond om naar te kijken, niet om in te spelen: hij staat op de
-// voordeur als voorproefje. Daarom een leeg bord - niemand neergezet, geen
-// kruisjes - en een link die je naar de echte puzzel brengt.
-function bordVoorbeeld(entry) {
-  let puzzle;
-  try {
-    puzzle = buildPuzzle(catalogSettings(entry));
-  } catch {
-    return null;
-  }
-  if (puzzle.kind !== 'kamer') return null;
-
-  const leeg = {
-    plaats: {},
-    kruis: new Set(),
-    schets: {},
-    gekozen: -1,
-    plaatsVanCel: () => null,
-    fout: new Set(),
-  };
-  const bord = renderKamerbord(puzzle, leeg, { klikCel: () => {} });
-  return el('a', {
-    class: 'hero-bord',
-    href: `#/puzzel/${puzzleId(entry)}`,
-    'aria-label': `Open ${entry.titel}`,
-  }, [bord, el('span', { class: 'hero-bord-label', text: entry.titel })]);
 }
 
 export function puzzelKaart(entry, done, bekeken = new Set()) {

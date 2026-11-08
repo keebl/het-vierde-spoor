@@ -2520,6 +2520,231 @@ export const RANDSTIJLEN = {
       b.spikkels(n(17), ['#2fd9ff', '#ff3fd0', '#ffffff'], { y0: 0, y1: d * 1.04, groot: 1.6 });
     },
   },
+  // ---------------------------------------------------- Het Rietveld College
+  //
+  // Een schoolgang nadat iedereen weg is. Dezelfde zes regels als de andere
+  // werelden, alleen is het licht hier tl in plaats van kaarsvuur: koud
+  // boven, en één armatuur die het net niet meer doet. Wat de gang
+  // herkenbaar maakt zijn de lockers die over de hele lengte doorlopen en
+  // de haakjes eronder met een jas die niemand is komen halen.
+  school: {
+    kern: '#121a22', koel: '#070b0f', warm: '#ffe6a8', textuur: 'korrel', ruw: 0.16, stap: 40,
+    gloed: '#ffd166',
+    verf(b) {
+      const { d, L, R, K, n } = b;
+      const s = d / 100;
+      const ver = b.laag('randver', 0.66);
+      const mid = b.laag('randmid');
+      const voor = b.laag('randvoor');
+
+      ver.vlak(`M0 0 H${L.toFixed(1)} V${d.toFixed(1)} H0 Z`, '#0c131a');
+      ver.vlak(`M0 ${(d * 0.62).toFixed(1)} H${L.toFixed(1)} V${d.toFixed(1)} H0 Z`, '#101a24');
+      ver.streek(`M0 ${(d * 0.62).toFixed(1)} H${L.toFixed(1)}`, '#27384a', 1.4 * s, 0.6);
+
+      // De lockerwand. Elke deur iets anders van kleur, want ze zijn in
+      // dertig jaar drie keer overgeschilderd.
+      const top = d * 0.2;
+      const hoog = d * 0.4;
+      const breed = 34 * s;
+      for (let x = R(8, 0); x < L; x += breed) {
+        const w = Math.min(breed - 2 * s, L - x);
+        if (w < 6 * s) break;
+        mid.vlak(`M${x.toFixed(1)} ${top.toFixed(1)} h${w.toFixed(1)} v${hoog.toFixed(1)} h${(-w).toFixed(1)} Z`, K(['#1d3346', '#1a2e40', '#20394d']));
+        mid.streek(`M${x.toFixed(1)} ${top.toFixed(1)} v${hoog.toFixed(1)}`, '#050a0f', 1.2 * s, 0.8);
+        for (let k = 0; k < 3; k++) {
+          mid.streek(`M${(x + 5 * s).toFixed(1)} ${(top + (4 + k * 3) * s).toFixed(1)} h${(w - 10 * s).toFixed(1)}`, '#09111a', 1 * s, 0.7);
+        }
+        mid.stip(x + w * 0.74, top + hoog * 0.42, 1.5 * s, '#6d8399');
+        if (R() < 0.16) {
+          mid.vlak(`M${(x + w * 0.5).toFixed(1)} ${top.toFixed(1)} h${(w * 0.5).toFixed(1)} v${hoog.toFixed(1)} h${(-w * 0.5).toFixed(1)} Z`, '#060b11');
+          voor.vlak(mid.klont(x + w * 0.74, top + hoog * 0.94, w * 0.46, hoog * 0.3, 3), '#2f4a3a');
+        }
+      }
+
+      // Haakjes onder de lockers, met hier en daar een jas eraan.
+      for (let i = 0; i < n(58); i++) {
+        const x = R(L, 0);
+        const y = d * 0.68;
+        voor.streek(`M${x.toFixed(1)} ${y.toFixed(1)} v${(4 * s).toFixed(1)}`, '#4a5f72', 1.2 * s);
+        if (R() < 0.3) {
+          voor.vlak(voor.klont(x, y + 20 * s, 13 * s, 16 * s, 3), K(['#3a2f4a', '#2a3b4f', '#4a3328']));
+        }
+      }
+
+      // De tl-balk loopt de hele gang door. Eén buis hapert; dat is het
+      // enige wat er in zo'n gang nog gebeurt als iedereen weg is.
+      const balk = d * 0.1;
+      mid.vlak(`M0 ${(balk - 2.6 * s).toFixed(1)} H${L.toFixed(1)} V${(balk + 2.6 * s).toFixed(1)} H0 Z`, '#1e2a35');
+      let x = R(30, 4);
+      while (x < L) {
+        const nx = Math.min(L, x + 150 * s * R(1.25, 0.75));
+        const aan = R() > 0.22;
+        voor.streek(`M${x.toFixed(1)} ${balk.toFixed(1)} H${nx.toFixed(1)}`, aan ? '#ffe6a8' : '#2b3a48', 2.4 * s, aan ? 0.95 : 0.7);
+        if (aan) {
+          const id = zorgVoorGloed('#ffd166');
+          voor.g.append(el('rect', {
+            x: x.toFixed(1), y: (balk - 16 * s).toFixed(1),
+            width: (nx - x).toFixed(1), height: (32 * s).toFixed(1),
+            fill: `url(#${id})`, opacity: 0.2,
+          }));
+          voor.gloed((x + nx) / 2, balk, 7 * s, '#ffd166', 0.8, 0.5);
+        }
+        x = nx + 10 * s;
+      }
+
+      voor.spikkels(n(90), ['#ffe6a8', '#cfe0f0'], { y0: balk, y1: d * 0.55, groot: 1.1, halo: 0.3 });
+      const bx = L * R(0.78, 0.6);
+      voor.ovaal(bx, d - 6 * s, 8 * s, 8 * s, '#c25a2a');
+      voor.streek(`M${(bx - 7 * s).toFixed(1)} ${(d - 7 * s).toFixed(1)} q${(7 * s).toFixed(1)} ${(5 * s).toFixed(1)} ${(14 * s).toFixed(1)} 0`, '#f0d8c0', 0.9 * s, 0.7);
+      voor.ovaal(bx, d - 0.5 * s, 9 * s, 2.2 * s, '#05080c', 0.5);
+    },
+  },
+
+  // -------------------------------------------------- Sint-Joris, nachtdienst
+  //
+  // Een ziekenhuisgang om drie uur 's nachts. Het hele gebouw heeft hier
+  // dezelfde kleur: een flauw groen dat uit het plafond komt en waar
+  // niemand ooit voor gekozen heeft. De leuning loopt over de volle lengte
+  // door - dat is wat een ziekenhuisgang een ziekenhuisgang maakt - en om
+  // de zoveel meter staat een deur met een ruitje waar licht achter kan
+  // branden.
+  ziekenhuis: {
+    kern: '#0b1a16', koel: '#030807', warm: '#d6fff0', textuur: 'strijk', ruw: 0.1, stap: 36,
+    gloed: '#49e0b4',
+    verf(b) {
+      const { d, L, R, K, n } = b;
+      const s = d / 100;
+      const ver = b.laag('randver', 0.7);
+      const mid = b.laag('randmid');
+      const voor = b.laag('randvoor');
+
+      ver.vlak(`M0 0 H${L.toFixed(1)} V${d.toFixed(1)} H0 Z`, '#081411');
+      ver.vlak(`M0 ${(d * 0.56).toFixed(1)} H${L.toFixed(1)} V${d.toFixed(1)} H0 Z`, '#0d2019');
+      ver.streek(`M0 ${(d * 0.56).toFixed(1)} H${L.toFixed(1)}`, '#1f4438', 1.2 * s, 0.7);
+
+      const stap = 118 * s;
+      for (let x = R(24, 6); x < L; x += stap) {
+        const w = 54 * s;
+        if (x + w > L) break;
+        mid.vlak(`M${x.toFixed(1)} ${(d * 0.14).toFixed(1)} h${w.toFixed(1)} v${(d * 0.44).toFixed(1)} h${(-w).toFixed(1)} Z`, '#102a22');
+        mid.streek(`M${x.toFixed(1)} ${(d * 0.14).toFixed(1)} v${(d * 0.44).toFixed(1)}`, '#061310', 1.2 * s, 0.8);
+        mid.streek(`M${(x + w).toFixed(1)} ${(d * 0.14).toFixed(1)} v${(d * 0.44).toFixed(1)}`, '#061310', 1.2 * s, 0.8);
+        const aan = R() < 0.34;
+        mid.vlak(
+          `M${(x + 14 * s).toFixed(1)} ${(d * 0.2).toFixed(1)} h${(26 * s).toFixed(1)} v${(d * 0.2).toFixed(1)} h${(-26 * s).toFixed(1)} Z`,
+          aan ? '#8ef0cf' : '#0a1b16',
+          aan ? 0.9 : 1,
+        );
+        if (aan) mid.gloed(x + w / 2, d * 0.3, 11 * s, '#49e0b4', 0.7, 0.3);
+        mid.stip(x + w - 7 * s, d * 0.38, 1.4 * s, '#79909a');
+      }
+
+      const leuning = d * 0.62;
+      voor.streek(`M0 ${leuning.toFixed(1)} H${L.toFixed(1)}`, '#5c7a70', 2.6 * s, 0.9);
+      voor.streek(`M0 ${(leuning - 1 * s).toFixed(1)} H${L.toFixed(1)}`, '#9fc2b6', 0.9 * s, 0.6);
+      for (let x = R(30, 10); x < L; x += 96 * s) {
+        voor.streek(`M${x.toFixed(1)} ${leuning.toFixed(1)} v${(7 * s).toFixed(1)}`, '#3c5950', 1.6 * s);
+      }
+
+      const id = zorgVoorGloed('#49e0b4');
+      voor.g.append(el('rect', {
+        x: 0, y: (d * 0.02).toFixed(1), width: L.toFixed(1), height: (18 * s).toFixed(1),
+        fill: `url(#${id})`, opacity: 0.16,
+      }));
+      voor.streek(`M0 ${(d * 0.06).toFixed(1)} H${L.toFixed(1)}`, '#d6fff0', 1.8 * s, 0.8);
+
+      const ex = L * R(0.42, 0.18);
+      voor.vlak(`M${(ex - 11 * s).toFixed(1)} ${(d * 0.1).toFixed(1)} h${(22 * s).toFixed(1)} v${(10 * s).toFixed(1)} h${(-22 * s).toFixed(1)} Z`, '#0e3a2c');
+      voor.gloed(ex, d * 0.15, 7 * s, '#49e0b4', 1, 0.6);
+
+      // Een brancard tegen de wand. Hij staat er altijd, en er ligt nooit
+      // iemand op.
+      const kx = L * R(0.86, 0.66);
+      voor.vlak(`M${(kx - 26 * s).toFixed(1)} ${(d * 0.68).toFixed(1)} h${(52 * s).toFixed(1)} v${(5 * s).toFixed(1)} h${(-52 * s).toFixed(1)} Z`, '#9fc2b6');
+      voor.vlak(`M${(kx - 22 * s).toFixed(1)} ${(d * 0.73).toFixed(1)} h${(8 * s).toFixed(1)} v${(14 * s).toFixed(1)} h${(-8 * s).toFixed(1)} Z`, '#3c5950');
+      voor.vlak(`M${(kx + 14 * s).toFixed(1)} ${(d * 0.73).toFixed(1)} h${(8 * s).toFixed(1)} v${(14 * s).toFixed(1)} h${(-8 * s).toFixed(1)} Z`, '#3c5950');
+      voor.stip(kx - 18 * s, d * 0.88, 2.4 * s, '#182f28');
+      voor.stip(kx + 18 * s, d * 0.88, 2.4 * s, '#182f28');
+      voor.spikkels(n(140), ['#d6fff0'], { y0: 0, y1: d * 0.4, groot: 0.9, halo: 0.2 });
+    },
+  },
+
+  // ------------------------------------------------------- De Spiegeltoren
+  //
+  // Een glazen gevel van binnenuit, na elven. De stijlen lopen van boven
+  // naar beneden door; daarachter de stad als vlekken licht, en op de
+  // vensterbank staat wat er 's avonds staat: een bureaulamp die nog aan
+  // is, een scherm in slaapstand, en een plant die het volhoudt.
+  kantoor: {
+    kern: '#0d0d16', koel: '#040409', warm: '#cdd7ff', textuur: 'strijk', ruw: 0.1, stap: 42,
+    gloed: '#8ab4ff',
+    verf(b) {
+      const { d, L, R, K, n } = b;
+      const s = d / 100;
+      const ver = b.laag('randver', 0.62);
+      const mid = b.laag('randmid');
+      const voor = b.laag('randvoor');
+
+      ver.vlak(`M0 0 H${L.toFixed(1)} V${d.toFixed(1)} H0 Z`, '#08080f');
+
+      // De stad achter het glas. Eén op de vijf ramen brandt; meer en het
+      // wordt een kerstboom, minder en het is een zwart vlak.
+      let x = 0;
+      while (x < L) {
+        const w = R(74, 30) * s;
+        const top = d * R(0.42, 0.1);
+        ver.vlak(`M${x.toFixed(1)} ${top.toFixed(1)} h${w.toFixed(1)} V${(d * 0.74).toFixed(1)} h${(-w).toFixed(1)} Z`, K(['#101323', '#0d1120', '#141828']));
+        for (let ry = top + 6 * s; ry < d * 0.7; ry += 9 * s) {
+          for (let rx = x + 5 * s; rx < x + w - 5 * s; rx += 9 * s) {
+            if (R() > 0.22) continue;
+            ver.vlak(`M${rx.toFixed(1)} ${ry.toFixed(1)} h${(3.4 * s).toFixed(1)} v${(4.4 * s).toFixed(1)} h${(-3.4 * s).toFixed(1)} Z`, K(['#8ab4ff', '#ffd79a', '#cdd7ff']));
+          }
+        }
+        x += w;
+      }
+      ver.waas(L * 0.3, d * 0.6, d * 0.9, '#8ab4ff', 0.1);
+      ver.waas(L * 0.78, d * 0.55, d * 0.8, '#ffd79a', 0.08);
+
+      for (let sx = R(26, 6); sx < L; sx += 104 * s) {
+        mid.vlak(`M${sx.toFixed(1)} 0 h${(3.4 * s).toFixed(1)} V${d.toFixed(1)} h${(-3.4 * s).toFixed(1)} Z`, '#1a1d2c');
+        mid.streek(`M${(sx + 3.4 * s).toFixed(1)} 0 V${d.toFixed(1)}`, '#343a52', 0.8 * s, 0.5);
+      }
+      mid.streek(`M0 ${(d * 0.74).toFixed(1)} H${L.toFixed(1)}`, '#2b3148', 1.6 * s, 0.7);
+      // Strijklicht op het glas: schuine vegen die je alleen ziet als je
+      // ernaar zoekt, en die het vlak glas maken in plaats van lucht.
+      for (let i = 0; i < n(130); i++) {
+        const gx = R(L, 0);
+        mid.streek(`M${gx.toFixed(1)} ${(d * R(0.6, 0.05)).toFixed(1)} l${(14 * s).toFixed(1)} ${(14 * s).toFixed(1)}`, '#cdd7ff', 0.7 * s, 0.07);
+      }
+
+      voor.vlak(`M0 ${(d * 0.76).toFixed(1)} H${L.toFixed(1)} V${d.toFixed(1)} H0 Z`, '#14141f');
+      voor.streek(`M0 ${(d * 0.76).toFixed(1)} H${L.toFixed(1)}`, '#3a3f58', 1.2 * s, 0.8);
+
+      // De bureaulamp: het enige warme ding op de hele band.
+      const lx = L * R(0.34, 0.14);
+      const lamp = voor.rechtop(lx, d * 0.78);
+      lamp.streek(`M0 0 V${(-16 * s).toFixed(1)} q0 ${(-9 * s).toFixed(1)} ${(9 * s).toFixed(1)} ${(-11 * s).toFixed(1)}`, '#4a4f68', 1.6 * s);
+      lamp.vlak(`M${(2 * s).toFixed(1)} ${(-21 * s).toFixed(1)} h${(14 * s).toFixed(1)} l${(-3 * s).toFixed(1)} ${(-9 * s).toFixed(1)} h${(-8 * s).toFixed(1)} Z`, '#2a2f44');
+      lamp.gloed(9 * s, -20 * s, 8 * s, '#ffd79a', 1.1, 0.8);
+      lamp.ovaal(0, 0, 8 * s, 2.4 * s, '#2a2f44');
+
+      const mx = L * R(0.74, 0.52);
+      const scherm = voor.rechtop(mx, d * 0.78);
+      scherm.vlak(`M${(-17 * s).toFixed(1)} ${(-24 * s).toFixed(1)} h${(34 * s).toFixed(1)} v${(19 * s).toFixed(1)} h${(-34 * s).toFixed(1)} Z`, '#191d2e');
+      scherm.vlak(`M${(-15 * s).toFixed(1)} ${(-22 * s).toFixed(1)} h${(30 * s).toFixed(1)} v${(15 * s).toFixed(1)} h${(-30 * s).toFixed(1)} Z`, '#0d1120');
+      scherm.gloed(10 * s, -14 * s, 2.4 * s, '#8ab4ff', 0.9, 0.7);
+      scherm.vlak(`M${(-4 * s).toFixed(1)} ${(-5 * s).toFixed(1)} h${(8 * s).toFixed(1)} v${(5 * s).toFixed(1)} h${(-8 * s).toFixed(1)} Z`, '#191d2e');
+      scherm.ovaal(0, 0, 11 * s, 2.4 * s, '#232840');
+
+      const px = L * R(0.94, 0.84);
+      const plant = voor.rechtop(px, d * 0.78);
+      plant.vlak(`M${(-8 * s).toFixed(1)} 0 h${(16 * s).toFixed(1)} l${(-2.4 * s).toFixed(1)} ${(-13 * s).toFixed(1)} h${(-11.2 * s).toFixed(1)} Z`, '#2e3348');
+      for (let i = 0; i < 7; i++) {
+        plant.loof(R(5 * s, -5 * s), -14 * s - R(5 * s, 0), R(17 * s, 10 * s), 5 * s, R(330, 200), K(['#2f5a46', '#3c7154', '#24463a']), R(1, 0.7));
+      }
+      voor.spikkels(n(150), ['#cdd7ff'], { y0: 0, y1: d * 0.7, groot: 0.8, halo: 0.18 });
+    },
+  },
 };
 
 // Geen wereld herkend? Dan het landhuis: donker hout doet nergens pijn.

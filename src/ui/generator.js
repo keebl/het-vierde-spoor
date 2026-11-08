@@ -2,23 +2,31 @@
 // dezelfde puzzel, dus wat je maakt kun je delen.
 
 import { el } from './boards.js';
-import { WORLDS } from '../content/worlds.js';
 import { ASSIGNMENTS, MECHANIC_BY_ID, ZICHTBARE_MECHANICS } from '../content/assignments.js';
 import { LEVELS, ZICHTBARE_LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
 import { randomSeed } from '../engine/rng.js';
-import { puzzleId } from '../puzzle.js';
+import { puzzleId, wereldVoorSeed } from '../puzzle.js';
 import { aiEnabled, setAiEnabled } from '../ai/flavour.js';
 import { aiEndpoint } from '../ai/endpoint.js';
+import { laatsteNiveau, zetNiveau } from './state.js';
 
 // Speurdoku staat voorop: dat is het hoofdspel, en dan hoort het ook de
 // stand te zijn waar je op uitkomt als je niets kiest.
+//
+// Het decor staat hier niet meer bij. Je koos uit acht genres, en dat is
+// eraf: je krijgt er een, je kiest er geen. Daarmee is dit scherm terug tot
+// wat het hoort te zijn - hoe zwaar, en welke seed als je er een wilt
+// terughalen. De wereld zit nog wel in de seed, zodat een gedeelde link
+// precies dezelfde puzzel geeft.
 const keuze = {
   opdracht: 'dader',
   wereld: 'noir',
   mechaniek: 'kamer',
-  niveau: 3,
+  niveau: laatsteNiveau(),
   seed: randomSeed(),
 };
+
+
 
 // Welke opdrachten je nog kunt kiezen: alleen die met een soort spel dat te
 // zien is. Zolang dat alleen het Speurdoku is, blijft 'Wie was het?' over.
@@ -40,7 +48,7 @@ export function renderGenerator(mount) {
     el('h1', { text: 'Maak je eigen puzzel' }),
     el('p', {
       class: 'lede',
-      text: 'Kies wat je wilt uitzoeken, waar het speelt, in welke vorm en hoe moeilijk. De puzzel wordt ter plekke gebouwd; met dezelfde seed krijg je hem altijd terug.',
+      text: 'Kies hoe zwaar je het wilt hebben. Het decor krijg je, dat kies je niet: elke puzzel speelt ergens anders. De puzzel wordt ter plekke gebouwd, en met dezelfde seed krijg je hem altijd terug.',
     })
   );
 
@@ -68,8 +76,11 @@ export function renderGenerator(mount) {
   const field = (label, kids, cls = 'options') =>
     el('div', { class: 'field' }, [el('span', { class: 'label', text: label }), el('div', { class: cls }, kids)]);
 
-  form.append(field('Opdracht', TEKIEZEN.map((a) => optButton('opdracht', a.id, a.name, a.blurb))));
-  form.append(field('Genre', WORLDS.map((w) => optButton('wereld', w.id, `${w.icon} ${w.name}`, w.blurb))));
+  // Eén opdracht over, dus geen veld: een keuzerij met één knop is geen
+  // keuze maar een mededeling. Hetzelfde gold voor 'Soort spel' hieronder.
+  if (TEKIEZEN.length > 1) {
+    form.append(field('Opdracht', TEKIEZEN.map((a) => optButton('opdracht', a.id, a.name, a.blurb))));
+  }
   // Het soort spel staat er niet meer bij: voorlopig is alles een Speurdoku.
   // Zie ZICHTBARE_MECHANICS in assignments.js. Zodra er meer dan één soort
   // te zien is, komt dit veld terug.
@@ -96,7 +107,7 @@ export function renderGenerator(mount) {
           : `${p.slots} rijen, ${p.style === 'shallow' ? 'doorstrepen' : 'aanname nodig'}`,
       }),
     ]);
-    b.addEventListener('click', () => { keuze.niveau = l; renderGenerator(mount); });
+    b.addEventListener('click', () => { keuze.niveau = l; zetNiveau(l); renderGenerator(mount); });
     return b;
   }), 'levels'));
 
@@ -137,6 +148,7 @@ export function renderGenerator(mount) {
   const go = el('button', { class: 'btn btn-primary', type: 'button', text: 'Maak de puzzel' });
   go.addEventListener('click', () => {
     if (!keuze.seed) keuze.seed = randomSeed();
+    keuze.wereld = wereldVoorSeed(keuze.seed);
     const heen = puzzleId(keuze);
     // Een volgende klik hoort een andere puzzel te geven, niet dezelfde.
     // Wil je er een terug, dan typ je de seed gewoon weer in.
