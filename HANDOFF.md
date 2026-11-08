@@ -3,7 +3,7 @@
 Voor de volgende sessie — mens of model. Lees eerst `ARCHITECTUUR.md` voor
 de kaart van de code, en `README.md` voor wat het spel is.
 
-**Laatst bijgewerkt:** 9 november 2026.
+**Laatst bijgewerkt:** 8 november 2026, commit `99e0d63`.
 
 ---
 
@@ -27,11 +27,11 @@ Twee dingen volgen daaruit, en ze zijn allebei al eens misgegaan:
 
 ## Stand van zaken
 
-Laatste commit: `c292e4b`. **Alles daarna staat nog niet live.**
+Laatste commit: `99e0d63`. De werkmap is schoon en **alles hieronder staat
+live** op https://keebl.github.io/het-vierde-spoor/. De keuring stond groen
+op alle zeven toetsen voordat het de deur uit ging.
 
-### In de werkmap, nog niet gecommit
-
-Twee afgeronde brokken die alleen nog op een groene keuring wachten:
+### Wat er in deze ronde af is gekomen
 
 **Soorten zaak** (`src/content/zaken.js`, nieuw). Niet elke puzzel is meer
 een moord: er zijn ook verdwijningen en diefstallen. Elke zaak levert eigen
@@ -107,18 +107,21 @@ Daarbij vier dingen die moesten meeveranderen:
   kiosk is een winkel); de overige 40 zijn getekend, van de duikbril tot
   de giraf. Reken daar bij een volgende wereld meteen op.
 
-Ook klaar en niet gecommit: `ARCHITECTUUR.md` en dit bestand.
+Erbij gekomen: `ARCHITECTUUR.md` (de kaart van de code) en dit bestand.
 
-### Wat er moet gebeuren
+### Hoe je iets de deur uit doet
 
-1. `npm run check:all` draaien. Het oordeel staat in de regel
-   `volledige keuring exit=` in het uitvoerbestand — **niet** de exitcode
-   van je shell.
+1. `npm run check:snel` tussendoor (een seconde), `npm run check:all` voor
+   een oordeel (vier tot vijf minuten). Het oordeel staat in de tabel met
+   goed/FOUT onderaan en in de regel `volledige keuring exit=` — **niet** in
+   de exitcode van je shell.
 2. Bij groen: committen, pushen, en op de live site zelf nakijken. Houd er
    rekening mee dat een tabblad dat al openstond de oude modules vasthoudt;
    `location.reload()` vóór je conclusies trekt.
 3. Guus de link sturen. Dat heeft hij expliciet gevraagd: na elke push en
    aan het eind van elke opdracht, als aanklikbare link.
+4. En dit bestand bijwerken voordat je afsluit. Het veroudert bij de eerste
+   commit die erna komt, en een overdracht die niet klopt is erger dan geen.
 
 ---
 
