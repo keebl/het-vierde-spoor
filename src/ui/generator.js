@@ -44,11 +44,11 @@ export function renderGenerator(mount) {
 
   mount.replaceChildren();
   mount.append(
-    el('p', { class: 'eyebrow', text: 'Generator' }),
-    el('h1', { text: 'Maak je eigen puzzel' }),
+    el('p', { class: 'eyebrow', text: 'Nieuwe zaak' }),
+    el('h1', { text: 'Nog een puzzel' }),
     el('p', {
       class: 'lede',
-      text: 'Kies hoe zwaar je het wilt hebben. Het decor krijg je, dat kies je niet: elke puzzel speelt ergens anders. De puzzel wordt ter plekke gebouwd, en met dezelfde seed krijg je hem altijd terug.',
+      text: 'Kies hoe zwaar je het wilt hebben en druk op de knop. Het decor krijg je, dat kies je niet: elke puzzel speelt ergens anders. Hij wordt ter plekke gebouwd en ter plekke nagerekend.',
     })
   );
 
@@ -111,11 +111,26 @@ export function renderGenerator(mount) {
     return b;
   }), 'levels'));
 
+  // De seed achter een klepje.
+  //
+  // Dit scherm was de generator: vier keuzes en een seed, voor wie precies
+  // wist wat hij wilde. Sinds "Nieuwe puzzel" in het menu hiernaartoe wijst
+  // is het de voordeur van het spel, en dan is een invulveld met
+  // "spoor-1216" erin het eerste wat je ziet. Dat is geen keuze maar een
+  // intern nummer. Wie een puzzel wil delen gebruikt "Link kopiëren" op de
+  // puzzel zelf; wie er eentje wil terughalen klapt dit open.
   const seedInput = el('input', { type: 'text', value: keuze.seed, 'aria-label': 'Seed' });
   seedInput.addEventListener('input', () => { keuze.seed = seedInput.value.trim(); });
   const dice = el('button', { class: 'btn', type: 'button', text: 'Nieuwe seed' });
   dice.addEventListener('click', () => { keuze.seed = randomSeed(); renderGenerator(mount); });
-  form.append(field('Seed', [seedInput, dice], 'row-inline'));
+  form.append(el('details', { class: 'spelregels' }, [
+    el('summary', { text: 'Een bepaalde puzzel terughalen' }),
+    el('p', {
+      class: 'legend',
+      text: 'Elke puzzel heeft een seed. Dezelfde seed geeft altijd exact dezelfde puzzel, met hetzelfde decor en dezelfde namen.',
+    }),
+    el('div', { class: 'row-inline' }, [seedInput, dice]),
+  ]));
 
   // De AI-laag herschrijft alleen de stijl van de teksten. Elke herschreven
   // aanwijzing wordt nagekeken op het behoud van alle eigennamen; faalt dat,
@@ -123,6 +138,10 @@ export function renderGenerator(mount) {
   // Zonder eindpunt valt er niets te herschrijven: dan staat de site ergens
   // waar geen server bij hoort. De knop daar laten staan alsof hij iets doet,
   // is misleidend.
+  // Online staat er geen server met een API-key achter - dat is met opzet, en
+  // het verandert niet. Een uitgegrijsd vak dat vertelt dat iets niet kan en
+  // ook nooit zal kunnen, is geen bediening maar ruis. Lokaal (npm start)
+  // staat het er wel, want daar doet hij het.
   const kan = !!aiEndpoint();
   const aiBtn = el('button', {
     class: 'opt',
@@ -143,7 +162,7 @@ export function renderGenerator(mount) {
   if (kan) {
     aiBtn.addEventListener('click', () => { setAiEnabled(!aiEnabled()); renderGenerator(mount); });
   }
-  form.append(field('Verhaalteksten', [aiBtn]));
+  if (kan) form.append(field('Verhaalteksten', [aiBtn]));
 
   const go = el('button', { class: 'btn btn-primary', type: 'button', text: 'Maak de puzzel' });
   go.addEventListener('click', () => {
