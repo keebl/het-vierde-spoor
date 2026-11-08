@@ -112,6 +112,15 @@ Ook klaar en niet gecommit: `ARCHITECTUUR.md` en dit bestand.
   niet de naam verder verbuigen. **Les voor de volgende keer: als een
   tekening liegt, teken hem. Een wereldlaag kan namen omdopen, geen beeld.**
 
+- *Een plantenbak in het ondiepe bad.* De twee baden en het pinguïnbad
+  hebben de soort `buiten`, net als de ligweide, dus alles wat op een
+  grasveld mag staan kan ook in het water belanden. De vloer is wel apart
+  geregeld (`VLOER_VAN_PLEK`), het meubilair niet. De nette oplossing is een
+  eigen soort `bad` met een eigen lijst - maar `check-kamers.mjs` eist tien
+  namen per soort, dus dat zijn tien zwembadmeubels met elk een eerlijke
+  tekening (startblok, zwemtrapje, lijnenhaspel, reddingsboei, duikplank,
+  peilpaal…). Een paar uur werk, geen kwartier.
+
 **Eerder opgemerkt, nog niet opgelost**
 
 - Een afsluiting als je het goed hebt. Nu staat er alleen "Opgelost".
