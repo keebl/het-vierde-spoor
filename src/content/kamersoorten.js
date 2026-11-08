@@ -26,7 +26,7 @@ export const SOORT_VAN = {
   'de regenachtige binnenplaats': 'buiten',
   // Huize Valkenhorst
   'de bibliotheek': 'bibliotheek',
-  'de wintertuin': 'buiten',
+  'de wintertuin': 'serre',
   'de biljartkamer': 'zaal',
   'de dienstgang': 'gang',
   'de wijnkelder': 'kelder',
@@ -35,7 +35,7 @@ export const SOORT_VAN = {
   'de koetshuiszolder': 'werkplaats',
   'de keuken': 'keuken',
   'de jachtkamer': 'zaal',
-  'de orangerie': 'buiten',
+  'de orangerie': 'serre',
   'de dienstbodentrap': 'gang',
   // Ruimtestation Meridiaan
   'de centrifuge': 'werkplaats',
@@ -88,7 +88,7 @@ export const SOORT_VAN = {
   'de leeszaal': 'bibliotheek',
   // Kerstavond en Halloweennacht
   'de eetkamer': 'zaal',
-  'de serre': 'buiten',
+  'de serre': 'serre',
   'de bijkeuken': 'keuken',
   'de logeerkamer': 'slaapkamer',
   'de hal met de boom': 'gang',
@@ -170,6 +170,9 @@ export const VLOER_VAN = {
   grafkelder:   { vul: '#95978b', lijn: '#74766a', dessin: 'steen' },
   laboratorium: { vul: '#9cc4b8', lijn: '#77a295', dessin: 'tegels' },
   sterrenwacht: { vul: '#a8865c', lijn: '#836742', dessin: 'planken' },
+  // Een serre is binnen. Terracotta tegels, geen gras - en al helemaal
+  // geen kampvuur, zie MEUBELS_VAN.serre.
+  serre:        { vul: '#c9a584', lijn: '#a38163', dessin: 'tegels' },
 };
 
 // Wat staat er in zo'n ruimte? Naam plus de tekening die erbij hoort.
@@ -227,6 +230,15 @@ export const MEUBELS_VAN = {
     ['het kaartenkabinet', 'kaartenkast'], ['de schrijflessenaar', 'schrijflessenaar'],
     ['de chronometer', 'chronometer'],
   ],
+  // Een serre, een orangerie, een wintertuin: binnen, onder glas, vol
+  // planten. Deze stonden als `buiten` te boek en kregen daardoor gras
+  // onder zich en een kampvuur, een omgevallen stam en een
+  // vogelverschrikker erin.
+  serre: [
+    ['de palmkuip', 'palmkuip'], ['de rieten stoel', 'rietenstoel'],
+    ['de oppotbak', 'oppotbak'], ['de gieterplank', 'gieterplank'],
+    ['de marmeren bank', 'marmerbank'], ['de citrusboom', 'citrusboom'],
+  ],
 };
 
 export const soortVan = (plek) => SOORT_VAN[plek] ?? 'zaal';
@@ -246,6 +258,8 @@ export const VERWANTE_SOORTEN = {
   grafkelder: ['kelder', 'buiten'],
   laboratorium: ['werkplaats', 'bibliotheek'],
   sterrenwacht: ['bibliotheek', 'zaal'],
+  // Naar binnen, nooit naar buiten: anders staat het kampvuur er alsnog.
+  serre: ['zaal', 'bibliotheek'],
 };
 
 // De namen die in deze soort ruimte mogen staan, in volgorde van voorkeur, en
@@ -453,6 +467,50 @@ export const WERELDVLOER = {
     kracht: 0.44,
     dessin: { planken: 'tapijt', 'planken-dwars': 'tapijt', steen: 'beton', ruiten: 'tapijt' },
   },
+};
+
+// De vloer van één bepaalde plek, als de soort hem niet goed raadt.
+//
+// De soort bepaalt drie dingen tegelijk: de vloer, het meubilair, en wat de
+// wereld daarin nog mag omruilen. Dat gaat goed zolang een soort één ding
+// is, en mis zodra hij er meerdere tegelijk moet zijn. `buiten` moest een
+// open plek in een bos, een nat steegje, een besneeuwde tuin, een
+// schoolplein en een dakterras bedienen - en die kregen dus allemaal gras.
+//
+// Voor de meeste van die kamers klopt het meubilair wel degelijk: op een
+// schoolplein staat een vlaggenmast en een fietsenrek, op een dakterras een
+// terrasbank. Alleen de grond eronder klopte niet. Daar is een hele nieuwe
+// soort te zwaar voor; dit is het lichte gereedschap. Staat een plek hier,
+// dan wint deze vloer van zijn soort én van de wereldlaag - specifieker
+// dan dit wordt het niet.
+//
+// Waar het méubilair ook niet klopt, hoort wel een eigen soort. Zie `serre`
+// hieronder: in een orangerie stond een kampvuur.
+export const VLOER_VAN_PLEK = {
+  // Bestrating in plaats van gras.
+  'het natte steegje': { vul: '#7f858c', lijn: '#616770', dessin: 'bestrating' },
+  'de regenachtige binnenplaats': { vul: '#868d95', lijn: '#686f78', dessin: 'bestrating' },
+  'het schoolplein': { vul: '#9a9a93', lijn: '#7a7a73', dessin: 'bestrating' },
+  'het dakterras': { vul: '#9ba0a8', lijn: '#7b8089', dessin: 'bestrating' },
+  // Sneeuw in plaats van gras. Een besneeuwde tuin met groen gras erin was
+  // het eerste wat opviel.
+  'de besneeuwde tuin': { vul: '#e8eef4', lijn: '#bfcbd8', dessin: 'sneeuw' },
+  'het besneeuwde terras': { vul: '#e3eaf1', lijn: '#b8c5d3', dessin: 'sneeuw' },
+  // Een kast onder de trap is geen gewelf. Hij hoort bij de kelder qua
+  // spullen - potten, kratten, een wijnrek - maar je staat er op een
+  // houten vloer, niet op natuursteen.
+  'de kelderkast': { vul: '#ab9068', lijn: '#88714c', dessin: 'planken' },
+  // Een zolder is geen kelder en een veranda geen grasveld: planken.
+  'de spinnenwebzolder': { vul: '#9c8763', lijn: '#7b684a', dessin: 'planken' },
+  'de koetshuiszolder': { vul: '#a68e66', lijn: '#836e4c', dessin: 'planken' },
+  'het vleermuizenhok': { vul: '#8f7c5c', lijn: '#6f5f44', dessin: 'planken' },
+  'de donkere veranda': { vul: '#7e6b52', lijn: '#5f503c', dessin: 'planken' },
+  // Stro over de staldeel. Hetzelfde patroon als gras, maar dan geel: dat
+  // is precies wat stro is.
+  'de koetshuisstal': { vul: '#c8a860', lijn: '#a08440', dessin: 'gras' },
+  // Een gymzaal heeft een houten vloer. De school ruilt planken normaal om
+  // voor tegels, en dat klopt overal behalve hier.
+  'de gymzaal': { vul: '#c9a469', lijn: '#a38248', dessin: 'planken' },
 };
 
 // Waar het meubilair van gemaakt is, per wereld. De namen zijn de materialen

@@ -109,3 +109,39 @@ export function zetNiveau(n) {
     /* geen opslag: dan geldt de keuze alleen deze sessie */
   }
 }
+
+// Welke panelen open staan. De legenda en de aanwijzingen zitten achter een
+// klepje; wat iemand opengeklapt laat, hoort open te blijven als hij de
+// volgende puzzel opent.
+export function paneelOpen(naam, standaard) {
+  const v = leesVoorkeuren().panelen?.[naam];
+  return typeof v === 'boolean' ? v : standaard;
+}
+
+export function zetPaneel(naam, open) {
+  const v = leesVoorkeuren();
+  v.panelen = { ...(v.panelen ?? {}), [naam]: !!open };
+  try {
+    localStorage.setItem(VOORKEUR, JSON.stringify(v));
+  } catch {
+    /* geen opslag: dan geldt de keuze alleen deze sessie */
+  }
+}
+
+// Zet het bord de kruisjes zelf? Zodra iemand neergezet is, kan er in die
+// rij en kolom niemand meer bij, en dat kruiste het bord vanzelf af. Dat is
+// handig als je snel wilt, en hinderlijk als je het zelf wilt doorzien.
+export function kruisjesVanzelf() {
+  const v = leesVoorkeuren().kruisjes;
+  return typeof v === 'boolean' ? v : true;
+}
+
+export function zetKruisjesVanzelf(aan) {
+  const v = leesVoorkeuren();
+  v.kruisjes = !!aan;
+  try {
+    localStorage.setItem(VOORKEUR, JSON.stringify(v));
+  } catch {
+    /* geen opslag: dan geldt de keuze alleen deze sessie */
+  }
+}

@@ -6,8 +6,6 @@ import { ASSIGNMENTS, MECHANIC_BY_ID, ZICHTBARE_MECHANICS } from '../content/ass
 import { LEVELS, ZICHTBARE_LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
 import { randomSeed } from '../engine/rng.js';
 import { puzzleId, wereldVoorSeed } from '../puzzle.js';
-import { aiEnabled, setAiEnabled } from '../ai/flavour.js';
-import { aiEndpoint } from '../ai/endpoint.js';
 import { laatsteNiveau, zetNiveau } from './state.js';
 
 // Speurdoku staat voorop: dat is het hoofdspel, en dan hoort het ook de
@@ -111,60 +109,29 @@ export function renderGenerator(mount) {
     return b;
   }), 'levels'));
 
-  // De seed achter een klepje.
+  // Geen seedveld meer.
   //
-  // Dit scherm was de generator: vier keuzes en een seed, voor wie precies
-  // wist wat hij wilde. Sinds "Nieuwe puzzel" in het menu hiernaartoe wijst
-  // is het de voordeur van het spel, en dan is een invulveld met
-  // "spoor-1216" erin het eerste wat je ziet. Dat is geen keuze maar een
-  // intern nummer. Wie een puzzel wil delen gebruikt "Link kopiëren" op de
-  // puzzel zelf; wie er eentje wil terughalen klapt dit open.
-  const seedInput = el('input', { type: 'text', value: keuze.seed, 'aria-label': 'Seed' });
-  seedInput.addEventListener('input', () => { keuze.seed = seedInput.value.trim(); });
-  const dice = el('button', { class: 'btn', type: 'button', text: 'Nieuwe seed' });
-  dice.addEventListener('click', () => { keuze.seed = randomSeed(); renderGenerator(mount); });
-  form.append(el('details', { class: 'spelregels' }, [
-    el('summary', { text: 'Een bepaalde puzzel terughalen' }),
-    el('p', {
-      class: 'legend',
-      text: 'Elke puzzel heeft een seed. Dezelfde seed geeft altijd exact dezelfde puzzel, met hetzelfde decor en dezelfde namen.',
-    }),
-    el('div', { class: 'row-inline' }, [seedInput, dice]),
-  ]));
+  // Hier stond een invulveld met "spoor-1216" erin, eerst open en daarna
+  // achter een klepje. Allebei fout: een seed is een intern nummer, en wie
+  // hem ziet weet niet wat hij ermee moet. Wat iemand eigenlijk wil is een
+  // puzzel kunnen bewaren, en daar is geen account voor nodig en ook geen
+  // nummer om over te typen - de puzzel heeft al een eigen link. Op de
+  // puzzel zelf staat daarom de knop "Bewaar deze puzzel", die hem
+  // kopieert met de uitleg dat je er een bladwijzer van kunt maken.
+  //
+  // De seed zit nog wel in die link, dus hij doet nog steeds wat hij deed.
+  // Hij staat alleen niet meer in het zicht van iemand die gewoon wil
+  // beginnen.
 
-  // De AI-laag herschrijft alleen de stijl van de teksten. Elke herschreven
-  // aanwijzing wordt nagekeken op het behoud van alle eigennamen; faalt dat,
-  // dan blijft de originele zin staan.
-  // Zonder eindpunt valt er niets te herschrijven: dan staat de site ergens
-  // waar geen server bij hoort. De knop daar laten staan alsof hij iets doet,
-  // is misleidend.
-  // Online staat er geen server met een API-key achter - dat is met opzet, en
-  // het verandert niet. Een uitgegrijsd vak dat vertelt dat iets niet kan en
-  // ook nooit zal kunnen, is geen bediening maar ruis. Lokaal (npm start)
-  // staat het er wel, want daar doet hij het.
-  const kan = !!aiEndpoint();
-  const aiBtn = el('button', {
-    class: 'opt',
-    type: 'button',
-    'aria-pressed': String(kan && aiEnabled()),
-    disabled: kan ? null : 'disabled',
-  }, [
-    el('span', {
-      class: 'opt-name',
-      text: kan ? (aiEnabled() ? 'AI-teksten: aan' : 'AI-teksten: uit') : 'AI-teksten: niet beschikbaar',
-    }),
-    el('small', {
-      text: kan
-        ? 'Laat de verhaalteksten herschrijven door Claude. De logica blijft altijd die van de generator: een herschrijving die een naam, een ontkenning, een getal of een keuze aantast, wordt niet gebruikt.'
-        : 'De puzzels uit de bibliotheek hebben hun herschreven tekst al bij zich. Voor een zelfgemaakte puzzel is er een server met een API-key nodig, en die hoort niet bij deze site. Draai hem lokaal met npm start, dan kan het wel.',
-    }),
-  ]);
-  if (kan) {
-    aiBtn.addEventListener('click', () => { setAiEnabled(!aiEnabled()); renderGenerator(mount); });
-  }
-  if (kan) form.append(field('Verhaalteksten', [aiBtn]));
+  // Geen schakelaar voor de verhaalteksten.
+  //
+  // Hier stond "AI-teksten: aan/uit". Twee dingen klopten daar niet aan:
+  // het is geen keuze van de speler of een zin mooier geschreven is, en
+  // hij stond standaard uit - dus hij deed nooit iets tenzij je hem had
+  // gevonden. Nu staan ze aan zodra er iets achter zit (zie aiEnabled), en
+  // online zit er met opzet niets achter. Dan hoeft er ook niets te staan.
 
-  const go = el('button', { class: 'btn btn-primary', type: 'button', text: 'Maak de puzzel' });
+  const go = el('button', { class: 'btn btn-primary btn-groot', type: 'button', text: 'Begin nieuwe puzzel' });
   go.addEventListener('click', () => {
     if (!keuze.seed) keuze.seed = randomSeed();
     keuze.wereld = wereldVoorSeed(keuze.seed);

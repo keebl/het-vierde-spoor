@@ -1581,4 +1581,86 @@ export const GESCHILDERD = {
     streep('houtdonker', 0.8, 'M16 24.4 V40 M24 24 V40.6 M32 24.4 V40'),
     v('houtdonker', plaat(11, 38.6, 26, 2.4, { zak: 0.3 })),
   ],
+
+  // ================================================== onder glas: de serre
+  //
+  // Een orangerie, een wintertuin en een serre stonden als "buiten" te boek.
+  // Ze kregen daardoor gras onder zich en konden een kampvuur, een
+  // omgevallen stam, een waterput en een vogelverschrikker krijgen. Dit is
+  // wat er wél staat in een ruimte van glas met planten erin.
+
+  palmkuip: [
+    vloer('hout', ton(24, 26, 27, 20, 15)),
+    v('houtdonker', plaat(9.4, 24.6, 29.2, 3)),
+    v('houtdonker', plaat(10.6, 35.4, 26.8, 2.6)),
+    v('houtdonker', staaf(24, 26, 24, 17, 3.2)),
+    v('blad', blad(24, 17, 17, 5.4, 252)),
+    v('blad', blad(24, 17, 16, 5, 288)),
+    v('blad', blad(24, 17.4, 15, 4.6, 215)),
+    v('blad', blad(24, 17.4, 15, 4.6, 325)),
+    v('blad', blad(24, 18, 12, 4, 180)),
+    v('blad', blad(24, 18, 12, 4, 0)),
+  ],
+
+  rietenstoel: [
+    v('hout', romp(12, 5, 24, 21, { taps: 0.06 })),
+    streep('houtdonker', 0.8, 'M14.4 9.4 H33.6 M14.4 13.4 H33.6 M14.4 17.4 H33.6 M14.4 21.4 H33.6'),
+    streep('houtdonker', 0.8, 'M19 6 V25 M24 6 V25 M29 6 V25'),
+    v('hout', kussen(10.6, 24, 26.8, 7)),
+    v('stofgroen', plaat(13, 25.4, 22, 3, { zak: 0.4 })),
+    v('houtdonker', poot(13.4, 30.6, 4.4, 9)),
+    v('houtdonker', poot(30.2, 30.6, 4.4, 9)),
+    vloer('houtdonker', plaat(11, 38.4, 26, 2.4, { zak: 0.4 })),
+  ],
+
+  oppotbak: [
+    vloer('hout', romp(6, 22, 36, 18)),
+    v('donker', plaat(8, 20, 32, 3.4, { zak: 0.5 })),
+    v('houtdonker', plaat(6.6, 18.4, 34.8, 2.6)),
+    v('houtrood', bak(15, 11, 11, 7.4, 8)),
+    v('houtrood', bak(28.6, 13.4, 9, 6, 6.4)),
+    v('blad', blad(15, 10.4, 10, 3.6, 250)),
+    v('blad', blad(15, 10.6, 8.4, 3.2, 300)),
+    v('blad', blad(28.6, 12.6, 9, 3.4, 288)),
+    v('metaal', staaf(33.4, 16.6, 38.6, 19.4, 1.6)),
+    v('houtdonker', staaf(36.6, 18.6, 40, 20.4, 2.6)),
+  ],
+
+  gieterplank: [
+    v('hout', staaf(10, 7, 10, 40, 2.6)),
+    v('hout', staaf(38, 7, 38, 40, 2.6)),
+    v('hout', plaat(8, 17.4, 32, 2.6, { zak: 0.3 })),
+    v('hout', plaat(8, 28.4, 32, 2.6, { zak: 0.3 })),
+    v('metaal', bak(17, 9, 11, 8.6, 8.4)),
+    v('metaal', staaf(22, 10.6, 27.4, 7.4, 1.8)),
+    v('metaal', kap(27.4, 6, 4.4, 2.4)),
+    v('koper', bak(30.4, 11.4, 8.6, 6.6, 6)),
+    v('houtrood', bak(15, 23.4, 8, 5.6, 5)),
+    v('blad', blad(15, 23, 8.6, 3.2, 255)),
+    v('houtrood', bak(27, 24, 7.4, 5.4, 4.4)),
+    vloer('houtdonker', plaat(8, 39.4, 32, 2.6, { zak: 0.4 })),
+  ],
+
+  marmerbank: [
+    v('steen', plaat(4.6, 20, 38.8, 2.6)),
+    v('steenkoel', plaat(6, 22, 36, 5, { zak: 0.3 })),
+    v('steenkoel', romp(10, 27, 7.4, 12, { taps: 0.03 })),
+    v('steenkoel', romp(30.6, 27, 7.4, 12, { taps: 0.03 })),
+    streep('steen', 0.7, 'M12 30 Q14 33 12.6 36 M33 31 Q35 34 33.4 37'),
+    vloer('steen', plaat(8, 38.4, 32, 2.6, { zak: 0.4 })),
+  ],
+
+  citrusboom: [
+    v('houtrood', bak(24, 26, 25, 18, 15)),
+    v('houtrood', plaat(11, 24.4, 26, 3)),
+    v('houtdonker', staaf(24, 26, 24, 18, 3)),
+    v('blad', hoop(24, 18, 29, 15)),
+    v('blad', bol(15.4, 12.6, 4.4)),
+    v('blad', bol(32, 11.6, 4.6)),
+    v('blad', bol(24, 6.6, 5)),
+    v('vuur', bol(18, 14, 2.1), { glans: 1 }),
+    v('vuur', bol(29.4, 10.4, 2.1), { glans: 1 }),
+    v('vuur', bol(24.4, 15.6, 1.9), { glans: 1 }),
+    vloer('houtrood', plaat(12.4, 38.6, 23.2, 2.6, { zak: 0.4 })),
+  ],
 };

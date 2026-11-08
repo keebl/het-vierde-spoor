@@ -9,9 +9,11 @@
 
 import { WORLDS } from '../src/content/worlds.js';
 import {
-  SOORT_VAN, VLOER_VAN, MEUBELS_VAN, VERWANTE_SOORTEN,
-  WERELDMEUBELS, WERELDVERWANT, meubelsVoor, soortVan,
+  SOORT_VAN, VLOER_VAN, VLOER_VAN_PLEK, MEUBELS_VAN, VERWANTE_SOORTEN,
+  WERELDMEUBELS, WERELDVERWANT, WERELDVLOER, meubelsVoor, soortVan,
 } from '../src/content/kamersoorten.js';
+import { GESLACHT_VAN } from '../src/content/namen.js';
+import { readFileSync } from 'node:fs';
 import { MEUBELKUNST } from '../src/ui/meubelkunst.js';
 import { GESCHILDERD } from '../src/ui/meubelkunst-geschilderd.js';
 import { STOFFEN } from '../src/ui/geschilderd.js';
@@ -392,6 +394,131 @@ for (const w of WORLDS) {
   }
 }
 
+// ---------------------------------------- bij elke naam hoort een portret
+//
+// De koppen op het bord werden getekend uit het volgnummer van een figuur,
+// en dat weet niets van de naam die eroverheen komt: Anouk kreeg een volle
+// baard. Sinds GESLACHT_VAN bepaalt de naam welk kapsel en welk
+// gezichtshaar passen - maar alleen voor namen die daar in staan. Een naam
+// die er niet in staat valt stilzwijgend terug op 'm', en dan is de fout
+// terug zonder dat iemand het merkt.
+const alleNamen = new Set();
+for (const w of WORLDS) {
+  for (const veld of ['persons', 'personenXL', 'personenExtra', 'slachtoffers']) {
+    for (const naam of (w[veld] ?? [])) alleNamen.add(naam);
+  }
+}
+for (const naam of alleNamen) {
+  if (!GESLACHT_VAN[naam]) meld('NAAM ZONDER PORTRET', naam);
+}
+for (const naam of Object.keys(GESLACHT_VAN)) {
+  if (!alleNamen.has(naam)) meld('PORTRET ZONDER NAAM', `${naam} staat in geen enkele wereld`);
+  if (!['m', 'v'].includes(GESLACHT_VAN[naam])) meld('RAAR PORTRET', `${naam}: ${GESLACHT_VAN[naam]}`);
+}
+
+// ------------------------------------------ de naam is een belofte
+//
+// Een besneeuwde tuin met groen gras erin. Een serre met een kampvuur, een
+// omgevallen stam en een vogelverschrikker. Een schoolplein van gras. Dat
+// kwam allemaal uit dezelfde bron: de soort van een kamer bepaalt de vloer
+// én het meubilair, en er waren elf soorten voor 129 kamers. `buiten`
+// moest een open plek in een bos, een nat steegje, een besneeuwde tuin en
+// een glazen serre tegelijk zijn.
+//
+// Deze regel zegt: wat in de naam van een kamer staat, moet kloppen met
+// wat je eronder ziet liggen en met wat erin kan staan. Hij kent maar een
+// handvol woorden, en dat is genoeg - het zijn precies de woorden waarmee
+// een kamernaam iets belooft over de grond. Zet iemand er een kamer bij
+// die "besneeuwd" heet, dan valt deze toets erover voordat er iemand naar
+// kijkt.
+const BELOFTEN = [
+  {
+    woorden: ['besneeuw', 'sneeuw'],
+    dessin: ['sneeuw'],
+    nooit: [],
+    uitleg: 'sneeuw, geen gras',
+  },
+  {
+    woorden: ['serre', 'orangerie', 'wintertuin'],
+    dessin: ['tegels', 'planken'],
+    // Een serre is binnen. Alles uit MEUBELS_VAN.buiten hoort er dus niet.
+    nooit: MEUBELS_VAN.buiten.map(([n]) => n),
+    uitleg: 'binnen, dus tegels of planken en niets van buiten',
+  },
+  {
+    woorden: ['plein', 'terras', 'binnenplaats', 'steeg'],
+    dessin: ['bestrating', 'sneeuw', 'steen', 'tegels'],
+    nooit: [],
+    uitleg: 'bestrating, geen gras',
+  },
+  {
+    woorden: ['zolder'],
+    dessin: ['planken', 'planken-dwars', 'tapijt'],
+    nooit: [],
+    uitleg: 'planken: een zolder is geen kelder',
+  },
+  {
+    woorden: ['veranda'],
+    dessin: ['planken', 'bestrating'],
+    nooit: [],
+    uitleg: 'een vlonder of tegels, geen gazon',
+  },
+  {
+    woorden: ['gymzaal'],
+    dessin: ['planken'],
+    nooit: [],
+    uitleg: 'een gymvloer is van hout',
+  },
+];
+
+const wereldVanPlek = new Map();
+for (const w of WORLDS) {
+  for (const plek of [...w.places, ...(w.plekkenXL ?? [])]) wereldVanPlek.set(plek, w.id);
+}
+
+for (const [plek, wereldId] of wereldVanPlek) {
+  const soort = soortVan(plek);
+  const basis = VLOER_VAN[soort] ?? VLOER_VAN.zaal;
+  const wv = WERELDVLOER[wereldId];
+  // Dezelfde volgorde als op het bord: eerst de plek zelf, dan de wereld,
+  // dan de soort. Zie vloerVan in board-rooms.js.
+  const dessin = VLOER_VAN_PLEK[plek]?.dessin ?? wv?.dessin?.[basis.dessin] ?? basis.dessin;
+  const kan = meubelsVoor(soort, wereldId).flat().map(([n]) => n);
+
+  for (const b of BELOFTEN) {
+    if (!b.woorden.some((woord) => plek.toLowerCase().includes(woord))) continue;
+    if (!b.dessin.includes(dessin)) {
+      meld('NAAM BELOOFT ANDERS', `${wereldId}/${plek}: vloer is "${dessin}", ${b.uitleg}`);
+    }
+    const mis = b.nooit.filter((m) => kan.includes(m));
+    if (mis.length) {
+      meld('STAAT ER NIET THUIS', `${wereldId}/${plek}: ${mis.slice(0, 4).join(', ')}${mis.length > 4 ? ` (+${mis.length - 4})` : ''}`);
+    }
+  }
+}
+
+// Een plek die een eigen vloer heeft, moet ook echt bestaan - anders staat
+// er een uitzondering voor een kamer die er niet meer is.
+for (const plek of Object.keys(VLOER_VAN_PLEK)) {
+  if (!wereldVanPlek.has(plek)) meld('EIGEN VLOER VOOR NIETS', plek);
+  const d = VLOER_VAN_PLEK[plek].dessin;
+  if (!DESSINS.includes(d)) meld('DESSIN BESTAAT NIET', `${plek} -> ${d}`);
+}
+
+// ------------------------------------------------- dezelfde sleutel twee keer
+// Een object-literal met twee keer dezelfde sleutel slikt javascript zonder
+// klagen: de laatste wint en de eerste verdwijnt geruisloos. Dat gebeurde
+// met 'de kelderkast' in VORM_VAN, en je ziet het nergens aan.
+const bron = readFileSync(new URL('../src/content/kamersoorten.js', import.meta.url), 'utf8');
+for (const tabel of ['SOORT_VAN', 'VORM_VAN', 'VLOER_VAN_PLEK', 'VOORZETSEL_VAN']) {
+  const start = bron.indexOf(`export const ${tabel} = {`);
+  if (start < 0) continue;
+  const blok = bron.slice(start, bron.indexOf('\n};', start));
+  const sleutels = [...blok.matchAll(/^\s*'([^']+)':/gm)].map((m) => m[1]);
+  const dubbel = [...new Set(sleutels.filter((x, i) => sleutels.indexOf(x) !== i))];
+  for (const d of dubbel) meld('TWEE KEER DEZELFDE SLEUTEL', `${tabel}: ${d}`);
+}
+
 console.log('');
 console.log(`plekken            ${plekken.size}, allemaal met een soort`);
 console.log(`soorten ruimte     ${soorten.size}, elk met vloer en meubilair`);
@@ -399,6 +526,9 @@ console.log(`meubelstukken      ${paren.length} namen, ${Object.keys(GESCHILDERD
 console.log(`eigen meubelnamen  ${wereldenMetLaag} werelden dopen het meubilair om`);
 console.log(`bordranden         ${Object.keys(RANDSTIJLEN).length}, één per wereld, elk een eigen nacht`);
 console.log('gelijkende namen   geen twee die in dezelfde puzzel op hetzelfde woord eindigen');
+console.log(`eigen vloeren      ${Object.keys(VLOER_VAN_PLEK).length} plekken waar de soort de grond niet goed raadt`);
+console.log('namen als belofte  wat een kamer heet klopt met de vloer en met wat erin kan staan');
+console.log(`portretten         ${alleNamen.size} namen, elk met een kop die bij de naam past`);
 
 if (fouten.length) {
   console.log('');

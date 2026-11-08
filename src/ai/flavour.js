@@ -37,11 +37,21 @@ export { keepsNames };
 
 const FLAG = 'vierdespoor.ai';
 
+// De AI-teksten staan aan zodra er iets achter zit.
+//
+// Dit was een schakelaar op de generatorpagina, en dat is niet iets waar
+// een speler over hoort te beslissen: of de verhaaltekst mooier geschreven
+// is, is geen spelinstelling. Hij stond bovendien standaard uit, dus hij
+// werkte nooit tenzij je hem had gevonden en aangezet.
+//
+// Nu is "aan" de stand, tenzij er expliciet uit gezet is (dat kan nog via
+// setAiEnabled, bijvoorbeeld om te vergelijken). Online hangt er niets
+// achter, en dan komt dressUp er sowieso niet aan toe: zie aiEndpoint.
 export const aiEnabled = () => {
   try {
-    return localStorage.getItem(FLAG) === '1';
+    return localStorage.getItem(FLAG) !== '0';
   } catch {
-    return false;
+    return true;
   }
 };
 

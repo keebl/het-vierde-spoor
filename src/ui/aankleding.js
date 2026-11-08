@@ -366,6 +366,12 @@ const MOTIEVEN = {
     sterrenkaartjes, rolpapier, kleed('#4a5a8a', 0.6), kandelaarvlek,
     kruk, boekenstapel, rolpapier,
   ],
+  // Binnen, maar groen: potgrond op de tegels, varens, een omgevallen
+  // bloempot. Geen paddenstoelen en geen wortels - dat is bos.
+  serre: [
+    kamerplant, varens, bloempol, plas, kruk, bladeren, emmer, kamerplant,
+    varens, bloempol,
+  ],
 };
 
 // Welke motieven horen bij deze soort ruimte? Onbekend: dan maar niets, dat

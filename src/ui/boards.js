@@ -9,6 +9,7 @@ import { tekenGeschilderd } from './geschilderd.js';
 import { GESCHILDERD } from './meubelkunst-geschilderd.js';
 import { tekenAankleding } from './aankleding.js';
 import { portretElement } from './personenkunst-geschilderd.js';
+import { geslachtVan } from '../content/namen.js';
 
 const el = (tag, attrs = {}, kids = []) => {
   const node = document.createElement(tag);
@@ -41,7 +42,7 @@ export function renderBlok(puzzle, blok, marks, onChange, wrong) {
   // zijn verschilt per puzzel - soms staan ze in de rijen, soms in de
   // kolommen - dus het gaat op de categorie zelf, niet op waar hij staat.
   const merkVan = (cat, i, naam, maat) => (cat.id === 'person'
-    ? portretElement(i, naam.charAt(0).toUpperCase(), maat)
+    ? portretElement(i, naam.charAt(0).toUpperCase(), maat, geslachtVan(naam))
     : icoonElement(naam, maat - 6));
 
   const head = el('tr', {}, [el('th', { class: 'corner' })]);
@@ -346,7 +347,7 @@ export function latinLegenda(puzzle) {
   return el('div', { class: 'swatches' },
     puzzle.symbols.map((naam, i) =>
       el('span', { class: 'swatch' }, [
-        portretElement(i, naam.charAt(0).toUpperCase(), 24),
+        portretElement(i, naam.charAt(0).toUpperCase(), 24, geslachtVan(naam)),
         el('span', { text: naam }),
       ])
     )

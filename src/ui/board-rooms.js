@@ -14,7 +14,8 @@ import { tekenBordrand, tekenBordhangers } from './bordrand.js';
 import { GESCHILDERD } from './meubelkunst-geschilderd.js';
 import { tekenPersoon, tekenSlachtofferkruis, slachtofferElement } from './personenkunst-geschilderd.js';
 import { icoonVan } from '../content/iconen.js';
-import { soortVan, VLOER_VAN, WERELDVLOER, WERELDSTOF } from '../content/kamersoorten.js';
+import { geslachtVan } from '../content/namen.js';
+import { soortVan, VLOER_VAN, VLOER_VAN_PLEK, WERELDVLOER, WERELDSTOF } from '../content/kamersoorten.js';
 import { tekenAankleding, tekenSnippers } from './aankleding.js';
 
 // Een meubelstuk zetten. De tekeningen staan in meubelkunst-geschilderd.js
@@ -166,7 +167,12 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
   // Zie WERELDVLOER in kamersoorten.js.
   const wv = WERELDVLOER[puzzle.world?.id];
   const vloerVan = (i) => {
-    const basis = VLOER_VAN[soortVan(puzzle.kamerNamen[kamer(i)])] ?? VLOER_VAN.zaal;
+    const plek = puzzle.kamerNamen[kamer(i)];
+    // Een plek die zijn eigen vloer heeft, krijgt die - ook als de wereld
+    // normaal iets anders zou omruilen. Zie VLOER_VAN_PLEK.
+    const eigen = VLOER_VAN_PLEK[plek];
+    if (eigen) return eigen;
+    const basis = VLOER_VAN[soortVan(plek)] ?? VLOER_VAN.zaal;
     if (!wv) return basis;
     return {
       vul: meng(basis.vul, wv.tint, wv.kracht),
@@ -569,6 +575,7 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
     tekenPersoon(g, {
       index: pi,
       letter: (puzzle.personen[pi] ?? '?').charAt(0).toUpperCase(),
+      geslacht: geslachtVan(puzzle.personen[pi] ?? ''),
       x: cx - maat / 2,
       y: cy - maat / 2,
       grootte: maat,
@@ -589,8 +596,11 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
   // Zodra iemand staat, kan er in diezelfde rij en kolom niemand meer bij.
   // Die kruisjes zet het bord zelf, want ze volgen dwingend uit de regel -
   // ze met de hand laten zetten is bezigheidstherapie.
+  // Of het bord ze zelf zet, is een keuze van de speler: handig als je
+  // snel wilt, hinderlijk als je het zelf wilt doorzien. Zie
+  // kruisjesVanzelf in state.js en de knop in de werkbalk.
   const vanzelf = new Set();
-  for (const cel of Object.values(state.plaats)) {
+  for (const cel of (opties.kruisjesVanzelf === false ? [] : Object.values(state.plaats))) {
     if (cel == null) continue;
     const r = rij(cel);
     const c = kol(cel);
@@ -661,8 +671,24 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
       x: x(kol(i)), y: y(rij(i)), width: CEL, height: CEL,
       class: 'klikvak', 'data-cel': i,
     });
-    if (puzzle.meubelOp[i] != null) vak.classList.add('klikvak-dicht');
-    else vak.addEventListener('click', () => acties.klikCel(i));
+    const m = puzzle.meubelOp[i];
+    if (m != null) {
+      vak.classList.add('klikvak-dicht');
+      // Hoe heet dat ding? Een aanwijzing noemt "de gieterplank", en dan
+      // moet je op het bord kunnen opzoeken welk tekeningetje dat is
+      // zonder eerst de hele legenda door te lezen. Wijs het aan en de
+      // naam staat er; tik erop en hij komt onder het bord te staan, want
+      // op een telefoon bestaat aanwijzen niet.
+      const naam = puzzle.meubelNamen?.[m];
+      if (naam) {
+        const titel = el('title');
+        titel.textContent = naam;
+        vak.append(titel);
+        vak.addEventListener('click', () => acties.klikMeubel?.(naam));
+      }
+    } else {
+      vak.addEventListener('click', () => acties.klikCel(i));
+    }
     klik.append(vak);
   }
   svg.append(klik);
@@ -903,6 +929,90 @@ export function dessins() {
   }
   defs.append(plaat);
 
+  // Bestrating: stoeptegels van ongelijke maat, met voegen waar vuil in
+  // zit en hier en daar een scheur. Dit is wat er onder een steegje, een
+  // binnenplaats, een schoolplein en een dakterras hoort te liggen - die
+  // kregen allemaal gras, omdat ze allemaal "buiten" heetten.
+  const stoepmaat = CEL * 2;
+  const bestrating = el('pattern', {
+    id: 'dessin-bestrating', width: stoepmaat, height: stoepmaat, patternUnits: 'userSpaceOnUse',
+  });
+  const bk = (k) => {
+    const v = Math.sin(k * 7.1234 + 2.9) * 28461.7;
+    return v - Math.floor(v);
+  };
+  let sy = 0;
+  let rij = 0;
+  while (sy < stoepmaat) {
+    const hoog = 17 + bk(rij) * 9;
+    bestrating.append(el('path', { d: `M0 ${sy.toFixed(1)} H${stoepmaat}`, class: 'dessinvoeg' }));
+    let sx = (rij % 2) * -12 + bk(rij + 90) * 8;
+    while (sx < stoepmaat) {
+      const breed = 22 + bk(rij * 7 + sx) * 16;
+      bestrating.append(el('path', { d: `M${sx.toFixed(1)} ${sy.toFixed(1)} v${hoog.toFixed(1)}`, class: 'dessinvoeg' }));
+      // Niet elke tegel is even licht: ze zijn op verschillende momenten
+      // gelegd en verschillend sleets geworden.
+      if (bk(sx + rij * 13) > 0.62) {
+        bestrating.append(el('rect', {
+          x: (sx + 1).toFixed(1), y: (sy + 1).toFixed(1),
+          width: (breed - 2).toFixed(1), height: (hoog - 2).toFixed(1),
+          class: 'dessinvlak',
+        }));
+      }
+      if (bk(sx * 3 + rij) > 0.86) {
+        bestrating.append(el('path', {
+          d: `M${(sx + breed * 0.3).toFixed(1)} ${(sy + hoog * 0.2).toFixed(1)} l${(breed * 0.25).toFixed(1)} ${(hoog * 0.5).toFixed(1)}`,
+          class: 'dessinscheur',
+        }));
+      }
+      sx += breed;
+    }
+    sy += hoog;
+    rij++;
+  }
+  for (let t = 0; t < 14; t++) {
+    bestrating.append(el('circle', {
+      cx: (bk(t + 11) * stoepmaat).toFixed(1), cy: (bk(t + 77) * stoepmaat).toFixed(1),
+      r: (0.6 + bk(t + 140) * 0.9).toFixed(1), class: 'dessinspikkel',
+    }));
+  }
+  defs.append(bestrating);
+
+  // Sneeuw: geen vlak wit, maar ribbels waar de wind overheen is gegaan,
+  // een paar kuiltjes en wat glinstering. Een besneeuwde tuin met gras
+  // erin was precies het soort scheefheid waar je overheen leest tot
+  // iemand het aanwijst.
+  const sneeuwmaat = CEL * 2;
+  const sneeuw = el('pattern', {
+    id: 'dessin-sneeuw', width: sneeuwmaat, height: sneeuwmaat, patternUnits: 'userSpaceOnUse',
+  });
+  const sk = (k) => {
+    const v = Math.sin(k * 15.731 + 4.1) * 19483.3;
+    return v - Math.floor(v);
+  };
+  for (let t = 0; t < 7; t++) {
+    const rx = 14 + sk(t) * 24;
+    sneeuw.append(el('ellipse', {
+      cx: (sk(t + 30) * sneeuwmaat).toFixed(1), cy: (sk(t + 60) * sneeuwmaat).toFixed(1),
+      rx: rx.toFixed(1), ry: (rx * 0.3).toFixed(1), class: 'dessinvlak',
+    }));
+  }
+  for (let t = 0; t < 9; t++) {
+    const x = sk(t + 120) * sneeuwmaat;
+    const y = sk(t + 150) * sneeuwmaat;
+    sneeuw.append(el('path', {
+      d: `M${x.toFixed(1)} ${y.toFixed(1)} q${(9 + sk(t) * 8).toFixed(1)} ${(-2 - sk(t + 9) * 3).toFixed(1)} ${(19 + sk(t) * 14).toFixed(1)} 0`,
+      class: 'dessinnerf',
+    }));
+  }
+  for (let t = 0; t < 22; t++) {
+    sneeuw.append(el('circle', {
+      cx: (sk(t + 200) * sneeuwmaat).toFixed(1), cy: (sk(t + 260) * sneeuwmaat).toFixed(1),
+      r: (0.5 + sk(t + 300) * 0.7).toFixed(1), class: 'dessinglans',
+    }));
+  }
+  defs.append(sneeuw);
+
   // Warm licht in elke kamer: een zachte gloed vanuit het midden. Zonder dat
   // is een vloer een egaal vlak, en daar komt "kil" vandaan.
   const gloed = el('radialGradient', { id: 'kamergloed' });
@@ -968,6 +1078,10 @@ export function dessins() {
 // vloer stilzwijgend geen dessin en ziet hij er kaal uit.
 export const DESSINS = [
   'planken', 'planken-dwars', 'tegels', 'ruiten', 'steen', 'gras', 'tapijt', 'beton',
+  // 'plaat' stond hier niet in terwijl hij wel bestaat en wel gebruikt
+  // wordt - alleen niet door een soort maar door de wereldlaag van het
+  // ruimtestation. De keuring keek dus langs een heel dessin heen.
+  'plaat', 'bestrating', 'sneeuw',
 ];
 
 export { CEL, PENNING };

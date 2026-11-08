@@ -62,7 +62,7 @@ export function renderHome(mount) {
   const vernieuw = () => {
     start.setAttribute('href', `#/puzzel/${nieuwePuzzel(niveau)}`);
     const k = KAMER_LEVELS[niveau];
-    start.textContent = `Nieuwe puzzel · ${k.n} bij ${k.n}`;
+    start.textContent = `Begin nieuwe puzzel · ${k.n} bij ${k.n}`;
   };
 
   const niveaus = el('div', { class: 'niveaukiezer' }, ZICHTBARE_LEVEL_IDS.map((l) => {

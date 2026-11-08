@@ -201,15 +201,36 @@ const KRAGEN = [
 ];
 
 // Zet een portret neer, passend in een vierkant van `grootte` bij `grootte`.
-export function tekenPersoon(ouder, { index = 0, letter = '', x = 0, y = 0, grootte = 48, metLetter = true } = {}) {
+// Welke kapsels bij welk portret passen, als index in KAPSELS:
+//   0 kort met een scheiding   1 lang, achter het hoofd   2 opgestoken
+//   3 een pet met een klep     4 kalend                   5 dikke bos met pony
+//
+// Hiervoor koos het volgnummer het kapsel, en dat weet niets van de naam
+// die eroverheen komt: Anouk kreeg een volle baard en Bertram een
+// opgestoken kapsel. Wat een naam is, staat in GESLACHT_VAN.
+const KAPSELS_VAN = {
+  m: [0, 3, 4, 5],
+  v: [1, 2, 5],
+};
+
+export function tekenPersoon(ouder, {
+  index = 0, letter = '', x = 0, y = 0, grootte = 48, metLetter = true, geslacht = 'm',
+} = {}) {
   // Elke eigenschap heeft zijn eigen stap door de lijst, anders lopen twee
-  // verdachten gelijk op en krijg je twee keer dezelfde kop.
+  // verdachten gelijk op en krijg je twee keer dezelfde kop. Huid, ogen,
+  // kleding en bril blijven uit het volgnummer komen: daar heeft een naam
+  // niets over te zeggen.
   const kleding = KLEDING[index % KLEDING.length];
   const huid = HUID[(index * 3) % HUID.length];
   const haarkleur = HAAR[(index * 5) % HAAR.length];
   const oogkleur = OGEN[(index * 7) % OGEN.length];
-  const kapsel = KAPSELS[(index * 3 + Math.floor(index / 5)) % KAPSELS.length];
-  const baard = GEZICHTSHAAR[(index * 4 + Math.floor(index / 2)) % GEZICHTSHAAR.length];
+  const mogelijk = KAPSELS_VAN[geslacht] ?? KAPSELS_VAN.m;
+  const kapsel = KAPSELS[mogelijk[(index * 3 + Math.floor(index / 5)) % mogelijk.length]];
+  // Geen baard of snor bij een vrouwennaam. De eerste drie plekken in
+  // GEZICHTSHAAR zijn leeg, dus die doen het ook als er niets hoort.
+  const baard = geslacht === 'v'
+    ? GEZICHTSHAAR[0]
+    : GEZICHTSHAAR[(index * 4 + Math.floor(index / 2)) % GEZICHTSHAAR.length];
   const bril = BRILLEN[(index * 7 + Math.floor(index / 2)) % BRILLEN.length];
   const kraag = KRAGEN[(index * 2) % KRAGEN.length];
 
@@ -336,9 +357,9 @@ export function tekenPersoon(ouder, { index = 0, letter = '', x = 0, y = 0, groo
 }
 
 // Een los portretje voor naast een naam in het palet.
-export function portretElement(index, letter, grootte = 24) {
+export function portretElement(index, letter, grootte = 24, geslacht = 'm') {
   const svg = el('svg', { viewBox: '0 0 48 48', width: grootte, height: grootte, 'aria-hidden': 'true' });
-  tekenPersoon(svg, { index, letter, grootte: 48, metLetter: false });
+  tekenPersoon(svg, { index, letter, grootte: 48, metLetter: false, geslacht });
   return svg;
 }
 

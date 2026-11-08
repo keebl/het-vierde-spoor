@@ -732,16 +732,10 @@ input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: -1p
 .blok-paar .label { color: var(--text-3); }
 
 .play { display: grid; gap: var(--s6); align-items: start; }
-@media (min-width: 920px) { .play { grid-template-columns: 300px 1fr; gap: var(--s7); } }
-/* Op een smal scherm staat het bord bovenaan en komen de aanwijzingen
-   eronder. Naast elkaar past niet, en onder elkaar in de volgorde van de
-   code betekende: eerst veertien zinnen voorbij scrollen voordat je het
-   bord ziet. Nu staan de namenbalk en het bord meteen in beeld, en blijft
-   de balk daar plakken terwijl je verder naar beneden leest. */
-@media (max-width: 919px) {
-  .play > :first-child { order: 2; }
-  .play > :last-child { order: 1; }
-}
+/* Eén kolom, op elk scherm: bord, legenda, aanwijzingen, knoppen. De
+   aanwijzingen stonden in een smalle kolom naast het bord; nu staan ze
+   eronder. Dat leest in de volgorde waarin je werkt, en op een telefoon
+   zag je anders eerst veertien zinnen voordat je het bord vond. */
 .play > *, .boards > * { min-width: 0; }
 
 /* Wat vaststaat staat boven de aanwijzingen, en ziet er anders uit: je kunt
@@ -1733,3 +1727,44 @@ body[data-wereld="kantoor"] .gloedrand { stop-color: #16182a; }
   margin: var(--s2) 0 var(--s4);
 }
 .btn-groot { font-size: var(--t-md); padding: var(--s3) var(--s5); }
+
+
+/* ---------------------------------------------------- panelen met een klepje
+   De legenda en de aanwijzingen zitten achter een kop waar je op klikt. Niet
+   om ze te verstoppen, maar omdat je ze niet allebei tegelijk nodig hebt -
+   en op een telefoon scheelt een dichtgeklapte legenda een heel scherm. Wat
+   je openlaat blijft open bij de volgende puzzel (zie paneelOpen). */
+.paneel {
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--surface);
+  margin-top: var(--s4);
+}
+.paneel > summary {
+  cursor: pointer;
+  padding: var(--s3) var(--s4);
+  font: 600 var(--t-sm)/1.4 var(--sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+}
+.paneel > summary::-webkit-details-marker { display: none; }
+.paneel > summary::before {
+  content: "▸";
+  font-size: 0.8em;
+  color: var(--text-3);
+  transition: transform 0.12s ease;
+}
+.paneel[open] > summary::before { transform: rotate(90deg); }
+.paneel > summary:hover { color: var(--text); }
+.paneel-binnen { padding: 0 var(--s4) var(--s4); }
+.paneel-binnen > .legenda { margin-top: 0; }
+
+@media print {
+  .paneel > summary::before { display: none; }
+  .paneel-binnen { display: block !important; }
+}

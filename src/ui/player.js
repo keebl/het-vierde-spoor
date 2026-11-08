@@ -3,7 +3,10 @@
 
 import { el, renderBlok, renderMap, renderLatin, latinLegenda, cellKey } from './boards.js';
 import { blokkenVan } from './blokken.js';
-import { loadProgress, saveProgress, clearProgress, randAan, zetRand } from './state.js';
+import {
+  loadProgress, saveProgress, clearProgress, randAan, zetRand,
+  paneelOpen, zetPaneel, kruisjesVanzelf, zetKruisjesVanzelf,
+} from './state.js';
 import { MECHANIC_BY_ID } from '../content/assignments.js';
 import { spelregelsVan } from '../content/spelregels.js';
 import { genreStijl } from './genre.js';
@@ -12,6 +15,7 @@ import { puzzleId } from '../puzzle.js';
 import { sceneVoor } from './scenes.js';
 import { renderKamerbord, renderLegenda, PENNING } from './board-rooms.js';
 import { portretElement, slachtofferElement } from './personenkunst-geschilderd.js';
+import { geslachtVan } from '../content/namen.js';
 import { LEVEL_IDS } from '../engine/difficulty.js';
 import { telwoord, hoofdletter } from '../content/woorden.js';
 import { extraAanwijzing, bekendAlsAanwijzingen } from '../engine/generate-rooms.js';
@@ -75,14 +79,28 @@ export function renderPlayer(puzzle, mount) {
   const notes = el('div');
   const clueCol = el('div');
 
-  const play = el('div', { class: 'play' }, [clueCol, el('div', {}, [boards, notes])]);
+  // Eén kolom, in de volgorde waarin je werkt: eerst het bord, dan de
+  // legenda, dan de aanwijzingen. De aanwijzingen stonden in een smalle
+  // kolom naast het bord; nu staan ze eronder, zoals gevraagd.
+  const play = el('div', { class: 'play' }, [boards, clueCol, notes]);
   mount.append(play);
 
   const draw = () => {
-    clueCol.replaceChildren(cluePanel(puzzle, state, draw, persist));
-    boards.replaceChildren(...boardNodes(puzzle, state, onCell));
+    const aantal = puzzle.clues.length + (state.extra?.length ?? 0);
+    clueCol.replaceChildren(klepje(
+      'aanwijzingen', `Aanwijzingen (${aantal})`, true, [cluePanel(puzzle, state, draw, persist)],
+    ));
+    boards.replaceChildren(...boardNodes(puzzle, state, onCell, toonMeubel));
     notes.replaceChildren(toolbar(puzzle, state, actions), noteNode(state));
   };
+
+  // Tikken op een meubelstuk: de naam eronder. Aanwijzen met de muis geeft
+  // hem als tooltip (zie het klikvlak in board-rooms.js), maar op een
+  // telefoon bestaat aanwijzen niet.
+  function toonMeubel(naam) {
+    state.note = { kind: 'ok', text: `Dat is ${naam}.` };
+    draw();
+  }
 
   function onCell(...args) {
     if (puzzle.kind === 'latin') cycleLatin(puzzle, state, ...args);
@@ -173,6 +191,19 @@ export function renderPlayer(puzzle, mount) {
       clearProgress(puzzle.id);
       draw();
     },
+    kruisjes() {
+      // De kruisjes die het bord zelf zet zodra iemand staat. Ze volgen
+      // dwingend uit de regel, dus ze schelen werk - maar ze nemen je ook
+      // de stap af die je misschien juist zelf wilde zetten.
+      zetKruisjesVanzelf(!kruisjesVanzelf());
+      state.note = {
+        kind: 'ok',
+        text: kruisjesVanzelf()
+          ? 'Het bord kruist weer zelf af waar niemand meer kan staan.'
+          : 'Het bord kruist niets meer vanzelf af; je zet ze zelf met Uitsluiten.',
+      };
+      draw();
+    },
     rand() {
       // De sierlijst eromheen aan of uit. Hij kost bij een klein bord ruim
       // een derde van de breedte; op een telefoon staat hij daarom vanzelf
@@ -199,7 +230,10 @@ export function renderPlayer(puzzle, mount) {
       const url = location.href;
       try {
         await navigator.clipboard.writeText(url);
-        state.note = { kind: 'ok', text: 'Link gekopieerd. Dezelfde link geeft altijd exact deze puzzel.' };
+        state.note = {
+          kind: 'ok',
+          text: 'Link gekopieerd. Bewaar hem of maak er een bladwijzer van: deze link geeft altijd exact deze puzzel terug, met hetzelfde decor en dezelfde namen.',
+        };
       } catch {
         state.note = { kind: 'ok', text: url };
       }
@@ -266,6 +300,25 @@ function spelregelBlok(puzzle) {
   if (!regels) return el('span', {});
   const lijst = el('ul', { class: 'regellijst' });
   for (const r of regels.regels) lijst.append(el('li', { text: r }));
+
+  // Wat "tegen de rotswand" betekent.
+  //
+  // Elke wereld heeft eigen woorden voor de buitenrand van het bord: tegen
+  // de buitenmuur, tegen de rotswand, aan de rand van het woud, tegen de
+  // glazen gevel. Die staan in een aanwijzing alsof het een ding is - en
+  // dan zoek je op het bord naar een rotswand die er niet staat. Het is
+  // geen ding maar een plek: de buitenste ring vakjes. Dat stond nergens.
+  const w = puzzle.woorden;
+  if (w?.randZin) {
+    lijst.append(el('li', {
+      text: `"${hoofdletter(w.randZin)}" is geen voorwerp maar een plek: het betekent op de buitenste rij of kolom van het bord.`,
+    }));
+  }
+  if (w?.hoekZin) {
+    lijst.append(el('li', {
+      text: `"${hoofdletter(w.hoekZin)}" betekent op een van de vier hoekvakjes.`,
+    }));
+  }
   const blok = el('details', { class: 'spelregels' }, [
     el('summary', { text: regels.kop }),
     lijst,
@@ -334,10 +387,7 @@ function cluePanel(puzzle, state, draw, persist) {
   } else {
     const list = el('div', { class: 'clues' });
     for (const clue of puzzle.clues) list.append(knopVoor(clue));
-    blokken.push(
-      el('p', { class: 'label', text: `Aanwijzingen (${puzzle.clues.length})` }),
-      list,
-    );
+    blokken.push(list);
   }
 
   // Bij het speurdoku staan de extra aanwijzingen al bij de naam waar ze
@@ -388,8 +438,6 @@ function perNaam(puzzle, extraClues, knopVoor) {
   }
 
   const uit = [];
-  const totaal = puzzle.clues.length + extraClues.length;
-  uit.push(el('p', { class: 'label', text: `Aanwijzingen (${totaal})` }));
 
   // Iedereen op het bord langs, in de volgorde van het palet, zodat de
   // lijst dezelfde volgorde heeft als de penningen erboven.
@@ -428,16 +476,35 @@ function perNaam(puzzle, extraClues, knopVoor) {
 
 
 
-function boardNodes(puzzle, state, onCell) {
+// Een blok achter een klepje, met de stand onthouden. De legenda en de
+// aanwijzingen zijn allebei dingen die je soms nodig hebt en soms in de weg
+// vindt zitten - en op een telefoon schelen ze een scherm.
+function klepje(sleutel, kop, standaard, inhoud) {
+  const open = paneelOpen(sleutel, standaard);
+  const blok = el('details', { class: 'paneel', open: open ? '' : null }, [
+    el('summary', { text: kop }),
+    el('div', { class: 'paneel-binnen' }, inhoud),
+  ]);
+  blok.addEventListener('toggle', () => zetPaneel(sleutel, blok.open));
+  return blok;
+}
+
+function boardNodes(puzzle, state, onCell, toonMeubel) {
   if (puzzle.kind === 'kamer') {
+    const vanzelf = kruisjesVanzelf();
     return [
       personenPalet(puzzle, state, onCell),
-      el('div', { class: 'board-wrap' }, renderKamerbord(puzzle, state, { klikCel: onCell }, { rand: randAan() })),
-      renderLegenda(puzzle),
-      el('p', {
-        class: 'legend',
-        text: 'Kies een figuur en klik een vakje om hem neer te zetten. Met Schetsen zet je in plaats daarvan zijn beginletter in het vakje, als notitie van wie daar zou kunnen staan. Er staat precies één verdachte per rij en per kolom, en niemand staat op een meubelstuk. Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan; met Uitsluiten zet je je eigen kruisjes.',
-      }),
+      el('div', { class: 'board-wrap' }, renderKamerbord(
+        puzzle, state, { klikCel: onCell, klikMeubel: toonMeubel },
+        { rand: randAan(), kruisjesVanzelf: vanzelf },
+      )),
+      klepje('legenda', 'Wat er op het bord staat', false, [renderLegenda(puzzle)]),
+      klepje('uitleg', 'Hoe je dit bord bedient', false, [
+        el('p', {
+          class: 'legend',
+          text: `Kies een figuur en klik een leeg vakje om hem neer te zetten. Klik je op een figuur die al op het bord staat, dan pak je die op; klik je er nog een keer op, dan gaat hij eraf. Met Schetsen zet je in plaats daarvan zijn beginletter in het vakje, als notitie van wie daar zou kunnen staan. Er staat precies één verdachte per rij en per kolom, en niemand staat op een meubelstuk. Met Uitsluiten zet je je eigen kruisjes.${vanzelf ? ' Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan; dat kun je uitzetten met de knop Kruisjes vanzelf.' : ' Het bord zet zelf geen kruisjes - dat staat uit.'}`,
+        }),
+      ]),
     ];
   }
   if (puzzle.kind === 'latin') {
@@ -500,7 +567,7 @@ function personenPalet(puzzle, state, onCell) {
     }, [
       el('span', { class: 'palet-portret' }, isLijk
         ? slachtofferElement(i, naam.charAt(0).toUpperCase(), 26)
-        : portretElement(i, naam.charAt(0).toUpperCase(), 26)),
+        : portretElement(i, naam.charAt(0).toUpperCase(), 26, geslachtVan(naam))),
       el('span', { text: naam }),
     ]);
     knop.addEventListener('click', () => onCell(null, i));
@@ -541,10 +608,11 @@ function toolbar(puzzle, state, actions) {
   add('Begin opnieuw', actions.reset);
   // Alleen bij het speurdoku: de andere borden hebben geen sierlijst.
   if (puzzle.kind === 'kamer') {
+    add(kruisjesVanzelf() ? 'Kruisjes vanzelf: aan' : 'Kruisjes vanzelf: uit', actions.kruisjes);
     add(randAan() ? 'Lijst eraf' : 'Lijst eromheen', actions.rand);
   }
   add('Printen', actions.print);
-  add('Link kopiëren', actions.share);
+  add('Bewaar deze puzzel', actions.share);
   return bar;
 }
 
@@ -619,12 +687,25 @@ function zetNeer(puzzle, state, cel, keuze) {
     else state.kruis.add(cel);
     return;
   }
+  // Op een bezet vakje klikken pakt die figuur op; hij wordt niet overschreven.
+  //
+  // Hiervoor zette een klik op een bezet vakje de figuur neer die je eerder
+  // had gekozen, en gooide hij degene die er stond eraf. Dat is wat een
+  // stempel doet, en het is precies verkeerd om: wie op een poppetje klikt
+  // bedoelt dát poppetje, niet het poppetje van drie klikken geleden. Je
+  // verloor er bovendien zwijgend een zet mee.
+  //
+  // Nu is een bezet vakje een figuur om op te pakken. Nog een keer klikken
+  // op dezelfde haalt hem van het bord. Neerzetten gaat alleen op een leeg
+  // vakje - dat is de ene stap die je erbij krijgt, en in ruil daarvoor
+  // kan een misklik nooit meer iemand wegvegen.
   const hier = state.plaatsVanCel(cel);
-  if (hier === state.gekozen) {
-    delete state.plaats[state.gekozen];
+  if (hier != null) {
+    if (hier === state.gekozen) delete state.plaats[hier];
+    else state.gekozen = hier;
     return;
   }
-  if (hier != null) delete state.plaats[hier];
+  if (state.gekozen < 0) return;
   state.plaats[state.gekozen] = cel;
   state.kruis.delete(cel);
   delete state.schets[cel];

@@ -192,18 +192,23 @@ function clueNames(clue, spec) {
 //
 // Elke zaak in hetzelfde genre kreeg woordelijk dezelfde zin, en dan leest
 // de tweede puzzel als een herhaling van de eerste. Alle vijf zeggen
-// precies hetzelfde: waar het lichaam ligt weet niemand meer, je zet
-// iedereen terug, en wie als enige bij het slachtoffer overblijft is de
-// dader. Alleen de toon verschilt.
+// precies hetzelfde: er is iemand vermoord, waar het lichaam ligt weet
+// niemand meer, je zet iedereen terug, en wie als enige bij het
+// slachtoffer overblijft is de dader. Alleen de toon verschilt.
+//
+// Dat eerste stond er eerder niet in. De inleiding vertelde dat de
+// stroom uitviel of dat het brandalarm afging, en daarna stond er ineens
+// "heeft het gedaan" - terwijl nergens gezegd was dát er iets gedaan was.
+// Nu staat in elke variant wie er dood is en wat hij was.
 const OPDRACHT_ZINNEN = [
-  (naam, zelfde) => `Niemand weet meer wie waar stond, en zelfs waar ${naam} lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij ${naam} ${zelfde} blijkt te staan, is de dader.`,
-  (naam, zelfde) => `Van die avond is geen plattegrond gemaakt. Zet iedereen terug op de plek waar hij stond, ${naam} incluis - want wie als enige bij hem ${zelfde} eindigt, heeft het gedaan.`,
-  (naam, zelfde) => `Er is niemand die nog weet waar hij stond, en waar ${naam} lag weet ook niemand. Zet ze allemaal neer; de enige die daarna bij ${naam} ${zelfde} staat, is de dader.`,
-  (naam, zelfde) => `De plattegrond is leeg gebleven: wie waar stond is niet opgeschreven, ook niet waar ${naam} lag. Vul hem in en kijk wie er als enige bij ${naam} ${zelfde} overblijft.`,
-  (naam, zelfde) => `Reconstrueer wie waar stond. Ook ${naam} zelf, want zelfs dat is niet meer bekend. Wie dan als enige bij hem ${zelfde} staat, is de dader.`,
+  (naam, rol, zelfde) => `${naam}, ${rol}, is dood aangetroffen. Niemand weet meer wie waar stond, en zelfs waar ${naam} lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij ${naam} ${zelfde} blijkt te staan, is de dader.`,
+  (naam, rol, zelfde) => `Er is die avond iemand omgebracht: ${naam}, ${rol}. Van wat er gebeurde is geen plattegrond gemaakt. Zet iedereen terug op de plek waar hij stond, ${naam} incluis - want wie als enige bij ${naam} ${zelfde} eindigt, heeft het gedaan.`,
+  (naam, rol, zelfde) => `${naam} is vermoord. ${cap(rol)} werd gevonden toen het al te laat was, en niemand weet meer waar iemand stond. Zet ze allemaal neer; de enige die daarna bij ${naam} ${zelfde} staat, is de dader.`,
+  (naam, rol, zelfde) => `Het lichaam van ${naam} is gevonden - ${rol}. De plattegrond is leeg gebleven: wie waar stond is niet opgeschreven, ook niet waar ${naam} lag. Vul hem in en kijk wie er als enige bij ${naam} ${zelfde} overblijft.`,
+  (naam, rol, zelfde) => `Dit is een moordzaak. ${naam}, ${rol}, heeft het niet gehaald. Reconstrueer wie waar stond, ${naam} zelf incluis, want zelfs dat is niet meer bekend. Wie dan als enige bij ${naam} ${zelfde} staat, is de dader.`,
 ];
 
-const opdrachtZin = (naam, zelfde, rng) => rng.pick(OPDRACHT_ZINNEN)(naam, zelfde);
+const opdrachtZin = (naam, rol, zelfde, rng) => rng.pick(OPDRACHT_ZINNEN)(naam, rol, zelfde);
 
 // ---------------------------------------------------- namen die kloppen
 //
@@ -323,6 +328,10 @@ function buildKamerPuzzle({ world, settings }) {
   // gebruiken (M, N en O; de verdachten gaan van A tot L en van P tot S).
   const slachtofferNaam = rng.pick(world.slachtoffers);
   namen[gen.slachtofferIdx] = slachtofferNaam;
+  // Wat het slachtoffer was: de conciërge, de nachtzuster, de havenmeester.
+  // Die rollen stonden er al voor de andere soorten puzzels; hier maken ze
+  // de inleiding concreet in plaats van algemeen.
+  const slachtofferRol = rng.pick(world.victims);
 
   const kamerNamen = noemKamers(
     gen.rooster,
@@ -385,7 +394,7 @@ function buildKamerPuzzle({ world, settings }) {
     niveau: Number(niveau),
     niveauLabel: levelParams(niveau).label,
     depth: gen.graad.opgelost ? 1 : 2,
-    intro: `${world.lead} ${opdrachtZin(slachtofferNaam, zelfde, rng)}`,
+    intro: `${world.lead} ${opdrachtZin(slachtofferNaam, slachtofferRol, zelfde, rng)}`,
     question: {
       text: `Wie stond er als enige bij ${slachtofferNaam} ${zelfde}?`,
       answer: namen[gen.dader],
