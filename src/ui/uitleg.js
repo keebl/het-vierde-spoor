@@ -1,10 +1,14 @@
 // Uitleg. Bedoeld voor iemand die net zijn eerste puzzel heeft geopend,
 // niet voor iemand die de code kent. Dus: eerst spelen, dan de begrippen.
+//
+// Hier stonden ook het Kruisverhoor, de Rondgang en het Dienstrooster, en
+// een tabel met wat je zoal uitzoekt. Die speltypes zijn er nog wel - de
+// motor maakt ze, de keuring rekent ze na - maar ze staan nergens in het
+// zicht (zie ZICHTBARE_MECHANICS in assignments.js), en dan hoort er ook
+// geen uitleg van te staan. Komt er een terug, dan komt zijn stuk terug.
 
 import { el } from './boards.js';
-import { WORLDS } from '../content/worlds.js';
-import { ASSIGNMENTS, ZICHTBARE_MECHANICS } from '../content/assignments.js';
-import { LEVELS, LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
+import { LEVELS, ZICHTBARE_LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
 
 const tabel = (rijen) =>
   el('table', { class: 'deftable' }, [
@@ -22,6 +26,11 @@ const sectie = (titel, kids, onderkop) =>
     ...[].concat(kids),
   ]);
 
+const vraag = (kop, antwoord) => el('p', {}, [
+  el('b', { text: `${kop} ` }),
+  el('span', { text: antwoord }),
+]);
+
 export function renderUitleg(mount) {
   mount.replaceChildren();
 
@@ -30,12 +39,12 @@ export function renderUitleg(mount) {
     el('h1', { text: 'Hoe je deze puzzels oplost' }),
     el('p', {
       class: 'lede',
-      text: 'Je krijgt een lijst aanwijzingen die allemaal waar zijn. Door te schrappen wat niet kan, blijft er uiteindelijk één mogelijkheid over. Raden hoeft nooit.',
+      text: 'Je krijgt een plattegrond en een lijst aanwijzingen die allemaal waar zijn. Door te schrappen wat niet kan, blijft er uiteindelijk één plaatsing over. Raden hoeft nooit.',
     })
   );
 
   mount.append(
-    sectie('Een Speurdoku', [
+    sectie('Het spel', [
       el('div', { class: 'prose' }, [
         el('p', { text: 'Je ziet een plattegrond met kamers en meubels. Daar zet je de figuren op: één per rij en één per kolom, en nooit op een meubelstuk. Een van de figuren is het slachtoffer; waar dat lichaam ligt moet je dus net zo goed uitzoeken.' }),
         el('p', {}, [
@@ -44,61 +53,69 @@ export function renderUitleg(mount) {
         ]),
         el('p', {}, [
           el('b', { text: 'Naast is naast. ' }),
-          el('span', { text: 'Staat er dat iemand naast de werkbank stond, dan bedoelen we pal ernaast — erboven, eronder, links of rechts — én in dezelfde kamer. Door een muur heen sta je niet naast iets, en schuin telt nooit. Zinnen over rijen, kolommen, het noorden en de buitenmuur gaan juist wél over de hele plattegrond; daarvoor staat er een kompas naast het bord.' }),
+          el('span', { text: 'Staat er dat iemand naast de werkbank stond, dan bedoelen we pal ernaast — erboven, eronder, links of rechts — én in dezelfde kamer. Door een muur heen sta je niet naast iets, en schuin telt nooit.' }),
         ]),
-        el('p', { text: 'Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan: de rest van die rij en kolom. Weet je het nog niet zeker, zet dan met Schetsen de beginletters van de kandidaten in een vakje. Met Uitsluiten zet je je eigen kruisjes.' }),
-        el('p', { class: 'legend', text: 'Bij elke puzzel staan de regels van dat speltype nog eens op een rij, onder de vraag, zodat je ze nooit hoeft te zoeken.' }),
+        el('p', {}, [
+          el('b', { text: 'De rand van het bord is een plek, geen voorwerp. ' }),
+          el('span', { text: 'Elke wereld heeft daar eigen woorden voor: tegen de buitenmuur, tegen de rotswand, aan de rand van het woud. Dat betekent telkens hetzelfde — op de buitenste rij of kolom. Zinnen over rijen, kolommen en het noorden gaan over de hele plattegrond en lopen wél door muren heen; daarvoor staat er een kompas naast het bord.' }),
+        ]),
       ]),
-    ], 'Het hoofdspel: figuren op een plattegrond, een per rij en een per kolom.')
+    ], 'Figuren op een plattegrond, één per rij en één per kolom.')
   );
 
   mount.append(
-    sectie('Een Kruisverhoor', [
+    sectie('Het bord bedienen', [
       el('div', { class: 'prose' }, [
+        el('p', { text: 'Kies een figuur uit de balk boven het bord en klik een leeg vakje aan: daar komt hij te staan. Klik je op een figuur die al op het bord staat, dan pak je die op; klik er nog een keer op en hij gaat eraf.' }),
         el('p', {}, [
-          el('b', { text: 'Elke rij hoort bij precies één kolom. ' }),
-          el('span', { text: 'Had Clara de aansteker, dan had niemand anders die, en zij had verder niets anders. Daarom zet een vink in een vakje automatisch kruisjes in de rest van zijn rij en kolom.' }),
+          el('b', { text: 'Schetsen en Uitsluiten. ' }),
+          el('span', { text: 'Weet je het nog niet zeker, zet dan met Schetsen de beginletters van de kandidaten in een vakje. Met Uitsluiten zet je je eigen kruisjes in vakjes waar niemand meer kan staan.' }),
         ]),
-        el('p', { text: 'Klikken loopt door drie standen: leeg, kruis (uitgesloten), vink (zeker). Een aanwijzing die je hebt verwerkt kun je wegstrepen door erop te klikken, zodat je ziet wat je nog niet hebt gebruikt.' }),
         el('p', {}, [
-          el('b', { text: 'Onderaan staan de blokken tussen de categorieën onderling. ' }),
-          el('span', { text: 'Een aanwijzing als "degene met de bankbiljetten was in het hotel" noemt geen verdachte, en kon je daarom nergens kwijt. Nu wel: in het blok voorwerp × plek. Je hoeft die blokken niet in te vullen om de vraag te beantwoorden, maar met zo\'n aanwijzing kom je er wel sneller.' }),
+          el('b', { text: 'Kruisjes vanzelf. ' }),
+          el('span', { text: 'Zodra je iemand neerzet, kruist het bord uit zichzelf af waar niemand meer kan staan: de rest van die rij en kolom. Dat scheelt werk, maar het neemt je ook een stap af — met de knop in de balk zet je het uit.' }),
         ]),
-      ]),
-    ], 'Kruisjes en vinkjes tot er een naam overblijft.')
-  );
-
-  mount.append(
-    sectie('Als je vastloopt', [
-      el('div', { class: 'prose' }, [
-        el('p', { text: 'De hint vult één vakje voor je in en zegt erbij uit welke aanwijzing dat volgde. Controleer kijkt na wat je tot nu toe hebt ingevuld en omlijnt wat niet klopt — je ziet dus wel dát er iets fout staat, maar niet wat het goede antwoord is.' }),
-        el('p', { text: 'Oplossing vult alles in. Dan is de puzzel natuurlijk voorbij.' }),
         el('p', {}, [
-          el('b', { text: 'Ongedaan en Overdoen. ' }),
-          el('span', { text: 'Een misklik op een groot bord kost anders tien zetten werk. Met ctrl+Z (of cmd+Z) gaat het ook, en met shift erbij doe je het weer over.' }),
+          el('b', { text: 'Wat is dat ding? ' }),
+          el('span', { text: 'Wijs een meubelstuk aan met de muis en de naam verschijnt; op een telefoon tik je erop en komt hij onder het bord te staan. De hele lijst staat onder het bord, achter "Wat er op het bord staat".' }),
+        ]),
+        el('p', {}, [
+          el('b', { text: 'De lijst om het bord. ' }),
+          el('span', { text: 'De sierlijst eromheen kost ruimte: op een klein bord is hij ruim een derde van de breedte. Op een telefoon staat hij daarom vanzelf uit; met de knop zet je hem aan.' }),
         ]),
       ]),
     ])
   );
 
   mount.append(
-    sectie('Wat je uitzoekt', tabel(ASSIGNMENTS.map((a) => [a.name, a.blurb])),
-      'Niet elke puzzel is een misdrijf.')
-  );
-
-  mount.append(
-    sectie('Soorten spel', tabel(ZICHTBARE_MECHANICS.map((m) => [m.name, m.blurb])),
-      ZICHTBARE_MECHANICS.length > 1
-        ? 'Dezelfde logica, verschillende vormen.'
-        : 'Eén vorm, acht decors en zes moeilijkheidsgraden.')
+    sectie('Als je vastloopt', [
+      el('div', { class: 'prose' }, [
+        el('p', {}, [
+          el('b', { text: 'Controleer ' }),
+          el('span', { text: 'kijkt na wat er staat: wat klopt krijgt een groene ring, wat niet klopt een rode. Je ziet dus wél dát iets fout staat, maar niet wat het goede antwoord is.' }),
+        ]),
+        el('p', {}, [
+          el('b', { text: 'Hint ' }),
+          el('span', { text: 'vult niets voor je in. Hij geeft je een extra aanwijzing, onderaan de lijst, net zo waar als de andere — gekozen op wat hij jou oplevert vanaf de stand van jouw bord, en nooit van de soort "die stond in de keuken".' }),
+        ]),
+        el('p', {}, [
+          el('b', { text: 'Oplossing ' }),
+          el('span', { text: 'vult alles in. Dan is de puzzel natuurlijk voorbij; hij telt daarna niet meer als opgelost.' }),
+        ]),
+        el('p', {}, [
+          el('b', { text: 'Bewaar deze puzzel ' }),
+          el('span', { text: 'kopieert de link. Elke puzzel heeft een eigen adres: bewaar het of maak er een bladwijzer van, dan krijg je exact deze puzzel terug — hetzelfde decor, dezelfde namen, dezelfde aanwijzingen.' }),
+        ]),
+      ]),
+    ])
   );
 
   mount.append(
     sectie('Moeilijkheidsgraad', [
-      tabel(LEVEL_IDS.map((l) => {
+      tabel(ZICHTBARE_LEVEL_IDS.map((l) => {
         const lv = LEVELS[l];
         const k = KAMER_LEVELS[l];
-        const omvang = `${k.n} bij ${k.n} vakjes in een Speurdoku, ${lv.slots} rijen in een raster.`;
+        const omvang = `${k.n} bij ${k.n} vakjes, ${k.kamers} kamers.`;
         return [
           `${l}. ${lv.label}`,
           lv.style === 'shallow'
@@ -114,36 +131,14 @@ export function renderUitleg(mount) {
   );
 
   mount.append(
-    sectie('De decors', tabel(WORLDS.map((w) => [`${w.icon} ${w.name}`, w.blurb])), `Hetzelfde spel, een ander decor en een ander verhaal. Je kiest het decor niet: elke nieuwe puzzel speelt ergens anders, en er zijn er ${WORLDS.length}.`)
-  );
-
-  mount.append(
     sectie('Veelgestelde vragen', [
       el('div', { class: 'prose' }, [
-        el('p', {}, [
-          el('b', { text: 'Moet ik ooit gokken? ' }),
-          el('span', { text: 'Nee. Op de eerste drie moeilijkheidsgraden kom je er door stap voor stap uit te sluiten. Op de drie zwaarste moet je soms een mogelijkheid aannemen en laten zien dat die tot een tegenspraak leidt — dat is nog steeds redeneren.' }),
-        ]),
-        el('p', {}, [
-          el('b', { text: 'Hoe weet ik dat een puzzel klopt? ' }),
-          el('span', { text: 'Voordat een puzzel bij jou komt, is geteld hoeveel oplossingen hij heeft, en zijn de aanwijzingen die je kunt missen weggesneden. Je krijgt er dus geen die je niet rond kunt krijgen, en geen regel die er voor de sier staat.' }),
-        ]),
-        el('p', {}, [
-          el('b', { text: 'Blijft mijn voortgang bewaard? ' }),
-          el('span', { text: 'In deze browser wel, zonder account. Op een ander apparaat of in een andere browser begin je opnieuw.' }),
-        ]),
-        el('p', {}, [
-          el('b', { text: 'Wat is die code in de link? ' }),
-          el('span', { text: 'De seed. Dezelfde seed met dezelfde instellingen levert altijd exact dezelfde puzzel op, dus wie je link opent krijgt jouw puzzel en niet een andere.' }),
-        ]),
-        el('p', {}, [
-          el('b', { text: 'Waarom heet het Het Vierde Spoor? ' }),
-          el('span', { text: 'Bij elke zaak liggen er drie sporen klaar die iedereen ziet: wie er was, wat er lag, waar het gebeurde. Het vierde spoor is het spoor dat niemand heeft opgemerkt, en dat is het spoor dat je hier zoekt. Je vindt het niet door beter te kijken, maar door alles weg te strepen wat het niet kan zijn.' }),
-        ]),
-        el('p', {}, [
-          el('b', { text: 'Is dit een kopie van een bestaand puzzelboek? ' }),
-          el('span', { text: 'Nee. Logische deductiepuzzels op een raster bestaan sinds de jaren zestig en de techniek erachter is wiskunde, vrij van rechten. Wat beschermd is — merknamen, personages, illustraties, teksten — is hier allemaal eigen werk.' }),
-        ]),
+        vraag('Moet ik ooit gokken?', 'Nee. Op de eerste drie moeilijkheidsgraden kom je er door stap voor stap uit te sluiten. Op de drie zwaarste moet je soms een mogelijkheid aannemen en laten zien dat die tot een tegenspraak leidt — dat is nog steeds redeneren.'),
+        vraag('Hoe weet ik dat een puzzel klopt?', 'Voordat een puzzel bij jou komt, is geteld hoeveel oplossingen hij heeft, en zijn de aanwijzingen die je kunt missen weggesneden. Je krijgt er dus geen die je niet rond kunt krijgen, en geen aanwijzing die er voor de sier staat.'),
+        vraag('Kan ik kiezen waar het speelt?', 'Nee. Je kiest hoe zwaar je het wilt hebben; het decor krijg je. Elke nieuwe puzzel speelt ergens anders.'),
+        vraag('Blijft mijn voortgang bewaard?', 'In deze browser wel, zonder account. Op een ander apparaat of in een andere browser begin je opnieuw. Puzzels die je zelf begonnen bent staan onder "Alle puzzels", bij hun eigen moeilijkheidsgraad.'),
+        vraag('Wat is die code in de link?', 'De seed. Dezelfde seed levert altijd exact dezelfde puzzel op, dus wie jouw link opent krijgt jouw puzzel en niet een andere.'),
+        vraag('Is dit een kopie van een bestaand puzzelboek?', 'Nee. Logische deductiepuzzels op een raster bestaan sinds de jaren zestig en de techniek erachter is wiskunde, vrij van rechten. Wat beschermd is — merknamen, personages, illustraties, teksten — is hier allemaal eigen werk.'),
       ]),
     ])
   );

@@ -44,6 +44,12 @@ const paden = {
 //               Hendrik", "de module van Dmitri". Zonder zo'n woord werd het
 //               "waar Hendrik is", en dan botst dat met het werkwoord dat er
 //               achteraan komt.
+// rollen    - wat het slachtoffer wás, in twee smaken. De inleiding van een
+//               speurdoku zegt nu wie er dood is én wat hij deed, en dan
+//               moet dat wel bij elkaar passen: "Marieke is vermoord. De
+//               buurman van nummer zes werd gevonden" stond er anders. De
+//               oude `victims` blijft voor de andere speltypes; die noemen
+//               geen naam, dus daar botst niets.
 // slachtoffers - het slachtoffer als figuur op het speurdoku-bord. Daar staat
 //               hij tussen de verdachten op het bord, met zijn beginletter op
 //               een penning, dus hij heeft een eigen naam nodig met een
@@ -67,6 +73,7 @@ export const WORLDS = [
     map: deuren,
     victims: ['de havenmeester', 'de nachtportier', 'de kroegbaas'],
     slachtoffers: ['Max', 'Nora', 'Otto', 'Mees', 'Marius', 'Nelly', 'Netty', 'Olga', 'Oscar'],
+    rollen: { m: ['de havenmeester', 'de nachtportier', 'de kroegbaas'], v: ['de waardin', 'de nachtzuster', 'de brugwachtster'] },
     lead: 'De regen kwam die nacht met bakken naar beneden, en niemand hoorde iets boven het water uit.',
     reconLead: 'Van die nacht is alleen het halve logboek van de brugwachter over.',
     findLead: 'Ergens in dit blok ligt het bewijs dat de hele zaak omgooit. Je hebt een nacht.',
@@ -96,6 +103,7 @@ export const WORLDS = [
     map: deuren,
     victims: ['oom Aldert', 'grootvader Valkenhorst', 'de rentmeester'],
     slachtoffers: ['Mathilde', 'Norbert', 'Oswald', 'Margaretha', 'Marcellus', 'Nicolaas', 'Nathalia', 'Odilia', 'Octaaf'],
+    rollen: { m: ['de oudoom van het huis', 'de rentmeester', 'de butler'], v: ['de oudtante van het huis', 'de huishoudster', 'de gezelschapsdame'] },
     lead: 'Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat.',
     reconLead: 'Van die avond is alleen het dienstrooster van de butler over.',
     findLead: 'Het testament lag gisteren nog in de kluis. Nu niet meer, en het huis is groot.',
@@ -135,6 +143,7 @@ export const WORLDS = [
     },
     victims: ['commandant Ngoie', 'de vluchtleider', 'de ladingmeester'],
     slachtoffers: ['Mira', 'Nuru', 'Osvald', 'Malia', 'Marek', 'Nadir', 'Noor', 'Odile', 'Omar'],
+    rollen: { m: ['de vluchtleider', 'de ladingmeester', 'de boordarts'], v: ['de commandant', 'de navigator', 'de boordarts'] },
     lead: 'De koeling viel uit en het alarm werd pas veel later gehoord.',
     reconLead: 'Het wachtrooster is half gewist; dit is wat ervan over is.',
     findLead: 'Iemand heeft het noodbaken uitgezet. Het hangt nog ergens aan boord.',
@@ -164,6 +173,7 @@ export const WORLDS = [
     map: paden,
     victims: ['de oude boswachter', 'de veerman', 'de grensopzichter'],
     slachtoffers: ['Maarten', 'Nienke', 'Olle', 'Mette', 'Menno', 'Neeltje', 'Noach', 'Obbe', 'Onne'],
+    rollen: { m: ['de oude boswachter', 'de veerman', 'de grensopzichter'], v: ['de oude boswachtster', 'de veervrouw', 'de kruidenvrouw'] },
     lead: 'Er werd iemand gevonden met zijn hand om iets wat er niet meer is.',
     reconLead: 'Het woud houdt geen tijd bij. De klokslagen van de kapel wel.',
     findLead: 'De bron verlegt zich elke eeuw. Deze keer is hij hier, ergens tussen de bomen.',
@@ -203,6 +213,7 @@ export const WORLDS = [
     },
     victims: ['de voorste gids', 'de lampendrager', 'de opzichter'],
     slachtoffers: ['Mies', 'Nina', 'Olaf', 'Machteld', 'Mauritz', 'Nelis', 'Noortje', 'Odulf', 'Onno'],
+    rollen: { m: ['de voorste gids', 'de lampendrager', 'de opzichter'], v: ['de voorste gids', 'de lampendraagster', 'de opzichtster'] },
     lead: 'Iemand liep vooruit met de enige kaart. De kaart kwam terug.',
     reconLead: 'De afdaling werd bijgehouden per kwartier, maar het schrift is vochtig geworden.',
     findLead: 'Er is een uitgang. De kaart liegt erover, de luchtstroom niet.',
@@ -232,6 +243,7 @@ export const WORLDS = [
     map: deuren,
     victims: ['de rector', 'de conrector', 'de huisbewaarder'],
     slachtoffers: ['Melchior', 'Nadia', 'Orso', 'Morgana', 'Magnus', 'Nicodemus', 'Nerissa', 'Ottilie', 'Orlando'],
+    rollen: { m: ['de rector', 'de conrector', 'de huisbewaarder'], v: ['de rector', 'de conrector', 'de huisbewaarster'] },
     lead: 'Tijdens het avondgebed is er iemand in steen veranderd. Niemand van de aanwezigen geeft iets toe.',
     reconLead: 'Het lesrooster van die dag is bewaard gebleven, maar half uitgewist.',
     findLead: 'Een van de zalen houdt de verdwenen leerstoel verborgen. De school zelf werkt tegen.',
@@ -261,6 +273,7 @@ export const WORLDS = [
     map: deuren,
     victims: ['oom Nicolaas', 'de kerstgast', 'de buurman van nummer zes'],
     slachtoffers: ['Marieke', 'Nicolaas', 'Olivier', 'Marjan', 'Mart', 'Nelleke', 'Niek', 'Odette', 'Otger'],
+    rollen: { m: ['de oom uit Groningen', 'de kerstgast', 'de buurman van nummer zes'], v: ['de tante uit Groningen', 'de kerstgast', 'de buurvrouw van nummer zes'] },
     lead: 'Halverwege het kerstdiner viel de stroom uit, en toen de kaarsen weer brandden klopte er iets niet.',
     reconLead: 'Van die avond is alleen het tijdschema van de gastvrouw over.',
     findLead: 'Er is een cadeau verdwenen voordat het onder de boom lag.',
@@ -290,6 +303,7 @@ export const WORLDS = [
     map: deuren,
     victims: ['de gastheer in het skeletpak', 'de huisbaas', 'de buurvrouw met de lantaarn'],
     slachtoffers: ['Mila', 'Nestor', 'Oskar', 'Morris', 'Mink', 'Nanne', 'Nova', 'Odilon', 'Olger'],
+    rollen: { m: ['de gastheer in het skeletpak', 'de huisbaas', 'de buurman met de lantaarn'], v: ['de gastvrouw in het skeletpak', 'de huisbazin', 'de buurvrouw met de lantaarn'] },
     lead: 'Om middernacht ging het licht uit, en toen de lampionnen weer brandden lag er iemand stil.',
     reconLead: 'Van die nacht is alleen een half ingevuld rondje langs de deuren over.',
     findLead: 'Achter een van de deuren hangt het echte masker, en dat is geen kostuum.',
@@ -325,6 +339,7 @@ export const WORLDS = [
     map: deuren,
     victims: ['de conciërge', 'de teamleider', 'de stagiair'],
     slachtoffers: ['Mo', 'Noor', 'Oumar', 'Mees', 'Milan', 'Nienke', 'Nordin', 'Olivier', 'Ouassima'],
+    rollen: { m: ['de conciërge', 'de teamleider', 'de stagiair'], v: ['de conciërge', 'de teamleider', 'de stagiaire'] },
     lead: 'Het brandalarm ging af in het laatste blokuur en iedereen moest het plein op.',
     reconLead: 'Van die middag is alleen het presentieoverzicht over, en dat is half ingevuld.',
     findLead: 'Ergens in het gebouw ligt het proefwerk dat nooit is afgenomen.',
@@ -354,6 +369,7 @@ export const WORLDS = [
     map: deuren,
     victims: ['de nachtzuster', 'de dienstdoend arts', 'de beveiliger'],
     slachtoffers: ['Maud', 'Nabil', 'Olivia', 'Mathis', 'Marit', 'Naomi', 'Nout', 'Otis', 'Oona'],
+    rollen: { m: ['de nachtverpleger', 'de dienstdoend arts', 'de beveiliger'], v: ['de nachtzuster', 'de dienstdoend arts', 'de beveiligster'] },
     lead: 'Om tien over twee viel een monitor stil, en het duurde elf minuten voordat iemand keek.',
     reconLead: 'Het rondelogboek is bijgehouden, maar halverwege de nacht houdt het op.',
     findLead: 'Er is iets uit de medicijnkast verdwenen. Het is het gebouw niet uit.',
@@ -383,6 +399,7 @@ export const WORLDS = [
     map: deuren,
     victims: ['de financieel directeur', 'de systeembeheerder', 'de bewaker van de nachtdienst'],
     slachtoffers: ['Martijn', 'Nour', 'Oleg', 'Maya', 'Mohammed', 'Nadine', 'Niels', 'Orhan', 'Oksana'],
+    rollen: { m: ['de financieel directeur', 'de systeembeheerder', 'de bewaker van de nachtdienst'], v: ['de financieel directeur', 'de systeembeheerder', 'de bewaakster van de nachtdienst'] },
     lead: 'De lampen gingen om elf uur vanzelf uit, en daarna heeft niemand meer uitgebadged.',
     reconLead: 'Van die avond is alleen het badgelogboek over, en dat mist een halfuur.',
     findLead: 'Het contract is nooit de deur uit gegaan. Het ligt nog op deze verdieping.',

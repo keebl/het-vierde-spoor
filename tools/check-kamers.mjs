@@ -411,6 +411,15 @@ for (const w of WORLDS) {
 for (const naam of alleNamen) {
   if (!GESLACHT_VAN[naam]) meld('NAAM ZONDER PORTRET', naam);
 }
+// Elke wereld moet een rol hebben voor allebei, anders valt het
+// slachtoffer terug op de oude lijst en staat er weer een buurman die
+// Marieke heet.
+for (const w of WORLDS) {
+  for (const soort of ['m', 'v']) {
+    if (!(w.rollen?.[soort] ?? []).length) meld('GEEN ROL', `${w.id}: niets voor '${soort}'`);
+  }
+}
+
 for (const naam of Object.keys(GESLACHT_VAN)) {
   if (!alleNamen.has(naam)) meld('PORTRET ZONDER NAAM', `${naam} staat in geen enkele wereld`);
   if (!['m', 'v'].includes(GESLACHT_VAN[naam])) meld('RAAR PORTRET', `${naam}: ${GESLACHT_VAN[naam]}`);

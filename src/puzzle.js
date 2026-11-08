@@ -13,6 +13,7 @@ import { kamerParams } from './engine/difficulty.js';
 import { zinVoor, namenIn } from './content/rooms-text.js';
 import { soortVan, meubelsVoor, vormVan } from './content/kamersoorten.js';
 import { makeRng } from './engine/rng.js';
+import { geslachtVan } from './content/namen.js';
 
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
@@ -329,9 +330,12 @@ function buildKamerPuzzle({ world, settings }) {
   const slachtofferNaam = rng.pick(world.slachtoffers);
   namen[gen.slachtofferIdx] = slachtofferNaam;
   // Wat het slachtoffer was: de conciërge, de nachtzuster, de havenmeester.
-  // Die rollen stonden er al voor de andere soorten puzzels; hier maken ze
-  // de inleiding concreet in plaats van algemeen.
-  const slachtofferRol = rng.pick(world.victims);
+  // Uit de lijst die bij zijn naam past, want anders staat er "Marieke is
+  // vermoord. De buurman van nummer zes werd gevonden" - en dat stond er.
+  // Zie `rollen` in worlds.js en GESLACHT_VAN in namen.js.
+  const slachtofferRol = rng.pick(
+    world.rollen?.[geslachtVan(slachtofferNaam)] ?? world.victims,
+  );
 
   const kamerNamen = noemKamers(
     gen.rooster,
