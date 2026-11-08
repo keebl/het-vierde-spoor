@@ -1450,6 +1450,21 @@ export const GESCHILDERD = {
     vloer('metaal', plaat(8, 40.6, 32, 2.6, { zak: 0.4 })),
   ],
 
+  // Hier stond eerst het dossierrek met zijn gekleurde ordners. Dat leest als
+  // een boekenkast, en in een giraffenstal is dat een leugen. Een hooirek is
+  // een schuin wandrek met hooi dat eruit steekt; nu staat het er ook zo bij.
+  hooirek: [
+    vloer('houtdonker', staaf(8.4, 11, 8.4, 41, 2.6)),
+    v('houtdonker', staaf(39.6, 11, 39.6, 41, 2.6)),
+    v('hout', staaf(9.4, 17.4, 38.6, 13.4, 1.8)),
+    v('hout', staaf(9.4, 24.4, 38.6, 20.4, 1.8)),
+    v('hout', staaf(9.4, 31.4, 38.6, 27.4, 1.8)),
+    v('blad', hoop(17, 16.6, 16, 8)),
+    v('blad', hoop(29, 13.6, 14, 7)),
+    streep('houtdonker', 0.9, 'M14 20.6 L14 34.4 M21 19.6 L21 33.4 M28 18.6 L28 32.4 M35 17.6 L35 31.4'),
+    streep('blad', 0.8, 'M13.4 15 L11 10.6 M20 13.4 L18.4 9 M27 11.6 L25.6 7.4 M33 11 L35.4 7'),
+  ],
+
   automaat: [
     vloer('donker', romp(7, 4, 34, 37)),
     v('glas', romp(9.4, 6.4, 20, 27, { taps: 0.004 }), { glans: 1 }),

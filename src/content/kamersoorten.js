@@ -1043,7 +1043,7 @@ export const WERELDMEUBELS = {
       'de waterput': ['de waterpomp'],
       'de mosrichel': ['de picknickbank', 'wachtbank'],
       'de vogelverschrikker': ['de vlaggenmast', 'vlaggenmast'],
-      'het wijnrek': ['het hooirek', 'dossierrek'],
+      'het wijnrek': ['het hooirek', 'hooirek'],
       'het eikenhouten vat': ['het watervat'],
       'de kolenbunker': ['de voederkist'],
       'de werktafel': ['de verzorgingstafel'],
