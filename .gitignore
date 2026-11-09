@@ -1,3 +1,13 @@
 node_modules/
+
+# Secrets. .env.example holds the placeholders; the key itself is typed by the owner.
 .env
+.env.*
+!.env.example
+
+# Personal, per-machine
+CLAUDE.local.md
+.claude/settings.local.json
+
+# macOS
 .DS_Store

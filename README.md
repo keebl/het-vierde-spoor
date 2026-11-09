@@ -19,10 +19,20 @@ voordat een puzzel bij de speler komt.
 
 ## Verder lezen
 
-- **[ARCHITECTUUR.md](ARCHITECTUUR.md)** — de kaart van de code: waar wat
-  staat, welke tabellen elkaar overrulen, en welke afspraken er gelden.
-- **[HANDOFF.md](HANDOFF.md)** — de stand van zaken, wat er open staat, en
-  de valkuilen. Begin hier als je nieuw aanschuift.
+De documentatie is Engels, de code is Nederlands — zie
+[ADR-0004](docs/decisions/0004-dutch-is-the-language-of-the-code.md).
+
+- **[STATUS.md](STATUS.md)** — de stand van zaken, wat er open staat en wat
+  er het eerst aan de beurt is. Begin hier als je nieuw aanschuift.
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — de kaart van de code:
+  waar wat staat, welke tabellen elkaar overrulen, welke afspraken er gelden.
+- **[docs/PRODUCT.md](docs/PRODUCT.md)** — waarvoor dit bestaat, voor wie, en
+  wat het met opzet níét doet.
+- **[docs/decisions/](docs/decisions/)** — de besluiten die de vorm bepaald
+  hebben, met hun waarom.
+- **[CLAUDE.md](CLAUDE.md)** — de commando's en de valkuilen, voor Claude.
+- **[SECURITY.md](SECURITY.md)** — wat er met gegevens gebeurt (niets) en hoe
+  het met de sleutel zit.
 
 ## Starten
 

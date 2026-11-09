@@ -1,0 +1,36 @@
+# Changelog
+
+All notable, user-facing changes to this project are documented here.
+Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: SemVer.
+
+There are no releases yet: the project is unversioned in practice and a push to `main` is a
+deploy. `package.json` says `0.1.0` and has never been bumped. Entries below start at the
+day the changelog was introduced; everything before that is in git history only.
+
+## [Unreleased]
+
+### Added
+- Project standard adopted (CLAUDE.md, STATUS.md, docs, specs, security baseline).
+- Two daylight settings: Het Openluchtbad and Dierenpark De Wildhoek. Until then all
+  eleven settings played at night.
+- Cases other than murder: a disappearance or a theft, each with its own wording, its own
+  mark on the figure in question, and its own word for the answer.
+- A floor plan of its own on each difficulty level on the home page, and a picture per
+  step under "Zo werkt het".
+
+### Changed
+- The atmosphere drawings on the library cards are painted rather than flat: a gradient per
+  depth layer, the setting's colour over the whole drawing, a real glow around each light,
+  haze, a vignette and grain. Four silhouettes redrawn.
+- Fewer furniture pieces per room (at most one per four squares, never more than three), so
+  a clue like "Bram stood next to the weighing scale" points at a landmark and not a pile.
+- A pool is a pool: the two pools and the penguin pool have their own kind of room with
+  their own ten pieces, instead of sharing the lawn's furniture.
+
+### Fixed
+- `het hooirek` was drawn as a bookcase, in a giraffe stable.
+- Clue sets were not minimal: twelve of two hundred and sixty-four clues could be removed.
+- Check showed no difference between right and wrong; placements now get a green or red
+  ring.
+- Roles no longer contradict the victim's name ("Marieke is dead. The neighbour at number
+  six was found").
