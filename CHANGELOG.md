@@ -28,6 +28,9 @@ day the changelog was introduced; everything before that is in git history only.
   their own ten pieces, instead of sharing the lawn's furniture.
 
 ### Fixed
+- On a phone the sticky bar covered a quarter of the screen, permanently, over the puzzle:
+  the two switches wrapped their labels over two and three lines. They moved below the
+  board, where they fit on one line; Uitsluiten and Schetsen stay in the bar.
 - `het hooirek` was drawn as a bookcase, in a giraffe stable.
 - Clue sets were not minimal: twelve of two hundred and sixty-four clues could be removed.
 - Check showed no difference between right and wrong; placements now get a green or red
