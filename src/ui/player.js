@@ -498,14 +498,15 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions) {
   if (puzzle.kind === 'kamer') {
     const vanzelf = kruisjesVanzelf();
     return [
-      personenPalet(puzzle, state, onCell, {
-        kruisjes: actions.kruisjes, rand: actions.rand,
-        kruisjesAan: vanzelf, randAan: randAan(),
-      }),
+      personenPalet(puzzle, state, onCell),
       el('div', { class: 'board-wrap' }, renderKamerbord(
         puzzle, state, { klikCel: onCell, klikMeubel: toonMeubel },
         { rand: randAan(), kruisjesVanzelf: vanzelf },
       )),
+      bordschakelaars({
+        kruisjes: actions.kruisjes, rand: actions.rand,
+        kruisjesAan: vanzelf, randAan: randAan(),
+      }),
       klepje('legenda', 'Wat er op het bord staat', false, [renderLegenda(puzzle)]),
       klepje('uitleg', 'Hoe je dit bord bedient', false, [
         el('p', {
@@ -555,11 +556,13 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions) {
 // verdachte aan, en op een bord met zestien namen betekende dat: eerst
 // zestien penningen voorbij schuiven voordat je bij je potlood bent. Nu
 // staan de namen boven en de twee standen eronder, altijd op dezelfde plek.
+// Verder dan die twee gaat deze balk niet: wat je maar één keer instelt
+// staat onder het bord, zie bordschakelaars.
 //
 // De hele balk plakt bovenaan vast zodra je naar beneden scrolt (zie .palet
 // in de opmaak). Daarmee staan de namen en het bord altijd samen op één
 // scherm, ook op een telefoon.
-function personenPalet(puzzle, state, onCell, acties) {
+function personenPalet(puzzle, state, onCell) {
   const balk = el('div', { class: 'palet' });
   const namen = el('div', { class: 'palet-namen' });
   const standen = el('div', { class: 'palet-standen' });
@@ -600,16 +603,24 @@ function personenPalet(puzzle, state, onCell, acties) {
   schets.addEventListener('click', () => onCell(null, -2));
   standen.append(schets);
 
-  // En daarnaast twee schakelaars. Ze horen bij het bord en niet in de
-  // werkbalk onderaan - daar stonden ze tussen Controleer en Printen, en
-  // dan vind je ze niet terwijl je aan het puzzelen bent.
-  //
-  // Ze zien er met opzet anders uit dan Uitsluiten en Schetsen. Die twee
-  // zijn standen: er staat er altijd precies één aan, en ze bepalen wat
-  // een klik op het bord dóét. Deze twee veranderen niets aan je klik, ze
-  // zetten iets aan of uit. Vandaar het streepje ertussen, de hoekige
-  // vorm en het woordje "aan" of "uit" erin.
-  standen.append(el('span', { class: 'palet-scheiding', 'aria-hidden': 'true' }));
+  return balk;
+}
+
+// De twee schakelaars die bij het bord horen, maar niet in de plakkende balk.
+//
+// Ze stonden er wel, naast Uitsluiten en Schetsen, en dat kostte te veel.
+// Op een telefoon braken hun teksten over twee en drie regels; de balk werd
+// daardoor 144 pixels hoog en dekte samen met de kop een kwart van het scherm
+// af - en die balk plakt, dus dat kwart zat permanent over de puzzel heen.
+//
+// Het verschil is wat je ermee doet. Uitsluiten en Schetsen zijn standen:
+// je wisselt er voortdurend tussen terwijl je puzzelt, dus die horen binnen
+// handbereik te blijven. Deze twee zet je één keer per puzzel goed. Die
+// mogen onder het bord staan, waar ze de ruimte hebben.
+//
+// Ze zien er ook met opzet anders uit: hoekig, met het woordje "aan" of
+// "uit" erin, omdat ze niets veranderen aan wat een klik op het bord doet.
+function bordschakelaars(acties) {
   const schakel = (naam, aan, fn) => {
     const b = el('button', {
       class: 'palet-schakel',
@@ -622,12 +633,10 @@ function personenPalet(puzzle, state, onCell, acties) {
     b.addEventListener('click', fn);
     return b;
   };
-  standen.append(
+  return el('div', { class: 'bordschakelaars' }, [
     schakel('Kruisjes vanzelf', acties.kruisjesAan, acties.kruisjes),
     schakel('Lijst om het bord', acties.randAan, acties.rand),
-  );
-
-  return balk;
+  ]);
 }
 
 function toolbar(puzzle, state, actions) {

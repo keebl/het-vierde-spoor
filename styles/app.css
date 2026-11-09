@@ -1885,12 +1885,20 @@ body[data-wereld="kantoor"] .gloedrand { stop-color: #16182a; }
    het bord doet. Deze twee veranderen niets aan je klik, ze zetten iets
    aan of uit. Daarom een streepje ertussen, rechte hoeken in plaats van
    rond, en het woord 'aan' of 'uit' in de knop zelf. */
-.palet-scheiding {
-  width: 1px;
-  align-self: stretch;
-  margin: 2px var(--s2);
-  background: var(--line);
+/* De twee schakelaars staan sinds kort onder het bord en niet meer in de
+   plakkende balk: op een telefoon braken hun teksten daar over drie regels,
+   en de balk dekte samen met de kop een kwart van het scherm af. Zie
+   bordschakelaars() in player.js. */
+.bordschakelaars {
+  display: flex;
+  gap: var(--s2);
+  flex-wrap: wrap;
+  /* Dicht tegen het bord aan: ze horen erbij, en de rij eronder is de
+     legenda - die mag wel op afstand staan. */
+  margin: calc(var(--s4) * -1) 0 0;
 }
+.bordschakelaars .palet-schakel { white-space: nowrap; }
+
 .palet-schakel {
   display: inline-flex;
   align-items: center;
@@ -1918,7 +1926,11 @@ body[data-wereld="kantoor"] .gloedrand { stop-color: #16182a; }
   background: var(--accent);
   color: var(--accent-ink);
 }
-@media (max-width: 680px) { .palet-scheiding { display: none; } }
+/* Op een telefoon vullen ze samen de breedte, zodat ze even groot zijn en
+   je ze niet hoeft te mikken. */
+@media (max-width: 680px) {
+  .bordschakelaars .palet-schakel { flex: 1 1 0; justify-content: space-between; }
+}
 
 
 /* Rimpels in het water. Dunner en lichter dan een voeg: het is beweging,
