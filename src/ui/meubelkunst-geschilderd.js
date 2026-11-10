@@ -2352,4 +2352,150 @@ export const GESCHILDERD = {
     v('metaal', plaat(20, 27.4, 8, 1.4, { zak: 0.1 })),
     v('metaal', plaat(20, 34.2, 8, 1.4, { zak: 0.1 })),
   ],
+
+  // ============================================ Sterrenschip Zwaluw
+  //
+  // Een schip dat reist, geen station dat hangt. Vijf stukken die het schip
+  // van zichzelf heeft, en vier die in de gedeelde moderne set horen
+  // (projector, gamestoel, speaker, spelcomputer): een ontspanningsdek op
+  // een sterrenschip ziet er niet anders uit dan een woonkamer van nu.
+
+  // De stoel van de piloot: hoge rug, gordels, twee stuurknuppels.
+  stuurstoel: [
+    v('metaal', zuilvorm(24, 30, 4, 5.4, 8)),
+    v('donker', romp(15, 5, 18, 21, { taps: 0.1 })),
+    v('donker', romp(18.6, 2.4, 10.8, 4.4, { taps: 0.04 })),
+    streep('neon', 1.1, 'M17.6 7.4 V23.6 M30.4 7.4 V23.6'),
+    streep('kunststof', 1, 'M19.4 8.4 L28.4 22 M28.6 8.4 L19.6 22'),
+    v('donker', kussen(12.6, 23.6, 22.8, 6.4)),
+    v('metaal', plaat(8.6, 22.4, 8.4, 2.4, { zak: 0.3 })),
+    v('metaal', plaat(31, 22.4, 8.4, 2.4, { zak: 0.3 })),
+    v('donker', staaf(12.2, 22.6, 12.8, 16.6, 1.8)),
+    v('donker', staaf(35.8, 22.6, 35.2, 16.6, 1.8)),
+    v('vuur', bol(12.8, 16, 1.7), { glans: 1 }),
+    v('water', bol(35.2, 16, 1.7), { glans: 1 }),
+    vloer('metaal', ovaal(24, 40, 11.4, 2.4)),
+  ],
+
+  // Een hologramtafel: een schijf die licht omhoog werpt, en daarboven
+  // draait een planeet met een ring.
+  hologram: [
+    v('metaal', romp(14, 30, 20, 9.6, { taps: -0.12 })),
+    v('donker', ovaal(24, 29.4, 13, 3)),
+    v('water', ovaal(24, 29, 9, 1.8), { glans: 1 }),
+    streep('water', 0.7, 'M16.4 28.4 L19.6 15 M31.6 28.4 L28.4 15 M24 28 V22'),
+    v('scherm', bol(24, 13.6, 7), { glans: 1 }),
+    streep('water', 0.6, 'M17.4 12.6 Q24 15.4 30.6 12.6 M24 6.8 Q19.6 13.6 24 20.4'),
+    streep('neon', 1.2, 'M13.6 16.6 Q24 21 34.4 11.4'),
+    v('neon', bol(34, 6.4, 1.7), { glans: 1 }),
+    vloer('metaal', plaat(12, 39.2, 24, 2.8, { zak: 0.4 })),
+  ],
+
+  // De energiekern: een glazen buis met een gloeiende kern en een
+  // bliksemstraal erin, tussen twee stalen kappen.
+  energiekern: [
+    v('metaal', staaf(13.4, 34.4, 6.6, 30, 2.4)),
+    v('metaal', staaf(34.6, 34.4, 41.4, 30, 2.4)),
+    v('neon', romp(16.4, 9, 15.2, 23.4, { taps: 0 }), { glans: 1 }),
+    v('water', romp(21.2, 10, 5.6, 21.4, { taps: 0 }), { glans: 1 }),
+    streep('kunststofwit', 1, 'M24 11 L21.8 15.4 L26 18.6 L22 22.4 L26 26 L24 30'),
+    v('metaal', plaat(14.4, 15, 19.2, 2.2, { zak: 0.3 })),
+    v('metaal', plaat(14.4, 24.4, 19.2, 2.2, { zak: 0.3 })),
+    v('metaal', romp(14, 3, 20, 6.4, { taps: 0.08 })),
+    v('vuur', bol(24, 5.8, 1.2), { glans: 1 }),
+    vloer('metaal', romp(12.6, 32, 22.8, 8.6, { taps: -0.06 })),
+  ],
+
+  // Een vrachtcontainer van nu: gegoten, met hoekstukken, een lichtstrip en
+  // een streepjescode. Een kleinere kist erbovenop.
+  vrachtcontainer: [
+    vloer('kunststof', romp(7, 17, 34, 24, { taps: 0.01 })),
+    streep('donker', 1, 'M14 19 V39 M34 19 V39'),
+    v('water', plaat(9, 21, 30, 1.6, { zak: 0.2 }), { glans: 1 }),
+    v('kunststofwit', romp(17, 27, 13, 7.4, { taps: 0.01 })),
+    streep('donker', 0.7, 'M18.6 28.6 V32.6 M19.8 28.6 V32.6 M21.6 28.6 V32.6 M22.6 28.6 V32.6 M24.4 28.6 V32.6 M26 28.6 V32.6 M27.6 28.6 V32.6'),
+    v('donker', romp(6.4, 16, 4, 4, { taps: 0 })),
+    v('donker', romp(37.6, 16, 4, 4, { taps: 0 })),
+    v('kunststofblauw', romp(11, 7.6, 19, 9.4, { taps: 0.02 })),
+    v('donker', plaat(17, 9.4, 7, 1.6, { zak: 0.1 })),
+    v('neon', bol(27, 11.4, 0.9), { glans: 1 }),
+  ],
+
+  // Een voedselprinter: een witte kast met een raam, en daarachter wordt
+  // laag voor laag een roze taart geprint.
+  voedselprinter: [
+    vloer('kunststofwit', romp(8, 7, 32, 34, { taps: 0.01 })),
+    v('glas', romp(11, 11, 26, 19, { taps: 0.004 }), { glans: 0.6 }),
+    v('metaal', plaat(13, 13, 22, 2.2, { zak: 0.2 })),
+    v('donker', romp(23, 15, 2.4, 3.4, { taps: 0.1 })),
+    v('kunststofroze', bak(24, 21.4, 11, 9, 6.4)),
+    streep('kunststofwit', 0.8, 'M19.6 23.6 H28.4 M20 26 H28'),
+    v('donker', plaat(13, 28.4, 22, 1.6, { zak: 0.2 })),
+    v('scherm', romp(26, 32.4, 10, 5, { taps: 0.01 }), { glans: 1 }),
+    v('stofgroen', bol(14.6, 34.8, 1.4), { glans: 1 }),
+    v('kunststof', bol(19, 34.8, 1.4)),
+  ],
+
+  // Een projector op een statief, met de lichtbundel ervoor.
+  projector: [
+    v('metaal', staaf(23, 22, 13.6, 39.6, 1.8)),
+    v('metaal', staaf(25, 22, 34.4, 39.6, 1.8)),
+    v('metaal', staaf(24, 22, 24, 39.6, 1.8)),
+    v('kunststofwit', romp(11, 13, 21, 9.6, { taps: 0.02 })),
+    streep('donker', 0.7, 'M13.4 16 H20 M13.4 18.2 H20'),
+    v('stofgroen', bol(16, 20.2, 0.8), { glans: 1 }),
+    v('donker', ring(29.6, 17.8, 3.8, 1.2), { gat: true }),
+    v('glas', bol(29.6, 17.8, 2.6), { glans: 1 }),
+    streep('kunststof', 0.8, 'M33.6 16 L46 9.6 M33.6 19.6 L46 26 M33.8 17.8 H46'),
+    vloer('donker', ovaal(24, 40.6, 12, 2)),
+  ],
+
+  // Een gamestoel: hoog, zwart en roze, met een kussen in de nek.
+  gamestoel: [
+    v('donker', romp(14.6, 3, 18.8, 23, { taps: 0.12 })),
+    v('kunststofroze', romp(19.6, 5.6, 8.8, 18, { taps: 0.06 })),
+    v('kunststofroze', kussen(18.6, 6, 10.8, 4.4)),
+    v('donker', kussen(12, 24.4, 24, 6.2)),
+    v('kunststofroze', plaat(14, 25.6, 20, 1.6, { zak: 0.4 })),
+    v('metaal', staaf(12, 25, 12, 19.4, 2)),
+    v('metaal', staaf(36, 25, 36, 19.4, 2)),
+    v('donker', plaat(9.4, 18.4, 6, 2.2, { zak: 0.2 })),
+    v('donker', plaat(32.6, 18.4, 6, 2.2, { zak: 0.2 })),
+    v('metaal', staaf(24, 30.6, 24, 37, 2.6)),
+    v('metaal', staaf(13, 39.4, 35, 39.4, 2.2)),
+    v('donker', bol(13, 40.6, 1.6)),
+    v('donker', bol(35, 40.6, 1.6)),
+    vloer('metaal', ovaal(24, 41.4, 13, 2.2)),
+  ],
+
+  // Een speakertoren met een ledstrip en noten die eruit dansen.
+  luidspreker: [
+    vloer('donker', romp(14, 5, 19, 36, { taps: 0.02 })),
+    streep('neon', 1, 'M15.8 7.4 V38.4'),
+    v('metaal', bol(24, 9.4, 1.9)),
+    v('metaal', ring(24, 18, 4.8, 1.1), { gat: true }),
+    v('donker', bol(24, 18, 3.6)),
+    v('metaal', ring(24, 30, 6.6, 1.4), { gat: true }),
+    v('donker', bol(24, 30, 5.2)),
+    v('metaal', bol(24, 30, 1.6)),
+    v('kunststof', bol(37.2, 11.6, 1.6)),
+    streep('kunststof', 0.9, 'M38.6 11.4 V5 L42.4 4 V8.6'),
+    v('kunststof', bol(41, 8.8, 1.4)),
+  ],
+
+  // Een tv-meubel met een spelcomputer, een controller en twee spellen.
+  spelcomputer: [
+    vloer('kunststofwit', romp(5, 27, 38, 14, { taps: 0.01 })),
+    streep('donker', 0.8, 'M24 29 V39'),
+    v('metaal', plaat(18, 33, 4, 1.2, { zak: 0.1 })),
+    v('metaal', plaat(26, 33, 4, 1.2, { zak: 0.1 })),
+    v('donker', romp(9, 20.4, 15, 6.6, { taps: 0.02 })),
+    v('water', plaat(10.6, 24, 11.8, 1, { zak: 0.1 }), { glans: 1 }),
+    v('kunststofroze', 'M27.4 24.6 Q27.4 21.4 30.6 21.4 L36.8 21.4 Q40 21.4 40 24.6 Q40 27.6 37.8 27.6 Q36 27.6 35.4 25.8 L32 25.8 Q31.4 27.6 29.6 27.6 Q27.4 27.6 27.4 24.6 Z'),
+    v('donker', bol(31, 23.6, 1)),
+    v('kunststofwit', bol(36.4, 23.2, 0.8)),
+    v('kunststofwit', bol(37.6, 24.6, 0.8)),
+    v('kunststofblauw', romp(7.4, 15.6, 9, 4.8, { taps: 0.01 })),
+    v('kunststof', romp(9, 11.6, 7.4, 4, { taps: 0.01 })),
+  ],
 };

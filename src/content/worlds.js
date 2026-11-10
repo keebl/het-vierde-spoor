@@ -494,6 +494,41 @@ export const WORLDS = [
     times: ['11:00', '12:00', '13:00', '14:00', '15:00', '16:00'],
     hidden: ['de sleutel van het apenverblijf', 'een opengelaten hek', 'een gat onder het gaas', 'een omgevallen emmer', 'een losgetrokken bordje', 'een spoor van voer', 'een vergeten kinderwagen', 'een openstaande dienstdeur'],
   },
+  // ---------------------------------------------------------------------
+  // Vier werelden van nu (specs/modern-worlds.md). De dochter vond de
+  // werelden te ouderwets: een landhuis, een crypte, een academie met
+  // kaarsen. Deze vier zijn waar zij zelf zou willen rondlopen.
+  {
+    id: 'ruimteschip',
+    name: 'Sterrenschip Zwaluw',
+    icon: '🚀',
+    accent: '#b86bff',
+    blurb: 'Op weg naar de verste ster, twaalf mensen aan boord, en midden in een sprong gaan alle lampen uit.',
+    timeUnit: { one: 'sprong', many: 'sprongen' },
+    tijdVoorzetsel: 'tijdens',
+    sameRoom: 'in dezelfde ruimte als',
+    randZin: 'tegen de romp',
+    hoekZin: 'in een hoek van het schip',
+    roomWord: 'ruimte',
+    plekWoord: 'ruimte',
+    map: deuren,
+    victims: ['de piloot', 'de boordwerktuigkundige', 'de scheepskok'],
+    rollen: { m: ['de piloot', 'de boordwerktuigkundige', 'de scheepskok'], v: ['de piloot', 'de boordwerktuigkundige', 'de scheepskok'] },
+    slachtoffers: ['Mira', 'Nova', 'Olaf', 'Max', 'Nadir', 'Oona', 'Malia', 'Nuru', 'Omar'],
+    gestolen: 'de startkaart van de kapitein',
+    lead: 'Het schip zat midden in een sprong toen alle lampen tegelijk uitgingen.',
+    reconLead: 'Van die reis is alleen het scheepslogboek over, en daar mist een sprong in.',
+    findLead: 'Er is iets van boord verdwenen, en het schip heeft sindsdien nergens aangemeerd.',
+    assignLead: 'Na de noodstop lag alle bagage door elkaar in het ruim. Niemand weet meer wat van wie is.',
+    persons: ['Aylin', 'Bilal', 'Cleo', 'Dmitri', 'Esra', 'Finn', 'Gaia', 'Hiro', 'Iris', 'Jonas', 'Kaya', 'Lotte'],
+    personenXL: ['Priya', 'Qiang', 'Ravi', 'Saar'],
+    personenExtra: ['Ayla', 'Boaz', 'Cem', 'Dilan', 'Elias', 'Farid', 'Gunnar', 'Hana', 'Idris', 'Juno', 'Kenji', 'Luna', 'Pablo', 'Quinn', 'Rafael', 'Suvi'],
+    objects: ['een gloeiende sensor', 'een losse zekering', 'een knipperende zaklamp', 'een handschoen van een ruimtepak', 'een geheugenkaart zonder naam', 'een opgerolde sterrenkaart', 'een tube ruimtevoedsel', 'een knuffelrobot'],
+    places: ['de cockpit', 'de hyperkern', 'het slaapdek', 'de laadbaai', 'het holodek', 'de messzaal', 'de luchtsluis', 'het observatiedek', 'de loopbrug'],
+    plekkenXL: ['de reddingscapsule', 'de motorkamer', 'de bemanningslounge'],
+    times: ['de eerste sprong', 'de tweede sprong', 'de derde sprong', 'de vierde sprong', 'de vijfde sprong', 'de zesde sprong'],
+    hidden: ['de startkaart van de kapitein', 'een openstaand luik', 'een gewist logboek', 'een tweede toegangspas', 'een camera die uit stond', 'een losgeschroefd paneel', 'een lek in een leiding', 'een verstekeling in een kist'],
+  },
 ];
 
 export const WORLD_BY_ID = new Map(WORLDS.map((w) => [w.id, w]));

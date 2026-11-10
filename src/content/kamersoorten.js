@@ -176,6 +176,19 @@ export const SOORT_VAN = {
   'de uilenvolière': 'buiten',
   'de picknickweide': 'buiten',
   'de souvenirwinkel': 'bibliotheek',
+  // Sterrenschip Zwaluw
+  'de cockpit': 'sterrenwacht',
+  'de hyperkern': 'werkplaats',
+  'het slaapdek': 'slaapkamer',
+  'de laadbaai': 'kelder',
+  'het holodek': 'zaal',
+  'de messzaal': 'keuken',
+  'de luchtsluis': 'gang',
+  'het observatiedek': 'sterrenwacht',
+  'de loopbrug': 'gang',
+  'de reddingscapsule': 'slaapkamer',
+  'de motorkamer': 'werkplaats',
+  'de bemanningslounge': 'zaal',
 };
 
 // De vloer per soort. dessin verwijst naar een patroon in board-rooms.js.
@@ -337,6 +350,11 @@ export const VOORZETSEL_VAN = {
   'de donkere veranda': 'op',
   'de achtertuin bij het hek': 'in',
   'de steenkring': 'in',
+  // Op een dek sta je, net als op een loopbrug.
+  'het slaapdek': 'op',
+  'het observatiedek': 'op',
+  'het holodek': 'op',
+  'de loopbrug': 'op',
 };
 
 // Een "of-aanwijzing" noemt twee plekken in één adem: "het hertenpad of de
@@ -469,6 +487,16 @@ export const VORM_VAN = {
   'de kelderkast': 'klein',
   'de naaikamer': 'klein',
   'het vleermuizenhok': 'klein',
+  // Sterrenschip Zwaluw
+  'de luchtsluis': 'smal',
+  'de loopbrug': 'smal',
+  'het slaapdek': 'smal',
+  'de laadbaai': 'groot',
+  'het holodek': 'groot',
+  'de messzaal': 'groot',
+  'het observatiedek': 'groot',
+  'de cockpit': 'klein',
+  'de reddingscapsule': 'klein',
 };
 
 export const vormVan = (plek) => VORM_VAN[plek] ?? 'vrij';
@@ -531,6 +559,13 @@ export const WERELDVLOER = {
     tint: '#8d8fa0',
     kracht: 0.44,
     dessin: { planken: 'tapijt', 'planken-dwars': 'tapijt', steen: 'beton', ruiten: 'tapijt' },
+  },
+  // Een schip dat reist: staalplaat overal, in het violet van de
+  // ledstrips. Geen hout, geen tapijt, geen steen.
+  ruimteschip: {
+    tint: '#6a55b8',
+    kracht: 0.5,
+    dessin: { planken: 'plaat', 'planken-dwars': 'plaat', steen: 'plaat', tapijt: 'tegels', ruiten: 'tegels', beton: 'plaat' },
   },
 };
 
@@ -635,6 +670,13 @@ export const WERELDSTOF = {
   zwembad: { hout: 'metaal', houtdonker: 'donker', houtrood: 'stofblauw', goud: 'metaal' },
   // Een dierentuin mag juist wél hout hebben - hekken, stallen, bakken -
   // dus die staat hier met opzet niet in.
+  // Het schip is staal en gegoten plastic. Wat in de basisset rood hout is,
+  // wordt hier roze kunststof - de kleur van de ledstrips.
+  ruimteschip: {
+    hout: 'metaal', houtdonker: 'donker', houtrood: 'kunststofroze',
+    steen: 'metaal', steenkoel: 'donker', touw: 'metaal', koper: 'metaal',
+    stof: 'stofblauw', goud: 'metaal', papier: 'kunststofwit',
+  },
 };
 
 // ------------------------------------------------ hetzelfde meubel, andere wereld
@@ -1100,6 +1142,63 @@ export const WERELDMEUBELS = {
       'de oppotbak': ['de potgrondzak'],
     },
   },
+
+  // ------------------------------------------------ Sterrenschip Zwaluw
+  // Een schip dat reist, met een gamehoek op het ontspanningsdek. Elke naam
+  // hier heeft een tekening van nu; niets is een omgedoopt landhuisstuk.
+  ruimteschip: {
+    volledig: true,
+    zelfde: ['de gereedschapskist', 'het schakelpaneel'],
+    anders: {
+      // de cockpit en het observatiedek
+      'de telescoop': ['de stoel van de piloot', 'stuurstoel'],
+      'de hemelbol': ['het hologram', 'hologram'],
+      'de sterrenkaart': ['het navigatiescherm', 'monitorwand'],
+      'het kaartenkabinet': ['de stuurconsole', 'navigatieconsole'],
+      'de schrijflessenaar': ['het radarscherm', 'radar'],
+      'de chronometer': ['de scheepsklok', 'tijdscherm'],
+      // de hyperkern en de motorkamer
+      'de stookpot': ['de energiekern', 'energiekern'],
+      'de magazijnstelling': ['de onderdelenstelling', 'laadrek'],
+      'het slijpwiel': ['de slijpmachine', 'slijpmachine'],
+      'de draaibank': ['de reparatierobot', 'robot'],
+      // het slaapdek en de reddingscapsule
+      'het bed': ['de slaapcapsule', 'slaapcapsule'],
+      'de kleerkast': ['de lockerkast', 'lockerkast'],
+      'het nachtkastje': ['het kastje', 'kastje'],
+      'het wasstel': ['de wasunit', 'wasbak'],
+      'de hutkoffer': ['de plunjezak', 'sporttas'],
+      'de voetenbank': ['het opstapje', 'opstapkrukje'],
+      // de laadbaai
+      'het wijnrek': ['het cilinderrek', 'cilinderrek'],
+      'het eikenhouten vat': ['de brandstoftank', 'gastank'],
+      'de kolenbunker': ['de afvalcontainer', 'afvalcontainer'],
+      'de werktafel': ['de montagetafel', 'werkbank'],
+      'de touwhaspel': ['de kabelhaspel', 'touwhaspel'],
+      'de stapel kratten': ['de vrachtcontainer', 'vrachtcontainer'],
+      // de messzaal
+      'het fornuis': ['de voedselprinter', 'voedselprinter'],
+      'de gootsteen': ['de spoelbak', 'gootsteen'],
+      'de koelkast': ['de koelcel', 'koelkast'],
+      'het aanrecht': ['het werkblad', 'aanrecht'],
+      'de spinde': ['de snackautomaat', 'automaat'],
+      'het serviesbuffet': ['de koffiemachine', 'koffieautomaat'],
+      // het holodek en de bemanningslounge
+      'de haard': ['de holoprojector', 'projector'],
+      'de leren fauteuil': ['de gamestoel', 'gamestoel'],
+      'de staande klok': ['de tijdzuil', 'klokzuil'],
+      'de vleugel': ['de speakertoren', 'luidspreker'],
+      'de wandspiegel': ['het grote scherm', 'beeldscherm'],
+      'het borstbeeld': ['de spelcomputer', 'spelcomputer'],
+      // de luchtsluis en de loopbrug
+      'de kapstok': ['de pakkenstandaard', 'pakkenrek'],
+      'de paraplubak': ['de afvalemmer', 'prullenbak'],
+      'de console': ['het infopunt', 'infozuil'],
+      'de spiegelstandaard': ['het laadpunt', 'laadpaal'],
+      'het uurwerk': ['de brandblusser', 'brandblusser'],
+      'het harnas': ['het ruimtepak', 'ruimtepak'],
+    },
+  },
 };
 
 
@@ -1147,6 +1246,13 @@ export const WERELDVERWANT = {
     laboratorium: ['keuken', 'bibliotheek'],
     serre: ['keuken', 'bibliotheek'],
   },
+  // Het schip heeft geen bibliotheek, geen tuin en geen kelder met
+  // wijnrekken: alles wijkt uit naar een ruimte die het schip zelf heeft.
+  ruimteschip: {
+    sterrenwacht: ['werkplaats', 'zaal'],
+    werkplaats: ['kelder', 'sterrenwacht'],
+    zaal: ['gang', 'slaapkamer'],
+  },
 };
 
 // ------------------------------------------------- tekeningen van vroeger
@@ -1175,7 +1281,10 @@ export const OUDERWETS = [
 ];
 
 // De werelden die nu spelen. Hier mag niets uit OUDERWETS op een bord komen.
-export const MODERNE_WERELDEN = ['station', 'school', 'ziekenhuis', 'kantoor', 'zwembad'];
+export const MODERNE_WERELDEN = [
+  'station', 'school', 'ziekenhuis', 'kantoor', 'zwembad',
+  'ruimteschip',
+];
 
 // De naam en de tekening die in deze wereld bij een meubelstuk horen.
 const omdopen = ([naam, icoon], laag) => {
