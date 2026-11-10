@@ -102,7 +102,8 @@ export function renderHome(mount) {
     el('section', { class: 'hero hero-met-bord' }, [
       el('div', {}, [
         el('p', { class: 'eyebrow', text: 'Deductiepuzzels' }),
-        el('h1', { text: 'Puzzels die je uitredeneert' }),
+        // Het laatste woord in kleur: zie .markeer in de opmaak.
+        el('h1', {}, ['Puzzels die je ', el('span', { class: 'markeer', text: 'uitredeneert' })]),
         el('p', {
           class: 'lede',
           text: 'Een handvol verdachten, een paar aanwijzingen, en één antwoord dat past. Je komt er door te schrappen wat niet kan. Gokken hoeft nooit, ook niet bij de moeilijkste.',
