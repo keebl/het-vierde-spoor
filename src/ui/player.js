@@ -412,6 +412,8 @@ function cluePanel(puzzle, state, draw, persist) {
 // vierenvijftig zinnen waarin je niet terugvond wat er over Hendrik gezegd
 // was. Nu staan ze onder de naam waar ze over gaan.
 //
+// Elke naam krijgt een kopje, ook als er niets over hem gezegd wordt.
+//
 // Elke aanwijzing staat één keer, onder de eerste naam die erin voorkomt, en
 // houdt zijn eigen nummer. Komt iemand als tweede naam voor - "Ada stond ten
 // noorden van Bram" staat bij Ada - dan krijgt Bram eronder een verwijzing
@@ -447,7 +449,16 @@ function perNaam(puzzle, extraClues, knopVoor) {
   for (let p = 0; p < puzzle.personen.length; p++) {
     const mijn = groepen.get(p) ?? [];
     const verwijzingen = ookIn.get(p) ?? [];
-    if (!mijn.length && !verwijzingen.length) continue;
+    // Een naam waar niets over gezegd wordt, werd hier overgeslagen. Op een
+    // bord van vijf stonden er dan vier namen in de lijst, en dat leest als
+    // een fout: alsof die ene vergeten is.
+    //
+    // Hij is niet vergeten, hij is overbodig. De aanwijzingen moeten samen de
+    // oplossing vastleggen, en wat daarna nog weg kan, gaat weg (zie snoei in
+    // generate-rooms.js) - dus als iemands plek al volgt uit de rest, blijft
+    // er niets over om over hem te zeggen. Dat is geen gat maar het laatste
+    // zetje, en het hoort er dus te staan.
+    const leeg = !mijn.length && !verwijzingen.length;
     const kop = el('p', { class: 'clue-kop' }, [
       el('span', { class: 'clue-kop-naam', text: puzzle.personen[p] }),
       p === puzzle.slachtofferIdx
@@ -456,9 +467,14 @@ function perNaam(puzzle, extraClues, knopVoor) {
     ]);
     const lijst = el('div', { class: 'clues' });
     for (const clue of mijn) lijst.append(knopVoor(clue));
-    uit.push(el('div', { class: 'clue-groep' }, [
+    uit.push(el('div', { class: leeg ? 'clue-groep clue-groep-leeg' : 'clue-groep' }, [
       kop,
-      lijst,
+      leeg
+        ? el('p', {
+          class: 'clue-leeg',
+          text: 'Hierover staat niets. Deze plek volgt uit de rest: als alle anderen staan, is er nog één vakje over.',
+        })
+        : lijst,
       verwijzingen.length
         ? el('p', {
           class: 'clue-ook',

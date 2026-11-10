@@ -1819,6 +1819,20 @@ body[data-wereld="kantoor"] .gloedrand { stop-color: #16182a; }
   color: var(--text-3);
 }
 
+/* Een naam waar niets over gezegd wordt. Die staat er nu wel, want anders
+   mist er een naam in de lijst en dat leest als een fout. Hij is wel
+   zichtbaar anders: gedempt en schuin, zodat je ziet dat hier geen
+   aanwijzing staat maar een mededeling. */
+.clue-leeg {
+  margin: var(--s1) 0 0;
+  font-size: var(--t-sm);
+  font-style: italic;
+  color: var(--text-3);
+  border-left: 2px solid var(--line-soft);
+  padding-left: var(--s3);
+}
+.clue-groep-leeg .clue-kop-naam { color: var(--text-3); }
+
 
 /* ----------------------------------------------- de niveaukiezer op de voordeur
    Dezelfde knoppen als in de generator, maar dan als enige keuze op de
