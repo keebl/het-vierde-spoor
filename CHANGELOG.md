@@ -27,6 +27,11 @@ day the changelog was introduced; everything before that is in git history only.
 - A pool is a pool: the two pools and the penguin pool have their own kind of room with
   their own ten pieces, instead of sharing the lawn's furniture.
 
+### Changed
+- Every name now appears in the clue list, including a name no clue says anything about.
+  It used to be skipped, so a board of five showed four names, which reads as a bug. It is
+  not missing but redundant: that spot follows from the rest, and the list now says so.
+
 ### Fixed
 - On a phone the sticky bar covered a quarter of the screen, permanently, over the puzzle:
   the two switches wrapped their labels over two and three lines. They moved below the
