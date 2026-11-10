@@ -474,6 +474,34 @@ const SCENES = {
     for (let x = 16; x < B; x += 84) g.append(rechthoek(x, 112, 9, H - 112, 'sc-near'));
     g.append(cirkel(140, 100, 3.5, 'sc-licht'));
   },
+
+  // Een schip in een sprong. De sterren zijn strepen geworden, er schuift
+  // een planeet voorbij, en achter de motoren gloeit het spoor. Dit is wat
+  // het schip van het station onderscheidt: het hangt niet, het gaat.
+  ruimteschip(g) {
+    sterren(g, 34, 101);
+    const r = zaadje(77);
+    for (let i = 0; i < 36; i++) {
+      const y = r() * 128 + 4;
+      const x = r() * B;
+      g.append(pad(`M ${x.toFixed(1)} ${y.toFixed(1)} h ${(30 + r() * 130).toFixed(1)}`, 'sc-regenlijn'));
+    }
+    g.append(cirkel(690, 44, 30, 'sc-planeet'));
+    g.append(pad('M 630 58 Q 690 26 752 36', 'sc-lijn'));
+
+    const schip = maak('g');
+    schip.append(pad('M 300 66 L 362 40 L 410 70 Z', 'sc-mid'));
+    schip.append(pad('M 250 74 L 430 62 Q 532 60 578 76 Q 532 92 430 90 L 250 84 Z', 'sc-mid'));
+    schip.append(pad('M 300 86 L 362 116 L 410 86 Z', 'sc-near'));
+    schip.append(pad('M 490 68 Q 530 66 556 76 Q 530 80 490 80 Z', 'sc-near'));
+    schip.append(flank('M 250 79 L 578 76 Q 532 92 430 90 L 250 84 Z'));
+    g.append(schip);
+    for (let x = 330; x < 470; x += 17) g.append(rechthoek(x, 74, 7, 3, 'sc-raam'));
+    // Het spoor achter de motoren.
+    g.append(pad('M 250 74 L 40 77 L 40 81 L 250 84 Z', 'sc-mist'));
+    g.append(cirkel(250, 79, 5, 'sc-licht'));
+    g.append(cirkel(250, 79, 20, 'sc-schijn'));
+  },
 };
 
 // ---------------------------------------------------------------- de verf

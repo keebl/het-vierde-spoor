@@ -1796,6 +1796,24 @@ body[data-wereld="kantoor"] .gloedmid { stop-color: #cfd2ef; }
 body[data-wereld="kantoor"] .gloedrand { stop-color: #16182a; }
 
 
+/* Sterrenschip Zwaluw: violet staal en het licht van de ledstrips. */
+body[data-thema="donker"][data-wereld="ruimteschip"] {
+  --bg: #0b0718; --surface: #140e27; --surface-2: #1c1436; --line: #3a2a68;
+  --text: #f0e8ff; --text-2: #c2b2e8; --text-3: #8a7cb0;
+  --accent: #c77dff; --accent-soft: #24183f;
+}
+body[data-wereld="ruimteschip"] .muurvoet,
+body[data-wereld="ruimteschip"] .buitenmuur-voet { stroke: #231a40; }
+body[data-wereld="ruimteschip"] .muurtop,
+body[data-wereld="ruimteschip"] .buitenmuur-top { stroke: #8a78c8; }
+body[data-wereld="ruimteschip"] .muurglans { stroke: #e2a6ff; }
+body[data-wereld="ruimteschip"] .muurnerf { stroke: rgba(28, 20, 56, 0.4); }
+body[data-wereld="ruimteschip"] .muur { stroke: #5c4c94; }
+body[data-wereld="ruimteschip"] .muur-buiten { stroke: #2e2452; }
+body[data-wereld="ruimteschip"] .gloedkern { stop-color: #f6eaff; }
+body[data-wereld="ruimteschip"] .gloedmid { stop-color: #d8c2f6; }
+body[data-wereld="ruimteschip"] .gloedrand { stop-color: #160f2c; }
+
 /* ------------------------------------------------------------- themaknop
    Eén knop in de kop die door drie standen loopt. Met een "A" ernaast als
    hij het apparaat volgt, zodat je ziet dat je zelf niets hebt gekozen. */

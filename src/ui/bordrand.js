@@ -2888,6 +2888,85 @@ export const RANDSTIJLEN = {
       }
     },
   },
+
+  // ------------------------------------------------ Sterrenschip Zwaluw
+  //
+  // Geen station dat stil hangt, maar een schip in een sprong. Door de
+  // ramen trekken de sterren uit tot strepen en schuift er een nevel
+  // voorbij; tussen de ramen staan de spanten, en vooraan ligt de rand van
+  // een console met een ledstrip en knopjes die knipperen. Dat er beweging
+  // in zit, komt helemaal uit de strepen: alles wat ver weg is, is lang.
+  ruimteschip: {
+    kern: '#0d0824', koel: '#04020c', warm: '#e6d4ff', textuur: 'strijk', ruw: 0.1, stap: 40,
+    gloed: '#c77dff',
+    verf(b) {
+      const { d, L, R, K, n } = b;
+      const s = d / 100;
+      const ver = b.laag('randver', 0.95);
+      const mid = b.laag('randmid');
+      const voor = b.laag('randvoor');
+      const raam = d * 0.62;
+
+      // De ruimte, met nevels in drie kleuren.
+      ver.vlak(`M0 0 H${L.toFixed(1)} V${raam.toFixed(1)} H0 Z`, '#0a0620');
+      for (let i = 0; i < n(120); i++) {
+        ver.waas(R(L, 0), d * R(0.52, 0.08), R(48, 22) * s, K(['#7b3fe4', '#2fb6ff', '#ff4fb8']), R(0.34, 0.14));
+      }
+      // Een planeet die voorbij schuift, met een ring.
+      if (R() < 0.7) {
+        const px = L * R(0.85, 0.15);
+        const py = d * R(0.4, 0.24);
+        const pr = R(16, 11) * s;
+        ver.stip(px, py, pr, K(['#4a2f9a', '#1f6a8a', '#8a2f6a']));
+        ver.gloed(px - pr * 0.35, py - pr * 0.35, pr * 0.55, '#d8c4ff', 0.35, 0);
+        ver.streek(
+          `M${(px - pr * 1.8).toFixed(1)} ${(py + pr * 0.35).toFixed(1)} Q${px.toFixed(1)} ${(py - pr * 0.5).toFixed(1)} ${(px + pr * 1.8).toFixed(1)} ${(py - pr * 0.35).toFixed(1)}`,
+          '#f0dcff', 1.4 * s, 0.75,
+        );
+      }
+      // De sterren in een sprong: strepen, en hoe verder weg hoe dunner.
+      for (let i = 0; i < n(6); i++) {
+        const x = R(L, 0);
+        const y = d * R(0.58, 0.04);
+        ver.streek(
+          `M${x.toFixed(1)} ${y.toFixed(1)} h${(R(70, 14) * s).toFixed(1)}`,
+          K(['#ffffff', '#bfe8ff', '#e6c8ff', '#ffd6f0']), R(1.5, 0.5) * s, R(0.95, 0.4),
+        );
+      }
+      ver.spikkels(n(26), ['#ffffff', '#cfe6ff'], { y0: 2 * s, y1: raam - 4 * s, groot: 1, halo: 0.3 });
+
+      // De spanten tussen de ramen, met een balk erboven.
+      mid.vlak(`M0 0 H${L.toFixed(1)} V${(7 * s).toFixed(1)} H0 Z`, '#171034');
+      for (let x = R(30, 6); x < L; x += 76 * s) {
+        mid.vlak(`M${x.toFixed(1)} 0 h${(8 * s).toFixed(1)} V${(raam + 2 * s).toFixed(1)} h${(-8 * s).toFixed(1)} Z`, '#1a1238');
+        mid.streek(`M${(x + 1.6 * s).toFixed(1)} 0 V${raam.toFixed(1)}`, '#5a46a0', 1 * s, 0.6);
+        mid.stip(x + 4 * s, raam * 0.5, 1.4 * s, '#8f7ad6');
+      }
+
+      // De console: een blad met een ledstrip, schermpjes en knopjes.
+      voor.vlak(`M0 ${raam.toFixed(1)} H${L.toFixed(1)} V${(d + 4).toFixed(1)} H0 Z`, '#120b28');
+      voor.vlak(`M0 ${raam.toFixed(1)} H${L.toFixed(1)} V${(raam + 6 * s).toFixed(1)} H0 Z`, '#21174a');
+      const strip = raam + 3 * s;
+      const id = zorgVoorGloed('#c77dff');
+      voor.g.append(el('rect', {
+        x: 0, y: (strip - 12 * s).toFixed(1), width: L.toFixed(1), height: (24 * s).toFixed(1),
+        fill: `url(#${id})`, opacity: 0.3,
+      }));
+      voor.streek(`M0 ${strip.toFixed(1)} H${L.toFixed(1)}`, '#e2a6ff', 1.6 * s, 0.95);
+      for (let i = 0; i < n(120); i++) {
+        const x = R(L, 0);
+        const y = d * R(0.84, 0.74);
+        voor.vlak(`M${x.toFixed(1)} ${y.toFixed(1)} h${(24 * s).toFixed(1)} v${(11 * s).toFixed(1)} h${(-24 * s).toFixed(1)} Z`, '#0b2448');
+        voor.streek(
+          `M${(x + 3 * s).toFixed(1)} ${(y + 7 * s).toFixed(1)} l${(5 * s).toFixed(1)} ${(-3 * s).toFixed(1)} l${(4 * s).toFixed(1)} ${(2 * s).toFixed(1)} l${(7 * s).toFixed(1)} ${(-4 * s).toFixed(1)}`,
+          '#3fe0ff', 0.9 * s, 0.95,
+        );
+      }
+      for (let i = 0; i < n(12); i++) {
+        voor.gloed(R(L, 0), d * R(0.96, 0.86), 1.7 * s, K(['#ff4fb8', '#3fe0ff', '#ffd166', '#7dff9a']), 0.6, 0.8);
+      }
+    },
+  },
 };
 
 // Geen wereld herkend? Dan het landhuis: donker hout doet nergens pijn.

@@ -564,7 +564,7 @@ export const WERELDVLOER = {
   // ledstrips. Geen hout, geen tapijt, geen steen.
   ruimteschip: {
     tint: '#6a55b8',
-    kracht: 0.5,
+    kracht: 0.6,
     dessin: { planken: 'plaat', 'planken-dwars': 'plaat', steen: 'plaat', tapijt: 'tegels', ruiten: 'tegels', beton: 'plaat' },
   },
 };
