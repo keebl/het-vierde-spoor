@@ -61,6 +61,10 @@ const BREED = 0.68;
 // bord af springen. Zie specs/visual-liveliness.md.
 const PENNING = ['#ef3e6d', '#2f7cf6', '#14a873', '#8b4dff', '#ff8a12', '#0fb3c4'];
 
+// De tint per kamer: dezelfde vrolijke kleuren als de site (--pop-* in
+// app.css), een slag lichter zodat de vloer en de meubels leesbaar blijven.
+const KAMERTINT = ['#ff7eb6', '#ffd23f', '#5ad8c4', '#7fb0ff', '#b48cff', '#ffa94d'];
+
 // Uit de hand getrokken lijnen.
 //
 // Alles op dit bord was kaarsrecht, en daardoor zag het eruit als een
@@ -183,9 +187,21 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
     };
   };
 
+  // Elke kamer een eigen kleur over zijn vloer, zoals op een bordspel. In een
+  // landhuis is bijna elke kamer hout, en dan is het bord één beige vlak. Het
+  // dessin blijft staan, dus planken blijven planken; alleen de tint wisselt.
+  // Water en sneeuw houden hun eigen kleur, want roze water is geen water.
+  // Volgt uit het kamernummer, niet uit een loting: verschuift geen puzzel.
+  const vloerVanKamer = (i) => {
+    const v = vloerVan(i);
+    if (v.dessin === 'water' || v.dessin === 'sneeuw') return v;
+    const tint = KAMERTINT[kamer(i) % KAMERTINT.length];
+    return { ...v, vul: meng(v.vul, tint, 0.3) };
+  };
+
   const vloer = el('g');
   for (let i = 0; i < n * n; i++) {
-    const v = vloerVan(i);
+    const v = vloerVanKamer(i);
     // Elk vakje zijn eigen tint. Niet zichtbaar als je ernaar zoekt, wel
     // zodra je het weglaat: dan is het weer een vlak.
     const toon = 0.92 + ((i * 2654435761) % 160) / 1000;
@@ -194,7 +210,7 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
     }));
     vloer.append(el('rect', {
       x: x(kol(i)), y: y(rij(i)), width: CEL, height: CEL,
-      fill: `url(#dessin-${v.dessin})`, opacity: 0.62,
+      fill: `url(#dessin-${v.dessin})`, opacity: 0.5,
     }));
   }
 
@@ -1052,7 +1068,9 @@ export function dessins() {
   // warme gloed over een stalen vloer maakt er weer hout van.
   gloed.append(el('stop', { offset: '0%', class: 'gloedkern', 'stop-opacity': '0.30' }));
   gloed.append(el('stop', { offset: '48%', class: 'gloedmid', 'stop-opacity': '0.10' }));
-  gloed.append(el('stop', { offset: '100%', class: 'gloedrand', 'stop-opacity': '0.30' }));
+  // De rand was 0.30 donker: samen met het schuine licht, het vignet en de
+  // wandschaduw trok dat elk bord naar sepia. Zie specs/visual-liveliness.md.
+  gloed.append(el('stop', { offset: '100%', class: 'gloedrand', 'stop-opacity': '0.12' }));
   defs.append(gloed);
 
   // Het licht valt schuin in: linksboven is de vloer lichter dan rechtsonder.
@@ -1061,7 +1079,7 @@ export function dessins() {
   const schuin = el('linearGradient', { id: 'kamerschuin', x1: '0', y1: '0', x2: '0.85', y2: '1' });
   schuin.append(el('stop', { offset: '0%', 'stop-color': '#fffaf0', 'stop-opacity': '0.38' }));
   schuin.append(el('stop', { offset: '46%', 'stop-color': '#fff6e4', 'stop-opacity': '0.05' }));
-  schuin.append(el('stop', { offset: '100%', 'stop-color': '#1d1206', 'stop-opacity': '0.34' }));
+  schuin.append(el('stop', { offset: '100%', 'stop-color': '#2a1b3d', 'stop-opacity': '0.14' }));
   defs.append(schuin);
 
   // ------------------------------------------------------- wandschaduw
@@ -1072,9 +1090,9 @@ export function dessins() {
   const randen = { n: ['0', '0', '0', '1'], z: ['0', '1', '0', '0'], w: ['0', '0', '1', '0'], o: ['1', '0', '0', '0'] };
   for (const [naam, [x1, y1, x2, y2]] of Object.entries(randen)) {
     const g = el('linearGradient', { id: `wandrand-${naam}`, x1, y1, x2, y2 });
-    g.append(el('stop', { offset: '0%', 'stop-color': '#241708', 'stop-opacity': '0.40' }));
-    g.append(el('stop', { offset: '55%', 'stop-color': '#241708', 'stop-opacity': '0.09' }));
-    g.append(el('stop', { offset: '100%', 'stop-color': '#241708', 'stop-opacity': '0' }));
+    g.append(el('stop', { offset: '0%', 'stop-color': '#2a1b3d', 'stop-opacity': '0.28' }));
+    g.append(el('stop', { offset: '55%', 'stop-color': '#2a1b3d', 'stop-opacity': '0.06' }));
+    g.append(el('stop', { offset: '100%', 'stop-color': '#2a1b3d', 'stop-opacity': '0' }));
     defs.append(g);
   }
 
@@ -1098,7 +1116,7 @@ export function dessins() {
   const vignet = el('radialGradient', { id: 'bordvignet' });
   vignet.append(el('stop', { offset: '0%', 'stop-color': '#2a1c0c', 'stop-opacity': '0' }));
   vignet.append(el('stop', { offset: '64%', 'stop-color': '#2a1c0c', 'stop-opacity': '0' }));
-  vignet.append(el('stop', { offset: '100%', 'stop-color': '#2a1c0c', 'stop-opacity': '0.30' }));
+  vignet.append(el('stop', { offset: '100%', 'stop-color': '#2a1b3d', 'stop-opacity': '0.12' }));
   defs.append(vignet);
 
   return defs;

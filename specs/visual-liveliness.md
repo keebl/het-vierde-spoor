@@ -19,6 +19,17 @@ aangekleed". That reopens the palette decision at the top of `styles/app.css`:
   drawings, portraits and frames are not touched in this round (directions 2–4 stay open).
 - Still no image files: every decoration is CSS or inline SVG.
 
+Second round, same day, after the owner saw it live: "the site looks better, now the
+puzzles themselves". The board was sepia because four overlays each pulled it to brown
+(room edge glow 0.30, slanting light 0.34, vignette 0.30, wall shadow 0.40). Changed:
+
+- those overlays lightened and moved from brown to plum;
+- every room gets its own tint from the site colours (`KAMERTINT`, by room number, no
+  rng), over the unchanged floor pattern — water and snow keep their own colour;
+- walls in the world colour instead of wood, room names as coloured labels;
+- brighter fabric, wood, leaf and water materials in `STOFFEN`;
+- the name bar is no longer sticky: it covered the board while scrolling.
+
 Handover brief. Written to be opened cold in a new session: everything you need is
 here or linked from here. The code is Dutch, this document is English — see
 `docs/decisions/0004-dutch-is-the-language-of-the-code.md` on branch `chore/adopt-standard`.
