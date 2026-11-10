@@ -502,6 +502,38 @@ const SCENES = {
     g.append(cirkel(250, 79, 5, 'sc-licht'));
     g.append(cirkel(250, 79, 20, 'sc-schijn'));
   },
+
+  // Hoogstad bij avond: torens tegen een roze schemering, de helft van de
+  // ramen aan, een neonbord en een metro die over het viaduct rijdt.
+  stad(g) {
+    sterren(g, 10, 131);
+    const ver = maak('g');
+    [[0, 54, 60], [70, 34, 50], [130, 60, 44], [260, 28, 56], [330, 48, 70],
+     [520, 40, 48], [580, 22, 60], [650, 52, 54], [720, 36, 80]].forEach(([x, y, w]) => {
+      ver.append(rechthoek(x, y, w, H - y, 'sc-ver'));
+    });
+    g.append(ver);
+
+    const mid = maak('g');
+    [[40, 70, 70], [180, 44, 76], [410, 30, 90], [610, 64, 84]].forEach(([x, y, w]) => {
+      mid.append(rechthoek(x, y, w, H - y, 'sc-mid'));
+      mid.append(flank(`M ${x + w * 0.66} ${y} L ${x + w} ${y} L ${x + w} ${H} L ${x + w * 0.66} ${H} Z`));
+    });
+    g.append(mid);
+    ramen(mid, 52, 80, 4, 4, 14, 5);
+    ramen(mid, 192, 54, 4, 6, 15, 9);
+    ramen(mid, 424, 40, 5, 6, 15, 13);
+    ramen(mid, 622, 74, 4, 4, 16, 2);
+    // Een neonbord op de hoge toren.
+    g.append(rechthoek(430, 112, 52, 8, 'sc-licht'));
+
+    // Het viaduct met de metro erop.
+    g.append(rechthoek(0, 126, B, 6, 'sc-near'));
+    g.append(pad('M 120 126 L 120 112 Q 120 106 128 106 L 300 106 Q 312 106 316 116 L 318 126 Z', 'sc-near'));
+    for (let x = 136; x < 300; x += 20) g.append(rechthoek(x, 110, 12, 6, 'sc-raam'));
+    g.append(cirkel(312, 118, 3, 'sc-licht'));
+    for (let x = 60; x < B; x += 160) g.append(rechthoek(x, 132, 8, H - 132, 'sc-near'));
+  },
 };
 
 // ---------------------------------------------------------------- de verf

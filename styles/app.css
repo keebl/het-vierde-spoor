@@ -1814,6 +1814,24 @@ body[data-wereld="ruimteschip"] .gloedkern { stop-color: #f6eaff; }
 body[data-wereld="ruimteschip"] .gloedmid { stop-color: #d8c2f6; }
 body[data-wereld="ruimteschip"] .gloedrand { stop-color: #160f2c; }
 
+/* Hoogstad: schemerpaars met het oranje van verlichte ramen. */
+body[data-thema="donker"][data-wereld="stad"] {
+  --bg: #100b1a; --surface: #191226; --surface-2: #221934; --line: #3e2f58;
+  --text: #f6ecf4; --text-2: #cdb8cf; --text-3: #94809a;
+  --accent: #ff8a5c; --accent-soft: #2e1a24;
+}
+body[data-wereld="stad"] .muurvoet,
+body[data-wereld="stad"] .buitenmuur-voet { stroke: #2a2434; }
+body[data-wereld="stad"] .muurtop,
+body[data-wereld="stad"] .buitenmuur-top { stroke: #a49bb2; }
+body[data-wereld="stad"] .muurglans { stroke: #e4dcef; }
+body[data-wereld="stad"] .muurnerf { stroke: rgba(36, 30, 48, 0.32); }
+body[data-wereld="stad"] .muur { stroke: #807790; }
+body[data-wereld="stad"] .muur-buiten { stroke: #403850; }
+body[data-wereld="stad"] .gloedkern { stop-color: #fff2de; }
+body[data-wereld="stad"] .gloedmid { stop-color: #f2d6c2; }
+body[data-wereld="stad"] .gloedrand { stop-color: #20161e; }
+
 /* ------------------------------------------------------------- themaknop
    Eén knop in de kop die door drie standen loopt. Met een "A" ernaast als
    hij het apparaat volgt, zodat je ziet dat je zelf niets hebt gekozen. */

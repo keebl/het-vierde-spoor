@@ -1267,7 +1267,7 @@ export const WERELDMEUBELS = {
       'de vuurplaats': ['de barbecue', 'barbecue'],
       'de omgevallen stam': ['de pingpongtafel', 'pingpongtafel'],
       'de waterput': ['de ronde plantenbak', 'plantenbakrond'],
-      'de mosrichel': ['de bank op het dak', 'wachtbank'],
+      'de mosrichel': ['de zitbank', 'wachtbank'],
       'de regenton': ['de laadpaal', 'laadpaal'],
       'de kruiwagen': ['de deelscooter', 'deelscooter'],
       'de boomstronk': ['de zitzak', 'zitzak'],

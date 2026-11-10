@@ -2967,6 +2967,83 @@ export const RANDSTIJLEN = {
       }
     },
   },
+
+  // -------------------------------------------------------------- Hoogstad
+  //
+  // De stad bij avond, gezien vanaf de overkant van de straat. Achteraan een
+  // skyline in de schemering met verlichte ramen - niet allemaal, want een
+  // stad waar elk raam brandt is een kerstboom - in het midden de gevels
+  // dichtbij met hier en daar een neonbord, en vooraan de stoep met een
+  // zebrapad en lantaarns. De schemering zelf is het licht: roze en oranje
+  // laag aan de hemel, en daarboven al nacht.
+  stad: {
+    kern: '#120c20', koel: '#05030a', warm: '#ffe2c4', textuur: 'korrel', ruw: 0.12, stap: 40,
+    gloed: '#ffb35c',
+    verf(b) {
+      const { d, L, R, K, n } = b;
+      const s = d / 100;
+      const ver = b.laag('randver', 0.9);
+      const mid = b.laag('randmid');
+      const voor = b.laag('randvoor');
+      const straat = d * 0.66;
+
+      // De schemering: nacht boven, roze en oranje laag aan de hemel.
+      ver.vlak(`M0 0 H${L.toFixed(1)} V${straat.toFixed(1)} H0 Z`, '#1a1234');
+      for (let i = 0; i < n(90); i++) {
+        ver.waas(R(L, 0), d * R(0.62, 0.42), R(44, 24) * s, K(['#ff6f91', '#ff9a4d', '#c45cff']), R(0.32, 0.14));
+      }
+      ver.spikkels(n(40), ['#ffffff', '#ffe2c4'], { y0: 2 * s, y1: d * 0.2, groot: 0.9, halo: 0.2 });
+
+      // De skyline ver weg: torens met een paar ramen aan.
+      let x = R(10, -10);
+      while (x < L) {
+        const w = R(34, 16) * s;
+        const top = d * R(0.42, 0.12);
+        ver.vlak(`M${x.toFixed(1)} ${top.toFixed(1)} h${w.toFixed(1)} V${straat.toFixed(1)} h${(-w).toFixed(1)} Z`, K(['#231a42', '#1f1a3c', '#2a1f48']));
+        if (R() < 0.3) ver.streek(`M${(x + w / 2).toFixed(1)} ${top.toFixed(1)} v${(-8 * s).toFixed(1)}`, '#3a2e5c', 1 * s);
+        for (let wy = top + 4 * s; wy < straat - 6 * s; wy += 7 * s) {
+          for (let wx = x + 3 * s; wx < x + w - 4 * s; wx += 6 * s) {
+            if (R() < 0.22) ver.vlak(`M${wx.toFixed(1)} ${wy.toFixed(1)} h${(2.6 * s).toFixed(1)} v${(3.4 * s).toFixed(1)} h${(-2.6 * s).toFixed(1)} Z`, K(['#ffd27a', '#ffb35c', '#9fdcff']), 0.85);
+          }
+        }
+        x += w + R(6, 1) * s;
+      }
+
+      // De gevels dichtbij, met een neonbord hier en daar.
+      x = R(20, -6);
+      while (x < L) {
+        const w = R(70, 44) * s;
+        const top = d * R(0.42, 0.28);
+        mid.vlak(`M${x.toFixed(1)} ${top.toFixed(1)} h${w.toFixed(1)} V${(straat + 2 * s).toFixed(1)} h${(-w).toFixed(1)} Z`, K(['#140f26', '#18112c']));
+        for (let wx = x + 6 * s; wx < x + w - 10 * s; wx += 14 * s) {
+          const aan = R() < 0.4;
+          mid.vlak(`M${wx.toFixed(1)} ${(top + 6 * s).toFixed(1)} h${(8 * s).toFixed(1)} v${(10 * s).toFixed(1)} h${(-8 * s).toFixed(1)} Z`, aan ? '#ffcf7a' : '#0c0918', aan ? 0.9 : 1);
+          if (aan) mid.gloed(wx + 4 * s, top + 11 * s, 5 * s, '#ffb35c', 0.35, 0);
+        }
+        if (R() < 0.45) {
+          const kl = K(['#ff4fa8', '#3fe0ff', '#7dff9a']);
+          const nx = x + w * 0.2;
+          const ny = top + 20 * s;
+          mid.gloed(nx + w * 0.3, ny + 4 * s, 9 * s, kl, 0.6, 0);
+          mid.vlak(`M${nx.toFixed(1)} ${ny.toFixed(1)} h${(w * 0.6).toFixed(1)} v${(8 * s).toFixed(1)} h${(-w * 0.6).toFixed(1)} Z`, '#0b0716');
+          mid.streek(`M${(nx + 2 * s).toFixed(1)} ${(ny + 4 * s).toFixed(1)} h${(w * 0.6 - 4 * s).toFixed(1)}`, meng(kl, '#ffffff', 0.4), 1.6 * s, 0.95);
+        }
+        x += w + R(10, 2) * s;
+      }
+
+      // De straat: stoeprand, een zebrapad en lantaarns.
+      voor.vlak(`M0 ${straat.toFixed(1)} H${L.toFixed(1)} V${(d + 4).toFixed(1)} H0 Z`, '#17121f');
+      voor.vlak(`M0 ${straat.toFixed(1)} H${L.toFixed(1)} V${(straat + 5 * s).toFixed(1)} H0 Z`, '#2c2638');
+      for (let zx = L * R(0.5, 0.2); zx < L * R(0.8, 0.55); zx += 9 * s) {
+        voor.vlak(`M${zx.toFixed(1)} ${(straat + 9 * s).toFixed(1)} h${(5 * s).toFixed(1)} V${(d + 4).toFixed(1)} h${(-5 * s).toFixed(1)} Z`, '#d8d2e0', 0.55);
+      }
+      for (let lx = R(60, 20); lx < L; lx += 150 * s) {
+        voor.streek(`M${lx.toFixed(1)} ${(straat + 6 * s).toFixed(1)} V${(d * 0.3).toFixed(1)} h${(8 * s).toFixed(1)}`, '#2e2840', 2.2 * s);
+        voor.gloed(lx + 9 * s, d * 0.3 + 2 * s, 4 * s, '#ffb35c', 0.95, 1);
+      }
+      voor.spikkels(n(60), ['#ffb35c', '#ff6f91'], { y0: straat + 6 * s, y1: d, groot: 1.2, halo: 0.5 });
+    },
+  },
 };
 
 // Geen wereld herkend? Dan het landhuis: donker hout doet nergens pijn.
