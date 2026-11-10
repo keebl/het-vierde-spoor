@@ -215,6 +215,19 @@ export const SOORT_VAN = {
   'de verborgen gang': 'gang',
   'de archiefkamer': 'bibliotheek',
   'de kostuumkamer': 'slaapkamer',
+  // Pretpark Zonnestraal
+  'de achtbaan': 'buiten',
+  'het spookhuis': 'gang',
+  'de foodtrucks': 'keuken',
+  'het podium': 'zaal',
+  'de botsautobaan': 'zaal',
+  'het kassahokje': 'gang',
+  'het reuzenrad': 'buiten',
+  'de draaimolen': 'buiten',
+  'het festivalterrein': 'buiten',
+  'de EHBO-tent': 'laboratorium',
+  'de backstage': 'kelder',
+  'de souvenirkraam': 'bibliotheek',
 };
 
 // De vloer per soort. dessin verwijst naar een patroon in board-rooms.js.
@@ -383,6 +396,11 @@ export const VOORZETSEL_VAN = {
   'de loopbrug': 'op',
   // Je staat óp een station, ook onder de grond.
   'het metrostation': 'op',
+  // Je staat óp een podium en bíj de foodtrucks, niet erin.
+  'het festivalterrein': 'op',
+  'het podium': 'op',
+  'de botsautobaan': 'op',
+  'de foodtrucks': 'bij',
 };
 
 // Een "of-aanwijzing" noemt twee plekken in één adem: "het hertenpad of de
@@ -542,6 +560,15 @@ export const VORM_VAN = {
   'de wachtruimte': 'groot',
   'de kluiskamer': 'klein',
   'de schuilkelder': 'klein',
+  // Pretpark Zonnestraal
+  'de achtbaan': 'smal',
+  'het festivalterrein': 'groot',
+  'de botsautobaan': 'groot',
+  'het podium': 'groot',
+  'de foodtrucks': 'groot',
+  'het kassahokje': 'klein',
+  'de draaimolen': 'klein',
+  'de EHBO-tent': 'klein',
 };
 
 export const vormVan = (plek) => VORM_VAN[plek] ?? 'vrij';
@@ -627,6 +654,9 @@ export const WERELDVLOER = {
     kracht: 0.4,
     dessin: { steen: 'beton', ruiten: 'tegels', tapijt: 'tegels' },
   },
+  // Zomer in een pretpark: alles een slag zonniger, en de paden zijn
+  // klinkers in plaats van tegels.
+  pretpark: { tint: '#ffe6a0', kracht: 0.22, dessin: { ruiten: 'bestrating', steen: 'beton' } },
 };
 
 // De vloer van één bepaalde plek, als de soort hem niet goed raadt.
@@ -690,6 +720,11 @@ export const VLOER_VAN_PLEK = {
   // Hoogstad: beton onder het skatepark, tegels op het perron.
   'het skatepark': { vul: '#a9aeb4', lijn: '#868b91', dessin: 'beton' },
   'het metrostation': { vul: '#c6cbd2', lijn: '#9ea4ac', dessin: 'tegels' },
+  // Pretpark Zonnestraal: een stalen vloer onder de botsauto's, klinkers
+  // bij de foodtrucks, en een houten vloer op het podium.
+  'de botsautobaan': { vul: '#9aa3ad', lijn: '#79828c', dessin: 'plaat' },
+  'de foodtrucks': { vul: '#d4c6a6', lijn: '#ad9f80', dessin: 'bestrating' },
+  'het kassahokje': { vul: '#d8cbb0', lijn: '#b1a488', dessin: 'bestrating' },
 };
 
 // Waar het meubilair van gemaakt is, per wereld. De namen zijn de materialen
@@ -745,6 +780,9 @@ export const WERELDSTOF = {
   // Een escaperoom is ingericht als decor, maar met spullen van nu: donker
   // fineer, staal, en niets wat van goud glimt behalve een kostuum.
   escaperoom: { houtrood: 'houtdonker', steen: 'steenkoel' },
+  // Een pretpark mag hout hebben (een wegwijzer, een kraam), maar geen
+  // mahonie en geen goud: alles is geverfd, gegoten of van staal.
+  pretpark: { houtrood: 'kunststofroze', goud: 'kunststof', steen: 'steenkoel' },
 };
 
 // ------------------------------------------------ hetzelfde meubel, andere wereld
@@ -1382,6 +1420,67 @@ export const WERELDMEUBELS = {
       'de voetenbank': ['het opstapkrukje', 'opstapkrukje'],
     },
   },
+
+  // ---------------------------------------------- Pretpark Zonnestraal
+  // Suikerspin, botsauto's en een podium met een dj. Overdag, en alles
+  // even fel als het eruitziet.
+  pretpark: {
+    volledig: true,
+    zelfde: [
+      'de koelkast', 'de gootsteen', 'de kuipplant', 'de touwhaspel',
+    ],
+    anders: {
+      // de achtbaan, het reuzenrad, de draaimolen, het festivalterrein
+      'de houtstapel': ['de stapel tuinstoelen', 'stoelenstapel'],
+      'de drinkbak': ['de drinkfontein', 'drinkfontein'],
+      'de vuurplaats': ['de suikerspinkraam', 'suikerspin'],
+      'de omgevallen stam': ['de tros ballonnen', 'ballonnen'],
+      'de waterput': ['de ronde plantenbak', 'plantenbakrond'],
+      'de mosrichel': ['de rij stoeltjes', 'wachtbank'],
+      'de regenton': ['de prullenbak', 'prullenbak'],
+      'de kruiwagen': ['het botsautootje', 'botsauto'],
+      'de boomstronk': ['de zitzak', 'zitzak'],
+      'de vogelverschrikker': ['de wegwijzer', 'wegwijzer'],
+      // de foodtrucks
+      'het fornuis': ['de foodtruck', 'foodtruck'],
+      'het aanrecht': ['de uitgiftebalie', 'balie'],
+      'de spinde': ['de drankautomaat', 'automaat'],
+      'het serviesbuffet': ['de koffiemachine', 'koffieautomaat'],
+      // het podium en de botsautobaan
+      'de haard': ['de spotlamp', 'spot'],
+      'de leren fauteuil': ['de loungebank', 'loungebank'],
+      'de staande klok': ['de klokzuil', 'klokzuil'],
+      'de vleugel': ['de speakertoren', 'luidspreker'],
+      'de wandspiegel': ['het grote scherm', 'beeldscherm'],
+      'het borstbeeld': ['de dj-tafel', 'djtafel'],
+      // het spookhuis en het kassahokje
+      'de kapstok': ['het toegangspoortje', 'poortje'],
+      'de paraplubak': ['de parapluhouder', 'paraplubak'],
+      'de console': ['het infopunt', 'infozuil'],
+      'de spiegelstandaard': ['de lachspiegel', 'spiegelpaneel'],
+      'het uurwerk': ['de wachttijdklok', 'tijdscherm'],
+      'het harnas': ['de brandblusser', 'brandblusser'],
+      // de EHBO-tent
+      'de kweekbak': ['de brancard', 'ziekenhuisbed'],
+      'het kruidenkabinet': ['het verbandkabinet', 'glaskast'],
+      'de distilleerketel': ['de infuusstandaard', 'infuusstandaard'],
+      'de weegschaal': ['de waterkoeler', 'waterkoeler'],
+      'de kolvenrij': ['de medicijntafel', 'proeventafel'],
+      // de backstage
+      'het wijnrek': ['het kostuumrek', 'kledingrek'],
+      'het eikenhouten vat': ['het watervat', 'drum'],
+      'de kolenbunker': ['de afvalcontainer', 'afvalcontainer'],
+      'de werktafel': ['het werkblad', 'werkbank'],
+      'de stapel kratten': ['de stapel flightcases', 'vrachtcontainer'],
+      // de souvenirkraam
+      'de boekenkast': ['het knuffelrek', 'knuffelrek'],
+      'de katheder': ['de kassa', 'kassa'],
+      'de globe': ['de grijpmachine', 'grijpmachine'],
+      'de commode': ['het ladenblok', 'archiefkast'],
+      'de leesstoel': ['de draaistoel', 'bureaustoel'],
+      'de kaartentafel': ['de ronde tafel', 'kaartentafel'],
+    },
+  },
 };
 
 
@@ -1446,6 +1545,15 @@ export const WERELDVERWANT = {
     werkplaats: ['kelder', 'laboratorium'],
     kelder: ['werkplaats', 'gang'],
   },
+  // Een pretpark heeft geen werkplaats en geen sterrenwacht: het terrein
+  // wijkt uit naar de opslag achter het podium, de EHBO naar de kraampjes.
+  pretpark: {
+    buiten: ['kelder', 'zaal'],
+    gang: ['zaal', 'buiten'],
+    laboratorium: ['keuken', 'bibliotheek'],
+    kelder: ['keuken', 'buiten'],
+    bibliotheek: ['zaal', 'gang'],
+  },
 };
 
 // ------------------------------------------------- tekeningen van vroeger
@@ -1479,6 +1587,7 @@ export const MODERNE_WERELDEN = [
   'ruimteschip',
   'stad',
   'escaperoom',
+  'pretpark',
 ];
 
 // De naam en de tekening die in deze wereld bij een meubelstuk horen.

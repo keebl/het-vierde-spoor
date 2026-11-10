@@ -2684,4 +2684,172 @@ export const GESCHILDERD = {
     v('donker', bol(9.4, 40.6, 1.8)),
     v('donker', bol(38.6, 40.6, 1.8)),
   ],
+
+  // ================================================ Pretpark Zonnestraal
+  //
+  // Daglicht, suikerspin en harde muziek. Tien stukken die je alleen op
+  // een pretpark of een festival ziet.
+
+  // Een suikerspinkraam: een gestreept dakje, een kom met roze wolk erin.
+  suikerspin: [
+    v('metaal', staaf(12, 23, 12, 8.4, 1.4, { krimp: 0 })),
+    v('metaal', staaf(36, 23, 36, 8.4, 1.4, { krimp: 0 })),
+    v('kunststofwit', doek(9, 4.4, 30, 6.4, { golf: 1.4 })),
+    streep('stof', 2.4, 'M14 5 V9.6 M21 5 V9.8 M28 5 V9.8 M35 5 V9.6'),
+    v('kunststofroze', hoop(24, 18.4, 15, 6)),
+    v('metaal', bak(24, 17.4, 19, 12, 5.4)),
+    v('kunststofroze', romp(9, 22.4, 30, 13.6, { taps: 0.02 })),
+    streep('kunststofwit', 1.6, 'M14 23.6 V35 M20 23.6 V35.4 M26 23.6 V35.4 M32 23.6 V35'),
+    v('kunststofroze', ovaal(40.4, 15, 3.6, 3.4)),
+    v('papier', staaf(40.4, 18.4, 40.4, 23.4, 0.9, { krimp: 0 })),
+    v('donker', bol(14.6, 38.4, 3)),
+    v('donker', bol(33.4, 38.4, 3)),
+    vloer('donker', ovaal(24, 41.2, 15, 1.4)),
+  ],
+
+  // Een tros ballonnen aan een gewicht.
+  ballonnen: [
+    streep('kunststofwit', 0.7, 'M24 34 L15 17.4 M24 34 L24 13.6 M24 34 L33 17.4 M24 34 L19.6 25 M24 34 L28.6 25'),
+    v('kunststofroze', ovaal(15, 11.6, 5, 6)),
+    v('kunststof', ovaal(24, 7.6, 5, 6)),
+    v('kunststofblauw', ovaal(33, 11.6, 5, 6)),
+    v('neon', ovaal(19.6, 20, 4.4, 5.2)),
+    v('stof', ovaal(28.6, 20, 4.4, 5.2)),
+    vloer('kunststofwit', romp(18, 33.4, 12, 7.6, { taps: 0.06 })),
+    v('kunststof', plaat(18.4, 35.6, 11.2, 1.6, { zak: 0.2 })),
+  ],
+
+  // Een botsautootje met een paal naar het plafond en een vonkje.
+  botsauto: [
+    v('metaal', staaf(36, 24, 36, 4, 1.4, { krimp: 0 })),
+    v('vuur', bol(36, 3.4, 1.5), { glans: 1 }),
+    streep('kunststof', 0.8, 'M33.6 2 L31.4 0.6 M38.4 2 L40.6 0.6'),
+    v('donker', romp(26, 15, 9, 10, { taps: 0.06 })),
+    v('kunststofroze', 'M6 32 Q6 24 14 24 L34 24 Q42 24 42 32 L42 35.6 L6 35.6 Z'),
+    v('donker', staaf(19, 24.4, 16.4, 18.6, 1.4)),
+    v('donker', ovaal(15.6, 18, 3.2, 1.3)),
+    v('kunststofwit', bol(12.4, 29.4, 2.8)),
+    streep('donker', 0.9, 'M11.2 28 H13.6 L12 31'),
+    v('kunststof', 'M30 27.4 L31 29.4 L33.2 29.6 L31.6 31 L32 33.2 L30 32.2 L28 33.2 L28.4 31 L26.8 29.6 L29 29.4 Z'),
+    vloer('donker', plaat(4, 34.4, 40, 4.6, { zak: 0.5 })),
+  ],
+
+  // Een wegwijzer met drie bordjes in drie kleuren.
+  wegwijzer: [
+    v('hout', zuilvorm(20, 5, 2.6, 3.2, 34)),
+    v('kunststof', 'M22 7.4 L37 7.4 L40.6 11 L37 14.6 L22 14.6 Z'),
+    v('kunststofblauw', 'M18.6 17.4 L7.4 17.4 L3.8 21 L7.4 24.6 L18.6 24.6 Z'),
+    v('kunststofroze', 'M22 27 L35 27 L38.6 30.4 L35 33.8 L22 33.8 Z'),
+    streep('donker', 0.9, 'M24.4 11 H34 M8.6 21 H16.4 M24.4 30.4 H32'),
+    vloer('steenkoel', ovaal(20, 40.4, 7.4, 2)),
+  ],
+
+  // Een foodtruck: een geel busje met een luik, een luifel en een menubord.
+  foodtruck: [
+    v('kunststof', 'M4 34.6 L4 12.4 Q4 10 6.4 10 L33.6 10 Q36 10 36 12.4 L36 34.6 Z'),
+    v('kunststof', 'M36 34.6 L36 18 L41.6 18 Q45 20 45 26 L45 34.6 Z'),
+    v('glas', 'M37.4 19.6 L41.4 19.6 Q43.4 21 43.6 25 L37.4 25 Z', { glans: 1 }),
+    v('donker', romp(8, 15.6, 22, 9.6, { taps: 0.004 })),
+    v('kunststofroze', bol(13, 22.8, 1.8)),
+    v('kunststofwit', bol(18, 23, 1.6)),
+    v('metaal', plaat(7, 25, 24, 2, { zak: 0.2 })),
+    v('stof', plaat(6, 12.4, 26, 3.2, { zak: 1.1 })),
+    streep('kunststofwit', 1.4, 'M10 12.8 V15 M16 13 V15.4 M22 13 V15.4 M28 12.8 V15'),
+    v('donker', romp(10, 3.6, 18, 6, { taps: 0.01 })),
+    streep('kunststofwit', 0.8, 'M12.4 6 H25 M12.4 7.8 H21'),
+    v('donker', bol(12, 37, 3.6)),
+    v('metaal', bol(12, 37, 1.4)),
+    v('donker', bol(39, 37, 3.6)),
+    v('metaal', bol(39, 37, 1.4)),
+    vloer('donker', ovaal(24, 41.2, 20, 1.2)),
+  ],
+
+  // Een spotlamp op een statief, met een gekleurde bundel.
+  spot: [
+    v('metaal', staaf(23, 22, 13.6, 39.6, 1.8)),
+    v('metaal', staaf(25, 22, 34.4, 39.6, 1.8)),
+    v('metaal', staaf(24, 22, 24, 39.6, 1.8)),
+    v('metaal', staaf(24, 15, 24, 22.4, 2)),
+    v('donker', 'M17 9.4 L31 5 L34.4 15 L20.4 19.4 Z'),
+    v('kunststof', ovaal(18.6, 14.4, 2.6, 5.2), { glans: 1 }),
+    streep('kunststof', 0.8, 'M16 10 L5 4.4 M16.6 18.6 L5 23.6'),
+    streep('neon', 0.8, 'M16.2 14.2 L4.4 14'),
+    vloer('donker', ovaal(24, 40.6, 12, 2)),
+  ],
+
+  // Een dj-tafel: twee draaitafels, een mengpaneel, een koptelefoon, en
+  // lampjes die op de maat meespringen.
+  djtafel: [
+    vloer('donker', romp(4, 22, 40, 19, { taps: 0.01 })),
+    streep('neon', 1.2, 'M5.4 25.6 H42.6'),
+    streep('kunststof', 1.6, 'M12 37 V33 M15 37 V30.4 M18 37 V32 M21 37 V29 M27 37 V31 M30 37 V28.4 M33 37 V32.4 M36 37 V30'),
+    v('metaal', plaat(5, 19.4, 15, 2.6, { zak: 0.2 })),
+    v('donker', ovaal(12.4, 19.4, 5.2, 1.1)),
+    v('metaal', plaat(28, 19.4, 15, 2.6, { zak: 0.2 })),
+    v('donker', ovaal(35.6, 19.4, 5.2, 1.1)),
+    v('donker', romp(20.6, 16.2, 6.8, 4.6, { taps: 0.04 })),
+    v('kunststofroze', bol(22.6, 18, 0.9)),
+    v('water', bol(25.4, 18, 0.9), { glans: 1 }),
+    streep('donker', 1.6, 'M30.4 13.6 Q34 7.4 37.6 13.6'),
+    v('donker', bol(30.4, 14.4, 1.8)),
+    v('donker', bol(37.6, 14.4, 1.8)),
+  ],
+
+  // Een rek vol knuffels die je kunt winnen.
+  knuffelrek: [
+    vloer('kunststofwit', romp(7, 6, 34, 35, { taps: 0.01 })),
+    v('donker', romp(9, 8, 30, 31, { taps: 0.004 })),
+    v('kunststofwit', plaat(8, 19, 32, 2, { zak: 0.3 })),
+    v('kunststofwit', plaat(8, 30.4, 32, 2, { zak: 0.3 })),
+    v('kunststofroze', bol(10.8, 11.6, 1.4)),
+    v('kunststofroze', bol(15.2, 11.6, 1.4)),
+    v('kunststofroze', bol(13, 14.6, 3.8)),
+    v('kunststof', bol(21.8, 11.6, 1.4)),
+    v('kunststof', bol(26.2, 11.6, 1.4)),
+    v('kunststof', bol(24, 14.6, 3.8)),
+    v('kunststofblauw', bol(32.8, 11.6, 1.4)),
+    v('kunststofblauw', bol(37.2, 11.6, 1.4)),
+    v('kunststofblauw', bol(35, 14.6, 3.8)),
+    v('stofgroen', bol(14, 26, 4)),
+    v('neon', bol(24, 26, 4)),
+    v('stof', bol(34, 26, 4)),
+    streep('donker', 1, 'M12 14 h.01 M14 14 h.01 M23 14 h.01 M25 14 h.01 M34 14 h.01 M36 14 h.01 M13 25.4 h.01 M15 25.4 h.01 M23 25.4 h.01 M25 25.4 h.01 M33 25.4 h.01 M35 25.4 h.01'),
+    v('kunststof', romp(13, 33.4, 22, 5, { taps: 0.02 })),
+  ],
+
+  // Een kassa op een toonbankje: een scherm op een steeltje, een la, een
+  // pinapparaat met een groen lichtje en een bonnetje.
+  kassa: [
+    vloer('kunststofwit', romp(8, 24, 32, 17, { taps: 0.01 })),
+    v('donker', plaat(7, 21.4, 34, 3, { zak: 0.3 })),
+    v('donker', romp(13, 12.6, 18, 9, { taps: 0.06 })),
+    streep('kunststofwit', 1.1, 'M16 15.4 h.01 M19 15.4 h.01 M22 15.4 h.01 M16 18 h.01 M19 18 h.01 M22 18 h.01'),
+    v('metaal', staaf(27, 12.8, 29, 8.4, 1.6)),
+    v('scherm', romp(25, 3, 11, 6.4, { taps: 0.01 }), { glans: 1 }),
+    v('metaal', plaat(13, 19.6, 18, 1.8, { zak: 0.1 })),
+    v('donker', romp(34, 15.4, 4.4, 6, { taps: 0.04 })),
+    v('stofgroen', bol(36.2, 17.2, 0.9), { glans: 1 }),
+    v('papier', romp(13.6, 9.4, 3.4, 3.6, { taps: 0 })),
+  ],
+
+  // Een grijpmachine: een glazen kast vol knuffels, een grijper aan een
+  // draad, en een knop om het te proberen.
+  grijpmachine: [
+    vloer('kunststofroze', romp(9, 26, 30, 15, { taps: 0.01 })),
+    v('glas', romp(9.6, 6, 28.8, 20, { taps: 0 }), { glans: 0.5 }),
+    v('kunststof', bol(14.6, 22.6, 3)),
+    v('kunststofblauw', bol(20.4, 23, 3)),
+    v('stofgroen', bol(29.6, 22.8, 3)),
+    v('kunststofroze', bol(35, 23, 2.6)),
+    v('metaal', staaf(24, 6.6, 24, 12, 0.8, { krimp: 0 })),
+    v('metaal', 'M20.6 12 L27.4 12 L29 15.6 L27.4 15.6 L25.8 13.6 L22.2 13.6 L20.6 15.6 L19 15.6 Z'),
+    v('kunststof', plaat(8, 2.6, 32, 4, { zak: 0.3 })),
+    v('vuur', bol(14, 4.6, 0.9), { glans: 1 }),
+    v('water', bol(24, 4.6, 0.9), { glans: 1 }),
+    v('vuur', bol(34, 4.6, 0.9), { glans: 1 }),
+    v('kunststof', bol(16, 31, 2)),
+    v('donker', staaf(23, 33, 23, 29, 1.2)),
+    v('donker', bol(23, 28.6, 1.4)),
+    v('donker', romp(29, 31, 6.6, 6, { taps: 0.02 })),
+  ],
 };

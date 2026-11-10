@@ -694,6 +694,31 @@ export const ICOON_VAN = {
   "een losse vloertegel": "tegel",
   "een laserstraal die niet werkte": "laser",
   "een kluis die al open was": "kluis",
+
+  // ----------------------------------------------- Pretpark Zonnestraal
+  "een suikerspin aan een stokje": "suikerspin",
+  "een knuffel die je kon winnen": "knuffel",
+  "een polsbandje van het park": "polsbandje",
+  "een zonnepet": "pet",
+  "een foto uit de achtbaan": "camera",
+  "een lege beker limonade": "beker",
+  "een ballon met een gat": "ballon",
+  "de achtbaan": "achtbaan",
+  "het spookhuis": "spook",
+  "de foodtrucks": "bestek",
+  "het podium": "muziek",
+  "de botsautobaan": "wagen",
+  "het kassahokje": "kaartje",
+  "het reuzenrad": "reuzenrad",
+  "de draaimolen": "draaimolen",
+  "het festivalterrein": "zon",
+  "de EHBO-tent": "medisch",
+  "de backstage": "krat",
+  "de souvenirkraam": "winkel",
+  "de sleutel van het reuzenrad": "sleutel",
+  "een verloren polsbandje": "polsbandje",
+  "een spoor van popcorn": "popcorn",
+  "een losgeraakt karretje": "wagen",
 };
 
 export function icoonVan(naam) {
