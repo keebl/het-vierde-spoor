@@ -3150,6 +3150,98 @@ export const RANDSTIJLEN = {
       }
     },
   },
+
+  // ---------------------------------------------- Pretpark Zonnestraal
+  //
+  // Daglicht, net als het zwembad en de dierentuin: de diepte komt hier
+  // uit schaduw, niet uit gloed. Achteraan een zomerlucht; daarvoor loopt
+  // een achtbaan in een lange golf door de hele band, en op een paar
+  // kanten draait een reuzenrad. Vlaggetjes hangen er in bogen tussen, en
+  // vooraan staat het hek met ballonnen eraan. Kleur is hier het onderwerp:
+  // zes felle kleuren, nergens grijs.
+  pretpark: {
+    dag: true,
+    kern: '#fff0bf', koel: '#4a3418', warm: '#ffffff', textuur: 'korrel', ruw: 0.12, stap: 40,
+    gloed: '#ffe08a',
+    verf(b) {
+      const { d, L, R, K, n } = b;
+      const s = d / 100;
+      const ver = b.laag('randver', 0.85);
+      const mid = b.laag('randmid');
+      const voor = b.laag('randvoor');
+      const grond = d * 0.66;
+      const FEL = ['#e8453c', '#ffb020', '#3fb6d8', '#7cc24a', '#e05c9e', '#9b6bff'];
+
+      // De lucht met wolken.
+      ver.vlak(`M0 0 H${L.toFixed(1)} V${grond.toFixed(1)} H0 Z`, '#a9dcf2');
+      for (let i = 0; i < n(150); i++) {
+        ver.vlak(ver.klont(R(L, 0), d * R(0.26, 0.04), R(80, 40) * s, R(14, 7) * s, 4), '#ffffff', 0.9);
+      }
+
+      // Een reuzenrad op sommige kanten.
+      if (R() < 0.7) {
+        const cx = L * R(0.82, 0.18);
+        const cy = d * 0.32;
+        const r = 24 * s;
+        mid.streek(`M${(cx - r * 0.6).toFixed(1)} ${grond.toFixed(1)} L${cx.toFixed(1)} ${cy.toFixed(1)} L${(cx + r * 0.6).toFixed(1)} ${grond.toFixed(1)}`, '#ffffff', 2.2 * s);
+        mid.streek(`M${(cx - r).toFixed(1)} ${cy.toFixed(1)} a${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(2 * r).toFixed(1)} 0 a${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(-2 * r).toFixed(1)} 0`, '#ffffff', 2 * s);
+        for (let k = 0; k < 8; k++) {
+          const a = (k / 8) * Math.PI * 2;
+          const gx = cx + Math.cos(a) * r;
+          const gy = cy + Math.sin(a) * r;
+          mid.streek(`M${cx.toFixed(1)} ${cy.toFixed(1)} L${gx.toFixed(1)} ${gy.toFixed(1)}`, '#f6f1e4', 0.9 * s, 0.9);
+          mid.vlak(`M${(gx - 3 * s).toFixed(1)} ${(gy + 1 * s).toFixed(1)} h${(6 * s).toFixed(1)} v${(5 * s).toFixed(1)} h${(-6 * s).toFixed(1)} Z`, FEL[k % FEL.length]);
+        }
+        mid.stip(cx, cy, 2.6 * s, '#e8453c');
+      }
+
+      // De achtbaan: een golvend spoor over de volle lengte, op witte palen.
+      const golf = (x) => d * (0.34 + 0.14 * Math.sin(x / (52 * s) + 1.3) + 0.05 * Math.sin(x / (19 * s)));
+      for (let x = R(10, 0); x < L; x += 14 * s) {
+        mid.streek(`M${x.toFixed(1)} ${golf(x).toFixed(1)} V${grond.toFixed(1)}`, '#ffffff', 1.2 * s, 0.85);
+      }
+      let spoor = `M0 ${golf(0).toFixed(1)}`;
+      for (let x = 4 * s; x <= L; x += 4 * s) spoor += ` L${x.toFixed(1)} ${golf(x).toFixed(1)}`;
+      mid.streek(spoor, '#c2302a', 3.4 * s);
+      mid.streek(spoor, '#ff7a6e', 1.2 * s, 0.8);
+      const kx = L * R(0.7, 0.3);
+      for (let k = 0; k < 4; k++) {
+        const x = kx + k * 9 * s;
+        mid.vlak(`M${(x - 4 * s).toFixed(1)} ${(golf(x) - 6 * s).toFixed(1)} h${(8 * s).toFixed(1)} v${(5 * s).toFixed(1)} h${(-8 * s).toFixed(1)} Z`, FEL[(k + 1) % FEL.length]);
+      }
+
+      // Vlaggetjes in bogen.
+      for (let x = R(20, 0); x < L; x += 90 * s) {
+        const x1 = x + 90 * s;
+        const y = d * 0.1;
+        mid.streek(`M${x.toFixed(1)} ${y.toFixed(1)} Q${((x + x1) / 2).toFixed(1)} ${(y + 14 * s).toFixed(1)} ${x1.toFixed(1)} ${y.toFixed(1)}`, '#6a4a2a', 0.8 * s);
+        for (let t = 0.1; t < 0.95; t += 0.12) {
+          const fx = x + (x1 - x) * t;
+          const fy = y + 14 * s * 2 * t * (1 - t);
+          mid.vlak(`M${(fx - 3 * s).toFixed(1)} ${fy.toFixed(1)} h${(6 * s).toFixed(1)} l${(-3 * s).toFixed(1)} ${(7 * s).toFixed(1)} Z`, K(FEL));
+        }
+      }
+
+      // Het pad en het hek, met ballonnen eraan.
+      voor.vlak(`M0 ${grond.toFixed(1)} H${L.toFixed(1)} V${(d + 4).toFixed(1)} H0 Z`, '#ecd9a8');
+      for (let i = 0; i < n(80); i++) {
+        voor.stip(R(L, 0), d * R(1, 0.8), R(1.6, 0.7) * s, K(['#ffffff', '#ffe48a', '#d7c08a']), 0.8);
+      }
+      voor.vlak(`M0 ${(grond + 4 * s).toFixed(1)} H${L.toFixed(1)} V${(grond + 7.4 * s).toFixed(1)} H0 Z`, '#ffffff');
+      for (let x = R(16, 4); x < L; x += 24 * s) {
+        voor.vlak(`M${x.toFixed(1)} ${(grond - 2 * s).toFixed(1)} h${(4 * s).toFixed(1)} V${(d * 0.86).toFixed(1)} h${(-4 * s).toFixed(1)} Z`, K(FEL));
+      }
+      voor.streek(`M0 ${(grond + 7.4 * s).toFixed(1)} H${L.toFixed(1)}`, '#c9b27a', 1 * s, 0.7);
+      for (let i = 0; i < n(70); i++) {
+        const x = R(L, 0);
+        const y = d * R(0.5, 0.36);
+        const kl = K(FEL);
+        voor.streek(`M${x.toFixed(1)} ${(y + 7 * s).toFixed(1)} q${(2 * s).toFixed(1)} ${(6 * s).toFixed(1)} 0 ${(grond - y - 4 * s).toFixed(1)}`, '#6a4a2a', 0.6 * s, 0.7);
+        voor.ovaal(x, y, 5 * s, 6.2 * s, kl);
+        voor.ovaal(x - 1.6 * s, y - 2.2 * s, 1.4 * s, 2 * s, '#ffffff', 0.55);
+      }
+    },
+  },
 };
 
 // Geen wereld herkend? Dan het landhuis: donker hout doet nergens pijn.

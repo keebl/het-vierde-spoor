@@ -569,6 +569,49 @@ const SCENES = {
       g.append(pad(`M ${x1} 30 L ${x2} 140`, 'sc-regenlijn'));
     }
   },
+
+  // Een pretpark op een zonnige zaterdag: een reuzenrad, een achtbaan die
+  // over de tenten heen golft, en vlaggetjes. Net als het zwembad geen
+  // nacht en geen lantaarns, maar lucht en kleur.
+  pretpark(g) {
+    const ver = maak('g');
+    ver.append(rechthoek(0, 0, B, 70, 'sc-ver'));
+    [[40, 22, 60], [220, 14, 50], [430, 26, 64], [640, 16, 56]].forEach(([x, y, w]) => {
+      ver.append(pad(`M ${x} ${y + 12} q ${w / 4} -12 ${w / 2} 0 q ${w / 4} -9 ${w / 2} 0 Z`, 'sc-sneeuw'));
+    });
+    g.append(ver);
+
+    // Het reuzenrad.
+    const rad = maak('g');
+    rad.append(pad('M 600 132 L 640 70 L 680 132', 'sc-lijn'));
+    rad.append(pad('M 596 70 a 44 44 0 0 1 88 0 a 44 44 0 0 1 -88 0', 'sc-lijn'));
+    for (let k = 0; k < 8; k++) {
+      const a = (k / 8) * Math.PI * 2;
+      const x = 640 + Math.cos(a) * 44;
+      const y = 70 + Math.sin(a) * 44;
+      rad.append(pad(`M 640 70 L ${x.toFixed(1)} ${y.toFixed(1)}`, 'sc-lijn'));
+      rad.append(rechthoek(x - 5, y, 10, 8, k % 2 ? 'sc-licht' : 'sc-pompoen'));
+    }
+    g.append(rad);
+
+    // De achtbaan.
+    let spoor = 'M 0 92';
+    for (let x = 10; x <= 560; x += 10) spoor += ` L ${x} ${(80 + 26 * Math.sin(x / 60) + 8 * Math.sin(x / 17)).toFixed(1)}`;
+    g.append(pad(spoor, 'sc-lijn'));
+    for (let x = 20; x < 560; x += 34) g.append(rechthoek(x, 80 + 26 * Math.sin(x / 60), 2, 60, 'sc-mid'));
+
+    // Tenten en vlaggetjes.
+    const tent = maak('g');
+    [[80, 70], [250, 60], [430, 76]].forEach(([x, b]) => {
+      tent.append(pad(`M ${x} 132 L ${x + b / 2} 98 L ${x + b} 132 Z`, 'sc-mid'));
+      tent.append(rechthoek(x + 4, 132, b - 8, 18, 'sc-near'));
+    });
+    g.append(tent);
+    for (let x = 0; x < B; x += 26) {
+      g.append(pad(`M ${x} 10 l 12 0 l -6 10 Z`, (x / 26) % 2 ? 'sc-licht' : 'sc-pompoen'));
+    }
+    g.append(rechthoek(0, 140, B, H - 140, 'sc-near'));
+  },
 };
 
 // ---------------------------------------------------------------- de verf
