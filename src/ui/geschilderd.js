@@ -85,6 +85,16 @@ export const STOFFEN = {
   haar: { kern: '#5c3b22', koel: '#180e1e', warm: '#dcab6c', rand: 0.55 },
   haargrijs: { kern: '#9ea3a8', koel: '#262c3a', warm: '#ffffff' },
   touw: { kern: '#c0a068', koel: '#33261f', warm: '#ffe9bb', rand: 0.45, textuur: 'weefsel' },
+  // Van nu (specs/modern-worlds.md). Plastic glimt en heeft geen nerf of
+  // weefsel; een scherm en een ledstrip geven zelf licht, dus hun warme kant
+  // is bijna wit. Met deze vier kleuren ziet een ding er gegoten uit in
+  // plaats van getimmerd - en dat is het verschil tussen 1930 en nu.
+  kunststof: { kern: '#f2b81f', koel: '#5a2408', warm: '#fff6c2', rand: 0.8 },
+  kunststofroze: { kern: '#ec4f93', koel: '#4a0b30', warm: '#ffd2e8', rand: 0.8 },
+  kunststofblauw: { kern: '#2a86e6', koel: '#0c1c4c', warm: '#c4ecff', rand: 0.8 },
+  kunststofwit: { kern: '#e9eef3', koel: '#3a4662', warm: '#ffffff', rand: 0.9 },
+  scherm: { kern: '#2368d8', koel: '#0a1440', warm: '#aef4ff', rand: 1 },
+  neon: { kern: '#c043ff', koel: '#3a0a5a', warm: '#ffd8ff', rand: 1 },
 };
 
 // -------------------------------------------------------- stof per wereld

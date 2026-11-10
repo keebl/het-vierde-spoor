@@ -1826,4 +1826,162 @@ export const GESCHILDERD = {
     v('metaal', plaat(17.6, 37, 13, 2.6, { zak: 0.3 })),
     vloer('steenkoel', ovaal(24, 40.4, 10, 2.4)),
   ],
+
+  // ============================================================ van nu
+  //
+  // De moderne set (specs/modern-worlds.md). Het ruimtestation, de school,
+  // het ziekenhuis, het kantoor en het zwembad leenden voor de helft het
+  // meubilair van een landhuis uit 1930 en gaven het een nieuwe naam: een
+  // ridderharnas heette "het ruimtepak", een staande klok "de tijdzuil",
+  // een vogelverschrikker "de antennemast". Een naam verandert niets aan wat
+  // je ziet. Deze stukken zijn wat die namen beloofden.
+  //
+  // Van nu betekent hier: gegoten in plaats van getimmerd (de kunststoffen
+  // uit STOFFEN), schermen en ledjes die zelf licht geven, en strakke
+  // vormen - maar wel uit dezelfde bouwstenen als de rest, met het licht uit
+  // linksboven, anders vallen ze op het bord uit de toon.
+
+  // Een pak aan een standaard, met de helm erop. Geen vizier met spleten en
+  // geen pluim: een bol glas en een oranje streep.
+  ruimtepak: [
+    v('metaal', zuilvorm(24, 28, 2.6, 3.4, 10)),
+    v('kunststofwit', staaf(17.4, 17, 13, 27.6, 4.2)),
+    v('kunststofwit', staaf(30.6, 17, 35, 27.6, 4.2)),
+    v('kunststof', bol(12.8, 28.4, 2.4)),
+    v('kunststof', bol(35.2, 28.4, 2.4)),
+    v('kunststofwit', poot(17.4, 28, 6, 9, { krimp: 0.1 })),
+    v('kunststofwit', poot(24.6, 28, 6, 9, { krimp: 0.1 })),
+    v('kunststofwit', romp(16, 15.4, 16, 14, { taps: 0.06 })),
+    v('kunststof', plaat(16.4, 24, 15.2, 2.4, { zak: 0.3 })),
+    v('donker', romp(20, 17.6, 8, 5, { taps: 0.02 })),
+    v('water', bol(22, 20, 0.9), { glans: 1 }),
+    v('vuur', bol(25.6, 20, 0.9), { glans: 1 }),
+    v('kunststofwit', bol(24, 9.6, 6.6)),
+    v('scherm', ovaal(24.8, 10, 4.4, 3.4), { glans: 1 }),
+    v('donker', romp(16.2, 36.4, 7.6, 3.6, { taps: 0.04 })),
+    v('donker', romp(24.2, 36.4, 7.6, 3.6, { taps: 0.04 })),
+    vloer('metaal', plaat(12, 39.8, 24, 2.6, { zak: 0.4 })),
+  ],
+
+  // Vier schermen in een rek: een controlekamer, een studio, een etalage.
+  monitorwand: [
+    v('metaal', staaf(8.6, 5, 8.6, 40, 2.2)),
+    v('metaal', staaf(39.4, 5, 39.4, 40, 2.2)),
+    v('donker', romp(7, 5, 16.6, 11.6, { taps: 0.004 })),
+    v('donker', romp(24.4, 5, 16.6, 11.6, { taps: 0.004 })),
+    v('donker', romp(7, 18, 16.6, 11.6, { taps: 0.004 })),
+    v('donker', romp(24.4, 18, 16.6, 11.6, { taps: 0.004 })),
+    v('scherm', romp(8.2, 6.2, 14.2, 9.2, { taps: 0.004 }), { glans: 1 }),
+    v('scherm', romp(25.6, 6.2, 14.2, 9.2, { taps: 0.004 }), { glans: 1 }),
+    v('scherm', romp(8.2, 19.2, 14.2, 9.2, { taps: 0.004 }), { glans: 1 }),
+    v('scherm', romp(25.6, 19.2, 14.2, 9.2, { taps: 0.004 }), { glans: 1 }),
+    streep('water', 1, 'M10.4 9.4 H17 M10.4 12 H20'),
+    streep('neon', 1.1, 'M27.4 13.4 L30.4 10 L33.4 12 L37.6 8.2'),
+    v('vuur', bol(15.4, 23.8, 2.4), { glans: 1 }),
+    streep('kunststof', 1, 'M27.6 26 V23 M30.6 26 V21.6 M33.6 26 V24 M36.6 26 V22.4'),
+    v('metaal', plaat(8, 31.4, 32, 2, { zak: 0.3 })),
+    vloer('donker', plaat(6, 39.6, 36, 3, { zak: 0.4 })),
+  ],
+
+  // Een klok van nu heeft geen wijzers: rode cijfers op een zwart bord.
+  tijdscherm: [
+    v('metaal', staaf(13, 25, 12, 38.6, 2.2)),
+    v('metaal', staaf(35, 25, 36, 38.6, 2.2)),
+    v('donker', romp(6, 10, 36, 16, { taps: 0.01 })),
+    v('donker', romp(8.4, 12.4, 31.2, 11.2, { taps: 0.004 })),
+    streep('vuur', 1.7, 'M11.4 14.4 V21.6 M14.4 14.4 H18.4 V18 H14.4 V21.6 H18.4 M23 14.4 H27 V21.6 H23 M23 18 H27 M29.8 14.4 H33.8 V21.6 H29.8 V14.4'),
+    v('vuur', bol(20.7, 16.2, 0.8), { glans: 1 }),
+    v('vuur', bol(20.7, 19.8, 0.8), { glans: 1 }),
+    streep('water', 1, 'M35.8 21.6 H37.6'),
+    vloer('metaal', plaat(9, 38.4, 30, 2.6, { zak: 0.4 })),
+  ],
+
+  // Een sporttas op de grond: geen leren koffer met beslag.
+  sporttas: [
+    vloer('stofblauw', rol(10.4, 22, 27.2, 16, { rond: 5 })),
+    v('donker', ovaal(9.8, 30, 2.6, 7.2)),
+    v('donker', ovaal(38.2, 30, 2.6, 7.2)),
+    v('kunststof', plaat(10.6, 29, 26.8, 2.6, { zak: 0.3 })),
+    streep('metaal', 0.9, 'M12.4 23.6 Q24 21.8 35.6 23.6'),
+    v('donker', 'M16.6 22.8 Q19.4 13.6 24 14.2 Q28.6 13.6 31.4 22.8 L29.2 22.8 Q27.2 16.4 24 16.4 Q20.8 16.4 18.8 22.8 Z'),
+    v('papier', bol(24, 34, 1.6)),
+  ],
+
+  // Een rolkoffer met een uitschuifbare beugel. Gegoten schaal, ribbels,
+  // twee wieltjes.
+  rolkoffer: [
+    v('metaal', staaf(19, 4.4, 19, 14, 1.6, { krimp: 0 })),
+    v('metaal', staaf(29, 4.4, 29, 14, 1.6, { krimp: 0 })),
+    v('donker', plaat(17.4, 3, 13.2, 2.6, { zak: 0.3 })),
+    vloer('kunststofroze', romp(13, 13, 22, 25, { taps: 0.01, bol: 0.9 })),
+    streep('kunststofroze', 1, 'M17.6 15.4 V35.6 M24 15 V36.2 M30.4 15.4 V35.6'),
+    v('donker', plaat(21, 16.6, 6, 1.8, { zak: 0.2 })),
+    v('donker', bol(16.4, 39.6, 2.2)),
+    v('donker', bol(31.6, 39.6, 2.2)),
+  ],
+
+  // Een vat van nu: blauw gegoten kunststof, twee ribbels, een etiket en
+  // twee doppen bovenop. Het eikenhouten vat met hoepels is van vroeger.
+  drum: [
+    vloer('kunststofblauw', zuilvorm(24, 10, 22, 22, 29, { bol: 0.7 })),
+    v('kunststofblauw', ovaal(24, 10.2, 11, 2.4)),
+    v('kunststofblauw', plaat(12.4, 19, 23.2, 2.2, { zak: 0.4 })),
+    v('kunststofblauw', plaat(12.4, 30, 23.2, 2.2, { zak: 0.4 })),
+    v('kunststofwit', romp(18.6, 22.6, 10.8, 6, { taps: 0.02 })),
+    streep('donker', 0.8, 'M20.4 24.8 H27.6 M20.4 26.8 H25.6'),
+    v('kunststofwit', bol(18.4, 9.6, 1.5)),
+    v('kunststofwit', bol(29.4, 9.8, 1.1)),
+  ],
+
+  // Een drukvat op poten: bolle kop, een meter, een kraan, een gele band.
+  gastank: [
+    v('metaal', staaf(16, 31, 13.6, 39.8, 2.2)),
+    v('metaal', staaf(32, 31, 34.4, 39.8, 2.2)),
+    v('metaal', 'M14 14 Q14 6.4 24 6.4 Q34 6.4 34 14 L34 31.4 Q34 37.4 24 37.4 Q14 37.4 14 31.4 Z'),
+    v('kunststof', plaat(14, 22.4, 20, 3.6, { zak: 0.4 })),
+    streep('donker', 1, 'M16.4 23.4 L18 25.4 M20.4 23.4 L22 25.4 M24.4 23.4 L26 25.4 M28.4 23.4 L30 25.4'),
+    v('kunststofwit', bol(28.4, 14.6, 3.4)),
+    streep('vuur', 0.8, 'M28.4 14.6 L30.2 12.6'),
+    v('koper', romp(22.2, 2.6, 3.6, 4, { taps: 0.04 })),
+    v('koper', ovaal(24, 2.8, 4.2, 1.2)),
+    vloer('donker', plaat(10, 39.4, 28, 2.6, { zak: 0.4 })),
+  ],
+
+  // Een wastafel van nu: een witte kom op een kastje en een kraan uit de
+  // muur. Geen lampetkan, geen marmeren blad.
+  wasbak: [
+    v('spiegel', ovaal(24, 6.4, 9, 5), { glans: 1 }),
+    vloer('kunststofwit', romp(10, 25.4, 28, 15.6, { taps: 0.01 })),
+    streep('metaal', 0.8, 'M24 27.6 V39.4'),
+    v('metaal', plaat(20, 29.6, 2.6, 1.6, { zak: 0.1 })),
+    v('metaal', plaat(25.4, 29.6, 2.6, 1.6, { zak: 0.1 })),
+    v('kunststofwit', plaat(8, 22, 32, 3.8, { zak: 0.4 })),
+    v('kunststofwit', bak(24, 17.6, 20, 15, 5.4)),
+    v('water', plaat(17.6, 18.6, 12.8, 1.6, { zak: 0.3 }), { glans: 1 }),
+    v('metaal', staaf(24, 11.6, 24, 17.6, 1.8, { krimp: 0 })),
+    v('metaal', staaf(24, 12.2, 27.8, 13.6, 1.6)),
+  ],
+
+  // Het opstapje van nu is van plastic, met twee treden en een handgreep.
+  opstapkrukje: [
+    vloer('kunststof', 'M10 40 L10 26.4 Q10 25.4 11 25.4 L23.6 25.4 L23.6 14.6 Q23.6 13.6 24.6 13.6 L37 13.6 Q38 13.6 38 14.6 L38 40 Q24 40.8 10 40 Z'),
+    v('donker', plaat(9.4, 24.2, 15.6, 2.6, { zak: 0.3 })),
+    v('donker', plaat(23, 12.4, 15.6, 2.6, { zak: 0.3 })),
+    v('donker', romp(28, 18.4, 6, 3, { taps: 0 })),
+    v('donker', 'M13.4 40 Q13.4 36.4 16.4 36.4 L32 36.4 Q35 36.4 35 40 Z'),
+    streep('kunststof', 0.8, 'M12.6 30.6 H21 M26.4 25 H35.4 M26.4 30.6 H35.4'),
+  ],
+
+  // Een vakwerkmast met een schotel en een knipperlicht.
+  antennemast: [
+    v('metaal', staaf(18, 40, 22.4, 7, 2.2, { krimp: 0.2 })),
+    v('metaal', staaf(30, 40, 25.6, 7, 2.2, { krimp: 0.2 })),
+    streep('metaal', 0.9, 'M18.9 34 H29.1 M18.9 34 L28.2 28 M19.8 28 H28.2 M19.8 28 L27.4 22 M20.6 22 H27.4 M20.6 22 L26.5 16 M21.5 16 H26.5 M21.5 16 L25.6 10.4'),
+    v('metaal', staaf(26.4, 17, 31, 17.4, 1.4)),
+    v('kunststofwit', 'M29.4 11.6 Q36.8 9 40.6 15.8 Q41.8 21 37.6 23.4 Q34.2 18 29.4 11.6 Z'),
+    v('metaal', staaf(35.4, 16.6, 31.4, 18.4, 1.2)),
+    v('metaal', romp(22.4, 5.4, 3.2, 2.6, { taps: 0.04 })),
+    v('vuur', bol(24, 4.2, 1.7), { glans: 1 }),
+    vloer('donker', plaat(13, 39.4, 22, 3, { zak: 0.4 })),
+  ],
 };
