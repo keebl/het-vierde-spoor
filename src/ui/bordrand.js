@@ -2994,7 +2994,10 @@ export const RANDSTIJLEN = {
       }
       ver.spikkels(n(40), ['#ffffff', '#ffe2c4'], { y0: 2 * s, y1: d * 0.2, groot: 0.9, halo: 0.2 });
 
-      // De skyline ver weg: torens met een paar ramen aan.
+      // De skyline ver weg: torens met een paar ramen aan. De ramen gaan
+      // per kleur in één pad: als losse vlakken waren het er honderden, en
+      // daarmee was dit het traagste bord van allemaal.
+      const ramen = { '#ffd27a': '', '#ffb35c': '', '#9fdcff': '' };
       let x = R(10, -10);
       while (x < L) {
         const w = R(34, 16) * s;
@@ -3003,11 +3006,12 @@ export const RANDSTIJLEN = {
         if (R() < 0.3) ver.streek(`M${(x + w / 2).toFixed(1)} ${top.toFixed(1)} v${(-8 * s).toFixed(1)}`, '#3a2e5c', 1 * s);
         for (let wy = top + 4 * s; wy < straat - 6 * s; wy += 7 * s) {
           for (let wx = x + 3 * s; wx < x + w - 4 * s; wx += 6 * s) {
-            if (R() < 0.22) ver.vlak(`M${wx.toFixed(1)} ${wy.toFixed(1)} h${(2.6 * s).toFixed(1)} v${(3.4 * s).toFixed(1)} h${(-2.6 * s).toFixed(1)} Z`, K(['#ffd27a', '#ffb35c', '#9fdcff']), 0.85);
+            if (R() < 0.22) ramen[K(['#ffd27a', '#ffb35c', '#9fdcff'])] += `M${wx.toFixed(1)} ${wy.toFixed(1)} h${(2.6 * s).toFixed(1)} v${(3.4 * s).toFixed(1)} h${(-2.6 * s).toFixed(1)} Z`;
           }
         }
         x += w + R(6, 1) * s;
       }
+      for (const [kleur, pad] of Object.entries(ramen)) if (pad) ver.vlak(pad, kleur, 0.85);
 
       // De gevels dichtbij, met een neonbord hier en daar.
       x = R(20, -6);
@@ -3015,10 +3019,18 @@ export const RANDSTIJLEN = {
         const w = R(70, 44) * s;
         const top = d * R(0.42, 0.28);
         mid.vlak(`M${x.toFixed(1)} ${top.toFixed(1)} h${w.toFixed(1)} V${(straat + 2 * s).toFixed(1)} h${(-w).toFixed(1)} Z`, K(['#140f26', '#18112c']));
+        // Ramen per kleur in één pad, en één gloed per gevel in plaats van
+        // één per raam: dat scheelde honderden cirkels op een groot bord.
+        let aanPad = '';
+        let uitPad = '';
         for (let wx = x + 6 * s; wx < x + w - 10 * s; wx += 14 * s) {
-          const aan = R() < 0.4;
-          mid.vlak(`M${wx.toFixed(1)} ${(top + 6 * s).toFixed(1)} h${(8 * s).toFixed(1)} v${(10 * s).toFixed(1)} h${(-8 * s).toFixed(1)} Z`, aan ? '#ffcf7a' : '#0c0918', aan ? 0.9 : 1);
-          if (aan) mid.gloed(wx + 4 * s, top + 11 * s, 5 * s, '#ffb35c', 0.35, 0);
+          const raam = `M${wx.toFixed(1)} ${(top + 6 * s).toFixed(1)} h${(8 * s).toFixed(1)} v${(10 * s).toFixed(1)} h${(-8 * s).toFixed(1)} Z`;
+          if (R() < 0.4) aanPad += raam; else uitPad += raam;
+        }
+        if (uitPad) mid.vlak(uitPad, '#0c0918');
+        if (aanPad) {
+          mid.gloed(x + w / 2, top + 11 * s, Math.min(w * 0.3, 14 * s), '#ffb35c', 0.3, 0);
+          mid.vlak(aanPad, '#ffcf7a', 0.9);
         }
         if (R() < 0.45) {
           const kl = K(['#ff4fa8', '#3fe0ff', '#7dff9a']);
