@@ -3,7 +3,7 @@
 Voor de volgende sessie — mens of model. Lees eerst `ARCHITECTUUR.md` voor
 de kaart van de code, en `README.md` voor wat het spel is.
 
-**Laatst bijgewerkt:** 8 november 2026, commit `99e0d63`.
+**Laatst bijgewerkt:** 10 november 2026, commit `9539de4`.
 
 ---
 
@@ -27,11 +27,54 @@ Twee dingen volgen daaruit, en ze zijn allebei al eens misgegaan:
 
 ## Stand van zaken
 
-Laatste commit: `99e0d63`. De werkmap is schoon en **alles hieronder staat
+Laatste commit: `9539de4`. De werkmap is schoon en **alles hieronder staat
 live** op https://keebl.github.io/het-vierde-spoor/. De keuring stond groen
 op alle zeven toetsen voordat het de deur uit ging.
 
-### Wat er in deze ronde af is gekomen
+### Waar je aan begint
+
+Twee dingen staan open, en het eerste is het belangrijkste:
+
+1. **"Het ziet er gewoon niet zo leuk uit."** Het oordeel van de dochter,
+   en haar vader vertaalde het: saaie kleuren, saaie plaatjes, het mist
+   artistieke levendigheid. Daar ligt een eigen opdracht voor klaar in
+   **`specs/visual-liveliness.md`** - lees die, niet dit stukje. Er staat
+   in waarom het ontwerp zo ingetogen is (dat is een besluit, geen
+   verwaarlozing), wat er gisteren al geprobeerd is, waar elke tekening
+   woont, vijf richtingen met hun prijs, en de vraag die eerst beantwoord
+   moet worden: vond ze het bórd saai of de site eromheen? Dat zijn
+   verschillende bestanden.
+2. **De projectstandaard wacht op een merge.** Branch
+   `chore/adopt-standard`, pull request #1. Daarin verhuist dit bestand
+   naar `STATUS.md` en `ARCHITECTUUR.md` naar `docs/ARCHITECTURE.md`,
+   allebei vertaald naar het Engels, en komen `CLAUDE.md`, `docs/`,
+   `CHANGELOG.md` en `SECURITY.md` erbij. Zolang die niet samengevoegd is,
+   staat de helft van de documentatie alleen op die branch. Er staan drie
+   `TODO(guus)`-punten in waar hij zelf over moet beslissen: een licentie
+   (de repo is publiek en heeft er geen), de nieuwe naam van de site, en
+   wat er met de drie verborgen speltypes gebeurt.
+
+### Wat er sinds 8 november bij is gekomen
+
+**De plakkende balk dekte een kwart van het scherm af** (`9004f24`). Op een
+telefoon braken "Kruisjes vanzelf" en "Lijst om het bord" hun tekst over twee
+en drie regels; de balk werd 144 pixels en samen met de kop was dat 248 van
+de 997. Die twee schakelaars staan nu onder het bord (`bordschakelaars` in
+`player.js`); Uitsluiten en Schetsen blijven boven, want daar wissel je
+voortdurend tussen.
+
+**Elke naam staat in de aanwijzingenlijst** (`8857c68`), ook als er niets
+over hem gezegd wordt. Daarvoor werd zo'n naam overgeslagen en stonden er
+vier namen in een lijst voor vijf mensen. Aanleiding was haar tweede punt:
+*elke naam moet maar één tip krijgen*. Dat kan niet - nagemeten over twaalf
+puzzels per niveau heeft een bord van vijf namen er gemiddeld 6,6 nodig om de
+oplossing vast te leggen, en zestien namen 41,3 - en de verdeling forceren in
+`groeiTotVast` hielp nauwelijks (zeven naar zes namen zonder tip, uitschieter
+bleef vier), omdat `snoei` het daarna terugdraait. Die proef is
+teruggedraaid. Wat wél kon: de naam zichtbaar maken, met erbij dat zijn plek
+uit de rest volgt.
+
+### Wat er in de ronde daarvoor af is gekomen
 
 **Soorten zaak** (`src/content/zaken.js`, nieuw). Niet elke puzzel is meer
 een moord: er zijn ook verdwijningen en diefstallen. Elke zaak levert eigen
