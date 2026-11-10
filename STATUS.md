@@ -7,7 +7,7 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Nothing in progress. Working tree clean on `main` at `8cb4b1d`; everything is live on
+- Nothing in progress. Working tree clean on `main` at `d8d161c`; everything is live on
   https://keebl.github.io/het-vierde-spoor/ with the keuring green on all seven checks.
 - This branch (`chore/adopt-standard`, pull request #1) adds the project standard and
   nothing else: no application code, dependencies or CI were touched. Until it merges,
@@ -20,9 +20,13 @@ standing guidance rather than state moved to `CLAUDE.md`.
    brief were built on 2026-11-10: the single gold accent gave way to a bright set
    (`--pop-1` … `--pop-6`, pink as the click colour), colour blobs in the background, a
    rainbow stripe under the header, a colour per difficulty level, a purple dark mode, and
-   brighter floors and tokens on the board. Furniture, portraits and board frames were not
-   touched — **directions 2, 3 and 4 of the brief are still open**. Nothing is proven until
-   she has seen it; that is the next step, and it is a measurement, not a formality.
+   brighter floors and tokens on the board. A second round the same day took on the board
+   itself: lighter layers (it was sepia under four brown overlays), a colour per room
+   (`KAMERTINT` in `board-rooms.js`), walls in the world's colour, brighter materials in
+   `STOFFEN` — and the name bar no longer sticks, because it lay over the board while you
+   scrolled. Furniture, portraits and board frames were not touched — **directions 2, 3
+   and 4 of the brief are still open**. Nothing is proven until she has seen it; that is
+   the next step, and it is a measurement, not a formality.
 2. **An ending when you solve it.** Today the screen only says "Opgelost". The culprit
    should appear, with a closing line and a button to the next case. Biggest gap for the
    intended player.

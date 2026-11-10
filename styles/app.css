@@ -1293,8 +1293,11 @@ table.latin td.cell { width: 78px; height: 46px; }
    altijd samen op één scherm staan - op een telefoon stond je anders
    steeds te scrollen tussen de naam die je wilt pakken en het vakje waar
    hij moet komen. */
+/* 2026-11-10: niet meer plakkend. De balk lag bij het scrollen over het bord
+   heen, en dat bleef de klacht ook nadat hij lager was gemaakt. Hij staat nu
+   gewoon boven het bord. */
 .palet {
-  position: sticky;
+  position: static;
   /* Onder de kop, niet eronder vandaan: die plakt zelf ook bovenaan (zie
      .top). Met top:0 schoof de namenrij er precies achter weg en zag je
      alleen Uitsluiten en Schetsen nog staan. */
@@ -2315,3 +2318,24 @@ select, input[type="text"] { border-radius: 999px; border-width: 2px; }
   .nav a { font-size: var(--t-sm); padding: 6px 9px; }
   .puzzle-head h1 { font-size: 1.75rem; }
 }
+
+/* ------------------------------------------------- het bord zelf, vrolijk
+   Muren in de kleur van de wereld in plaats van bruin hout: lichtgekleurd
+   bovenvlak, een diepe voet in dezelfde kleur. `body` ervoor zodat dit wint
+   van de materiaalregels per wereld hoger in dit bestand. De voorpagina
+   heeft geen wereld; daar is het landhuisgoud. */
+body .kamerbord .muurvoet,
+body .kamerbord .buitenmuur-voet { stroke: color-mix(in oklab, var(--wkleur, #d8a657) 42%, #24163a); }
+body .kamerbord .muurtop,
+body .kamerbord .buitenmuur-top { stroke: color-mix(in oklab, var(--wkleur, #d8a657) 68%, #ffffff); }
+body .kamerbord .muurglans { stroke: #ffffff; opacity: 0.75; }
+body .kamerbord .muurnerf { stroke: transparent; }
+
+/* De kamernaam als een gekleurd label met een witte rand, niet meer als
+   vervaagd potlood. */
+body .kamerbord .kamernaam {
+  fill: color-mix(in oklab, var(--wkleur, #e8337f) 50%, #24163a);
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 4.5;
+}
+.vakjeslijn { stroke: rgba(42, 27, 61, 0.26); }
