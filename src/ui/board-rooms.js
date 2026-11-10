@@ -57,7 +57,9 @@ const BREED = 0.68;
 // De vloer volgt het soort ruimte, niet het kamernummer: tegels in de keuken,
 // parket in de bibliotheek, gras buiten. Zie src/content/kamersoorten.js.
 
-const PENNING = ['#b8452f', '#2f6ea8', '#3f7d4f', '#8a4f9e', '#c07a1d', '#1f7f85'];
+// Fel, niet gedekt: een penning is iets wat je oppakt, en hij moet van het
+// bord af springen. Zie specs/visual-liveliness.md.
+const PENNING = ['#ef3e6d', '#2f7cf6', '#14a873', '#8b4dff', '#ff8a12', '#0fb3c4'];
 
 // Uit de hand getrokken lijnen.
 //
