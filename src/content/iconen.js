@@ -677,7 +677,7 @@ export const ICOON_VAN = {
   "de controlekamer": "camera",
   "de puzzelkamer": "puzzelstuk",
   "de schuilkelder": "trapAf",
-  "de wachtruimte": "stoel",
+  "de wachtzaal": "stoel",
   "de kluiskamer": "kluis",
   "de verborgen gang": "geheimeDeur",
   "de archiefkamer": "archief",

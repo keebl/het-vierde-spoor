@@ -210,7 +210,7 @@ export const SOORT_VAN = {
   'de controlekamer': 'werkplaats',
   'de puzzelkamer': 'bibliotheek',
   'de schuilkelder': 'kelder',
-  'de wachtruimte': 'zaal',
+  'de wachtzaal': 'zaal',
   'de kluiskamer': 'werkplaats',
   'de verborgen gang': 'gang',
   'de archiefkamer': 'bibliotheek',
@@ -557,7 +557,7 @@ export const VORM_VAN = {
   'de verborgen gang': 'smal',
   'de lobby': 'groot',
   'het spiegeldoolhof': 'groot',
-  'de wachtruimte': 'groot',
+  'de wachtzaal': 'groot',
   'de kluiskamer': 'klein',
   'de schuilkelder': 'klein',
   // Pretpark Zonnestraal
@@ -1381,7 +1381,7 @@ export const WERELDMEUBELS = {
       'de globe', 'de stapel kratten', 'de kweekbak', 'de kuipplant',
     ],
     anders: {
-      // de lobby, het spiegeldoolhof, de wachtruimte
+      // de lobby, het spiegeldoolhof, de wachtzaal
       'de haard': ['de loungebank', 'loungebank'],
       'de leren fauteuil': ['de leunstoel', 'fauteuil'],
       'de staande klok': ['de aftelklok', 'tijdscherm'],
