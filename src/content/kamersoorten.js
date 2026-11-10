@@ -202,6 +202,19 @@ export const SOORT_VAN = {
   'de wasserette': 'werkplaats',
   'de sportschool': 'zaal',
   'het appartement': 'slaapkamer',
+  // Escaperoom Klokslag
+  'de lobby': 'zaal',
+  'de lasergang': 'gang',
+  'het spiegeldoolhof': 'zaal',
+  'het geheime lab': 'laboratorium',
+  'de controlekamer': 'werkplaats',
+  'de puzzelkamer': 'bibliotheek',
+  'de schuilkelder': 'kelder',
+  'de wachtruimte': 'zaal',
+  'de kluiskamer': 'werkplaats',
+  'de verborgen gang': 'gang',
+  'de archiefkamer': 'bibliotheek',
+  'de kostuumkamer': 'slaapkamer',
 };
 
 // De vloer per soort. dessin verwijst naar een patroon in board-rooms.js.
@@ -521,6 +534,14 @@ export const VORM_VAN = {
   'de lift': 'klein',
   'de gamekamer': 'klein',
   'de wasserette': 'klein',
+  // Escaperoom Klokslag
+  'de lasergang': 'smal',
+  'de verborgen gang': 'smal',
+  'de lobby': 'groot',
+  'het spiegeldoolhof': 'groot',
+  'de wachtruimte': 'groot',
+  'de kluiskamer': 'klein',
+  'de schuilkelder': 'klein',
 };
 
 export const vormVan = (plek) => VORM_VAN[plek] ?? 'vrij';
@@ -598,6 +619,13 @@ export const WERELDVLOER = {
     tint: '#5d6fb0',
     kracht: 0.32,
     dessin: { steen: 'beton', ruiten: 'tegels' },
+  },
+  // Binnen, en het licht komt uit ledstrips: alles schuift naar een koel
+  // groenblauw. De kelder is beton, de gangen zijn tegels.
+  escaperoom: {
+    tint: '#3d8c86',
+    kracht: 0.4,
+    dessin: { steen: 'beton', ruiten: 'tegels', tapijt: 'tegels' },
   },
 };
 
@@ -714,6 +742,9 @@ export const WERELDSTOF = {
   },
   // Een stad van nu: donker fineer en staal, niets dat glimt als goud.
   stad: { houtrood: 'houtdonker', goud: 'metaal', steen: 'steenkoel' },
+  // Een escaperoom is ingericht als decor, maar met spullen van nu: donker
+  // fineer, staal, en niets wat van goud glimt behalve een kostuum.
+  escaperoom: { houtrood: 'houtdonker', steen: 'steenkoel' },
 };
 
 // ------------------------------------------------ hetzelfde meubel, andere wereld
@@ -1297,6 +1328,60 @@ export const WERELDMEUBELS = {
       'de draaibank': ['de droogtrommel', 'autoclaaf'],
     },
   },
+
+  // ---------------------------------------------- Escaperoom Klokslag
+  // Elke kamer is een puzzel: een kluis met een cijferslot, een gang vol
+  // lasers, een wand van spiegels. Ingericht als decor, maar alles van nu.
+  escaperoom: {
+    volledig: true,
+    zelfde: [
+      'de kapstok', 'de gereedschapskist', 'het schakelpaneel', 'de boekenkast',
+      'de globe', 'de stapel kratten', 'de kweekbak', 'de kuipplant',
+    ],
+    anders: {
+      // de lobby, het spiegeldoolhof, de wachtruimte
+      'de haard': ['de loungebank', 'loungebank'],
+      'de leren fauteuil': ['de leunstoel', 'fauteuil'],
+      'de staande klok': ['de aftelklok', 'tijdscherm'],
+      'de vleugel': ['de speakerbox', 'luidspreker'],
+      'de wandspiegel': ['de spiegelwand', 'spiegelpaneel'],
+      'het borstbeeld': ['de vitrine', 'vitrine'],
+      // de lasergang en de verborgen gang
+      'de paraplubak': ['de prullenbak', 'prullenbak'],
+      'de console': ['het infopunt', 'infozuil'],
+      'de spiegelstandaard': ['de laserpaal', 'laserpaal'],
+      'het uurwerk': ['de bewakingscamera', 'camerapaal'],
+      'het harnas': ['de brandblusser', 'brandblusser'],
+      // het geheime lab
+      'het kruidenkabinet': ['de glazen kast', 'glaskast'],
+      'de distilleerketel': ['de afzuigkap', 'zuurkast'],
+      'de weegschaal': ['de microscoop', 'microscoop'],
+      'de kolvenrij': ['de proefopstelling', 'proeventafel'],
+      // de controlekamer en de kluiskamer
+      'de stookpot': ['de camerawand', 'monitorwand'],
+      'de magazijnstelling': ['de stelling met rekwisieten', 'laadrek'],
+      'het slijpwiel': ['de regietafel', 'navigatieconsole'],
+      'de draaibank': ['het kopieerapparaat', 'kopieerapparaat'],
+      // de puzzelkamer en de archiefkamer
+      'de katheder': ['de lessenaar', 'lessenaar'],
+      'de commode': ['het ladenblok', 'archiefkast'],
+      'de leesstoel': ['de zitzak', 'zitzak'],
+      'de kaartentafel': ['de codekluis', 'kluis'],
+      // de schuilkelder
+      'het wijnrek': ['het ordnerrek', 'dossierrek'],
+      'het eikenhouten vat': ['het watervat', 'drum'],
+      'de kolenbunker': ['de noodvoorraad', 'vrachtcontainer'],
+      'de werktafel': ['de werkbank', 'werkbank'],
+      'de touwhaspel': ['de kabelhaspel', 'touwhaspel'],
+      // de kostuumkamer
+      'het bed': ['het kostuumrek', 'kledingrek'],
+      'de kleerkast': ['de lockerkast', 'lockerkast'],
+      'het nachtkastje': ['het kastje', 'kastje'],
+      'het wasstel': ['de wastafel', 'wasbak'],
+      'de hutkoffer': ['de rolkoffer', 'rolkoffer'],
+      'de voetenbank': ['het opstapkrukje', 'opstapkrukje'],
+    },
+  },
 };
 
 
@@ -1354,6 +1439,13 @@ export const WERELDVERWANT = {
   // In Hoogstad staat geen bibliotheek: de grote zalen wijken uit naar de
   // gangen en de flat.
   stad: { zaal: ['gang', 'slaapkamer'] },
+  // Een escaperoom heeft geen sterrenwacht, geen keuken en geen tuin: elke
+  // uitwijk blijft binnen het gebouw.
+  escaperoom: {
+    bibliotheek: ['zaal', 'gang'],
+    werkplaats: ['kelder', 'laboratorium'],
+    kelder: ['werkplaats', 'gang'],
+  },
 };
 
 // ------------------------------------------------- tekeningen van vroeger
@@ -1386,6 +1478,7 @@ export const MODERNE_WERELDEN = [
   'station', 'school', 'ziekenhuis', 'kantoor', 'zwembad',
   'ruimteschip',
   'stad',
+  'escaperoom',
 ];
 
 // De naam en de tekening die in deze wereld bij een meubelstuk horen.

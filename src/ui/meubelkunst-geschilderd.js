@@ -2599,4 +2599,89 @@ export const GESCHILDERD = {
     v('metaal', zuilvorm(13.6, 35.6, 3, 4, 3.6)),
     vloer('donker', ovaal(13.6, 40.4, 7.4, 2)),
   ],
+
+  // ============================================= Escaperoom Klokslag
+  //
+  // Een escaperoom is een gebouw van nu waarin alles een puzzel is. De
+  // spiegels zijn panelen met een ledrand, geen vergulde lijsten; de kluis
+  // heeft een cijferslot.
+
+  // Een spiegelpaneel zonder lijst, met een ledrand en twee pootjes.
+  spiegelpaneel: [
+    v('metaal', staaf(15, 34, 12, 39.8, 2)),
+    v('metaal', staaf(33, 34, 36, 39.8, 2)),
+    v('spiegel', romp(12, 3, 24, 32, { taps: 0.004 }), { glans: 1 }),
+    streep('neon', 1, 'M12.8 4.4 V33.6 M35.2 4.4 V33.6'),
+    streep('kunststofwit', 1.4, 'M16 26 L26 8 M20 30 L31 11'),
+    v('kunststof', bol(30, 9.4, 1.4), { glans: 1 }),
+    vloer('metaal', plaat(9.6, 39.4, 28.8, 2.4, { zak: 0.3 })),
+  ],
+
+  // Een vitrine op een sokkel, met een edelsteen onder het glas.
+  vitrine: [
+    vloer('kunststofwit', romp(14, 26, 20, 15, { taps: 0.02 })),
+    v('donker', plaat(13, 23.6, 22, 2.6, { zak: 0.3 })),
+    v('glas', romp(15, 7, 18, 16.8, { taps: 0 }), { glans: 0.5 }),
+    v('stof', kussen(19.4, 19.6, 9.2, 3.4)),
+    v('neon', 'M24 11.6 L28 16 L24 20.6 L20 16 Z', { glans: 1 }),
+    streep('kunststofwit', 0.8, 'M21 16 H27 M24 11.8 L22 16 L24 20.4 M24 11.8 L26 16 L24 20.4'),
+    streep('kunststofwit', 1.2, 'M16.6 21 L22 8.6'),
+    v('donker', plaat(14, 5.4, 20, 2.2, { zak: 0.2 })),
+    v('kunststof', bol(24, 6.6, 0.9), { glans: 1 }),
+  ],
+
+  // Een laserpaal: rode stralen dwars door de gang naar een ontvanger.
+  laserpaal: [
+    v('donker', zuilvorm(40, 10, 3, 4, 29)),
+    streep('vuur', 1, 'M14.6 12 L38.6 16 M14.6 20 L38.6 22.4 M14.6 28 L38.6 26.4'),
+    v('donker', zuilvorm(12, 6, 4.4, 5.4, 33)),
+    v('vuur', bol(14, 12, 1.5), { glans: 1 }),
+    v('vuur', bol(14, 20, 1.5), { glans: 1 }),
+    v('vuur', bol(14, 28, 1.5), { glans: 1 }),
+    v('kunststof', bol(12, 5.4, 1.2), { glans: 1 }),
+    vloer('donker', plaat(6, 39.6, 38, 2.4, { zak: 0.3 })),
+  ],
+
+  // Een bewakingscamera op een paal, met een rood opnamelichtje.
+  camerapaal: [
+    v('metaal', zuilvorm(16, 10, 2.4, 3.6, 28)),
+    v('metaal', staaf(16, 10.4, 24, 10.4, 2)),
+    v('donker', plaat(20.4, 3.6, 18, 2.2, { zak: 0.2 })),
+    v('kunststofwit', 'M21 6.6 L37 5.4 L37.6 12.4 L22 13.6 Z'),
+    v('donker', romp(17.6, 7.4, 4.6, 5, { taps: 0.04 })),
+    v('scherm', bol(19.4, 9.8, 1.5), { glans: 1 }),
+    v('vuur', bol(34.4, 8.4, 0.9), { glans: 1 }),
+    v('metaal', plaat(11, 37, 10, 2.6, { zak: 0.3 })),
+    vloer('steenkoel', ovaal(16, 40.4, 8.4, 2.2)),
+  ],
+
+  // Een kluis met een cijferslot, een draaiwiel en een groen lichtje.
+  kluis: [
+    vloer('donker', romp(8, 8, 32, 33, { taps: 0.01 })),
+    v('metaal', romp(11, 11, 26, 27, { taps: 0.004 })),
+    v('donker', romp(13.6, 13.4, 10, 12.6, { taps: 0.01 })),
+    v('scherm', romp(14.6, 14.4, 8, 3, { taps: 0 }), { glans: 1 }),
+    streep('kunststofwit', 1.3, 'M16 20 h.01 M18.6 20 h.01 M21.2 20 h.01 M16 22.6 h.01 M18.6 22.6 h.01 M21.2 22.6 h.01'),
+    v('metaal', ring(30, 24, 4.6, 1.3), { gat: true }),
+    streep('metaal', 1, 'M30 19.8 V28.2 M25.8 24 H34.2'),
+    v('metaal', bol(30, 24, 1.4)),
+    v('stofgroen', bol(18.6, 31, 1), { glans: 1 }),
+    v('metaal', plaat(10.2, 14, 1.8, 4, { zak: 0 })),
+    v('metaal', plaat(10.2, 30, 1.8, 4, { zak: 0 })),
+  ],
+
+  // Een kostuumrek op wieltjes: twee blouses en een cape aan hangertjes.
+  kledingrek: [
+    v('metaal', staaf(9, 8, 9, 38, 2, { krimp: 0 })),
+    v('metaal', staaf(39, 8, 39, 38, 2, { krimp: 0 })),
+    v('metaal', staaf(8, 8, 40, 8, 2, { krimp: 0 })),
+    streep('metaal', 0.8, 'M16.4 8 V10.4 M25 8 V10.4 M33 8 V10.4'),
+    v('stofblauw', 'M11.4 12.4 L14.6 10.8 Q16.4 12.8 18.2 10.8 L21.4 12.4 L22 16 L20.2 16.4 L20.2 31 L12.6 31 L12.6 16.4 L10.8 16 Z'),
+    v('kunststof', 'M20 12.4 L23.2 10.8 Q25 12.8 26.8 10.8 L30 12.4 L30.6 16 L28.8 16.4 L28.8 27 L21.2 27 L21.2 16.4 L19.4 16 Z'),
+    v('stof', doek(28.6, 10.4, 9, 26, { golf: 1.6 })),
+    v('goud', bol(33, 12, 1)),
+    vloer('metaal', plaat(7, 37.4, 34, 2.2, { zak: 0.3 })),
+    v('donker', bol(9.4, 40.6, 1.8)),
+    v('donker', bol(38.6, 40.6, 1.8)),
+  ],
 };

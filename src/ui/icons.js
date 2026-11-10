@@ -321,6 +321,12 @@ export const ICONS = {
   film: ['M4 6h16v12H4Z', 'M8 6v12', 'M16 6v12', 'M4 10h4', 'M4 14h4', 'M16 10h4', 'M16 14h4'],
   wasmachine: ['M5 3h14v18H5Z', 'M5 7h14', 'M12 10a4.5 4.5 0 1 0 0 9a4.5 4.5 0 0 0 0-9Z', 'M8 5h.01', 'M11 5h.01'],
   halter: ['M3 10v4', 'M6 7v10', 'M18 7v10', 'M21 10v4', 'M6 12h12'],
+
+  // ------------------------------------------------ Escaperoom Klokslag
+  hangslot: ['M7 11h10v10H7Z', 'M9 11V8a3 3 0 0 1 6 0v3', 'M10 15h.01', 'M12 15h.01', 'M14 15h.01', 'M10 18h4'],
+  vergrootglas: ['M10 4a6 6 0 1 0 0 12a6 6 0 0 0 0-12Z', 'M14.5 14.5L20 20', 'M8 8a3 3 0 0 1 3-1'],
+  puzzelstuk: ['M5 8h4a2 2 0 1 1 4 0h4v4a2 2 0 1 1 0 4v4h-4a2 2 0 1 0-4 0H5v-4a2 2 0 1 0 0-4Z'],
+  laser: ['M4 5v14', 'M20 5v14', 'M4 8l16 2', 'M4 13h16', 'M4 18l16-2'],
 };
 
 import { icoonVan } from '../content/iconen.js';
