@@ -2852,4 +2852,40 @@ export const GESCHILDERD = {
     v('donker', bol(23, 28.6, 1.4)),
     v('donker', romp(29, 31, 6.6, 6, { taps: 0.02 })),
   ],
+
+  // ===================================================== de gedeelde set
+  //
+  // De laatste twee van de moderne set: een bureau met een laptop en een
+  // sta-bureau. Ze staan in de school, het kantoor en het ziekenhuis, waar
+  // eerst een kaartentafel met groen laken en een katheder stonden.
+
+  // Een bureau met een opengeklapte laptop, een mok en een ladeblok.
+  laptopbureau: [
+    v('metaal', staaf(9, 24.6, 9, 40, 2, { krimp: 0 })),
+    vloer('kunststofwit', romp(29, 24.6, 11, 15.8, { taps: 0.01 })),
+    streep('metaal', 0.8, 'M31 29.6 H38 M31 34.6 H38'),
+    v('kunststofwit', plaat(5, 21.6, 38, 3.2, { zak: 0.4 })),
+    v('donker', romp(13.6, 7.6, 20, 13, { taps: 0 })),
+    v('scherm', romp(15, 9, 17.2, 10.2, { taps: 0 }), { glans: 1 }),
+    streep('kunststofwit', 0.7, 'M17 12 H25 M17 14.4 H29 M17 16.8 H23'),
+    v('metaal', 'M12.4 19.4 L35.6 19.4 L39 22.2 L9 22.2 Z'),
+    streep('donker', 0.6, 'M14 20.8 H34'),
+    v('kunststofroze', romp(36, 16.6, 4, 5, { taps: 0.04 })),
+  ],
+
+  // Een sta-bureau: hoog, op twee telescooppoten, met een scherm en een
+  // toetsenbord erop en twee knopjes om hem hoger of lager te zetten.
+  stabureau: [
+    v('metaal', staaf(12, 21, 12, 38.6, 2.6, { krimp: 0.1 })),
+    v('metaal', staaf(36, 21, 36, 38.6, 2.6, { krimp: 0.1 })),
+    v('metaal', plaat(7, 38.4, 10, 2.4, { zak: 0.2 })),
+    vloer('metaal', plaat(31, 38.4, 10, 2.4, { zak: 0.2 })),
+    v('hout', plaat(5, 17.6, 38, 3.4, { zak: 0.4 })),
+    v('donker', romp(33.4, 21, 5, 2.2, { taps: 0 })),
+    v('stofgroen', bol(35, 22.1, 0.6), { glans: 1 }),
+    v('metaal', staaf(22, 12.4, 22, 17.6, 2)),
+    v('donker', romp(12, 2.6, 20, 11, { taps: 0 })),
+    v('scherm', romp(13.2, 3.8, 17.6, 8.6, { taps: 0 }), { glans: 1 }),
+    v('kunststofwit', plaat(14, 15.8, 14, 1.6, { zak: 0.1 })),
+  ],
 };
