@@ -51,7 +51,7 @@ is omgekeerd: woorden, namen, tabellen, en geen enkele berekening.
 Dat is waarom je een wereld kunt toevoegen door alleen woorden op te
 schrijven, en waarom je het meubilair kunt omdopen zonder dat een puzzel
 verandert. Houd die scheiding in stand; hij is de reden dat dit project
-na dertien werelden nog te overzien is.
+na zeventien werelden nog te overzien is.
 
 ### De motor (`src/engine/`)
 
@@ -78,14 +78,14 @@ De generator werkt in vier stappen, en die volgorde is de hele truc:
 
 | bestand | wat erin staat |
 |---|---|
-| `worlds.js` | de dertien decors: namen, plekken, voorwerpen, tijden, en de zinnen waarmee die wereld over een plattegrond praat. |
+| `worlds.js` | de zeventien decors: namen, plekken, voorwerpen, tijden, en de zinnen waarmee die wereld over een plattegrond praat. |
 | `kamersoorten.js` | **het hart van de inhoud.** Welke soort ruimte een plek is, welke vloer daarbij hoort, welk meubilair erin kan staan, en per wereld hoe dat meubilair daar heet. |
 | `zaken.js` | wat voor zaak het is: een moord, een verdwijning of een diefstal. Levert woorden, geen logica. |
 | `namen.js` | bij welke naam welk portret hoort (404+ namen, met de hand). |
 | `iconen.js` | bij welk woord welk pictogram hoort. Met de hand, woord voor woord. |
 | `rooms-text.js` | van een ruwe aanwijzing naar een Nederlandse zin. |
 | `spelregels.js` | de regels in woorden, per speltype. |
-| `catalog.js` | de vierenzeventig vaste zaken (alleen instellingen, geen puzzels). |
+| `catalog.js` | de tweeëntachtig vaste zaken (alleen instellingen, geen puzzels). |
 | `assignments.js` | de vier opdrachten en de vier speltypes, plus wat er zichtbaar is. |
 
 ### Het scherm (`src/ui/`)
@@ -95,7 +95,7 @@ De generator werkt in vier stappen, en die volgorde is de hele truc:
 | `player.js` | het speelscherm: markeringen bijhouden, controleren, hinten, de oplossing geven. |
 | `board-rooms.js` | het speurbord tekenen: vloeren, muren, meubels, figuren, kruisjes. |
 | `bordrand.js` | de lijst om het bord, één per wereld. Het grootste bestand, en bijna helemaal tekening. |
-| `meubelkunst-geschilderd.js` | 112 meubelstukken, geschilderd. |
+| `meubelkunst-geschilderd.js` | 193 meubelstukken, geschilderd - waarvan een moderne set van ruim zeventig voor de werelden van nu. |
 | `meubelkunst.js` | diezelfde stukken als lijnicoon (vergelijkpagina en noodgeval). |
 | `personenkunst-geschilderd.js` | de koppen van de figuren. |
 | `geschilderd.js` | de schildermotor: hoe een vorm licht en schaduw krijgt. |
@@ -125,6 +125,10 @@ MEUBELS_VAN[soort]         wat er in zo'n ruimte kan staan
   WERELDMEUBELS[wereld]    hoe dat meubilair in die wereld heet
   WERELDSTOF[wereld]       waar het daar van gemaakt is
 
+OUDERWETS                  tekeningen die alleen in een landhuis, bos of
+MODERNE_WERELDEN           grafkelder horen; een wereld van nu mag ze onder
+                           geen enkele naam op een bord zetten
+
 VORM_VAN[plek]             strook, vlak of hoekje — bepaalt welke naam
                            op welke kamer belandt
 VOORZETSEL_VAN[plek]       "in", "op" of "bij" de plek
@@ -146,12 +150,12 @@ iemand kan instellen.
 | script | wat het nareken |
 |---|---|
 | `check.mjs` | bouwt elke combinatie van opdracht × wereld × speltype × niveau, twee seeds elk. Ruim duizend puzzels. |
-| `check-catalog.mjs` | de vierenzeventig vaste zaken. |
+| `check-catalog.mjs` | de tweeëntachtig vaste zaken. |
 | `check-regels.mjs` | ruim zeventig regels over elke gebouwde puzzel: precies één oplossing, elke aanwijzing waar, geen aanwijzing die het antwoord verklapt, elke zin met een hoofdletter en een punt… |
 | `check-ai-guard.mjs` | dat een herschreven tekst namen, ontkenningen en getallen intact laat. |
 | `check-weggevers.mjs` | dat de inleiding niets weggeeft wat er niet hoort. |
 | `check-iconen.mjs` | dat elk woord in de inhoud een eigen pictogram heeft. |
-| `check-kamers.mjs` | de tabellen hierboven: elke plek een soort, elk meubelstuk een eigen tekening, geen twee namen die op elkaar lijken, elke naam een portret, elke kamernaam die klopt met zijn vloer. |
+| `check-kamers.mjs` | de tabellen hierboven: elke plek een soort, elk meubelstuk een eigen tekening, geen twee namen die op elkaar lijken, elke naam een portret, elke kamernaam die klopt met zijn vloer, en geen tekening uit 1930 (`OUDERWETS`) in een wereld van nu (`MODERNE_WERELDEN`). |
 
 `npm run check:snel` draait alleen de drie toetsen die geen puzzels bouwen
 (iconen, kamers, AI-vangnet) en is in een seconde klaar. Dat vangt verreweg

@@ -1,6 +1,6 @@
 # Het Vierde Spoor
 
-Deductiepuzzels in dertien werelden en zes moeilijkheidsgraden. Je kiest
+Deductiepuzzels in zeventien werelden en zes moeilijkheidsgraden. Je kiest
 alleen hoe zwaar je het wilt hebben; het decor krijg je. Elke druk op de knop
 levert een nieuwe zaak op, ter plekke gebouwd en ter plekke nagerekend.
 
@@ -10,7 +10,7 @@ staan ze hier: een machine die er net zo veel maakt als ze wil, elk met
 precies één oplossing. Dat is de maatstaf waaraan alles hier gemeten wordt -
 niet of de code mooi is, maar of zij er een uur zoet mee is.
 
-De bibliotheek met vierenzeventig vaste zaken bestaat nog wel, maar staat
+De bibliotheek met tweeëntachtig vaste zaken bestaat nog wel, maar staat
 nergens meer in het zicht: `#/puzzels` werkt, het menu wijst er niet heen.
 
 Elke puzzel heeft gegarandeerd **precies een oplossing**, en die is altijd

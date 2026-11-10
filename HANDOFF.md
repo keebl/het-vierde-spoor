@@ -3,7 +3,7 @@
 Voor de volgende sessie — mens of model. Lees eerst `ARCHITECTUUR.md` voor
 de kaart van de code, en `README.md` voor wat het spel is.
 
-**Laatst bijgewerkt:** 10 november 2026, commit `9539de4`.
+**Laatst bijgewerkt:** 10 november 2026, branch `claude/adoring-noyce-f45804` (vier werelden van nu).
 
 ---
 
@@ -27,9 +27,12 @@ Twee dingen volgen daaruit, en ze zijn allebei al eens misgegaan:
 
 ## Stand van zaken
 
-Laatste commit: `9539de4`. De werkmap is schoon en **alles hieronder staat
-live** op https://keebl.github.io/het-vierde-spoor/. De keuring stond groen
-op alle zeven toetsen voordat het de deur uit ging.
+**Nog niet live.** Alles uit "Vier werelden van nu" hieronder staat op de
+branch `claude/adoring-noyce-f45804` en is níét samengevoegd met `main`.
+Guus koos ervoor fase 1 (eerlijke tekeningen) en de vier nieuwe werelden in
+één keer uit te brengen, na één volledige keuring. Live op
+https://keebl.github.io/het-vierde-spoor/ staat nog de stand van `9539de4`
+plus de bordrestyle van 10 november.
 
 ### Waar je aan begint
 
@@ -53,6 +56,81 @@ Twee dingen staan open, en het eerste is het belangrijkste:
    `TODO(guus)`-punten in waar hij zelf over moet beslissen: een licentie
    (de repo is publiek en heeft er geen), de nieuwe naam van de site, en
    wat er met de drie verborgen speltypes gebeurt.
+
+### Vier werelden van nu (10 november, nog niet live)
+
+Opdracht: `specs/modern-worlds.md`. Guus meldde na de restyle: "moderne
+kleuren met oude iconen - een ridder in een ruimteschip en een ouderwetse
+spiegel, dat kan niet". En zijn dochter wilde modernere werelden.
+
+**Fase 1: een tekening mag nooit tegen zijn naam ingaan.** Het station, de
+school, het ziekenhuis, het kantoor en het zwembad leenden voor de helft
+het meubilair van het landhuis en gaven het alleen een nieuwe naam: "het
+ruimtepak" was het ridderharnas, "de tijdzuil" de staande klok, "de
+antennemast" de vogelverschrikker, "het linnenrek" het wijnrek. Nu:
+
+- `OUDERWETS` en `MODERNE_WERELDEN` in `kamersoorten.js`, en
+  `check-kamers.mjs` faalt met `OUDERWETSE TEKENING IN MODERNE WERELD`
+  zodra een wereld van nu er eentje op een bord kán zetten - ook via de
+  uitwijk naar een verwante soort. Dat waren er 71.
+- Elk van die slots is één-op-één geruild voor een eerlijke moderne
+  tekening (nooit weggehaald): `maxMeubels` is voor alle dertien bestaande
+  werelden gemeten vóór en na en is gelijk gebleven, en een vingerafdruk
+  van 18 borden per wereld (plattegrond, meubelplaatsen, figuren,
+  oplossing, aanwijzingen) is identiek aan `f74d2b8`. Alleen de namen van
+  de meubels zijn veranderd. (Eén meting gaf voor halloween op niveau 6
+  een ander resultaat; bij herhalen was het weer gelijk. Dat is de klok
+  in `naSnoei`, zie "Eerder opgemerkt".)
+- Daarbij ook de omgedoopte stukken die niet in de lijst staan maar wel
+  logen: een nachtkastje met een kaars in het ziekenhuis (nu een wit
+  kastje), "de scanner" en "de frankeermachine" die een draaibank waren
+  (nu een CT-scanner en een kopieerapparaat), "de slippersmand" en "de
+  handdoekplank" (nu een parapluhouder en een echt handdoekrek).
+- Vier nieuwe materialen in `STOFFEN`: gegoten kunststof in geel, roze,
+  blauw en wit, een oplichtend `scherm` en `neon`.
+
+**Fase 2: vier nieuwe werelden**, elk compleet zoals het zwembad:
+**Sterrenschip Zwaluw** (`ruimteschip`, een schip in een sprong - niet het
+station), **Hoogstad** (`stad`, avond), **Escaperoom Klokslag**
+(`escaperoom`, het "doolhof" - een decor, geen nieuw spel; de aftelklok
+staat alleen als versiering in de rand) en **Pretpark Zonnestraal**
+(`pretpark`, overdag, `dag: true`). Elk: woorden, zeven soorten ruimte met
+een eigen `WERELDVERWANT` zodat de uitwijk in de wereld blijft, een
+volledige meubellaag, vloer, materialen, iconen, bordrand, sfeertekening,
+muurkleur, licht en donker palet, en twee vaste zaken in de bibliotheek.
+Geen waterattractie in het pretpark, dus ook geen gazonmeubels in water.
+
+**De keuring** stond op `dc6ab54` groen op alle zeven toetsen
+(`volledige keuring exit=0`; de veegronde duurt nu bijna twaalf minuten,
+het geheel ruim een kwartier). De eerste ronde viel over één echte fout:
+in de escaperoom heette een ruimte "kamer" terwijl vijf kamernamen al op
+"kamer" eindigen - nu "ruimte", en "de wachtruimte" werd "de wachtzaal".
+Rendertijd van een 16×16-bord: de nieuwe werelden zitten op of onder het
+landhuis (het traagste bestaande); Hoogstad zat er eerst 20% boven door
+honderden losse raampjes in de rand, die nu per kleur één pad zijn.
+
+**De moderne set.** 69 nieuwe tekeningen in `meubelkunst-geschilderd.js`
+(van 124 naar 193). Daaronder de gedeelde set uit de spec: laptopbureau,
+sta-bureau, gamestoel, spelcomputer, zitzak, loungebank, slimme koelkast,
+projector, laadpaal, monitorwand, speaker en booglamp (plus de bestaande
+beeldscherm, automaat en koffieautomaat). Die staan nu ook in de school,
+het kantoor en het ziekenhuis, op plekken waar een kaartentafel met groen
+laken, een katheder of een borstbeeld stond.
+
+**Wat je moet weten als je verder bouwt:**
+- Een wereld van nu toevoegen: zet hem in `MODERNE_WERELDEN`, dan bewaakt
+  de keuring hem meteen.
+- Meubelnamen mogen niet op hetzelfde woord eindigen binnen één soort plus
+  zijn uitwijk (`-bank`, `-tafel`, `-kast`...). Dat was het meeste werk bij
+  het benoemen; een naam van twee woorden ("de rij stoeltjes") telt niet mee.
+- De bordranden tekenen een ding dat je moet kunnen lezen (de aftelklok)
+  binnen `b.rechtop(x, y)`, anders staat het op drie kanten gedraaid.
+- **Nieuwe random puzzels landen nu in een andere wereld** dan voorheen:
+  `wereldVoorSeed` rekent modulo zeventien in plaats van dertien. Bestaande
+  links blijven gelijk (de wereld staat in de URL). Dat stond als
+  geaccepteerd in de spec.
+- **Volgende stap: laat haar de vier werelden zien en schrijf op welke ze
+  het leukst vindt en waarom** (de meting uit de spec).
 
 ### Wat er sinds 8 november bij is gekomen
 
@@ -191,19 +269,24 @@ Erbij gekomen: `ARCHITECTUUR.md` (de kaart van de code) en dit bestand.
 - *De naam van de site.* "Het Vierde Spoor" gaat veranderen; hij heeft nog
   niet gezegd waarin. Het speltype heet sinds vandaag **Reconstructie**
   (was "Speurdoku", dat te dicht bij Murdoku lag).
-- *Modernere voorwerpen.* Zijn dochter vindt de spullen te jaren-vijftig.
-  We hebben gekozen voor nieuwe lichte werelden in plaats van de basisset
-  hertekenen — maar de basisset blijft een landhuis uit 1930 (een haard,
-  een vleugel, een hutkoffer, een kolenbunker). Als de klacht terugkomt,
-  is de volgende stap die set moderniseren, en dat raakt elke wereld.
-- *Namen die om een tekening heen gebogen zijn.* In het zwembad staan "de
-  slippersmand" en "de handdoekplank": namen die gekozen zijn omdat er
-  toevallig een paraplubak en een wandtafel te hergebruiken waren. Guus
-  heeft dat opgemerkt. De eerlijke oplossing is die stukken echt tekenen,
-  niet de naam verder verbuigen. **Les voor de volgende keer: als een
-  tekening liegt, teken hem. Een wereldlaag kan namen omdopen, geen beeld.**
+- *Modernere voorwerpen.* Gedaan voor de werelden van nu (zie "Vier
+  werelden van nu"). De basisset zelf blijft een landhuis uit 1930 en dat
+  is goed zo voor het landhuis, de kerst, halloween, de academie en
+  Regenstad; hem hertekenen is richting 2 van `specs/visual-liveliness.md`
+  en een apart besluit.
+- *Namen die om een tekening heen gebogen zijn.* Opgelost (zie "Vier
+  werelden van nu"), en voor de werelden van nu afgedwongen door de
+  keuring. **De les blijft: als een tekening liegt, teken hem. Een
+  wereldlaag kan namen omdopen, geen beeld.**
 
 **Eerder opgemerkt, nog niet opgelost**
+
+- **Een 16×16-bord volgt niet helemaal uit de seed.** `naSnoei` in
+  `generate-rooms.js` stopt na 900 ms wandkloktijd. Op een drukke machine
+  (of een trage telefoon) snoeit hij minder weg, en dan krijgt dezelfde
+  link een andere set aanwijzingen. Gezien op 10 november toen de keuring
+  tegelijk liep. De plattegrond en de oplossing blijven gelijk, de
+  aanwijzingen niet. Repareren verschuift bestaande borden: eerst beslissen.
 
 - Een afsluiting als je het goed hebt. Nu staat er alleen "Opgelost".
   Daar hoort de dader in beeld te komen, met een slotzin en een knop naar
