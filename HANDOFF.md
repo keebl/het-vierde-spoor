@@ -66,6 +66,10 @@ wereldkleur zelf. Op het bord: fellere vloeren per soort (`VLOER_VAN`) en
 fellere penningen. De versiering staat als één blok onderaan `app.css`
 ("vrolijk aangekleed"). Meubels, portretten en bordranden zijn níét
 aangeraakt - dat zijn richtingen 2 tot 4 in `specs/visual-liveliness.md`.
+Tweede ronde dezelfde dag, het bord zelf: lichtere lagen (het bord was sepia
+door vier bruine overlagen), elke kamer een eigen kleur (`KAMERTINT` in
+`board-rooms.js`), muren in de wereldkleur, fellere stoffen in `STOFFEN`.
+En de namenbalk plakt niet meer: hij lag bij het scrollen over het bord.
 **Volgende stap: laat het haar zien en schrijf op wat ze zegt.**
 
 **De plakkende balk dekte een kwart van het scherm af** (`9004f24`). Op een
