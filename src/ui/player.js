@@ -412,6 +412,8 @@ function cluePanel(puzzle, state, draw, persist) {
 // vierenvijftig zinnen waarin je niet terugvond wat er over Hendrik gezegd
 // was. Nu staan ze onder de naam waar ze over gaan.
 //
+// Elke naam krijgt een kopje, ook als er niets over hem gezegd wordt.
+//
 // Elke aanwijzing staat één keer, onder de eerste naam die erin voorkomt, en
 // houdt zijn eigen nummer. Komt iemand als tweede naam voor - "Ada stond ten
 // noorden van Bram" staat bij Ada - dan krijgt Bram eronder een verwijzing
@@ -447,7 +449,16 @@ function perNaam(puzzle, extraClues, knopVoor) {
   for (let p = 0; p < puzzle.personen.length; p++) {
     const mijn = groepen.get(p) ?? [];
     const verwijzingen = ookIn.get(p) ?? [];
-    if (!mijn.length && !verwijzingen.length) continue;
+    // Een naam waar niets over gezegd wordt, werd hier overgeslagen. Op een
+    // bord van vijf stonden er dan vier namen in de lijst, en dat leest als
+    // een fout: alsof die ene vergeten is.
+    //
+    // Hij is niet vergeten, hij is overbodig. De aanwijzingen moeten samen de
+    // oplossing vastleggen, en wat daarna nog weg kan, gaat weg (zie snoei in
+    // generate-rooms.js) - dus als iemands plek al volgt uit de rest, blijft
+    // er niets over om over hem te zeggen. Dat is geen gat maar het laatste
+    // zetje, en het hoort er dus te staan.
+    const leeg = !mijn.length && !verwijzingen.length;
     const kop = el('p', { class: 'clue-kop' }, [
       el('span', { class: 'clue-kop-naam', text: puzzle.personen[p] }),
       p === puzzle.slachtofferIdx
@@ -456,9 +467,14 @@ function perNaam(puzzle, extraClues, knopVoor) {
     ]);
     const lijst = el('div', { class: 'clues' });
     for (const clue of mijn) lijst.append(knopVoor(clue));
-    uit.push(el('div', { class: 'clue-groep' }, [
+    uit.push(el('div', { class: leeg ? 'clue-groep clue-groep-leeg' : 'clue-groep' }, [
       kop,
-      lijst,
+      leeg
+        ? el('p', {
+          class: 'clue-leeg',
+          text: 'Hierover staat niets. Deze plek volgt uit de rest: als alle anderen staan, is er nog één vakje over.',
+        })
+        : lijst,
       verwijzingen.length
         ? el('p', {
           class: 'clue-ook',
@@ -498,14 +514,15 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions) {
   if (puzzle.kind === 'kamer') {
     const vanzelf = kruisjesVanzelf();
     return [
-      personenPalet(puzzle, state, onCell, {
-        kruisjes: actions.kruisjes, rand: actions.rand,
-        kruisjesAan: vanzelf, randAan: randAan(),
-      }),
+      personenPalet(puzzle, state, onCell),
       el('div', { class: 'board-wrap' }, renderKamerbord(
         puzzle, state, { klikCel: onCell, klikMeubel: toonMeubel },
         { rand: randAan(), kruisjesVanzelf: vanzelf },
       )),
+      bordschakelaars({
+        kruisjes: actions.kruisjes, rand: actions.rand,
+        kruisjesAan: vanzelf, randAan: randAan(),
+      }),
       klepje('legenda', 'Wat er op het bord staat', false, [renderLegenda(puzzle)]),
       klepje('uitleg', 'Hoe je dit bord bedient', false, [
         el('p', {
@@ -555,11 +572,13 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions) {
 // verdachte aan, en op een bord met zestien namen betekende dat: eerst
 // zestien penningen voorbij schuiven voordat je bij je potlood bent. Nu
 // staan de namen boven en de twee standen eronder, altijd op dezelfde plek.
+// Verder dan die twee gaat deze balk niet: wat je maar één keer instelt
+// staat onder het bord, zie bordschakelaars.
 //
 // De hele balk plakt bovenaan vast zodra je naar beneden scrolt (zie .palet
 // in de opmaak). Daarmee staan de namen en het bord altijd samen op één
 // scherm, ook op een telefoon.
-function personenPalet(puzzle, state, onCell, acties) {
+function personenPalet(puzzle, state, onCell) {
   const balk = el('div', { class: 'palet' });
   const namen = el('div', { class: 'palet-namen' });
   const standen = el('div', { class: 'palet-standen' });
@@ -600,16 +619,24 @@ function personenPalet(puzzle, state, onCell, acties) {
   schets.addEventListener('click', () => onCell(null, -2));
   standen.append(schets);
 
-  // En daarnaast twee schakelaars. Ze horen bij het bord en niet in de
-  // werkbalk onderaan - daar stonden ze tussen Controleer en Printen, en
-  // dan vind je ze niet terwijl je aan het puzzelen bent.
-  //
-  // Ze zien er met opzet anders uit dan Uitsluiten en Schetsen. Die twee
-  // zijn standen: er staat er altijd precies één aan, en ze bepalen wat
-  // een klik op het bord dóét. Deze twee veranderen niets aan je klik, ze
-  // zetten iets aan of uit. Vandaar het streepje ertussen, de hoekige
-  // vorm en het woordje "aan" of "uit" erin.
-  standen.append(el('span', { class: 'palet-scheiding', 'aria-hidden': 'true' }));
+  return balk;
+}
+
+// De twee schakelaars die bij het bord horen, maar niet in de plakkende balk.
+//
+// Ze stonden er wel, naast Uitsluiten en Schetsen, en dat kostte te veel.
+// Op een telefoon braken hun teksten over twee en drie regels; de balk werd
+// daardoor 144 pixels hoog en dekte samen met de kop een kwart van het scherm
+// af - en die balk plakt, dus dat kwart zat permanent over de puzzel heen.
+//
+// Het verschil is wat je ermee doet. Uitsluiten en Schetsen zijn standen:
+// je wisselt er voortdurend tussen terwijl je puzzelt, dus die horen binnen
+// handbereik te blijven. Deze twee zet je één keer per puzzel goed. Die
+// mogen onder het bord staan, waar ze de ruimte hebben.
+//
+// Ze zien er ook met opzet anders uit: hoekig, met het woordje "aan" of
+// "uit" erin, omdat ze niets veranderen aan wat een klik op het bord doet.
+function bordschakelaars(acties) {
   const schakel = (naam, aan, fn) => {
     const b = el('button', {
       class: 'palet-schakel',
@@ -622,12 +649,10 @@ function personenPalet(puzzle, state, onCell, acties) {
     b.addEventListener('click', fn);
     return b;
   };
-  standen.append(
+  return el('div', { class: 'bordschakelaars' }, [
     schakel('Kruisjes vanzelf', acties.kruisjesAan, acties.kruisjes),
     schakel('Lijst om het bord', acties.randAan, acties.rand),
-  );
-
-  return balk;
+  ]);
 }
 
 function toolbar(puzzle, state, actions) {

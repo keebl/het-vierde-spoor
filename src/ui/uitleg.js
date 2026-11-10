@@ -73,7 +73,7 @@ export function renderUitleg(mount) {
         ]),
         el('p', {}, [
           el('b', { text: 'Kruisjes vanzelf. ' }),
-          el('span', { text: 'Zodra je iemand neerzet, kruist het bord uit zichzelf af waar niemand meer kan staan: de rest van die rij en kolom. Dat scheelt werk, maar het neemt je ook een stap af — met de knop in de balk zet je het uit.' }),
+          el('span', { text: 'Zodra je iemand neerzet, kruist het bord uit zichzelf af waar niemand meer kan staan: de rest van die rij en kolom. Dat scheelt werk, maar het neemt je ook een stap af — met de knop onder het bord zet je het uit.' }),
         ]),
         el('p', {}, [
           el('b', { text: 'Wat is dat ding? ' }),
@@ -81,7 +81,7 @@ export function renderUitleg(mount) {
         ]),
         el('p', {}, [
           el('b', { text: 'De lijst om het bord. ' }),
-          el('span', { text: 'De sierlijst eromheen kost ruimte: op een klein bord is hij ruim een derde van de breedte. Op een telefoon staat hij daarom vanzelf uit; met de knop zet je hem aan.' }),
+          el('span', { text: 'De sierlijst eromheen kost ruimte: op een klein bord is hij ruim een derde van de breedte. Op een telefoon staat hij daarom vanzelf uit; met de knop onder het bord zet je hem aan.' }),
         ]),
       ]),
     ])
