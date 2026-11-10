@@ -7,19 +7,22 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Nothing in progress. Working tree clean on `main` at `82ff799`; everything is live on
+- Nothing in progress. Working tree clean on `main` at `8cb4b1d`; everything is live on
   https://keebl.github.io/het-vierde-spoor/ with the keuring green on all seven checks.
 - This branch (`chore/adopt-standard`, pull request #1) adds the project standard and
   nothing else: no application code, dependencies or CI were touched. Until it merges,
   half the documentation exists only here.
 
 ## Next
-1. **Make it look alive.** The daughter's verdict on the site: dull colours, dull
-   drawings, no artistic life. The brief is written and ready to be picked up cold —
-   **`specs/visual-liveliness.md`**. It covers why the design is restrained (a decision,
-   not neglect), what was already tried, where every drawing lives, five directions with
-   their cost, and the question that has to be answered first: is the *board* dull or the
-   site around it? Those are different files.
+1. **Show her the cheerful restyle and write down what she says.** The daughter's verdict
+   was: dull colours, dull drawings, no artistic life. The owner answered the opening
+   question of `specs/visual-liveliness.md` with "both", and directions 1 and 5 of that
+   brief were built on 2026-11-10: the single gold accent gave way to a bright set
+   (`--pop-1` … `--pop-6`, pink as the click colour), colour blobs in the background, a
+   rainbow stripe under the header, a colour per difficulty level, a purple dark mode, and
+   brighter floors and tokens on the board. Furniture, portraits and board frames were not
+   touched — **directions 2, 3 and 4 of the brief are still open**. Nothing is proven until
+   she has seen it; that is the next step, and it is a measurement, not a formality.
 2. **An ending when you solve it.** Today the screen only says "Opgelost". The culprit
    should appear, with a closing line and a button to the next case. Biggest gap for the
    intended player.
@@ -43,6 +46,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   standard is "all rights reserved"; MIT only by decision (ADR).
 
 ## Recent decisions
+- 2026-11-10 — The restrained palette was reopened on purpose: one gold accent on cream
+  became a bright set with pink as the click colour, because the player it is built for
+  found it dull. The decoration sits in one block at the bottom of `styles/app.css`, and
+  still uses no image files. See `specs/visual-liveliness.md` → Decision.
 - 2026-11-10 — Exactly one clue per name is impossible, so every name is shown instead.
   Measured over twelve puzzles per level: five names need 6.6 clues on average to pin the
   solution, sixteen names 41.3. Forcing a balanced spread in `groeiTotVast` barely moved it

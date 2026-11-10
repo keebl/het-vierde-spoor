@@ -1,7 +1,23 @@
 # Spec: make it look alive
 
-Status: draft
+Status: accepted (directions 1 and 5)
 Date: 2026-11-10
+
+## Decision (2026-11-10)
+
+The owner answered the first question: **both** — the site and the puzzles. His words:
+livelier, cheerful colours that appeal to teenagers, less minimalist, "gewoon leuk
+aangekleed". That reopens the palette decision at the top of `styles/app.css`:
+
+- The single gold accent is replaced by a bright set (`--pop-1` … `--pop-6`: pink,
+  orange, yellow, teal, blue, purple). Pink is the click colour; the others decorate.
+- Cream paper becomes a light page with soft colour blobs; dark mode becomes deep purple
+  instead of near-black.
+- Inside a case the page still takes the world's colour, but stronger, and the world
+  accent is a saturated version of the world colour instead of a hint on rust.
+- On the board: brighter floors per room kind and brighter token colours. The furniture
+  drawings, portraits and frames are not touched in this round (directions 2–4 stay open).
+- Still no image files: every decoration is CSS or inline SVG.
 
 Handover brief. Written to be opened cold in a new session: everything you need is
 here or linked from here. The code is Dutch, this document is English — see

@@ -180,29 +180,31 @@ export const SOORT_VAN = {
 
 // De vloer per soort. dessin verwijst naar een patroon in board-rooms.js.
 //
-// Deze kleuren zijn met opzet verzadigd en warm. De eerste versie was een
+// Deze kleuren zijn met opzet verzadigd en warm, en sinds 2026-11-10 nog
+// een slag feller: zonnig geel in de keuken, roze vloerbedekking in de
+// slaapkamer, mintgroen in het lab (specs/visual-liveliness.md). De eerste versie was een
 // rij pastels, en dan ziet een plattegrond eruit als een bouwtekening: kaal
 // en kil. Een keuken hoort warm te zijn, een grafkelder koud, een bos groen.
 // Dat verschil tussen de kamers is wat een bord sfeer geeft.
 export const VLOER_VAN = {
-  keuken:       { vul: '#d9c091', lijn: '#b39a6a', dessin: 'tegels' },
-  zaal:         { vul: '#cb9f62', lijn: '#a67c41', dessin: 'planken' },
-  bibliotheek:  { vul: '#b5884f', lijn: '#8f6835', dessin: 'planken-dwars' },
-  kelder:       { vul: '#a89878', lijn: '#86795c', dessin: 'steen' },
-  slaapkamer:   { vul: '#c99183', lijn: '#a26f62', dessin: 'tapijt' },
-  gang:         { vul: '#c6b291', lijn: '#9c8a70', dessin: 'ruiten' },
-  werkplaats:   { vul: '#a2abb4', lijn: '#808a94', dessin: 'beton' },
-  buiten:       { vul: '#9bc174', lijn: '#79a052', dessin: 'gras' },
-  grafkelder:   { vul: '#95978b', lijn: '#74766a', dessin: 'steen' },
-  laboratorium: { vul: '#9cc4b8', lijn: '#77a295', dessin: 'tegels' },
-  sterrenwacht: { vul: '#a8865c', lijn: '#836742', dessin: 'planken' },
+  keuken:       { vul: '#f4d47f', lijn: '#d1ad55', dessin: 'tegels' },
+  zaal:         { vul: '#e6a95c', lijn: '#c4873a', dessin: 'planken' },
+  bibliotheek:  { vul: '#c98a4a', lijn: '#a46a2e', dessin: 'planken-dwars' },
+  kelder:       { vul: '#b9a27a', lijn: '#977f58', dessin: 'steen' },
+  slaapkamer:   { vul: '#f0a0b4', lijn: '#cf7d93', dessin: 'tapijt' },
+  gang:         { vul: '#e8c48a', lijn: '#c4a066', dessin: 'ruiten' },
+  werkplaats:   { vul: '#9fb7d4', lijn: '#7b95b4', dessin: 'beton' },
+  buiten:       { vul: '#8fd16a', lijn: '#6cae49', dessin: 'gras' },
+  grafkelder:   { vul: '#a3a6b8', lijn: '#808396', dessin: 'steen' },
+  laboratorium: { vul: '#8ee0cf', lijn: '#64bcaa', dessin: 'tegels' },
+  sterrenwacht: { vul: '#c48f55', lijn: '#a06e36', dessin: 'planken' },
   // Een serre is binnen. Terracotta tegels, geen gras - en al helemaal
   // geen kampvuur, zie MEUBELS_VAN.serre.
-  serre:        { vul: '#c9a584', lijn: '#a38163', dessin: 'tegels' },
+  serre:        { vul: '#f0a679', lijn: '#cc8457', dessin: 'tegels' },
   // Een bad is water. De drie baden hadden hiervoor de soort `buiten`, en
   // kregen hun water alleen via VLOER_VAN_PLEK - terwijl hun meubilair van
   // het gazon bleef komen. Nu is het een soort op zichzelf.
-  bad:          { vul: '#4fb4d4', lijn: '#3391b3', dessin: 'water' },
+  bad:          { vul: '#3fc6ee', lijn: '#1fa3cc', dessin: 'water' },
 };
 
 // Wat staat er in zo'n ruimte? Naam plus de tekening die erbij hoort.

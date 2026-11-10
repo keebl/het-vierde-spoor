@@ -1,5 +1,14 @@
 /* Het Vierde Spoor.
-   Een ontwerpsysteem in plaats van losse opmaak:
+   Een ontwerpsysteem in plaats van losse opmaak.
+
+   2026-11-10: de ingetogen versie (crème papier, één gouden accent) was
+   "gewoon niet zo leuk" voor de speler voor wie dit gemaakt is. Het palet is
+   nu vrolijk: roze is de klikkleur, en vijf andere felle kleuren (--pop-*)
+   mogen versieren. Zie specs/visual-liveliness.md. Wat hieronder over goud
+   en crème staat is de geschiedenis van die keuze; de regel "de pagina
+   neemt de kleur van de wereld aan" geldt nog steeds.
+
+   Oorspronkelijk:
    - EEN accentkleur (goud), uitsluitend voor dingen waar je op klikt
    - een vaste ruimtemaat en een vaste letterschaal
    - de hele pagina neemt de kleur van de wereld aan zodra je een zaak
@@ -19,22 +28,32 @@
   /* Crème papier in plaats van zwart: een puzzelboek dat open op tafel ligt.
      De tekeningen draaien mee - silhouetten staan nu tegen een lichte lucht,
      wat ze eerder helderder maakt dan minder. */
-  --bg: #f7f2e8;
-  --surface: #fffdf7;
-  --surface-2: #f1eade;
-  --surface-3: #e7decd;
-  --line: #dccfb8;
-  --line-soft: #ece4d5;
+  --bg: #fff8f0;
+  --surface: #ffffff;
+  --surface-2: #f7f0ff;
+  --surface-3: #ece1ff;
+  --line: #e5d5f5;
+  --line-soft: #f1e8fa;
 
-  --text: #2b241c;
-  --text-2: #5f5547;
-  --text-3: #8b8070;
+  --text: #2a1b3d;
+  --text-2: #5b4a72;
+  --text-3: #8a7ca0;
 
-  --accent: #a3551f;
-  --accent-soft: #f8e8d4;
-  --accent-ink: #fffaf0;
-  --good: #2e7d4f;
-  --bad: #b03a3a;
+  --accent: #e8337f;
+  --accent-soft: #ffe2ef;
+  --accent-ink: #ffffff;
+  --good: #1f9d63;
+  --bad: #d7263d;
+
+  /* De vrolijke kleuren. Roze is ook --accent; de rest versiert. */
+  --pop-1: #ff4f9a;
+  --pop-2: #ff9f1c;
+  --pop-3: #ffcf33;
+  --pop-4: #18c3a8;
+  --pop-5: #3a86ff;
+  --pop-6: #8b4dff;
+  --regenboog: linear-gradient(90deg, var(--pop-1), var(--pop-2), var(--pop-3), var(--pop-4), var(--pop-5), var(--pop-6));
+  --schaduw-pop: 0 4px 0 rgba(42, 27, 61, 0.14), 0 10px 24px rgba(139, 77, 255, 0.12);
 
   --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
   --s5: 24px; --s6: 32px; --s7: 48px; --s8: 72px;
@@ -42,7 +61,7 @@
   --t-xs: 0.75rem; --t-sm: 0.86rem; --t-base: 0.95rem;
   --t-md: 1.06rem; --t-lg: 1.3rem; --t-xl: 1.75rem; --t-2xl: 2.4rem;
 
-  --r-sm: 6px; --r: 10px; --r-lg: 16px;
+  --r-sm: 10px; --r: 16px; --r-lg: 22px;
 
   --serif: ui-serif, "Iowan Old Style", Palatino, Georgia, serif;
   --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -660,13 +679,15 @@ input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: -1p
    lichter, want daar hangt de nevel. De verlopen zelf staan in scenes.js en
    halen hun kleur hier op, zodat donker en licht allebei kloppen. */
 :root {
-  --sc-ver-top: #b4bfd0;   --sc-ver-voet: #d2d9e4;
-  --sc-mid-top: #8792a6;   --sc-mid-voet: #a9b2c2;
-  --sc-near-top: #5a6477;  --sc-near-voet: #7a8496;
-  --sc-diep-top: #3c4456;  --sc-diep-voet: #565f72;
-  --sc-grond-top: #525b6d; --sc-grond-voet: #6d7688;
-  --sc-boom-top: #3c5c3e;  --sc-boom-voet: #577c57;
-  --sc-gloed: #f0b44a;
+  /* Was grijsblauw: alle dertien tekeningen dezelfde mistige middag. Nu een
+     schemering in lila en paars, zodat de wereldkleur erover kan gloeien. */
+  --sc-ver-top: #c9bff5;   --sc-ver-voet: #ffd9ec;
+  --sc-mid-top: #9f8de6;   --sc-mid-voet: #c2b0f2;
+  --sc-near-top: #6f58c9;  --sc-near-voet: #8f78dc;
+  --sc-diep-top: #45309a;  --sc-diep-voet: #6249b8;
+  --sc-grond-top: #523aa8; --sc-grond-voet: #7058c4;
+  --sc-boom-top: #1f8f6a;  --sc-boom-voet: #3dbb86;
+  --sc-gloed: #ffc93c;
   --sc-nevel: #ffffff;
 }
 .sc-ver { fill: url(#sc-v-ver); }
@@ -676,7 +697,7 @@ input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: -1p
 .sc-korrel { opacity: 0.1; mix-blend-mode: overlay; pointer-events: none; }
 /* De kant van een silhouet die van het licht af ligt. */
 .sc-flank { fill: #0b1018; opacity: 0.16; }
-.sc-tint { opacity: 0.4; mix-blend-mode: soft-light; pointer-events: none; }
+.sc-tint { opacity: 0.6; mix-blend-mode: soft-light; pointer-events: none; }
 body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 .sc-planeet { fill: #cfd6e2; }
 .sc-horizon { fill: none; stroke: #aab3c3; stroke-width: 1.5; }
@@ -1472,11 +1493,12 @@ table.latin td.cell { width: 78px; height: 46px; }
    buiten een zaak hoort geen enkele wereld partij te krijgen. */
 body[data-thema="donker"] {
   color-scheme: dark;
-  --bg: #11131a; --surface: #1a1d26; --surface-2: #222631; --surface-3: #2c313e;
-  --line: #363c4b; --line-soft: #262b36;
-  --text: #ecebe6; --text-2: #b6b7b8; --text-3: #83868d;
-  --accent: #e8a35c; --accent-soft: #2a2119; --accent-ink: #120d08;
-  --good: #6fdc9a; --bad: #ff7b6b;
+  --bg: #170e2e; --surface: #22163f; --surface-2: #2c1d52; --surface-3: #392764;
+  --line: #4a3683; --line-soft: #30215a;
+  --text: #f6f0ff; --text-2: #cbbde8; --text-3: #9888bb;
+  --accent: #ff5fa8; --accent-soft: #3a1a44; --accent-ink: #1a0b22;
+  --good: #5ff0a8; --bad: #ff7b8b;
+  --schaduw-pop: 0 4px 0 rgba(0, 0, 0, 0.35), 0 10px 26px rgba(255, 95, 168, 0.14);
 }
 
 /* Licht mét een zaak open.
@@ -1487,14 +1509,17 @@ body[data-thema="donker"] {
    waar het om begonnen was. */
 body[data-thema="licht"][data-wereld] {
   color-scheme: light;
-  --bg: color-mix(in srgb, var(--wkleur, #a3551f) 9%, #f7f2e8);
-  --surface: color-mix(in srgb, var(--wkleur, #a3551f) 4%, #fffdf7);
-  --surface-2: color-mix(in srgb, var(--wkleur, #a3551f) 11%, #f1eade);
-  --surface-3: color-mix(in srgb, var(--wkleur, #a3551f) 18%, #e7decd);
-  --line: color-mix(in srgb, var(--wkleur, #a3551f) 32%, #cfc0a6);
-  --line-soft: color-mix(in srgb, var(--wkleur, #a3551f) 15%, #ece4d5);
-  --accent: color-mix(in srgb, var(--wkleur, #a3551f) 32%, #8a4316);
-  --accent-soft: color-mix(in srgb, var(--wkleur, #a3551f) 16%, #f8e8d4);
+  /* Sterker dan eerst (9% werd 18%): je moet zien in welke wereld je bent.
+     Het accent is de wereldkleur zelf, verdiept tot er witte letters op
+     kunnen - niet langer een vleugje ervan op roestbruin. */
+  --bg: color-mix(in srgb, var(--wkleur, #e8337f) 18%, #fffaf4);
+  --surface: color-mix(in srgb, var(--wkleur, #e8337f) 5%, #ffffff);
+  --surface-2: color-mix(in srgb, var(--wkleur, #e8337f) 14%, #ffffff);
+  --surface-3: color-mix(in srgb, var(--wkleur, #e8337f) 26%, #ffffff);
+  --line: color-mix(in srgb, var(--wkleur, #e8337f) 45%, #e5d5f5);
+  --line-soft: color-mix(in srgb, var(--wkleur, #e8337f) 22%, #f6f0fb);
+  --accent: color-mix(in oklab, var(--wkleur, #e8337f) 62%, #2a1060);
+  --accent-soft: color-mix(in srgb, var(--wkleur, #e8337f) 24%, #ffffff);
 }
 
 body[data-thema="donker"][data-wereld] {
@@ -1950,3 +1975,343 @@ body[data-wereld="kantoor"] .gloedrand { stop-color: #16182a; }
 /* Rimpels in het water. Dunner en lichter dan een voeg: het is beweging,
    geen naad. */
 .dessinrimpel { fill: none; stroke: #ffffff; stroke-width: 1.1; opacity: 0.34; }
+
+
+/* =================================================== vrolijk aangekleed
+   De laag die er op 2026-11-10 bij kwam (specs/visual-liveliness.md). Alles
+   hieronder is versiering bovenop de tokens: kleurvlekken in de achtergrond,
+   een regenboogstreep onder de kop, knoppen die je wilt indrukken, en per
+   moeilijkheidsgraad een eigen kleur. Geen plaatjes - alleen css. Staat het
+   in de weg, dan is dit blok de plek om het weer weg te halen. */
+
+/* Zachte kleurvlekken achter de hele pagina. Vast aan het venster, zodat
+   ze niet meescrollen en de tekst er nooit half overheen valt. */
+body {
+  background:
+    radial-gradient(42rem 30rem at 8% -6%, color-mix(in srgb, var(--pop-1) 16%, transparent), transparent 70%),
+    radial-gradient(36rem 28rem at 96% 8%, color-mix(in srgb, var(--pop-5) 14%, transparent), transparent 70%),
+    radial-gradient(40rem 32rem at 70% 104%, color-mix(in srgb, var(--pop-3) 18%, transparent), transparent 70%),
+    radial-gradient(30rem 26rem at 0% 80%, color-mix(in srgb, var(--pop-4) 12%, transparent), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+}
+/* In een zaak doet de wereldkleur het werk; de vlekken nemen die kleur aan. */
+body[data-wereld] {
+  background:
+    radial-gradient(44rem 30rem at 6% -8%, color-mix(in srgb, var(--wkleur, var(--pop-1)) 30%, transparent), transparent 70%),
+    radial-gradient(36rem 28rem at 100% 30%, color-mix(in srgb, var(--pop-1) 9%, transparent), transparent 70%),
+    radial-gradient(40rem 30rem at 50% 110%, color-mix(in srgb, var(--wkleur, var(--pop-3)) 22%, transparent), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+/* ------------------------------------------------------------------ kop */
+.top {
+  border-bottom: 0;
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  box-shadow: 0 6px 20px rgba(42, 27, 61, 0.06);
+}
+.top::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 4px;
+  background: var(--regenboog);
+}
+.brand { font-size: var(--t-lg); font-weight: 700; }
+.brand-text {
+  background: linear-gradient(90deg, var(--pop-1), var(--pop-6) 60%, var(--pop-5));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.brand-mark {
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, var(--pop-1), var(--pop-2));
+  color: #fff;
+  transform: rotate(-6deg);
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--pop-1) 60%, #2a1b3d);
+}
+.nav { gap: var(--s2); align-items: center; }
+.nav a {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: var(--t-base);
+  border-radius: 999px;
+  padding: 7px 14px;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.nav a:hover { transform: translateY(-1px); background: var(--accent-soft); color: var(--accent); }
+.nav a[aria-current="page"] { background: var(--accent); color: var(--accent-ink); }
+
+/* ---------------------------------------------------------------- tekst */
+h1 { font-weight: 700; }
+.markeer {
+  background: linear-gradient(100deg, var(--pop-1), var(--pop-6) 55%, var(--pop-5));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.eyebrow {
+  display: inline-block;
+  font-family: var(--display);
+  letter-spacing: 0.08em;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 4px 12px;
+  border-radius: 999px;
+  transform: rotate(-2deg);
+}
+.section-head { border-bottom: 0; position: relative; }
+.section-head::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 88px; height: 5px;
+  border-radius: 99px;
+  background: var(--regenboog);
+}
+.hero { border-bottom: 0; }
+
+/* -------------------------------------------------------------- knoppen */
+.btn {
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  font-family: var(--display);
+  font-weight: 600;
+  box-shadow: 0 3px 0 var(--line);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+.btn:hover { transform: translateY(-2px); border-color: var(--accent); background: var(--surface); box-shadow: 0 5px 0 color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--line); }
+.btn-primary {
+  border: 0;
+  background: linear-gradient(100deg, var(--pop-1), var(--pop-2));
+  color: #fff;
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--pop-1) 55%, #2a1b3d), 0 10px 22px color-mix(in srgb, var(--pop-1) 30%, transparent);
+  text-shadow: 0 1px 0 rgba(120, 20, 60, 0.25);
+}
+.btn-primary:hover {
+  background: linear-gradient(100deg, #ff5fa8, #ffae3c);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--pop-1) 55%, #2a1b3d), 0 14px 26px color-mix(in srgb, var(--pop-1) 34%, transparent);
+}
+/* In een zaak is de grote knop in de kleur van de wereld. */
+body[data-wereld] .btn-primary {
+  background: var(--accent);
+  box-shadow: 0 4px 0 color-mix(in oklab, var(--accent) 60%, #000);
+}
+.btn[disabled]:hover { transform: none; }
+
+.themaknop { border-width: 2px; font-size: var(--t-md); padding: 6px 11px; }
+
+/* ----------------------------------------------- niveaus: elk zijn kleur */
+.niveaukiezer .level-btn:nth-child(6n+1) { --kleur: var(--pop-4); }
+.niveaukiezer .level-btn:nth-child(6n+2) { --kleur: var(--pop-5); }
+.niveaukiezer .level-btn:nth-child(6n+3) { --kleur: var(--pop-6); }
+.niveaukiezer .level-btn:nth-child(6n+4) { --kleur: var(--pop-1); }
+.niveaukiezer .level-btn:nth-child(6n+5) { --kleur: var(--pop-2); }
+.niveaukiezer .level-btn:nth-child(6n+6) { --kleur: #e0281f; }
+
+.opt {
+  border: 2px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: 0 3px 0 var(--line);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+}
+.opt:hover { transform: translateY(-3px) rotate(-0.6deg); border-color: var(--kleur, var(--accent)); box-shadow: 0 6px 0 color-mix(in srgb, var(--kleur, var(--accent)) 40%, var(--line)); }
+.opt[aria-pressed="true"] {
+  border-color: var(--kleur, var(--accent));
+  background: color-mix(in srgb, var(--kleur, var(--accent)) 14%, var(--surface));
+  box-shadow: 0 4px 0 var(--kleur, var(--accent));
+}
+.level-btn b {
+  display: grid; place-items: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--kleur, var(--accent));
+  color: #fff;
+  font-size: var(--t-base);
+  margin-top: -2px;
+}
+.level-btn .mini-figuur { fill: var(--kleur, var(--accent)); }
+.level-btn[aria-pressed="true"] .mini-vloer { fill: color-mix(in srgb, var(--kleur, var(--accent)) 22%, var(--surface)); }
+
+/* ------------------------------------------------- de plattegrond op tafel */
+.hero-bord-label { background: var(--pop-3); border: 0; color: #2a1b3d; }
+.hero-bord::before {
+  /* Een plakbandje op de hoek: het bord ligt op tafel, iemand heeft het
+     vastgeplakt. */
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 10%;
+  left: 2%;
+  width: 92px; height: 26px;
+  background: color-mix(in srgb, var(--pop-3) 70%, transparent);
+  transform: rotate(-32deg);
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* ------------------------------------------------------------ stappen */
+.step {
+  background: var(--surface);
+  border: 2px solid var(--line-soft);
+  border-radius: var(--r-lg);
+  padding: var(--s5);
+  box-shadow: var(--schaduw-pop);
+}
+.step:nth-child(3n+1) { --kleur: var(--pop-1); }
+.step:nth-child(3n+2) { --kleur: var(--pop-4); }
+.step:nth-child(3n+3) { --kleur: var(--pop-6); }
+.step { border-top: 6px solid var(--kleur); }
+.step-n {
+  display: grid; place-items: center;
+  width: 38px; height: 38px;
+  border-radius: 12px;
+  background: var(--kleur);
+  color: #fff;
+  font: 700 var(--t-lg)/1 var(--display);
+  transform: rotate(-6deg);
+}
+.step h3 { font-family: var(--display); font-size: var(--t-md); }
+
+/* -------------------------------------------------------- bibliotheek */
+.kaart {
+  border: 3px solid color-mix(in srgb, var(--genre, var(--accent)) 55%, var(--surface));
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--genre, var(--accent)) 45%, var(--line));
+}
+.kaart:nth-child(odd):hover { transform: translateY(-4px) rotate(-1deg); }
+.kaart:nth-child(even):hover { transform: translateY(-4px) rotate(1deg); }
+.kaart:hover {
+  border-color: var(--genre, var(--accent));
+  box-shadow: 0 9px 0 color-mix(in srgb, var(--genre, var(--accent)) 55%, var(--line)), 0 18px 30px color-mix(in srgb, var(--genre, var(--accent)) 25%, transparent);
+}
+.kaart-merk { border-color: var(--genre, var(--accent)); background: var(--genre, var(--accent)); color: #fff; }
+.kaart-titel { font-size: var(--t-lg); font-weight: 700; }
+.kaart-stempel { border-color: var(--good); color: var(--good); }
+.dot { width: 8px; height: 8px; }
+.dot.on { background: var(--genre, var(--accent)); }
+select, input[type="text"] { border-radius: 999px; border-width: 2px; }
+
+/* ------------------------------------------------------- in een zaak */
+.scene-wrap { height: 170px; }
+.scene-wrap .scene { height: 170px; }
+.puzzle-head h1 { font-size: var(--t-2xl); }
+.crumbs a {
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 3px 10px;
+  border: 1px solid var(--line-soft);
+}
+.intro {
+  background: var(--surface);
+  border-left: 0;
+  border-radius: var(--r-lg);
+  padding: var(--s4) var(--s5);
+  box-shadow: var(--schaduw-pop);
+  position: relative;
+}
+.intro::before {
+  /* Een stift langs de rand, in de kleur van de wereld. */
+  content: "";
+  position: absolute;
+  left: 0; top: 14px; bottom: 14px;
+  width: 6px;
+  border-radius: 0 6px 6px 0;
+  background: var(--accent);
+}
+.question {
+  border: 3px solid var(--accent);
+  border-radius: var(--r-lg);
+  background: var(--accent-soft);
+  box-shadow: 0 4px 0 color-mix(in oklab, var(--accent) 55%, #000);
+  padding: var(--s4) var(--s5);
+}
+.question::before { content: "🔍"; font-size: 1.3em; }
+.question .label { color: var(--accent); }
+.question b { font-size: var(--t-lg); font-weight: 700; }
+.spelregels { border-radius: var(--r-lg); border-width: 2px; }
+
+/* De namenbalk: dikke, ronde fiches om op te pakken. */
+.palet { background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); }
+.palet-knop {
+  border-width: 2px;
+  font-family: var(--display);
+  font-weight: 600;
+  box-shadow: 0 2px 0 var(--line);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.palet-knop:hover { transform: translateY(-2px); border-color: var(--accent); }
+.palet-knop[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: 0 3px 0 color-mix(in oklab, var(--accent) 55%, #000);
+}
+.palet-knop[aria-pressed="true"] .palet-fiche { background: rgba(255, 255, 255, 0.3); color: #fff; }
+
+/* Panelen en aanwijzingen. */
+.paneel {
+  border-width: 2px;
+  border-radius: var(--r-lg);
+  box-shadow: 0 3px 0 var(--line);
+  overflow: hidden;
+}
+.paneel > summary { font-family: var(--display); letter-spacing: 0.02em; color: var(--text); }
+.paneel > summary::before { color: var(--accent); }
+.paneel[open] > summary { background: var(--accent-soft); }
+.clue-kop-naam {
+  display: inline-block;
+  font-family: var(--display);
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 999px;
+  padding: 1px 10px;
+}
+.clue-kop { border-bottom: 0; }
+.clue { border-radius: var(--r-sm); border-bottom-color: transparent; }
+.clue:hover { background: var(--accent-soft); }
+.clue-n { color: var(--accent); font-weight: 700; }
+.note { border-width: 2px; border-radius: var(--r); font-weight: 600; }
+.note-good { background: color-mix(in srgb, var(--good) 12%, var(--surface)); }
+.note-good::before { content: "🎉 "; }
+.note-bad { background: color-mix(in srgb, var(--bad) 10%, var(--surface)); }
+.palet-schakel { border-radius: 999px; border-width: 2px; }
+.palet-schakel-stand { border-radius: 99px; }
+
+/* ----------------------------------------------------------------- voet */
+.foot { border-top: 0; position: relative; color: var(--text-2); }
+.foot::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 4px;
+  background: var(--regenboog);
+  opacity: 0.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .opt, .kaart, .palet-knop, .nav a { transition: none; }
+}
+
+@media print {
+  body, body[data-wereld] { background: #fff; }
+  .top::after, .foot::before, .question::before, .hero-bord::before, .intro::before { display: none; }
+  .intro, .question, .step, .paneel { box-shadow: none; }
+}
+
+/* Op een telefoon plakt de kop niet (zie hoger); de regenboogstreep moet dan
+   toch aan de kop hangen en niet aan de pagina. */
+@media (max-width: 640px) {
+  .top { position: relative; }
+  .brand { font-size: var(--t-md); }
+  /* De ronde menuknoppen zijn breder dan de oude; op 375 pixels duwden ze
+     de themaknop van het scherm. Kleiner, en de themaknop rechts vast. */
+  .nav { gap: 2px; justify-content: space-between; }
+  .nav a { font-size: var(--t-sm); padding: 6px 9px; }
+  .puzzle-head h1 { font-size: 1.75rem; }
+}
