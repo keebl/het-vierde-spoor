@@ -2308,4 +2308,48 @@ export const GESCHILDERD = {
     v('metaal', plaat(8.6, 8.2, 30.8, 2.2, { zak: 0.3 })),
     vloer('metaal', plaat(6.6, 39.4, 34.8, 2.4, { zak: 0.4 })),
   ],
+
+  // Een wit kastje met een la en een lampje erop. Het nachtkastje uit de
+  // basisset heeft een kaars, en een kaars hoort niet naast een
+  // ziekenhuisbed of in een kantoor.
+  kastje: [
+    vloer('kunststofwit', romp(13, 22, 22, 18.6, { taps: 0.01 })),
+    v('kunststofwit', plaat(11.6, 19.6, 24.8, 3, { zak: 0.3 })),
+    v('kunststofwit', romp(15, 24.4, 18, 5.6, { taps: 0.004 })),
+    v('metaal', plaat(21, 26.4, 6, 1.4, { zak: 0.1 })),
+    v('kunststofwit', romp(15, 31.6, 18, 7, { taps: 0.004 })),
+    v('metaal', bol(30.4, 35, 1)),
+    v('metaal', zuilvorm(19, 12.6, 1.4, 2, 7)),
+    v('metaal', ovaal(19, 19.4, 3.6, 1)),
+    v('kunststof', 'M14.4 13.4 Q14.4 8.2 19 8.2 Q23.6 8.2 23.6 13.4 Z', { glans: 1 }),
+    v('donker', romp(26, 17.2, 6.4, 2.4, { taps: 0.02 })),
+    v('scherm', romp(26.8, 17.6, 4.8, 1.2, { taps: 0 }), { glans: 1 }),
+  ],
+
+  // Een scanner: een grote witte ring met een ligbank erdoorheen.
+  scanner: [
+    vloer('kunststofwit', romp(8, 31, 24, 9.6, { taps: 0.02 })),
+    v('kunststofwit', ring(20, 19.4, 13.6, 5.2), { gat: true }),
+    v('kunststofblauw', ring(20, 19.4, 8.8, 1.4), { gat: true }),
+    streep('water', 1.1, 'M10 10.6 Q20 3.6 30 10.6'),
+    v('kunststofwit', romp(31, 27.6, 9, 12, { taps: 0.04 })),
+    v('kunststofwit', plaat(13, 24.4, 33, 3.4, { zak: 0.4 })),
+    v('stofblauw', plaat(16, 22.6, 26, 2, { zak: 0.3 })),
+    v('scherm', romp(23, 33, 6, 3.6, { taps: 0.01 }), { glans: 1 }),
+  ],
+
+  // Een kopieerapparaat: lades met papier, een klep, een paneeltje.
+  kopieerapparaat: [
+    vloer('kunststofwit', romp(8, 16, 32, 25, { taps: 0.01 })),
+    v('donker', plaat(7, 12.4, 34, 3.6, { zak: 0.3 })),
+    v('donker', romp(28.4, 16.6, 10, 4.6, { taps: 0.02 })),
+    v('scherm', romp(29.6, 17.4, 5, 2.8, { taps: 0 }), { glans: 1 }),
+    v('stofgroen', bol(36.4, 18.8, 0.9), { glans: 1 }),
+    v('donker', plaat(10, 21.4, 16, 1.6, { zak: 0.2 })),
+    v('papier', romp(11.4, 18.6, 13, 2.8, { taps: 0.01 })),
+    v('kunststofwit', romp(10, 25.6, 28, 5.4, { taps: 0.004 })),
+    v('kunststofwit', romp(10, 32.4, 28, 5.4, { taps: 0.004 })),
+    v('metaal', plaat(20, 27.4, 8, 1.4, { zak: 0.1 })),
+    v('metaal', plaat(20, 34.2, 8, 1.4, { zak: 0.1 })),
+  ],
 };
