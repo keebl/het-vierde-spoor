@@ -1984,4 +1984,149 @@ export const GESCHILDERD = {
     v('vuur', bol(24, 4.2, 1.7), { glans: 1 }),
     vloer('donker', plaat(13, 39.4, 22, 3, { zak: 0.4 })),
   ],
+
+  // Buizen op een stapel, met de kopse kanten naar je toe: dan zie je dat
+  // het buizen zijn en geen boomstammen.
+  buizenstapel: [
+    v('metaal', ring(13.4, 34.2, 5.2, 1.6), { gat: true }),
+    v('metaal', ring(24, 34.2, 5.2, 1.6), { gat: true }),
+    v('metaal', ring(34.6, 34.2, 5.2, 1.6), { gat: true }),
+    v('kunststof', ring(18.7, 25.2, 5.2, 1.6), { gat: true }),
+    v('kunststof', ring(29.3, 25.2, 5.2, 1.6), { gat: true }),
+    v('metaal', ring(24, 16.2, 5.2, 1.6), { gat: true }),
+    v('donker', 'M5 39.6 L8 33.6 L8.6 39.6 Z'),
+    v('donker', 'M43 39.6 L40 33.6 L39.4 39.6 Z'),
+    vloer('donker', plaat(5, 39.4, 38, 2.6, { zak: 0.3 })),
+  ],
+
+  // Tegels op een pallet, met een spanband eromheen.
+  tegelstapel: [
+    v('hout', romp(8, 37.2, 5, 3.2, { taps: 0 })),
+    v('hout', romp(21.5, 37.2, 5, 3.2, { taps: 0 })),
+    v('hout', romp(35, 37.2, 5, 3.2, { taps: 0 })),
+    v('hout', plaat(7, 34.8, 34, 2.6, { zak: 0.3 })),
+    v('steen', plaat(8.6, 32, 30.8, 2.8, { zak: 0.2 })),
+    v('steenkoel', plaat(8.6, 29.2, 30.8, 2.8, { zak: 0.2 })),
+    v('steen', plaat(8.6, 26.4, 30.8, 2.8, { zak: 0.2 })),
+    v('steenkoel', plaat(8.6, 23.6, 30.8, 2.8, { zak: 0.2 })),
+    v('steen', plaat(8.6, 20.8, 30.8, 2.8, { zak: 0.2 })),
+    v('steenkoel', plaat(8.6, 18, 30.8, 2.8, { zak: 0.2 })),
+    streep('kunststof', 1.2, 'M15 17.8 V34.6 M33 17.8 V34.6'),
+    vloer('hout', plaat(7, 39.6, 34, 2.4, { zak: 0.3 })),
+  ],
+
+  // Vier tuinstoelen van plastic in elkaar geschoven.
+  stoelenstapel: [
+    v('kunststofwit', staaf(15.6, 30, 12.6, 40, 2)),
+    v('kunststofwit', staaf(30.4, 30, 33.4, 40, 2)),
+    v('kunststofwit', staaf(30.6, 29, 32.4, 16.4, 2.6)),
+    v('kunststofwit', plaat(13, 28, 19.6, 2.6, { zak: 0.5 })),
+    v('kunststofwit', staaf(30.6, 25.4, 32.4, 12.8, 2.6)),
+    v('kunststofwit', plaat(13, 24.6, 19.6, 2.6, { zak: 0.5 })),
+    v('kunststofwit', staaf(30.6, 22, 32.4, 9.4, 2.6)),
+    v('kunststofwit', plaat(13, 21.2, 19.6, 2.6, { zak: 0.5 })),
+    v('kunststofwit', 'M29.4 18.4 L31 5.4 Q34 4.8 36 6.4 L33.8 18.8 Z'),
+    v('kunststofwit', plaat(13, 17.8, 19.6, 2.6, { zak: 0.5 })),
+    streep('kunststofwit', 0.8, 'M31.6 8.6 L34.4 9 M31.2 11.6 L34 12'),
+    vloer('metaal', plaat(10, 39.6, 26, 2, { zak: 0.4 })),
+  ],
+
+  // Een drinkfontein op een zuil: een kom, een straaltje, een drukknop.
+  drinkfontein: [
+    v('metaal', zuilvorm(24, 18, 8, 10, 20)),
+    v('kunststofblauw', plaat(19.6, 26, 8.8, 2.2, { zak: 0.2 })),
+    v('kunststofblauw', bol(30.6, 21.6, 1.6)),
+    v('metaal', bak(24, 12.6, 21, 14, 6)),
+    v('water', plaat(16.6, 13.2, 14.8, 1.4, { zak: 0.4 }), { glans: 1 }),
+    v('metaal', staaf(28.4, 14, 26.4, 10.4, 1.6)),
+    streep('water', 1.1, 'M26 9.8 Q21.4 3.6 17.6 11.4'),
+    v('metaal', plaat(17, 37.4, 14, 2.6, { zak: 0.3 })),
+    vloer('steenkoel', ovaal(24, 40.6, 10.6, 2.4)),
+  ],
+
+  // Een kogelbarbecue op drie poten, met rook die onder het deksel uit kruipt.
+  barbecue: [
+    v('metaal', staaf(16, 27, 11.6, 39.6, 1.8)),
+    v('metaal', staaf(32, 27, 36.4, 39.6, 1.8)),
+    v('metaal', staaf(24, 29, 24, 39.4, 1.8)),
+    v('donker', bak(24, 19.4, 25, 13, 10)),
+    v('vuur', plaat(12.6, 17.8, 22.8, 1.4, { zak: 0.2 }), { glans: 1 }),
+    v('donker', 'M11.6 17.6 Q11.6 6.6 24 6.6 Q36.4 6.6 36.4 17.6 Z'),
+    v('metaal', plaat(20.6, 4.4, 6.8, 2, { zak: 0.2 })),
+    streep('metaal', 0.9, 'M16 12 H19 M29 12 H32'),
+    streep('papier', 1, 'M37.4 15.4 Q41 12 38.6 8.6 Q36.6 5.4 40 2.6'),
+    v('donker', bol(11.6, 38.8, 1.8)),
+    vloer('metaal', ovaal(24, 40.2, 12.6, 1.8)),
+  ],
+
+  // Een terrasverwarmer: een gasfles als voet, een paal, een gloeiende
+  // kooi en een schotel erboven. Geen kampvuur.
+  terrasheater: [
+    vloer('metaal', zuilvorm(24, 30, 10, 11.4, 9)),
+    v('metaal', zuilvorm(24, 13, 2.4, 3, 18)),
+    v('vuur', romp(20.4, 8, 7.2, 7, { taps: 0.08 }), { glans: 1 }),
+    streep('donker', 0.7, 'M22.2 8.4 V14.6 M24 8.2 V15 M25.8 8.4 V14.6'),
+    v('metaal', kap(24, 1.6, 30, 6, { buik: 0.6 })),
+    v('metaal', bol(24, 1.6, 1.2)),
+    v('donker', plaat(19.6, 33.4, 8.8, 2.2, { zak: 0.2 })),
+  ],
+
+  // Een laadpaal: een witte zuil met een schermpje, een groen lichtje, de
+  // bliksem en een kabel die in een lus naar beneden hangt.
+  laadpaal: [
+    vloer('kunststofwit', romp(16, 9, 16, 31, { taps: 0.03 })),
+    v('stofgroen', plaat(15, 6.4, 18, 3.2, { zak: 0.3 })),
+    v('scherm', romp(18.6, 11.6, 10.8, 7, { taps: 0.01 }), { glans: 1 }),
+    v('kunststof', 'M24.8 20.4 L21.4 26.2 L24 26.2 L22.8 31 L26.8 24.6 L24.2 24.6 Z'),
+    v('donker', bol(24, 34.2, 2.2)),
+    v('water', bol(29.4, 15, 0.9), { glans: 1 }),
+    streep('donker', 1.8, 'M31.6 28 Q41 30 39.2 36.4 Q38 40.6 32 39.4'),
+    v('donker', romp(29.4, 37.6, 3.6, 3.4, { taps: 0.04 })),
+  ],
+
+  // Een onderhoudsrobot op rupsbanden, met een vizier en een sprietje.
+  robot: [
+    v('metaal', staaf(24, 6.6, 24, 3.4, 1)),
+    v('vuur', bol(24, 2.8, 1.3), { glans: 1 }),
+    v('metaal', staaf(15.4, 19.4, 10.4, 27, 2.6)),
+    v('metaal', staaf(32.6, 19.4, 37.6, 27, 2.6)),
+    v('kunststof', bol(10, 28, 1.8)),
+    v('kunststof', bol(38, 28, 1.8)),
+    v('metaal', zuilvorm(24, 15, 4, 4, 3)),
+    v('kunststofwit', romp(15, 17, 18, 15, { taps: 0.06 })),
+    v('neon', bol(24, 23, 2.2), { glans: 1 }),
+    streep('donker', 0.8, 'M19 27.4 H29'),
+    v('kunststofwit', romp(16.6, 6.4, 14.8, 9.4, { taps: 0.04 })),
+    v('scherm', romp(18.2, 8.2, 11.6, 5.4, { taps: 0.02 }), { glans: 1 }),
+    v('water', bol(21.6, 10.8, 1.1), { glans: 1 }),
+    v('water', bol(26.4, 10.8, 1.1), { glans: 1 }),
+    vloer('donker', rol(13.4, 32, 21.2, 7.6, { rond: 3.4 })),
+    v('metaal', bol(16.4, 35.8, 2)),
+    v('metaal', bol(24, 35.8, 2)),
+    v('metaal', bol(31.6, 35.8, 2)),
+  ],
+
+  // Een pingpongtafel voor buiten: een blauw blad, een netje, een batje en
+  // een balletje.
+  pingpongtafel: [
+    v('metaal', staaf(10, 24, 9, 39.6, 2.2)),
+    v('metaal', staaf(38, 24, 39, 39.6, 2.2)),
+    v('metaal', staaf(10, 31, 38, 31, 1.6)),
+    v('kunststofblauw', plaat(4, 20, 40, 4, { zak: 0.4 })),
+    streep('kunststofwit', 0.9, 'M5.4 20.6 H42.6'),
+    v('donker', romp(23, 12.6, 2, 7.6, { taps: 0 })),
+    streep('kunststofwit', 0.6, 'M23.2 15 H24.8 M23.2 17.4 H24.8'),
+    v('kunststofroze', ovaal(11.4, 15.6, 3.2, 2.8)),
+    v('hout', staaf(13.6, 17.4, 15.4, 19.6, 1.4)),
+    v('kunststofwit', bol(33, 12.6, 1.3)),
+    vloer('steenkoel', plaat(6, 39.4, 36, 2.6, { zak: 0.3 })),
+  ],
+
+  // Een zitzak: een zak vol bolletjes met een kuil waar je in zakt.
+  zitzak: [
+    vloer('stof', 'M10 40 Q5.4 31 11 22.6 Q16.4 14.4 25 15 Q34.6 15.4 38 23.6 Q42.6 32.6 38.4 40 Q24 42 10 40 Z'),
+    v('stof', 'M13.4 28.4 Q24 34.4 34.6 27.4 Q30.4 22.4 24 22.6 Q17.4 22.6 13.4 28.4 Z'),
+    streep('stof', 0.9, 'M25 15.4 Q22 20 23.6 22.6 M10.8 33 Q16 36.4 22 35.4'),
+    v('papier', romp(31.4, 33, 4, 3, { taps: 0.02 })),
+  ],
 };
