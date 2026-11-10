@@ -189,6 +189,19 @@ export const SOORT_VAN = {
   'de reddingscapsule': 'slaapkamer',
   'de motorkamer': 'werkplaats',
   'de bemanningslounge': 'zaal',
+  // Hoogstad
+  'de gamekamer': 'zaal',
+  'het metrostation': 'gang',
+  'het winkelcentrum': 'zaal',
+  'de daktuin': 'buiten',
+  'het skatepark': 'buiten',
+  'de foodcourt': 'keuken',
+  'de bioscoop': 'zaal',
+  'de lift': 'gang',
+  'de parkeergarage': 'kelder',
+  'de wasserette': 'werkplaats',
+  'de sportschool': 'zaal',
+  'het appartement': 'slaapkamer',
 };
 
 // De vloer per soort. dessin verwijst naar een patroon in board-rooms.js.
@@ -355,6 +368,8 @@ export const VOORZETSEL_VAN = {
   'het observatiedek': 'op',
   'het holodek': 'op',
   'de loopbrug': 'op',
+  // Je staat óp een station, ook onder de grond.
+  'het metrostation': 'op',
 };
 
 // Een "of-aanwijzing" noemt twee plekken in één adem: "het hertenpad of de
@@ -497,6 +512,15 @@ export const VORM_VAN = {
   'het observatiedek': 'groot',
   'de cockpit': 'klein',
   'de reddingscapsule': 'klein',
+  // Hoogstad
+  'het metrostation': 'smal',
+  'het winkelcentrum': 'groot',
+  'de bioscoop': 'groot',
+  'het skatepark': 'groot',
+  'de parkeergarage': 'groot',
+  'de lift': 'klein',
+  'de gamekamer': 'klein',
+  'de wasserette': 'klein',
 };
 
 export const vormVan = (plek) => VORM_VAN[plek] ?? 'vrij';
@@ -567,6 +591,14 @@ export const WERELDVLOER = {
     kracht: 0.6,
     dessin: { planken: 'plaat', 'planken-dwars': 'plaat', steen: 'plaat', tapijt: 'tegels', ruiten: 'tegels', beton: 'plaat' },
   },
+  // Een stad bij avond: alles schuift naar het blauw van de schemering.
+  // Beton in de garage, tegels op het station; het parket in de flat en de
+  // gamekamer mag blijven.
+  stad: {
+    tint: '#5d6fb0',
+    kracht: 0.32,
+    dessin: { steen: 'beton', ruiten: 'tegels' },
+  },
 };
 
 // De vloer van één bepaalde plek, als de soort hem niet goed raadt.
@@ -627,6 +659,9 @@ export const VLOER_VAN_PLEK = {
   'de giraffenstal': { vul: '#cfae63', lijn: '#a78a44', dessin: 'gras' },
   'het voerhok': { vul: '#c0a673', lijn: '#9a8454', dessin: 'planken' },
   'de speeltuin': { vul: '#d8c48e', lijn: '#b09d6b', dessin: 'gras' },
+  // Hoogstad: beton onder het skatepark, tegels op het perron.
+  'het skatepark': { vul: '#a9aeb4', lijn: '#868b91', dessin: 'beton' },
+  'het metrostation': { vul: '#c6cbd2', lijn: '#9ea4ac', dessin: 'tegels' },
 };
 
 // Waar het meubilair van gemaakt is, per wereld. De namen zijn de materialen
@@ -677,6 +712,8 @@ export const WERELDSTOF = {
     steen: 'metaal', steenkoel: 'donker', touw: 'metaal', koper: 'metaal',
     stof: 'stofblauw', goud: 'metaal', papier: 'kunststofwit',
   },
+  // Een stad van nu: donker fineer en staal, niets dat glimt als goud.
+  stad: { houtrood: 'houtdonker', goud: 'metaal', steen: 'steenkoel' },
 };
 
 // ------------------------------------------------ hetzelfde meubel, andere wereld
@@ -1199,6 +1236,67 @@ export const WERELDMEUBELS = {
       'het harnas': ['het ruimtepak', 'ruimtepak'],
     },
   },
+
+  // --------------------------------------------------------- Hoogstad
+  // Metro, skatepark, foodcourt en een flat met een loungebank. Hout mag
+  // hier (een bank, een bed, een skateramp), ouderwets niet.
+  stad: {
+    volledig: true,
+    zelfde: [
+      'de gereedschapskist', 'de gootsteen', 'het bed', 'de kleerkast',
+      'de stapel kratten',
+    ],
+    anders: {
+      // de gamekamer, de bioscoop, het winkelcentrum, de sportschool
+      'de haard': ['de beamer', 'projector'],
+      'de leren fauteuil': ['de gamestoel', 'gamestoel'],
+      'de staande klok': ['de loungebank', 'loungebank'],
+      'de vleugel': ['de speakerbox', 'luidspreker'],
+      'de wandspiegel': ['de monitorwand', 'monitorwand'],
+      'het borstbeeld': ['de spelcomputer', 'spelcomputer'],
+      // het metrostation en de lift
+      'de kapstok': ['het toegangspoortje', 'poortje'],
+      'de paraplubak': ['de prullenbak', 'prullenbak'],
+      'de console': ['het infopunt', 'infozuil'],
+      'de spiegelstandaard': ['het vertrekbord', 'beeldscherm'],
+      'het uurwerk': ['de stationsklok', 'tijdscherm'],
+      'het harnas': ['de brandblusser', 'brandblusser'],
+      // de daktuin en het skatepark
+      'de houtstapel': ['de skateramp', 'skateramp'],
+      'de drinkbak': ['de drinkfontein', 'drinkfontein'],
+      'de vuurplaats': ['de barbecue', 'barbecue'],
+      'de omgevallen stam': ['de pingpongtafel', 'pingpongtafel'],
+      'de waterput': ['de ronde plantenbak', 'plantenbakrond'],
+      'de mosrichel': ['de bank op het dak', 'wachtbank'],
+      'de regenton': ['de laadpaal', 'laadpaal'],
+      'de kruiwagen': ['de deelscooter', 'deelscooter'],
+      'de boomstronk': ['de zitzak', 'zitzak'],
+      'de vogelverschrikker': ['de lantaarnpaal', 'lantaarnpaal'],
+      // de foodcourt
+      'het fornuis': ['de kookplaat'],
+      'de koelkast': ['de slimme koelkast', 'slimmekoelkast'],
+      'het aanrecht': ['de uitgiftebalie', 'balie'],
+      'de spinde': ['de snoepautomaat', 'automaat'],
+      'het serviesbuffet': ['de koffiemachine', 'koffieautomaat'],
+      // de parkeergarage
+      'het wijnrek': ['het fietsenrek', 'fietsenrek'],
+      'het eikenhouten vat': ['het olievat', 'drum'],
+      'de kolenbunker': ['de afvalcontainer', 'afvalcontainer'],
+      'de werktafel': ['het werkblad', 'werkbank'],
+      'de touwhaspel': ['de slanghaspel', 'touwhaspel'],
+      // het appartement
+      'het nachtkastje': ['het nachtkastje', 'kastje'],
+      'het wasstel': ['de wastafel', 'wasbak'],
+      'de hutkoffer': ['de rolkoffer', 'rolkoffer'],
+      'de voetenbank': ['de booglamp', 'ledlamp'],
+      // de wasserette
+      'de stookpot': ['de wasmachine', 'wasmachine'],
+      'het schakelpaneel': ['de meterkast', 'schakelkast'],
+      'de magazijnstelling': ['de opslagstelling', 'laadrek'],
+      'het slijpwiel': ['de fietspomp', 'fietspomp'],
+      'de draaibank': ['de droogtrommel', 'autoclaaf'],
+    },
+  },
 };
 
 
@@ -1253,6 +1351,9 @@ export const WERELDVERWANT = {
     werkplaats: ['kelder', 'sterrenwacht'],
     zaal: ['gang', 'slaapkamer'],
   },
+  // In Hoogstad staat geen bibliotheek: de grote zalen wijken uit naar de
+  // gangen en de flat.
+  stad: { zaal: ['gang', 'slaapkamer'] },
 };
 
 // ------------------------------------------------- tekeningen van vroeger
@@ -1284,6 +1385,7 @@ export const OUDERWETS = [
 export const MODERNE_WERELDEN = [
   'station', 'school', 'ziekenhuis', 'kantoor', 'zwembad',
   'ruimteschip',
+  'stad',
 ];
 
 // De naam en de tekening die in deze wereld bij een meubelstuk horen.

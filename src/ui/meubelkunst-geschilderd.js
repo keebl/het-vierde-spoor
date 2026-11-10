@@ -2498,4 +2498,105 @@ export const GESCHILDERD = {
     v('kunststofblauw', romp(7.4, 15.6, 9, 4.8, { taps: 0.01 })),
     v('kunststof', romp(9, 11.6, 7.4, 4, { taps: 0.01 })),
   ],
+
+  // ======================================================== Hoogstad
+  //
+  // Een stad van nu bij avond: metro, skatepark, wasserette en een flat
+  // met een loungebank. De slimme koelkast, de loungebank en de ledlamp
+  // horen ook bij de gedeelde moderne set.
+
+  // Een toegangspoortje in de metro: twee zuilen, twee glazen klepjes en
+  // een kaartlezer met een groen lichtje.
+  poortje: [
+    v('metaal', romp(5, 17, 10, 23.4, { taps: 0.02 })),
+    v('metaal', romp(33, 17, 10, 23.4, { taps: 0.02 })),
+    v('glas', 'M15 21.4 L23 23.6 L23 31.6 L15 33.8 Z', { glans: 1 }),
+    v('glas', 'M33 21.4 L25 23.6 L25 31.6 L33 33.8 Z', { glans: 1 }),
+    v('donker', romp(7, 13.4, 6, 4.4, { taps: 0.04 })),
+    v('stofgroen', bol(10, 15.4, 1.1), { glans: 1 }),
+    v('donker', romp(35, 13.4, 6, 4.4, { taps: 0.04 })),
+    v('stof', bol(38, 15.4, 1.1), { glans: 1 }),
+    streep('water', 1, 'M7 24 V37 M41 24 V37'),
+    vloer('donker', plaat(3.6, 39.6, 40.8, 2.6, { zak: 0.3 })),
+  ],
+
+  // Een skateramp: een kwartpijp met een stalen rand, een tag erop en een
+  // skateboard aan de voet.
+  skateramp: [
+    vloer('hout', 'M5 40 L5 35.4 Q22 35.4 29 20 Q32 13 32 8 L41 8 L41 40 Z'),
+    streep('houtdonker', 0.9, 'M12 40 V35.6 M20 40 V32.6 M27 40 V24 M34 40 V9'),
+    v('metaal', staaf(31.4, 7.6, 41.6, 7.6, 2.2, { krimp: 0 })),
+    streep('kunststofroze', 1.3, 'M33.6 19 q2 -3 4 0 q-2 3 2 4 M34.4 27 h4'),
+    streep('donker', 1.4, 'M8 36.4 Q14 38 20 36.4'),
+    v('kunststof', bol(10, 38.6, 1.3)),
+    v('kunststof', bol(18, 38.6, 1.3)),
+  ],
+
+  // Een deelscooter: een plankje, twee wielen, een stuur met een schermpje.
+  deelscooter: [
+    v('stofgroen', staaf(33.4, 34.6, 30, 8.4, 2.4)),
+    v('donker', staaf(25.6, 8.4, 35.4, 8.4, 2, { krimp: 0 })),
+    v('scherm', bol(30.4, 9.6, 1.4), { glans: 1 }),
+    v('kunststofwit', bol(31.4, 14.4, 1.2), { glans: 1 }),
+    v('kunststofwit', romp(29.6, 18.4, 3.6, 5.2, { taps: 0.04 })),
+    v('stofgroen', plaat(9.4, 33.4, 26, 3, { zak: 0.3 })),
+    v('donker', bol(11.6, 38.2, 3.4)),
+    v('metaal', bol(11.6, 38.2, 1.3)),
+    v('donker', bol(34.6, 38.2, 3.4)),
+    v('metaal', bol(34.6, 38.2, 1.3)),
+    vloer('donker', ovaal(23, 41.6, 15, 1.4)),
+  ],
+
+  // Een slimme koelkast: twee deuren, een scherm in de linker en een
+  // waterkraantje in de rechter.
+  slimmekoelkast: [
+    vloer('metaal', romp(8.6, 4, 30.8, 37, { taps: 0.01 })),
+    streep('donker', 0.9, 'M24 6 V39'),
+    v('metaal', staaf(21.4, 10, 21.4, 22, 1.6, { krimp: 0 })),
+    v('metaal', staaf(26.6, 10, 26.6, 22, 1.6, { krimp: 0 })),
+    v('scherm', romp(11.4, 9, 8.6, 12, { taps: 0.004 }), { glans: 1 }),
+    streep('kunststofwit', 0.8, 'M13 12.4 H18.4 M13 15 H17 M13 17.6 H18'),
+    v('donker', romp(28.6, 12, 7.6, 9, { taps: 0.01 })),
+    v('water', bol(32.4, 15.4, 1.3), { glans: 1 }),
+    v('stofgroen', bol(36.4, 7.4, 0.8), { glans: 1 }),
+  ],
+
+  // Een wasmachine: een strookje knoppen bovenaan en een ronde deur met
+  // was die ronddraait.
+  wasmachine: [
+    vloer('kunststofwit', romp(9, 7, 30, 34, { taps: 0.01 })),
+    v('kunststofwit', plaat(9, 7, 30, 6, { zak: 0.2 })),
+    v('scherm', romp(14, 8.6, 10, 3.4, { taps: 0 }), { glans: 1 }),
+    v('metaal', bol(32.4, 10.2, 2.2)),
+    v('water', bol(24, 27, 7.4), { glans: 1 }),
+    v('kunststofroze', 'M17.6 30.6 Q18 26 22.4 26.4 Q25.4 27 24.6 31.4 Q21 33.4 17.6 30.6 Z'),
+    v('kunststof', 'M24.4 24.4 Q27.4 21.6 30 24.2 Q31 27.4 27.6 28.2 Q24.6 27.6 24.4 24.4 Z'),
+    v('kunststofwit', bol(28.4, 31, 0.9)),
+    v('metaal', ring(24, 27, 9.4, 2.2), { gat: true }),
+  ],
+
+  // Een loungebank: laag en breed, met grote kussens en een roze kussen
+  // in de hoek.
+  loungebank: [
+    v('stofgroen', kussen(6, 14.6, 17.4, 12)),
+    v('stofgroen', kussen(24.6, 14.6, 17.4, 12)),
+    v('kunststofroze', kussen(31, 17, 8.4, 7.4)),
+    vloer('stofgroen', romp(4, 26, 40, 10, { taps: 0.01 })),
+    v('stofgroen', kussen(7, 23, 17, 5.4)),
+    v('stofgroen', kussen(24, 23, 17, 5.4)),
+    v('stofgroen', romp(2.4, 19, 5.4, 17, { taps: 0.04 })),
+    v('stofgroen', romp(40.2, 19, 5.4, 17, { taps: 0.04 })),
+    v('metaal', staaf(8, 36, 7, 40.4, 1.4)),
+    v('metaal', staaf(40, 36, 41, 40.4, 1.4)),
+  ],
+
+  // Een booglamp: een zware voet, een boog en een witte kap met een ledje.
+  ledlamp: [
+    streep('metaal', 2.2, 'M13.6 38.6 Q12.4 6 33.6 7.4'),
+    v('kunststofwit', kap(34, 6.4, 11, 5.4)),
+    v('kunststof', ovaal(34, 12, 3.4, 1.2), { glans: 1 }),
+    streep('kunststof', 0.7, 'M31 13.6 L28 22 M34 13.6 V23 M37 13.6 L40 22'),
+    v('metaal', zuilvorm(13.6, 35.6, 3, 4, 3.6)),
+    vloer('donker', ovaal(13.6, 40.4, 7.4, 2)),
+  ],
 };
