@@ -56,6 +56,18 @@ Twee dingen staan open, en het eerste is het belangrijkste:
 
 ### Wat er sinds 8 november bij is gekomen
 
+**Vrolijk aangekleed** (10 november). Guus koos "allebei": de site én de
+puzzels. Het ingetogen palet (crème, één gouden accent) is vervangen door
+roze als klikkleur plus vijf felle kleuren (`--pop-1` … `--pop-6`),
+kleurvlekken in de achtergrond, een regenboogstreep onder de kop, ronde
+knoppen met een duwrand, een eigen kleur per moeilijkheidsgraad, en een
+paars donker thema. In een zaak is de wereldkleur sterker en het accent de
+wereldkleur zelf. Op het bord: fellere vloeren per soort (`VLOER_VAN`) en
+fellere penningen. De versiering staat als één blok onderaan `app.css`
+("vrolijk aangekleed"). Meubels, portretten en bordranden zijn níét
+aangeraakt - dat zijn richtingen 2 tot 4 in `specs/visual-liveliness.md`.
+**Volgende stap: laat het haar zien en schrijf op wat ze zegt.**
+
 **De plakkende balk dekte een kwart van het scherm af** (`9004f24`). Op een
 telefoon braken "Kruisjes vanzelf" en "Lijst om het bord" hun tekst over twee
 en drie regels; de balk werd 144 pixels en samen met de kop was dat 248 van
