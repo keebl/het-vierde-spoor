@@ -534,6 +534,41 @@ const SCENES = {
     g.append(cirkel(312, 118, 3, 'sc-licht'));
     for (let x = 60; x < B; x += 160) g.append(rechthoek(x, 132, 8, H - 132, 'sc-near'));
   },
+
+  // Een escaperoom van binnen: een deur met een groen uitgangsbordje, de
+  // aftelklok aan de muur, een kluis, en rode lasers dwars door de kamer.
+  escaperoom(g) {
+    g.append(rechthoek(0, 0, B, H, 'sc-ver'));
+    const mid = maak('g');
+    for (let x = 0; x < B; x += 90) mid.append(rechthoek(x, 0, 2, H, 'sc-mid'));
+    mid.append(rechthoek(0, 112, B, H - 112, 'sc-mid'));
+    g.append(mid);
+
+    // De deur met het bordje erboven.
+    g.append(rechthoek(560, 40, 64, 76, 'sc-near'));
+    g.append(cirkel(614, 82, 3, 'sc-raam'));
+    g.append(rechthoek(570, 24, 44, 10, 'sc-licht'));
+
+    // De klok: een donker vlak met rode streepjes als cijfers.
+    g.append(rechthoek(250, 26, 120, 40, 'sc-near'));
+    [[262, 34], [286, 34], [324, 34], [348, 34]].forEach(([x, y]) => {
+      g.append(pad(`M ${x} ${y} h 12 v 12 h -12 v 12 h 12`, 'sc-lijn'));
+    });
+    g.append(cirkel(310, 40, 2.4, 'sc-licht'));
+    g.append(cirkel(310, 52, 2.4, 'sc-licht'));
+
+    // Een kluis en een plank met dozen.
+    g.append(rechthoek(120, 74, 60, 42, 'sc-near'));
+    g.append(cirkel(160, 95, 8, 'sc-mid'));
+    g.append(rechthoek(680, 64, 90, 6, 'sc-near'));
+    g.append(rechthoek(690, 46, 20, 18, 'sc-mid'));
+    g.append(rechthoek(716, 52, 26, 12, 'sc-mid'));
+
+    // De lasers.
+    for (const [x1, x2] of [[0, 420], [180, 700], [380, 800], [-60, 260]]) {
+      g.append(pad(`M ${x1} 30 L ${x2} 140`, 'sc-regenlijn'));
+    }
+  },
 };
 
 // ---------------------------------------------------------------- de verf

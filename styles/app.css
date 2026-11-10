@@ -1832,6 +1832,24 @@ body[data-wereld="stad"] .gloedkern { stop-color: #fff2de; }
 body[data-wereld="stad"] .gloedmid { stop-color: #f2d6c2; }
 body[data-wereld="stad"] .gloedrand { stop-color: #20161e; }
 
+/* Escaperoom Klokslag: donker groenblauw, met het groen van de uitgang. */
+body[data-thema="donker"][data-wereld="escaperoom"] {
+  --bg: #061312; --surface: #0c1e1c; --surface-2: #122a27; --line: #22483f;
+  --text: #defaf0; --text-2: #a2d2c4; --text-3: #6c968a;
+  --accent: #2fe0b4; --accent-soft: #0e2c27;
+}
+body[data-wereld="escaperoom"] .muurvoet,
+body[data-wereld="escaperoom"] .buitenmuur-voet { stroke: #18292b; }
+body[data-wereld="escaperoom"] .muurtop,
+body[data-wereld="escaperoom"] .buitenmuur-top { stroke: #6f9a94; }
+body[data-wereld="escaperoom"] .muurglans { stroke: #9dffe0; }
+body[data-wereld="escaperoom"] .muurnerf { stroke: rgba(20, 40, 40, 0.4); }
+body[data-wereld="escaperoom"] .muur { stroke: #4f7570; }
+body[data-wereld="escaperoom"] .muur-buiten { stroke: #263e3c; }
+body[data-wereld="escaperoom"] .gloedkern { stop-color: #e8fff8; }
+body[data-wereld="escaperoom"] .gloedmid { stop-color: #bdeee0; }
+body[data-wereld="escaperoom"] .gloedrand { stop-color: #0e2220; }
+
 /* ------------------------------------------------------------- themaknop
    Eén knop in de kop die door drie standen loopt. Met een "A" ernaast als
    hij het apparaat volgt, zodat je ziet dat je zelf niets hebt gekozen. */

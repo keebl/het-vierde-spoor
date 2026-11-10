@@ -3044,6 +3044,112 @@ export const RANDSTIJLEN = {
       voor.spikkels(n(60), ['#ffb35c', '#ff6f91'], { y0: straat + 6 * s, y1: d, groot: 1.2, halo: 0.5 });
     },
   },
+
+  // ----------------------------------------------- Escaperoom Klokslag
+  //
+  // De muur van een escaperoom: donkere panelen, een groene ledstrip,
+  // tekens die alleen onder blacklight oplichten, en op elke kant één groot
+  // scherm waarop de klok terugtelt. Dat is versiering - de puzzel heeft
+  // geen tijdslimiet, en dat moet zo blijven - maar zonder klok is het
+  // geen escaperoom. Vooraan lopen de laserstralen schuin door de band en
+  // staan er gele pijlen op de vloer.
+  escaperoom: {
+    kern: '#08141a', koel: '#020608', warm: '#c8fff0', textuur: 'strijk', ruw: 0.1, stap: 40,
+    gloed: '#2fe0b4',
+    verf(b) {
+      const { d, L, R, K, n } = b;
+      const s = d / 100;
+      const ver = b.laag('randver', 0.9);
+      const mid = b.laag('randmid');
+      const voor = b.laag('randvoor');
+      const vloer = d * 0.7;
+
+      // De wand: panelen met naden.
+      ver.vlak(`M0 0 H${L.toFixed(1)} V${vloer.toFixed(1)} H0 Z`, '#0b1a20');
+      for (let x = R(30, 0); x < L; x += 46 * s) {
+        ver.streek(`M${x.toFixed(1)} 0 V${vloer.toFixed(1)}`, '#050c10', 1.2 * s, 0.9);
+      }
+      ver.streek(`M0 ${(d * 0.42).toFixed(1)} H${L.toFixed(1)}`, '#050c10', 1 * s, 0.7);
+
+      // De ledstrip bovenaan, met zijn schijnsel op de wand.
+      const strip = d * 0.12;
+      const id = zorgVoorGloed('#2fe0b4');
+      mid.g.append(el('rect', {
+        x: 0, y: (strip - 12 * s).toFixed(1), width: L.toFixed(1), height: (26 * s).toFixed(1),
+        fill: `url(#${id})`, opacity: 0.32,
+      }));
+      mid.streek(`M0 ${strip.toFixed(1)} H${L.toFixed(1)}`, '#9dffe0', 1.8 * s, 0.95);
+
+      // Tekens onder blacklight: driehoek, cirkel, vierkant, een pijl.
+      for (let i = 0; i < n(70); i++) {
+        const x = R(L, 0);
+        const y = d * R(0.6, 0.24);
+        const k = K(['#ff4fd8', '#5ff2ff', '#c8ff5a']);
+        const r = R(7, 4) * s;
+        const vorm = Math.floor(R(4, 0));
+        const pad = vorm === 0
+          ? `M${x.toFixed(1)} ${(y - r).toFixed(1)} L${(x + r).toFixed(1)} ${(y + r).toFixed(1)} L${(x - r).toFixed(1)} ${(y + r).toFixed(1)} Z`
+          : vorm === 1
+            ? `M${(x - r).toFixed(1)} ${y.toFixed(1)} a${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(2 * r).toFixed(1)} 0 a${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(-2 * r).toFixed(1)} 0`
+            : vorm === 2
+              ? `M${(x - r).toFixed(1)} ${(y - r).toFixed(1)} h${(2 * r).toFixed(1)} v${(2 * r).toFixed(1)} h${(-2 * r).toFixed(1)} Z`
+              : `M${(x - r).toFixed(1)} ${y.toFixed(1)} h${(2 * r).toFixed(1)} m${(-r * 0.7).toFixed(1)} ${(-r * 0.7).toFixed(1)} l${(r * 0.7).toFixed(1)} ${(r * 0.7).toFixed(1)} l${(-r * 0.7).toFixed(1)} ${(r * 0.7).toFixed(1)}`;
+        mid.gloed(x, y, r * 0.9, k, 0.3, 0);
+        mid.streek(pad, k, 1.4 * s, 0.9);
+      }
+
+      // De aftelklok: één groot scherm per kant, met rode cijfers. 45:00.
+      // Rechtop gezet, anders staat hij op drie van de vier kanten gedraaid
+      // en leest de onderkant "00:54".
+      const kb = 66 * s;
+      const kh = 26 * s;
+      const klok = mid.rechtop(L * R(0.6, 0.4), d * 0.24 + kh / 2);
+      klok.vlak(`M${(-kb / 2).toFixed(1)} ${(-kh / 2).toFixed(1)} h${kb.toFixed(1)} v${kh.toFixed(1)} h${(-kb).toFixed(1)} Z`, '#1d2a30');
+      klok.vlak(`M${(-kb / 2 + 3 * s).toFixed(1)} ${(-kh / 2 + 3 * s).toFixed(1)} h${(kb - 6 * s).toFixed(1)} v${(kh - 6 * s).toFixed(1)} h${(-kb + 6 * s).toFixed(1)} Z`, '#050304');
+      klok.gloed(0, 0, 18 * s, '#ff3b3b', 0.5, 0);
+      const SEG = { 4: 'bcfg', 5: 'acdfg', 0: 'abcdef' };
+      const cijfer = (cx, c) => {
+        const w = 8 * s;
+        const h = 14 * s;
+        const top = -h / 2;
+        const pts = {
+          a: [cx, top, cx + w, top], b: [cx + w, top, cx + w, top + h / 2], c: [cx + w, top + h / 2, cx + w, top + h],
+          d: [cx, top + h, cx + w, top + h], e: [cx, top + h / 2, cx, top + h], f: [cx, top, cx, top + h / 2],
+          g: [cx, top + h / 2, cx + w, top + h / 2],
+        };
+        for (const seg of SEG[c]) {
+          const [x1, y1, x2, y2] = pts[seg];
+          klok.streek(`M${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)}`, '#ff5a4a', 2.2 * s, 0.95);
+        }
+      };
+      cijfer(-27 * s, 4);
+      cijfer(-15 * s, 5);
+      klok.stip(0, -3 * s, 1.3 * s, '#ff5a4a');
+      klok.stip(0, 3 * s, 1.3 * s, '#ff5a4a');
+      cijfer(5 * s, 0);
+      cijfer(17 * s, 0);
+
+      // De vloer met gele pijlen.
+      voor.vlak(`M0 ${vloer.toFixed(1)} H${L.toFixed(1)} V${(d + 4).toFixed(1)} H0 Z`, '#0e1c1e');
+      voor.streek(`M0 ${vloer.toFixed(1)} H${L.toFixed(1)}`, '#1f3a3a', 2 * s, 0.9);
+      for (let x = R(40, 10); x < L; x += 70 * s) {
+        voor.streek(
+          `M${x.toFixed(1)} ${(d * 0.8).toFixed(1)} l${(6 * s).toFixed(1)} ${(6 * s).toFixed(1)} l${(-6 * s).toFixed(1)} ${(6 * s).toFixed(1)}`
+          + ` M${(x + 9 * s).toFixed(1)} ${(d * 0.8).toFixed(1)} l${(6 * s).toFixed(1)} ${(6 * s).toFixed(1)} l${(-6 * s).toFixed(1)} ${(6 * s).toFixed(1)}`,
+          '#ffd23f', 2 * s, 0.85,
+        );
+      }
+
+      // De lasers: schuin door de hele band, met een gloed eromheen.
+      for (let i = 0; i < n(110); i++) {
+        const x = R(L, 0);
+        const lang = R(140, 70) * s;
+        const pad = `M${x.toFixed(1)} ${(d * 0.15).toFixed(1)} L${(x + lang).toFixed(1)} ${(d * 0.95).toFixed(1)}`;
+        voor.streek(pad, '#ff2d2d', 3.4 * s, 0.18);
+        voor.streek(pad, '#ff6a5a', 0.9 * s, 0.9);
+      }
+    },
+  },
 };
 
 // Geen wereld herkend? Dan het landhuis: donker hout doet nergens pijn.
