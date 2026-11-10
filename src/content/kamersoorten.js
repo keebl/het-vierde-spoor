@@ -1146,6 +1146,34 @@ export const WERELDVERWANT = {
   },
 };
 
+// ------------------------------------------------- tekeningen van vroeger
+//
+// Een wereldlaag kan namen omdopen, geen beeld. Op het ruimtestation heette
+// het harnas "het ruimtepak", de staande klok "de tijdzuil" en de
+// vogelverschrikker "de antennemast" - en op het bord stond gewoon een
+// ridder, een staande klok en een vogelverschrikker. Guus: "een ridder in
+// een ruimteschip, dat kan niet".
+//
+// Dit zijn de tekeningen die bij een landhuis van 1930 horen, een bos of een
+// grafkelder, en in een wereld van nu niets anders kunnen zijn dan wat ze
+// zijn. tools/check-kamers.mjs faalt zodra een wereld uit MODERNE_WERELDEN
+// er eentje op een bord kan zetten, onder welke naam ook.
+export const OUDERWETS = [
+  // het landhuis
+  'harnas', 'staandespiegel', 'wandspiegel', 'haard', 'staandeklok', 'gangklok',
+  'hutkoffer', 'vat', 'kolenkist', 'wastafel', 'voetenbank', 'wijnrek',
+  'kruidenkast', 'distilleerketel', 'slijpsteen', 'chronometer',
+  // het erf en het bos
+  'vogelverschrikker', 'put', 'houtstapel', 'vuur', 'stam', 'boomstronk',
+  'regenton', 'mosbank', 'drinkbak',
+  // de grafkelder
+  'zandloper', 'sarcofaag', 'knekelnis', 'grafzerk', 'bidbank', 'kaarsentafel',
+  'lampenstaander', 'reliekkast',
+];
+
+// De werelden die nu spelen. Hier mag niets uit OUDERWETS op een bord komen.
+export const MODERNE_WERELDEN = ['station', 'school', 'ziekenhuis', 'kantoor', 'zwembad'];
+
 // De naam en de tekening die in deze wereld bij een meubelstuk horen.
 const omdopen = ([naam, icoon], laag) => {
   const nieuw = laag?.anders?.[naam];
