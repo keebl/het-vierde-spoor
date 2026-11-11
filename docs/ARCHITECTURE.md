@@ -51,7 +51,7 @@ The most important agreement in this project:
 
 That separation is why a world can be added by writing only words, and why furniture can be
 renamed without changing a puzzle. It is the reason the project is still comprehensible
-after thirteen worlds.
+after seventeen worlds.
 
 ### The engine (`src/engine/`)
 
@@ -77,14 +77,14 @@ The generator works in four steps, and that order is the whole trick:
 
 | file | what is in it |
 |---|---|
-| `worlds.js` | the thirteen settings: names, places, objects, times, and the sentences that world uses to talk about a floor plan. |
+| `worlds.js` | the seventeen settings: names, places, objects, times, and the sentences that world uses to talk about a floor plan. |
 | `kamersoorten.js` | **the heart of the content.** Which kind of room a place is, which floor belongs to it, which furniture can stand in it, and per world what that furniture is called there. |
 | `zaken.js` | the kind of case: a murder, a disappearance or a theft. Supplies words, no logic. |
 | `namen.js` | which portrait belongs to which name (427 names, by hand). |
 | `iconen.js` | which pictogram belongs to which word. By hand, word by word. |
 | `rooms-text.js` | from a raw clue to a Dutch sentence. |
 | `spelregels.js` | the rules in words, per game type. |
-| `catalog.js` | the seventy-four fixed cases (settings only, no puzzle data). |
+| `catalog.js` | the eighty-two fixed cases (settings only, no puzzle data). |
 | `assignments.js` | the four assignments and the four game types, plus what is visible. |
 
 ### The screen (`src/ui/`)
@@ -94,7 +94,7 @@ The generator works in four steps, and that order is the whole trick:
 | `player.js` | the play screen: markings, checking, hints, revealing the solution. |
 | `board-rooms.js` | drawing the board: floors, walls, furniture, figures, crosses. |
 | `bordrand.js` | the frame around the board, one per world. The largest file, and almost entirely drawing. |
-| `meubelkunst-geschilderd.js` | the painted furniture pieces. |
+| `meubelkunst-geschilderd.js` | the painted furniture pieces (193), of which a modern set of some seventy for the present-day worlds. |
 | `meubelkunst.js` | the same pieces as line icons (comparison page and fallback). |
 | `personenkunst-geschilderd.js` | the figures' heads. |
 | `geschilderd.js` | the painting engine: how a shape gets light and shadow. |
@@ -131,6 +131,10 @@ MEUBELS_VAN[kind]          what can stand in such a room
   WERELDMEUBELS[world]     what that furniture is called in that world
   WERELDSTOF[world]        what it is made of there
 
+OUDERWETS                  drawings that belong only in a manor, a wood or
+MODERNE_WERELDEN           a catacomb; a present-day world may not put them
+                           on a board under any name
+
 VORM_VAN[place]            strip, area or corner — decides which name lands on which room
 VOORZETSEL_VAN[place]      "in", "op" or "bij" the place
 ```
@@ -149,12 +153,12 @@ commands.
 | script | what it verifies |
 |---|---|
 | `check.mjs` | builds every combination of assignment × world × game type × level, two seeds each. Over a thousand puzzles. |
-| `check-catalog.mjs` | the seventy-four fixed cases. |
+| `check-catalog.mjs` | the eighty-two fixed cases. |
 | `check-regels.mjs` | seventy-plus rules over every built puzzle: exactly one solution, every clue true, no clue that gives the answer away, every sentence with a capital and a full stop… |
 | `check-ai-guard.mjs` | that a rewritten text keeps names, negations and numbers intact. |
 | `check-weggevers.mjs` | that the intro gives nothing away that it should not. |
 | `check-iconen.mjs` | that every word in the content has its own pictogram. |
-| `check-kamers.mjs` | the tables above: every place a kind, every furniture piece its own drawing, no two names that look alike, every name a portrait, every room name that matches its floor. |
+| `check-kamers.mjs` | the tables above: every place a kind, every furniture piece its own drawing, no two names that look alike, every name a portrait, every room name that matches its floor, and no 1930s drawing (`OUDERWETS`) in a present-day world (`MODERNE_WERELDEN`). |
 
 Every rule in `check-regels.mjs` and `check-kamers.mjs` is there because something was once
 wrong that nobody saw. A few examples, because they show the kind of mistake this project

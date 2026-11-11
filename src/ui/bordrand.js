@@ -2888,6 +2888,372 @@ export const RANDSTIJLEN = {
       }
     },
   },
+
+  // ------------------------------------------------ Sterrenschip Zwaluw
+  //
+  // Geen station dat stil hangt, maar een schip in een sprong. Door de
+  // ramen trekken de sterren uit tot strepen en schuift er een nevel
+  // voorbij; tussen de ramen staan de spanten, en vooraan ligt de rand van
+  // een console met een ledstrip en knopjes die knipperen. Dat er beweging
+  // in zit, komt helemaal uit de strepen: alles wat ver weg is, is lang.
+  ruimteschip: {
+    kern: '#0d0824', koel: '#04020c', warm: '#e6d4ff', textuur: 'strijk', ruw: 0.1, stap: 40,
+    gloed: '#c77dff',
+    verf(b) {
+      const { d, L, R, K, n } = b;
+      const s = d / 100;
+      const ver = b.laag('randver', 0.95);
+      const mid = b.laag('randmid');
+      const voor = b.laag('randvoor');
+      const raam = d * 0.62;
+
+      // De ruimte, met nevels in drie kleuren.
+      ver.vlak(`M0 0 H${L.toFixed(1)} V${raam.toFixed(1)} H0 Z`, '#0a0620');
+      for (let i = 0; i < n(120); i++) {
+        ver.waas(R(L, 0), d * R(0.52, 0.08), R(48, 22) * s, K(['#7b3fe4', '#2fb6ff', '#ff4fb8']), R(0.34, 0.14));
+      }
+      // Een planeet die voorbij schuift, met een ring.
+      if (R() < 0.7) {
+        const px = L * R(0.85, 0.15);
+        const py = d * R(0.4, 0.24);
+        const pr = R(16, 11) * s;
+        ver.stip(px, py, pr, K(['#4a2f9a', '#1f6a8a', '#8a2f6a']));
+        ver.gloed(px - pr * 0.35, py - pr * 0.35, pr * 0.55, '#d8c4ff', 0.35, 0);
+        ver.streek(
+          `M${(px - pr * 1.8).toFixed(1)} ${(py + pr * 0.35).toFixed(1)} Q${px.toFixed(1)} ${(py - pr * 0.5).toFixed(1)} ${(px + pr * 1.8).toFixed(1)} ${(py - pr * 0.35).toFixed(1)}`,
+          '#f0dcff', 1.4 * s, 0.75,
+        );
+      }
+      // De sterren in een sprong: strepen, en hoe verder weg hoe dunner.
+      for (let i = 0; i < n(6); i++) {
+        const x = R(L, 0);
+        const y = d * R(0.58, 0.04);
+        ver.streek(
+          `M${x.toFixed(1)} ${y.toFixed(1)} h${(R(70, 14) * s).toFixed(1)}`,
+          K(['#ffffff', '#bfe8ff', '#e6c8ff', '#ffd6f0']), R(1.5, 0.5) * s, R(0.95, 0.4),
+        );
+      }
+      ver.spikkels(n(26), ['#ffffff', '#cfe6ff'], { y0: 2 * s, y1: raam - 4 * s, groot: 1, halo: 0.3 });
+
+      // De spanten tussen de ramen, met een balk erboven.
+      mid.vlak(`M0 0 H${L.toFixed(1)} V${(7 * s).toFixed(1)} H0 Z`, '#171034');
+      for (let x = R(30, 6); x < L; x += 76 * s) {
+        mid.vlak(`M${x.toFixed(1)} 0 h${(8 * s).toFixed(1)} V${(raam + 2 * s).toFixed(1)} h${(-8 * s).toFixed(1)} Z`, '#1a1238');
+        mid.streek(`M${(x + 1.6 * s).toFixed(1)} 0 V${raam.toFixed(1)}`, '#5a46a0', 1 * s, 0.6);
+        mid.stip(x + 4 * s, raam * 0.5, 1.4 * s, '#8f7ad6');
+      }
+
+      // De console: een blad met een ledstrip, schermpjes en knopjes.
+      voor.vlak(`M0 ${raam.toFixed(1)} H${L.toFixed(1)} V${(d + 4).toFixed(1)} H0 Z`, '#120b28');
+      voor.vlak(`M0 ${raam.toFixed(1)} H${L.toFixed(1)} V${(raam + 6 * s).toFixed(1)} H0 Z`, '#21174a');
+      const strip = raam + 3 * s;
+      const id = zorgVoorGloed('#c77dff');
+      voor.g.append(el('rect', {
+        x: 0, y: (strip - 12 * s).toFixed(1), width: L.toFixed(1), height: (24 * s).toFixed(1),
+        fill: `url(#${id})`, opacity: 0.3,
+      }));
+      voor.streek(`M0 ${strip.toFixed(1)} H${L.toFixed(1)}`, '#e2a6ff', 1.6 * s, 0.95);
+      for (let i = 0; i < n(120); i++) {
+        const x = R(L, 0);
+        const y = d * R(0.84, 0.74);
+        voor.vlak(`M${x.toFixed(1)} ${y.toFixed(1)} h${(24 * s).toFixed(1)} v${(11 * s).toFixed(1)} h${(-24 * s).toFixed(1)} Z`, '#0b2448');
+        voor.streek(
+          `M${(x + 3 * s).toFixed(1)} ${(y + 7 * s).toFixed(1)} l${(5 * s).toFixed(1)} ${(-3 * s).toFixed(1)} l${(4 * s).toFixed(1)} ${(2 * s).toFixed(1)} l${(7 * s).toFixed(1)} ${(-4 * s).toFixed(1)}`,
+          '#3fe0ff', 0.9 * s, 0.95,
+        );
+      }
+      for (let i = 0; i < n(12); i++) {
+        voor.gloed(R(L, 0), d * R(0.96, 0.86), 1.7 * s, K(['#ff4fb8', '#3fe0ff', '#ffd166', '#7dff9a']), 0.6, 0.8);
+      }
+    },
+  },
+
+  // -------------------------------------------------------------- Hoogstad
+  //
+  // De stad bij avond, gezien vanaf de overkant van de straat. Achteraan een
+  // skyline in de schemering met verlichte ramen - niet allemaal, want een
+  // stad waar elk raam brandt is een kerstboom - in het midden de gevels
+  // dichtbij met hier en daar een neonbord, en vooraan de stoep met een
+  // zebrapad en lantaarns. De schemering zelf is het licht: roze en oranje
+  // laag aan de hemel, en daarboven al nacht.
+  stad: {
+    kern: '#120c20', koel: '#05030a', warm: '#ffe2c4', textuur: 'korrel', ruw: 0.12, stap: 40,
+    gloed: '#ffb35c',
+    verf(b) {
+      const { d, L, R, K, n } = b;
+      const s = d / 100;
+      const ver = b.laag('randver', 0.9);
+      const mid = b.laag('randmid');
+      const voor = b.laag('randvoor');
+      const straat = d * 0.66;
+
+      // De schemering: nacht boven, roze en oranje laag aan de hemel.
+      ver.vlak(`M0 0 H${L.toFixed(1)} V${straat.toFixed(1)} H0 Z`, '#1a1234');
+      for (let i = 0; i < n(90); i++) {
+        ver.waas(R(L, 0), d * R(0.62, 0.42), R(44, 24) * s, K(['#ff6f91', '#ff9a4d', '#c45cff']), R(0.32, 0.14));
+      }
+      ver.spikkels(n(40), ['#ffffff', '#ffe2c4'], { y0: 2 * s, y1: d * 0.2, groot: 0.9, halo: 0.2 });
+
+      // De skyline ver weg: torens met een paar ramen aan. De ramen gaan
+      // per kleur in één pad: als losse vlakken waren het er honderden, en
+      // daarmee was dit het traagste bord van allemaal.
+      const ramen = { '#ffd27a': '', '#ffb35c': '', '#9fdcff': '' };
+      let x = R(10, -10);
+      while (x < L) {
+        const w = R(34, 16) * s;
+        const top = d * R(0.42, 0.12);
+        ver.vlak(`M${x.toFixed(1)} ${top.toFixed(1)} h${w.toFixed(1)} V${straat.toFixed(1)} h${(-w).toFixed(1)} Z`, K(['#231a42', '#1f1a3c', '#2a1f48']));
+        if (R() < 0.3) ver.streek(`M${(x + w / 2).toFixed(1)} ${top.toFixed(1)} v${(-8 * s).toFixed(1)}`, '#3a2e5c', 1 * s);
+        for (let wy = top + 4 * s; wy < straat - 6 * s; wy += 7 * s) {
+          for (let wx = x + 3 * s; wx < x + w - 4 * s; wx += 6 * s) {
+            if (R() < 0.22) ramen[K(['#ffd27a', '#ffb35c', '#9fdcff'])] += `M${wx.toFixed(1)} ${wy.toFixed(1)} h${(2.6 * s).toFixed(1)} v${(3.4 * s).toFixed(1)} h${(-2.6 * s).toFixed(1)} Z`;
+          }
+        }
+        x += w + R(6, 1) * s;
+      }
+      for (const [kleur, pad] of Object.entries(ramen)) if (pad) ver.vlak(pad, kleur, 0.85);
+
+      // De gevels dichtbij, met een neonbord hier en daar.
+      x = R(20, -6);
+      while (x < L) {
+        const w = R(70, 44) * s;
+        const top = d * R(0.42, 0.28);
+        mid.vlak(`M${x.toFixed(1)} ${top.toFixed(1)} h${w.toFixed(1)} V${(straat + 2 * s).toFixed(1)} h${(-w).toFixed(1)} Z`, K(['#140f26', '#18112c']));
+        // Ramen per kleur in één pad, en één gloed per gevel in plaats van
+        // één per raam: dat scheelde honderden cirkels op een groot bord.
+        let aanPad = '';
+        let uitPad = '';
+        for (let wx = x + 6 * s; wx < x + w - 10 * s; wx += 14 * s) {
+          const raam = `M${wx.toFixed(1)} ${(top + 6 * s).toFixed(1)} h${(8 * s).toFixed(1)} v${(10 * s).toFixed(1)} h${(-8 * s).toFixed(1)} Z`;
+          if (R() < 0.4) aanPad += raam; else uitPad += raam;
+        }
+        if (uitPad) mid.vlak(uitPad, '#0c0918');
+        if (aanPad) {
+          mid.gloed(x + w / 2, top + 11 * s, Math.min(w * 0.3, 14 * s), '#ffb35c', 0.3, 0);
+          mid.vlak(aanPad, '#ffcf7a', 0.9);
+        }
+        if (R() < 0.45) {
+          const kl = K(['#ff4fa8', '#3fe0ff', '#7dff9a']);
+          const nx = x + w * 0.2;
+          const ny = top + 20 * s;
+          mid.gloed(nx + w * 0.3, ny + 4 * s, 9 * s, kl, 0.6, 0);
+          mid.vlak(`M${nx.toFixed(1)} ${ny.toFixed(1)} h${(w * 0.6).toFixed(1)} v${(8 * s).toFixed(1)} h${(-w * 0.6).toFixed(1)} Z`, '#0b0716');
+          mid.streek(`M${(nx + 2 * s).toFixed(1)} ${(ny + 4 * s).toFixed(1)} h${(w * 0.6 - 4 * s).toFixed(1)}`, meng(kl, '#ffffff', 0.4), 1.6 * s, 0.95);
+        }
+        x += w + R(10, 2) * s;
+      }
+
+      // De straat: stoeprand, een zebrapad en lantaarns.
+      voor.vlak(`M0 ${straat.toFixed(1)} H${L.toFixed(1)} V${(d + 4).toFixed(1)} H0 Z`, '#17121f');
+      voor.vlak(`M0 ${straat.toFixed(1)} H${L.toFixed(1)} V${(straat + 5 * s).toFixed(1)} H0 Z`, '#2c2638');
+      for (let zx = L * R(0.5, 0.2); zx < L * R(0.8, 0.55); zx += 9 * s) {
+        voor.vlak(`M${zx.toFixed(1)} ${(straat + 9 * s).toFixed(1)} h${(5 * s).toFixed(1)} V${(d + 4).toFixed(1)} h${(-5 * s).toFixed(1)} Z`, '#d8d2e0', 0.55);
+      }
+      for (let lx = R(60, 20); lx < L; lx += 150 * s) {
+        voor.streek(`M${lx.toFixed(1)} ${(straat + 6 * s).toFixed(1)} V${(d * 0.3).toFixed(1)} h${(8 * s).toFixed(1)}`, '#2e2840', 2.2 * s);
+        voor.gloed(lx + 9 * s, d * 0.3 + 2 * s, 4 * s, '#ffb35c', 0.95, 1);
+      }
+      voor.spikkels(n(60), ['#ffb35c', '#ff6f91'], { y0: straat + 6 * s, y1: d, groot: 1.2, halo: 0.5 });
+    },
+  },
+
+  // ----------------------------------------------- Escaperoom Klokslag
+  //
+  // De muur van een escaperoom: donkere panelen, een groene ledstrip,
+  // tekens die alleen onder blacklight oplichten, en op elke kant één groot
+  // scherm waarop de klok terugtelt. Dat is versiering - de puzzel heeft
+  // geen tijdslimiet, en dat moet zo blijven - maar zonder klok is het
+  // geen escaperoom. Vooraan lopen de laserstralen schuin door de band en
+  // staan er gele pijlen op de vloer.
+  escaperoom: {
+    kern: '#08141a', koel: '#020608', warm: '#c8fff0', textuur: 'strijk', ruw: 0.1, stap: 40,
+    gloed: '#2fe0b4',
+    verf(b) {
+      const { d, L, R, K, n } = b;
+      const s = d / 100;
+      const ver = b.laag('randver', 0.9);
+      const mid = b.laag('randmid');
+      const voor = b.laag('randvoor');
+      const vloer = d * 0.7;
+
+      // De wand: panelen met naden.
+      ver.vlak(`M0 0 H${L.toFixed(1)} V${vloer.toFixed(1)} H0 Z`, '#0b1a20');
+      for (let x = R(30, 0); x < L; x += 46 * s) {
+        ver.streek(`M${x.toFixed(1)} 0 V${vloer.toFixed(1)}`, '#050c10', 1.2 * s, 0.9);
+      }
+      ver.streek(`M0 ${(d * 0.42).toFixed(1)} H${L.toFixed(1)}`, '#050c10', 1 * s, 0.7);
+
+      // De ledstrip bovenaan, met zijn schijnsel op de wand.
+      const strip = d * 0.12;
+      const id = zorgVoorGloed('#2fe0b4');
+      mid.g.append(el('rect', {
+        x: 0, y: (strip - 12 * s).toFixed(1), width: L.toFixed(1), height: (26 * s).toFixed(1),
+        fill: `url(#${id})`, opacity: 0.32,
+      }));
+      mid.streek(`M0 ${strip.toFixed(1)} H${L.toFixed(1)}`, '#9dffe0', 1.8 * s, 0.95);
+
+      // Tekens onder blacklight: driehoek, cirkel, vierkant, een pijl.
+      for (let i = 0; i < n(70); i++) {
+        const x = R(L, 0);
+        const y = d * R(0.6, 0.24);
+        const k = K(['#ff4fd8', '#5ff2ff', '#c8ff5a']);
+        const r = R(7, 4) * s;
+        const vorm = Math.floor(R(4, 0));
+        const pad = vorm === 0
+          ? `M${x.toFixed(1)} ${(y - r).toFixed(1)} L${(x + r).toFixed(1)} ${(y + r).toFixed(1)} L${(x - r).toFixed(1)} ${(y + r).toFixed(1)} Z`
+          : vorm === 1
+            ? `M${(x - r).toFixed(1)} ${y.toFixed(1)} a${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(2 * r).toFixed(1)} 0 a${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(-2 * r).toFixed(1)} 0`
+            : vorm === 2
+              ? `M${(x - r).toFixed(1)} ${(y - r).toFixed(1)} h${(2 * r).toFixed(1)} v${(2 * r).toFixed(1)} h${(-2 * r).toFixed(1)} Z`
+              : `M${(x - r).toFixed(1)} ${y.toFixed(1)} h${(2 * r).toFixed(1)} m${(-r * 0.7).toFixed(1)} ${(-r * 0.7).toFixed(1)} l${(r * 0.7).toFixed(1)} ${(r * 0.7).toFixed(1)} l${(-r * 0.7).toFixed(1)} ${(r * 0.7).toFixed(1)}`;
+        mid.gloed(x, y, r * 0.9, k, 0.3, 0);
+        mid.streek(pad, k, 1.4 * s, 0.9);
+      }
+
+      // De aftelklok: één groot scherm per kant, met rode cijfers. 45:00.
+      // Rechtop gezet, anders staat hij op drie van de vier kanten gedraaid
+      // en leest de onderkant "00:54".
+      const kb = 66 * s;
+      const kh = 26 * s;
+      const klok = mid.rechtop(L * R(0.6, 0.4), d * 0.24 + kh / 2);
+      klok.vlak(`M${(-kb / 2).toFixed(1)} ${(-kh / 2).toFixed(1)} h${kb.toFixed(1)} v${kh.toFixed(1)} h${(-kb).toFixed(1)} Z`, '#1d2a30');
+      klok.vlak(`M${(-kb / 2 + 3 * s).toFixed(1)} ${(-kh / 2 + 3 * s).toFixed(1)} h${(kb - 6 * s).toFixed(1)} v${(kh - 6 * s).toFixed(1)} h${(-kb + 6 * s).toFixed(1)} Z`, '#050304');
+      klok.gloed(0, 0, 18 * s, '#ff3b3b', 0.5, 0);
+      const SEG = { 4: 'bcfg', 5: 'acdfg', 0: 'abcdef' };
+      const cijfer = (cx, c) => {
+        const w = 8 * s;
+        const h = 14 * s;
+        const top = -h / 2;
+        const pts = {
+          a: [cx, top, cx + w, top], b: [cx + w, top, cx + w, top + h / 2], c: [cx + w, top + h / 2, cx + w, top + h],
+          d: [cx, top + h, cx + w, top + h], e: [cx, top + h / 2, cx, top + h], f: [cx, top, cx, top + h / 2],
+          g: [cx, top + h / 2, cx + w, top + h / 2],
+        };
+        for (const seg of SEG[c]) {
+          const [x1, y1, x2, y2] = pts[seg];
+          klok.streek(`M${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)}`, '#ff5a4a', 2.2 * s, 0.95);
+        }
+      };
+      cijfer(-27 * s, 4);
+      cijfer(-15 * s, 5);
+      klok.stip(0, -3 * s, 1.3 * s, '#ff5a4a');
+      klok.stip(0, 3 * s, 1.3 * s, '#ff5a4a');
+      cijfer(5 * s, 0);
+      cijfer(17 * s, 0);
+
+      // De vloer met gele pijlen.
+      voor.vlak(`M0 ${vloer.toFixed(1)} H${L.toFixed(1)} V${(d + 4).toFixed(1)} H0 Z`, '#0e1c1e');
+      voor.streek(`M0 ${vloer.toFixed(1)} H${L.toFixed(1)}`, '#1f3a3a', 2 * s, 0.9);
+      for (let x = R(40, 10); x < L; x += 70 * s) {
+        voor.streek(
+          `M${x.toFixed(1)} ${(d * 0.8).toFixed(1)} l${(6 * s).toFixed(1)} ${(6 * s).toFixed(1)} l${(-6 * s).toFixed(1)} ${(6 * s).toFixed(1)}`
+          + ` M${(x + 9 * s).toFixed(1)} ${(d * 0.8).toFixed(1)} l${(6 * s).toFixed(1)} ${(6 * s).toFixed(1)} l${(-6 * s).toFixed(1)} ${(6 * s).toFixed(1)}`,
+          '#ffd23f', 2 * s, 0.85,
+        );
+      }
+
+      // De lasers: schuin door de hele band, met een gloed eromheen.
+      for (let i = 0; i < n(110); i++) {
+        const x = R(L, 0);
+        const lang = R(140, 70) * s;
+        const pad = `M${x.toFixed(1)} ${(d * 0.15).toFixed(1)} L${(x + lang).toFixed(1)} ${(d * 0.95).toFixed(1)}`;
+        voor.streek(pad, '#ff2d2d', 3.4 * s, 0.18);
+        voor.streek(pad, '#ff6a5a', 0.9 * s, 0.9);
+      }
+    },
+  },
+
+  // ---------------------------------------------- Pretpark Zonnestraal
+  //
+  // Daglicht, net als het zwembad en de dierentuin: de diepte komt hier
+  // uit schaduw, niet uit gloed. Achteraan een zomerlucht; daarvoor loopt
+  // een achtbaan in een lange golf door de hele band, en op een paar
+  // kanten draait een reuzenrad. Vlaggetjes hangen er in bogen tussen, en
+  // vooraan staat het hek met ballonnen eraan. Kleur is hier het onderwerp:
+  // zes felle kleuren, nergens grijs.
+  pretpark: {
+    dag: true,
+    kern: '#fff0bf', koel: '#4a3418', warm: '#ffffff', textuur: 'korrel', ruw: 0.12, stap: 40,
+    gloed: '#ffe08a',
+    verf(b) {
+      const { d, L, R, K, n } = b;
+      const s = d / 100;
+      const ver = b.laag('randver', 0.85);
+      const mid = b.laag('randmid');
+      const voor = b.laag('randvoor');
+      const grond = d * 0.66;
+      const FEL = ['#e8453c', '#ffb020', '#3fb6d8', '#7cc24a', '#e05c9e', '#9b6bff'];
+
+      // De lucht met wolken.
+      ver.vlak(`M0 0 H${L.toFixed(1)} V${grond.toFixed(1)} H0 Z`, '#a9dcf2');
+      for (let i = 0; i < n(150); i++) {
+        ver.vlak(ver.klont(R(L, 0), d * R(0.26, 0.04), R(80, 40) * s, R(14, 7) * s, 4), '#ffffff', 0.9);
+      }
+
+      // Een reuzenrad op sommige kanten.
+      if (R() < 0.7) {
+        const cx = L * R(0.82, 0.18);
+        const cy = d * 0.32;
+        const r = 24 * s;
+        mid.streek(`M${(cx - r * 0.6).toFixed(1)} ${grond.toFixed(1)} L${cx.toFixed(1)} ${cy.toFixed(1)} L${(cx + r * 0.6).toFixed(1)} ${grond.toFixed(1)}`, '#ffffff', 2.2 * s);
+        mid.streek(`M${(cx - r).toFixed(1)} ${cy.toFixed(1)} a${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(2 * r).toFixed(1)} 0 a${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(-2 * r).toFixed(1)} 0`, '#ffffff', 2 * s);
+        for (let k = 0; k < 8; k++) {
+          const a = (k / 8) * Math.PI * 2;
+          const gx = cx + Math.cos(a) * r;
+          const gy = cy + Math.sin(a) * r;
+          mid.streek(`M${cx.toFixed(1)} ${cy.toFixed(1)} L${gx.toFixed(1)} ${gy.toFixed(1)}`, '#f6f1e4', 0.9 * s, 0.9);
+          mid.vlak(`M${(gx - 3 * s).toFixed(1)} ${(gy + 1 * s).toFixed(1)} h${(6 * s).toFixed(1)} v${(5 * s).toFixed(1)} h${(-6 * s).toFixed(1)} Z`, FEL[k % FEL.length]);
+        }
+        mid.stip(cx, cy, 2.6 * s, '#e8453c');
+      }
+
+      // De achtbaan: een golvend spoor over de volle lengte, op witte palen.
+      const golf = (x) => d * (0.34 + 0.14 * Math.sin(x / (52 * s) + 1.3) + 0.05 * Math.sin(x / (19 * s)));
+      for (let x = R(10, 0); x < L; x += 14 * s) {
+        mid.streek(`M${x.toFixed(1)} ${golf(x).toFixed(1)} V${grond.toFixed(1)}`, '#ffffff', 1.2 * s, 0.85);
+      }
+      let spoor = `M0 ${golf(0).toFixed(1)}`;
+      for (let x = 4 * s; x <= L; x += 4 * s) spoor += ` L${x.toFixed(1)} ${golf(x).toFixed(1)}`;
+      mid.streek(spoor, '#c2302a', 3.4 * s);
+      mid.streek(spoor, '#ff7a6e', 1.2 * s, 0.8);
+      const kx = L * R(0.7, 0.3);
+      for (let k = 0; k < 4; k++) {
+        const x = kx + k * 9 * s;
+        mid.vlak(`M${(x - 4 * s).toFixed(1)} ${(golf(x) - 6 * s).toFixed(1)} h${(8 * s).toFixed(1)} v${(5 * s).toFixed(1)} h${(-8 * s).toFixed(1)} Z`, FEL[(k + 1) % FEL.length]);
+      }
+
+      // Vlaggetjes in bogen.
+      for (let x = R(20, 0); x < L; x += 90 * s) {
+        const x1 = x + 90 * s;
+        const y = d * 0.1;
+        mid.streek(`M${x.toFixed(1)} ${y.toFixed(1)} Q${((x + x1) / 2).toFixed(1)} ${(y + 14 * s).toFixed(1)} ${x1.toFixed(1)} ${y.toFixed(1)}`, '#6a4a2a', 0.8 * s);
+        for (let t = 0.1; t < 0.95; t += 0.12) {
+          const fx = x + (x1 - x) * t;
+          const fy = y + 14 * s * 2 * t * (1 - t);
+          mid.vlak(`M${(fx - 3 * s).toFixed(1)} ${fy.toFixed(1)} h${(6 * s).toFixed(1)} l${(-3 * s).toFixed(1)} ${(7 * s).toFixed(1)} Z`, K(FEL));
+        }
+      }
+
+      // Het pad en het hek, met ballonnen eraan.
+      voor.vlak(`M0 ${grond.toFixed(1)} H${L.toFixed(1)} V${(d + 4).toFixed(1)} H0 Z`, '#ecd9a8');
+      for (let i = 0; i < n(80); i++) {
+        voor.stip(R(L, 0), d * R(1, 0.8), R(1.6, 0.7) * s, K(['#ffffff', '#ffe48a', '#d7c08a']), 0.8);
+      }
+      voor.vlak(`M0 ${(grond + 4 * s).toFixed(1)} H${L.toFixed(1)} V${(grond + 7.4 * s).toFixed(1)} H0 Z`, '#ffffff');
+      for (let x = R(16, 4); x < L; x += 24 * s) {
+        voor.vlak(`M${x.toFixed(1)} ${(grond - 2 * s).toFixed(1)} h${(4 * s).toFixed(1)} V${(d * 0.86).toFixed(1)} h${(-4 * s).toFixed(1)} Z`, K(FEL));
+      }
+      voor.streek(`M0 ${(grond + 7.4 * s).toFixed(1)} H${L.toFixed(1)}`, '#c9b27a', 1 * s, 0.7);
+      for (let i = 0; i < n(70); i++) {
+        const x = R(L, 0);
+        const y = d * R(0.5, 0.36);
+        const kl = K(FEL);
+        voor.streek(`M${x.toFixed(1)} ${(y + 7 * s).toFixed(1)} q${(2 * s).toFixed(1)} ${(6 * s).toFixed(1)} 0 ${(grond - y - 4 * s).toFixed(1)}`, '#6a4a2a', 0.6 * s, 0.7);
+        voor.ovaal(x, y, 5 * s, 6.2 * s, kl);
+        voor.ovaal(x - 1.6 * s, y - 2.2 * s, 1.4 * s, 2 * s, '#ffffff', 0.55);
+      }
+    },
+  },
 };
 
 // Geen wereld herkend? Dan het landhuis: donker hout doet nergens pijn.

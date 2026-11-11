@@ -1,14 +1,16 @@
 # Status — Het Vierde Spoor
 
-Last updated: 2026-11-10
+Last updated: 2026-11-11
 
 Translated and restructured from `HANDOFF.md`, which lived at the repository root until the
 project standard was adopted; the original is in git history. The parts of it that are
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Nothing in progress. Working tree clean on `main` at `d8d161c`; everything is live on
-  https://keebl.github.io/het-vierde-spoor/ with the keuring green on all seven checks.
+- Nothing in progress. Working tree clean on `main` at `dda4cb4`; everything is live on
+  https://keebl.github.io/het-vierde-spoor/ with the keuring green on all seven checks
+  (last full run on `dc6ab54`, `volledige keuring exit=0`; the sweep alone now takes
+  nearly twelve minutes, the whole thing a good quarter of an hour).
 - This branch (`chore/adopt-standard`, pull request #1) adds the project standard and
   nothing else: no application code, dependencies or CI were touched. Until it merges,
   half the documentation exists only here.
@@ -26,7 +28,8 @@ standing guidance rather than state moved to `CLAUDE.md`.
    `STOFFEN` — and the name bar no longer sticks, because it lay over the board while you
    scrolled. Furniture, portraits and board frames were not touched — **directions 2, 3
    and 4 of the brief are still open**. Nothing is proven until she has seen it; that is
-   the next step, and it is a measurement, not a formality.
+   the next step, and it is a measurement, not a formality. The same goes for the four
+   present-day worlds of 2026-11-10: write down which one she likes best, and why.
 2. **An ending when you solve it.** Today the screen only says "Opgelost". The culprit
    should appear, with a closing line and a button to the next case. Biggest gap for the
    intended player.
@@ -34,22 +37,38 @@ standing guidance rather than state moved to `CLAUDE.md`.
    The game type was renamed to **Reconstructie** (was "Speurdoku", too close to Murdoku).
 4. **Keyboard and screen reader.** Board cells are `rect` elements without focus, so the
    game cannot be played without a mouse.
-5. **Modernise the base furniture set.** The daughter finds the objects too 1950s. We added
-   daylight worlds instead of redrawing the base set, but that set is still a 1930s manor
-   (hearth, grand piano, steamer trunk, coal bunker). Redrawing it touches every world.
-6. **Names bent around a drawing.** In the swimming pool "de slippersmand" and "de
-   handdoekplank" exist because an umbrella stand and a side table happened to be
-   reusable. The honest fix is to draw those pieces, not to bend the name further.
+5. **Modernise the base furniture set.** Done for the present-day worlds (see Recent
+   decisions, 2026-11-10). The base set itself is still a 1930s manor (hearth, grand piano,
+   steamer trunk, coal bunker), which is right for the manor, Christmas, Halloween, the
+   academy and Regenstad. Redrawing it is direction 2 of `specs/visual-liveliness.md` and a
+   decision of its own, because it touches every world. The lesson stands either way: if a
+   drawing lies, draw it. A world layer can rename things, not redraw them.
 
 ## Blocked / open questions
 - **TODO(guus): the new site name.** Everything else about the rename is ready.
 - **Cloudflare Worker deferred.** `worker/` is written but not deployed: the free plan
   gives 10 ms CPU per request and verifying a puzzle costs up to three seconds. Works on
   the paid plan (~$5/month) or a host with a higher limit. Deliberately postponed.
+- **Should `naSnoei` keep its wall clock?** Repairing it shifts the clues of existing
+  boards (see Known gaps), so decide before touching it.
 - **TODO(guus): licence.** The repository is public and has no `LICENSE`. Default per the
   standard is "all rights reserved"; MIT only by decision (ADR).
 
 ## Recent decisions
+- 2026-11-10 — A drawing may never contradict its own name. The station, the school, the
+  hospital, the office and the pool borrowed half their furniture from the manor and only
+  renamed it ("het ruimtepak" was the knight's armour, "de tijdzuil" the longcase clock).
+  All 71 such slots were swapped one-for-one for an honest modern drawing — never removed:
+  `maxMeubels` was measured before and after for all thirteen existing worlds and is
+  unchanged, and a fingerprint of 18 boards per world is identical to `f74d2b8`. Enforced
+  by `OUDERWETS` / `MODERNE_WERELDEN` in `kamersoorten.js`, which `check-kamers.mjs` fails
+  on as `OUDERWETSE TEKENING IN MODERNE WERELD`. See `specs/modern-worlds.md`.
+- 2026-11-10 — Four present-day worlds, each as complete as the pool: Sterrenschip Zwaluw
+  (`ruimteschip`), Hoogstad (`stad`, evening), Escaperoom Klokslag (`escaperoom`, a set,
+  not a new game) and Pretpark Zonnestraal (`pretpark`, daylight). Thirteen worlds became
+  seventeen, so **`wereldVoorSeed` now takes modulo seventeen: a new random puzzle lands in
+  a different world than it used to.** Existing links are unaffected, because the world is
+  in the URL. Accepted in the spec.
 - 2026-11-10 — The restrained palette was reopened on purpose: one gold accent on cream
   became a bright set with pink as the click colour, because the player it is built for
   found it dull. The decoration sits in one block at the bottom of `styles/app.css`, and
@@ -72,6 +91,11 @@ standing guidance rather than state moved to `CLAUDE.md`.
 - 2026-11-08 — Not every case is a murder: disappearances and thefts too (`zaken.js`).
 
 ## Known gaps not yet scheduled
+- **A 16×16 board does not follow entirely from its seed.** `naSnoei` in
+  `generate-rooms.js` stops after 900 ms of wall-clock time, so on a busy machine (or a
+  slow phone) it prunes less and the same link gets a different set of clues. Seen on
+  2026-11-10 while the keuring was running alongside it. The floor plan and the solution
+  stay the same, the clues do not.
 - The keuring never draws the board frames, so a fault in `bordrand.js` that only breaks at
   draw time is not caught.
 - The solution sits in the page; anyone who opens the console can read it.
@@ -79,5 +103,5 @@ standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Health
 Version: 0.1.0 (private, unreleased) · Build: no build step — a push to `main` is a deploy ·
-Tests: `npm run check:all` green, 7/7 checks, 2026-11-08; `check:snel` green 2026-11-09 · Store: n/a (web) ·
+Tests: `npm run check:all` green, 7/7 checks, 2026-11-10 (`dc6ab54`); `check:snel` green 2026-11-11 · Store: n/a (web) ·
 Dependencies: 1 (`@anthropic-ai/sdk`, tooling only), 0 vulnerabilities (2026-11-09)

@@ -11,6 +11,7 @@ import { WORLDS } from '../src/content/worlds.js';
 import {
   SOORT_VAN, VLOER_VAN, VLOER_VAN_PLEK, MEUBELS_VAN, VERWANTE_SOORTEN,
   WERELDMEUBELS, WERELDVERWANT, WERELDVLOER, meubelsVoor, soortVan,
+  OUDERWETS, MODERNE_WERELDEN,
 } from '../src/content/kamersoorten.js';
 import { GESLACHT_VAN } from '../src/content/namen.js';
 import { readFileSync } from 'node:fs';
@@ -136,6 +137,35 @@ for (const w of WORLDS) {
       if (!gedekt.has(naam)) meld('NIET OMGEDOOPT', `${w.id}: ${naam} kan hier opduiken`);
     }
   }
+}
+
+// ------------------------------------------------ een tekening van vroeger
+//
+// Een wereldlaag kan een naam omdopen, maar het beeld blijft. Zo stond er op
+// het ruimtestation een ridderharnas dat "het ruimtepak" heette, een
+// staande klok als "de tijdzuil" en een vogelverschrikker als "de
+// antennemast". Deze regel kijkt niet naar de naam maar naar de tekening:
+// een wereld van nu mag niets uit OUDERWETS op een bord kunnen zetten, ook
+// niet via de uitwijk naar een verwante soort.
+for (const id of MODERNE_WERELDEN) {
+  const w = WORLDS.find((x) => x.id === id);
+  if (!w) { meld('MODERNE WERELD BESTAAT NIET', id); continue; }
+  const eigen = new Set([...w.places, ...(w.plekkenXL ?? [])].map(soortVan));
+  const bereik = new Set(eigen);
+  for (const s of eigen) {
+    for (const v of (WERELDVERWANT[id]?.[s] ?? VERWANTE_SOORTEN[s] ?? [])) bereik.add(v);
+  }
+  const gezien = new Set();
+  for (const s of bereik) {
+    for (const [naam, sleutel] of meubelsVoor(s, id).flat()) {
+      if (!OUDERWETS.includes(sleutel) || gezien.has(naam)) continue;
+      gezien.add(naam);
+      meld('OUDERWETSE TEKENING IN MODERNE WERELD', `${id}/${s}: ${naam} -> ${sleutel}`);
+    }
+  }
+}
+for (const sleutel of OUDERWETS) {
+  if (!GESCHILDERD[sleutel]) meld('OUDERWETS BESTAAT NIET', sleutel);
 }
 
 for (const sleutel of Object.keys(GESCHILDERD)) {

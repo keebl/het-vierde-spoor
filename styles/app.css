@@ -1796,6 +1796,78 @@ body[data-wereld="kantoor"] .gloedmid { stop-color: #cfd2ef; }
 body[data-wereld="kantoor"] .gloedrand { stop-color: #16182a; }
 
 
+/* Sterrenschip Zwaluw: violet staal en het licht van de ledstrips. */
+body[data-thema="donker"][data-wereld="ruimteschip"] {
+  --bg: #0b0718; --surface: #140e27; --surface-2: #1c1436; --line: #3a2a68;
+  --text: #f0e8ff; --text-2: #c2b2e8; --text-3: #8a7cb0;
+  --accent: #c77dff; --accent-soft: #24183f;
+}
+body[data-wereld="ruimteschip"] .muurvoet,
+body[data-wereld="ruimteschip"] .buitenmuur-voet { stroke: #231a40; }
+body[data-wereld="ruimteschip"] .muurtop,
+body[data-wereld="ruimteschip"] .buitenmuur-top { stroke: #8a78c8; }
+body[data-wereld="ruimteschip"] .muurglans { stroke: #e2a6ff; }
+body[data-wereld="ruimteschip"] .muurnerf { stroke: rgba(28, 20, 56, 0.4); }
+body[data-wereld="ruimteschip"] .muur { stroke: #5c4c94; }
+body[data-wereld="ruimteschip"] .muur-buiten { stroke: #2e2452; }
+body[data-wereld="ruimteschip"] .gloedkern { stop-color: #f6eaff; }
+body[data-wereld="ruimteschip"] .gloedmid { stop-color: #d8c2f6; }
+body[data-wereld="ruimteschip"] .gloedrand { stop-color: #160f2c; }
+
+/* Hoogstad: schemerpaars met het oranje van verlichte ramen. */
+body[data-thema="donker"][data-wereld="stad"] {
+  --bg: #100b1a; --surface: #191226; --surface-2: #221934; --line: #3e2f58;
+  --text: #f6ecf4; --text-2: #cdb8cf; --text-3: #94809a;
+  --accent: #ff8a5c; --accent-soft: #2e1a24;
+}
+body[data-wereld="stad"] .muurvoet,
+body[data-wereld="stad"] .buitenmuur-voet { stroke: #2a2434; }
+body[data-wereld="stad"] .muurtop,
+body[data-wereld="stad"] .buitenmuur-top { stroke: #a49bb2; }
+body[data-wereld="stad"] .muurglans { stroke: #e4dcef; }
+body[data-wereld="stad"] .muurnerf { stroke: rgba(36, 30, 48, 0.32); }
+body[data-wereld="stad"] .muur { stroke: #807790; }
+body[data-wereld="stad"] .muur-buiten { stroke: #403850; }
+body[data-wereld="stad"] .gloedkern { stop-color: #fff2de; }
+body[data-wereld="stad"] .gloedmid { stop-color: #f2d6c2; }
+body[data-wereld="stad"] .gloedrand { stop-color: #20161e; }
+
+/* Escaperoom Klokslag: donker groenblauw, met het groen van de uitgang. */
+body[data-thema="donker"][data-wereld="escaperoom"] {
+  --bg: #061312; --surface: #0c1e1c; --surface-2: #122a27; --line: #22483f;
+  --text: #defaf0; --text-2: #a2d2c4; --text-3: #6c968a;
+  --accent: #2fe0b4; --accent-soft: #0e2c27;
+}
+body[data-wereld="escaperoom"] .muurvoet,
+body[data-wereld="escaperoom"] .buitenmuur-voet { stroke: #18292b; }
+body[data-wereld="escaperoom"] .muurtop,
+body[data-wereld="escaperoom"] .buitenmuur-top { stroke: #6f9a94; }
+body[data-wereld="escaperoom"] .muurglans { stroke: #9dffe0; }
+body[data-wereld="escaperoom"] .muurnerf { stroke: rgba(20, 40, 40, 0.4); }
+body[data-wereld="escaperoom"] .muur { stroke: #4f7570; }
+body[data-wereld="escaperoom"] .muur-buiten { stroke: #263e3c; }
+body[data-wereld="escaperoom"] .gloedkern { stop-color: #e8fff8; }
+body[data-wereld="escaperoom"] .gloedmid { stop-color: #bdeee0; }
+body[data-wereld="escaperoom"] .gloedrand { stop-color: #0e2220; }
+
+/* Pretpark Zonnestraal: zonnegeel en suikerspinroze, ook in het donker. */
+body[data-thema="donker"][data-wereld="pretpark"] {
+  --bg: #17110a; --surface: #221a10; --surface-2: #2e2416; --line: #5a4428;
+  --text: #fff4e2; --text-2: #e2caa6; --text-3: #a88e6e;
+  --accent: #ffb020; --accent-soft: #3a2a12;
+}
+body[data-wereld="pretpark"] .muurvoet,
+body[data-wereld="pretpark"] .buitenmuur-voet { stroke: #4a3a22; }
+body[data-wereld="pretpark"] .muurtop,
+body[data-wereld="pretpark"] .buitenmuur-top { stroke: #ffd27a; }
+body[data-wereld="pretpark"] .muurglans { stroke: #fff2c8; }
+body[data-wereld="pretpark"] .muurnerf { stroke: rgba(74, 52, 24, 0.3); }
+body[data-wereld="pretpark"] .muur { stroke: #e8a13c; }
+body[data-wereld="pretpark"] .muur-buiten { stroke: #8a5a20; }
+body[data-wereld="pretpark"] .gloedkern { stop-color: #fffbe8; }
+body[data-wereld="pretpark"] .gloedmid { stop-color: #fff0c4; }
+body[data-wereld="pretpark"] .gloedrand { stop-color: #2a2010; }
+
 /* ------------------------------------------------------------- themaknop
    Eén knop in de kop die door drie standen loopt. Met een "A" ernaast als
    hij het apparaat volgt, zodat je ziet dat je zelf niets hebt gekozen. */
