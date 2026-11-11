@@ -183,19 +183,36 @@ function snoei(rooster, aanwijzingen, stijl, rng, budget) {
 // Twee dingen houden hem betaalbaar. Hij draait één keer, op de poging die
 // het geworden is, en niet bij elk van de vierentwintig pogingen - dat
 // scheelt het verschil tussen drie en zevenentwintig seconden op een bord
-// van zestien bij zestien. En er staat een klok omheen: elke beurt is een
+// van zestien bij zestien. En hij heeft een werkbudget: elke beurt is een
 // volledige telling, en die kost op zestien bij zestien ruim een seconde.
-// Wat binnen de tijd past wordt nagerekend, de rest blijft staan.
+// Wat binnen het budget past wordt nagerekend, de rest blijft staan.
+//
+// Dat budget telt solverstappen en geen milliseconden. Hier stond eerst een
+// klok van 900 ms, en dan hangt de puzzel af van hoe druk de machine is: op
+// 2026-11-10 gaf een halloween-bord op niveau zes andere aanwijzingen
+// terwijl er een keuring naast draaide. Dezelfde link moet op elke telefoon
+// hetzelfde bord geven, dus alles volgt uit de seed, ook waar we ophouden.
+//
+// 480.000 stappen is één volle telling op zestien bij zestien (30.000 per
+// rij, zie poging) en gemeten iets meer dan wat er op een rustige laptop in
+// 900 ms paste. Zo blijven de borden in de bibliotheek wat ze waren, en
+// verschuift er niets op de kleinere roosters: die waren al binnen de klok
+// klaar, dus ook binnen dit budget. We kijken voor elke beurt of er nog
+// budget over is, en breken een lopende telling niet af - een afgebroken
+// telling kost werk en levert niets op.
+const NASNOEI_STAPPEN = 480000;
+
 function naSnoei(rooster, aanwijzingen, overgeslagen, budget) {
   if (!overgeslagen.length) return aanwijzingen;
   const houd = aanwijzingen.slice();
-  const tot = Date.now() + 900;
+  let gebruikt = 0;
   for (const c of overgeslagen) {
     const i = houd.indexOf(c);
     if (i < 0) continue;
-    if (Date.now() > tot) break;
+    if (gebruikt >= NASNOEI_STAPPEN) break;
     const proef = houd.filter((x, j) => x && j !== i);
     const uit = telPlaatsingen(rooster, proef, 2, budget);
+    gebruikt += uit.stappen;
     if (uit.opgegeven) continue;
     if (uit.count === 1) houd[i] = null;
   }
