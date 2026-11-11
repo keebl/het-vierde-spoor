@@ -7,18 +7,17 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Nothing in progress. Working tree clean on `main` at `e58ee1d`; everything is live on
+- Nothing in progress. Working tree clean on `main` at `c7136a5`; everything is live on
   https://keebl.github.io/het-vierde-spoor/.
 - The project standard was merged on 2026-11-11 (pull request #1, merge commit `e58ee1d`):
   documentation only, no application code, dependencies or CI. `HANDOFF.md` and
   `ARCHITECTUUR.md` are gone from the root; this file and `docs/ARCHITECTURE.md` replace
   them, and standing guidance lives in `CLAUDE.md`.
-- The keuring was last run in full on `dc6ab54`, green on all seven checks
-  (`volledige keuring exit=0`; the sweep alone takes nearly twelve minutes, the whole thing
-  a good quarter of an hour). The four engine and server commits after it (`edcbd24`
-  onwards: the step-bounded `naSnoei`, a `.env` parser without a backtracking regex, a
-  logged dress-up failure) have had `check:snel` only — **a full keuring is owed before the
-  next release.**
+- The keuring ran in full on `c7136a5` (2026-11-11) and is green on all seven checks,
+  `volledige keuring exit=0`. That covers the four engine and server commits after
+  `dc6ab54` — the step-bounded `naSnoei`, a `.env` parser without a backtracking regex, a
+  logged dress-up failure. Twelve minutes on an idle laptop: engine 249s, sweep 370s,
+  giveaways 71s, library 33s, the other three a tenth of a second each.
 
 ## Next
 1. **Show her the cheerful restyle and write down what she says.** The daughter's verdict
@@ -106,5 +105,5 @@ standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Health
 Version: 0.1.0 (private, unreleased) · Build: no build step — a push to `main` is a deploy ·
-Tests: `npm run check:all` green, 7/7 checks, 2026-11-10 (`dc6ab54`); `check:snel` green 2026-11-11 · Store: n/a (web) ·
+Tests: `npm run check:all` green, 7/7 checks, 2026-11-11 (`c7136a5`) · Store: n/a (web) ·
 Dependencies: 1 (`@anthropic-ai/sdk`, tooling only), 0 vulnerabilities (2026-11-09)
