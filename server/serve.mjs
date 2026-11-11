@@ -218,10 +218,10 @@ function readJson(req) {
 async function loadDotEnv() {
   try {
     const raw = await readFile(join(ROOT, '.env'), 'utf8');
-    for (const line of raw.split('\n')) {
-      const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/);
+    for (const line of raw.split(/\r?\n/)) {
+      const m = line.match(/^\s*([A-Z0-9_]+)\s*=(.*)$/);
       if (!m) continue;
-      const value = m[2].replace(/^["']|["']$/g, '');
+      const value = m[2].trim().replace(/^["']|["']$/g, '');
       if (!process.env[m[1]]) process.env[m[1]] = value;
     }
   } catch {
