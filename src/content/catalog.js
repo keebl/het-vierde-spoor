@@ -45,6 +45,16 @@ export const CATALOG = [
   { seed: 'kamer-24', titel: 'Het grote tentamen', sub: 'Zestien bij zestien in een school die niet meewerkt.', opdracht: 'dader', wereld: 'academie', mechaniek: 'kamer', niveau: 6 },
   { seed: 'kamer-25', titel: 'De langste nacht van Regenstad', sub: 'Zestien bij zestien. Niemand gaat vanavond naar huis.', opdracht: 'dader', wereld: 'noir', mechaniek: 'kamer', niveau: 6 },
 
+  // ---- Vier werelden van nu ----------------------------------------------
+  { seed: 'zwaluw-1', titel: 'Midden in een sprong', sub: 'Zes bemanningsleden, en net op dat moment gaan de lampen uit.', opdracht: 'dader', wereld: 'ruimteschip', mechaniek: 'kamer', niveau: 2 },
+  { seed: 'zwaluw-2', titel: 'Het holodek staat nog aan', sub: 'Negen aan boord, en eentje stond ergens alleen.', opdracht: 'dader', wereld: 'ruimteschip', mechaniek: 'kamer', niveau: 4 },
+  { seed: 'hoogstad-1', titel: 'Stroomstoring op vrijdag', sub: 'Zeven vrienden in het donker, ergens in het blok.', opdracht: 'dader', wereld: 'stad', mechaniek: 'kamer', niveau: 3 },
+  { seed: 'hoogstad-2', titel: 'De laatste metro', sub: 'Twaalf bij twaalf, en de lift zit vast.', opdracht: 'dader', wereld: 'stad', mechaniek: 'kamer', niveau: 5 },
+  { seed: 'klokslag-1', titel: 'Nog tien minuten', sub: 'Vijf spelers, vier kamers, en de klok tikt door.', opdracht: 'dader', wereld: 'escaperoom', mechaniek: 'kamer', niveau: 1 },
+  { seed: 'klokslag-2', titel: 'De laatste code', sub: 'Negen spelers en een kluis die al open was.', opdracht: 'dader', wereld: 'escaperoom', mechaniek: 'kamer', niveau: 4 },
+  { seed: 'zonnestraal-1', titel: 'Stilstand in het reuzenrad', sub: 'Zes bezoekers, en niemand weet wie er bovenin zat.', opdracht: 'dader', wereld: 'pretpark', mechaniek: 'kamer', niveau: 2 },
+  { seed: 'zonnestraal-2', titel: 'De hele zaterdag', sub: 'Zestien bij zestien door het hele park. Neem er de tijd voor.', opdracht: 'dader', wereld: 'pretpark', mechaniek: 'kamer', niveau: 6 },
+
   // ---- Regenstad ---------------------------------------------------------
   { seed: 'kade-1', titel: 'De havenmeester', sub: 'Eén nacht, vier verdachten, en een telefoon die niemand opnam.', opdracht: 'dader', wereld: 'noir', mechaniek: 'grid', niveau: 2 },
   { seed: 'kade-7', titel: 'Natte voeten', sub: 'Iedereen was ergens anders. Eén iemand twee keer.', opdracht: 'dader', wereld: 'noir', mechaniek: 'grid', niveau: 4 },

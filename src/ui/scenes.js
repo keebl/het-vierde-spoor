@@ -474,6 +474,144 @@ const SCENES = {
     for (let x = 16; x < B; x += 84) g.append(rechthoek(x, 112, 9, H - 112, 'sc-near'));
     g.append(cirkel(140, 100, 3.5, 'sc-licht'));
   },
+
+  // Een schip in een sprong. De sterren zijn strepen geworden, er schuift
+  // een planeet voorbij, en achter de motoren gloeit het spoor. Dit is wat
+  // het schip van het station onderscheidt: het hangt niet, het gaat.
+  ruimteschip(g) {
+    sterren(g, 34, 101);
+    const r = zaadje(77);
+    for (let i = 0; i < 36; i++) {
+      const y = r() * 128 + 4;
+      const x = r() * B;
+      g.append(pad(`M ${x.toFixed(1)} ${y.toFixed(1)} h ${(30 + r() * 130).toFixed(1)}`, 'sc-regenlijn'));
+    }
+    g.append(cirkel(690, 44, 30, 'sc-planeet'));
+    g.append(pad('M 630 58 Q 690 26 752 36', 'sc-lijn'));
+
+    const schip = maak('g');
+    schip.append(pad('M 300 66 L 362 40 L 410 70 Z', 'sc-mid'));
+    schip.append(pad('M 250 74 L 430 62 Q 532 60 578 76 Q 532 92 430 90 L 250 84 Z', 'sc-mid'));
+    schip.append(pad('M 300 86 L 362 116 L 410 86 Z', 'sc-near'));
+    schip.append(pad('M 490 68 Q 530 66 556 76 Q 530 80 490 80 Z', 'sc-near'));
+    schip.append(flank('M 250 79 L 578 76 Q 532 92 430 90 L 250 84 Z'));
+    g.append(schip);
+    for (let x = 330; x < 470; x += 17) g.append(rechthoek(x, 74, 7, 3, 'sc-raam'));
+    // Het spoor achter de motoren.
+    g.append(pad('M 250 74 L 40 77 L 40 81 L 250 84 Z', 'sc-mist'));
+    g.append(cirkel(250, 79, 5, 'sc-licht'));
+    g.append(cirkel(250, 79, 20, 'sc-schijn'));
+  },
+
+  // Hoogstad bij avond: torens tegen een roze schemering, de helft van de
+  // ramen aan, een neonbord en een metro die over het viaduct rijdt.
+  stad(g) {
+    sterren(g, 10, 131);
+    const ver = maak('g');
+    [[0, 54, 60], [70, 34, 50], [130, 60, 44], [260, 28, 56], [330, 48, 70],
+     [520, 40, 48], [580, 22, 60], [650, 52, 54], [720, 36, 80]].forEach(([x, y, w]) => {
+      ver.append(rechthoek(x, y, w, H - y, 'sc-ver'));
+    });
+    g.append(ver);
+
+    const mid = maak('g');
+    [[40, 70, 70], [180, 44, 76], [410, 30, 90], [610, 64, 84]].forEach(([x, y, w]) => {
+      mid.append(rechthoek(x, y, w, H - y, 'sc-mid'));
+      mid.append(flank(`M ${x + w * 0.66} ${y} L ${x + w} ${y} L ${x + w} ${H} L ${x + w * 0.66} ${H} Z`));
+    });
+    g.append(mid);
+    ramen(mid, 52, 80, 4, 4, 14, 5);
+    ramen(mid, 192, 54, 4, 6, 15, 9);
+    ramen(mid, 424, 40, 5, 6, 15, 13);
+    ramen(mid, 622, 74, 4, 4, 16, 2);
+    // Een neonbord op de hoge toren.
+    g.append(rechthoek(430, 112, 52, 8, 'sc-licht'));
+
+    // Het viaduct met de metro erop.
+    g.append(rechthoek(0, 126, B, 6, 'sc-near'));
+    g.append(pad('M 120 126 L 120 112 Q 120 106 128 106 L 300 106 Q 312 106 316 116 L 318 126 Z', 'sc-near'));
+    for (let x = 136; x < 300; x += 20) g.append(rechthoek(x, 110, 12, 6, 'sc-raam'));
+    g.append(cirkel(312, 118, 3, 'sc-licht'));
+    for (let x = 60; x < B; x += 160) g.append(rechthoek(x, 132, 8, H - 132, 'sc-near'));
+  },
+
+  // Een escaperoom van binnen: een deur met een groen uitgangsbordje, de
+  // aftelklok aan de muur, een kluis, en rode lasers dwars door de kamer.
+  escaperoom(g) {
+    g.append(rechthoek(0, 0, B, H, 'sc-ver'));
+    const mid = maak('g');
+    for (let x = 0; x < B; x += 90) mid.append(rechthoek(x, 0, 2, H, 'sc-mid'));
+    mid.append(rechthoek(0, 112, B, H - 112, 'sc-mid'));
+    g.append(mid);
+
+    // De deur met het bordje erboven.
+    g.append(rechthoek(560, 40, 64, 76, 'sc-near'));
+    g.append(cirkel(614, 82, 3, 'sc-raam'));
+    g.append(rechthoek(570, 24, 44, 10, 'sc-licht'));
+
+    // De klok: een donker vlak met rode streepjes als cijfers.
+    g.append(rechthoek(250, 26, 120, 40, 'sc-near'));
+    [[262, 34], [286, 34], [324, 34], [348, 34]].forEach(([x, y]) => {
+      g.append(pad(`M ${x} ${y} h 12 v 12 h -12 v 12 h 12`, 'sc-lijn'));
+    });
+    g.append(cirkel(310, 40, 2.4, 'sc-licht'));
+    g.append(cirkel(310, 52, 2.4, 'sc-licht'));
+
+    // Een kluis en een plank met dozen.
+    g.append(rechthoek(120, 74, 60, 42, 'sc-near'));
+    g.append(cirkel(160, 95, 8, 'sc-mid'));
+    g.append(rechthoek(680, 64, 90, 6, 'sc-near'));
+    g.append(rechthoek(690, 46, 20, 18, 'sc-mid'));
+    g.append(rechthoek(716, 52, 26, 12, 'sc-mid'));
+
+    // De lasers.
+    for (const [x1, x2] of [[0, 420], [180, 700], [380, 800], [-60, 260]]) {
+      g.append(pad(`M ${x1} 30 L ${x2} 140`, 'sc-regenlijn'));
+    }
+  },
+
+  // Een pretpark op een zonnige zaterdag: een reuzenrad, een achtbaan die
+  // over de tenten heen golft, en vlaggetjes. Net als het zwembad geen
+  // nacht en geen lantaarns, maar lucht en kleur.
+  pretpark(g) {
+    const ver = maak('g');
+    ver.append(rechthoek(0, 0, B, 70, 'sc-ver'));
+    [[40, 22, 60], [220, 14, 50], [430, 26, 64], [640, 16, 56]].forEach(([x, y, w]) => {
+      ver.append(pad(`M ${x} ${y + 12} q ${w / 4} -12 ${w / 2} 0 q ${w / 4} -9 ${w / 2} 0 Z`, 'sc-sneeuw'));
+    });
+    g.append(ver);
+
+    // Het reuzenrad.
+    const rad = maak('g');
+    rad.append(pad('M 600 132 L 640 70 L 680 132', 'sc-lijn'));
+    rad.append(pad('M 596 70 a 44 44 0 0 1 88 0 a 44 44 0 0 1 -88 0', 'sc-lijn'));
+    for (let k = 0; k < 8; k++) {
+      const a = (k / 8) * Math.PI * 2;
+      const x = 640 + Math.cos(a) * 44;
+      const y = 70 + Math.sin(a) * 44;
+      rad.append(pad(`M 640 70 L ${x.toFixed(1)} ${y.toFixed(1)}`, 'sc-lijn'));
+      rad.append(rechthoek(x - 5, y, 10, 8, k % 2 ? 'sc-licht' : 'sc-pompoen'));
+    }
+    g.append(rad);
+
+    // De achtbaan.
+    let spoor = 'M 0 92';
+    for (let x = 10; x <= 560; x += 10) spoor += ` L ${x} ${(80 + 26 * Math.sin(x / 60) + 8 * Math.sin(x / 17)).toFixed(1)}`;
+    g.append(pad(spoor, 'sc-lijn'));
+    for (let x = 20; x < 560; x += 34) g.append(rechthoek(x, 80 + 26 * Math.sin(x / 60), 2, 60, 'sc-mid'));
+
+    // Tenten en vlaggetjes.
+    const tent = maak('g');
+    [[80, 70], [250, 60], [430, 76]].forEach(([x, b]) => {
+      tent.append(pad(`M ${x} 132 L ${x + b / 2} 98 L ${x + b} 132 Z`, 'sc-mid'));
+      tent.append(rechthoek(x + 4, 132, b - 8, 18, 'sc-near'));
+    });
+    g.append(tent);
+    for (let x = 0; x < B; x += 26) {
+      g.append(pad(`M ${x} 10 l 12 0 l -6 10 Z`, (x / 26) % 2 ? 'sc-licht' : 'sc-pompoen'));
+    }
+    g.append(rechthoek(0, 140, B, H - 140, 'sc-near'));
+  },
 };
 
 // ---------------------------------------------------------------- de verf

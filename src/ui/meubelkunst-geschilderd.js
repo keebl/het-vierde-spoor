@@ -1826,4 +1826,1066 @@ export const GESCHILDERD = {
     v('metaal', plaat(17.6, 37, 13, 2.6, { zak: 0.3 })),
     vloer('steenkoel', ovaal(24, 40.4, 10, 2.4)),
   ],
+
+  // ============================================================ van nu
+  //
+  // De moderne set (specs/modern-worlds.md). Het ruimtestation, de school,
+  // het ziekenhuis, het kantoor en het zwembad leenden voor de helft het
+  // meubilair van een landhuis uit 1930 en gaven het een nieuwe naam: een
+  // ridderharnas heette "het ruimtepak", een staande klok "de tijdzuil",
+  // een vogelverschrikker "de antennemast". Een naam verandert niets aan wat
+  // je ziet. Deze stukken zijn wat die namen beloofden.
+  //
+  // Van nu betekent hier: gegoten in plaats van getimmerd (de kunststoffen
+  // uit STOFFEN), schermen en ledjes die zelf licht geven, en strakke
+  // vormen - maar wel uit dezelfde bouwstenen als de rest, met het licht uit
+  // linksboven, anders vallen ze op het bord uit de toon.
+
+  // Een pak aan een standaard, met de helm erop. Geen vizier met spleten en
+  // geen pluim: een bol glas en een oranje streep.
+  ruimtepak: [
+    v('metaal', zuilvorm(24, 28, 2.6, 3.4, 10)),
+    v('kunststofwit', staaf(17.4, 17, 13, 27.6, 4.2)),
+    v('kunststofwit', staaf(30.6, 17, 35, 27.6, 4.2)),
+    v('kunststof', bol(12.8, 28.4, 2.4)),
+    v('kunststof', bol(35.2, 28.4, 2.4)),
+    v('kunststofwit', poot(17.4, 28, 6, 9, { krimp: 0.1 })),
+    v('kunststofwit', poot(24.6, 28, 6, 9, { krimp: 0.1 })),
+    v('kunststofwit', romp(16, 15.4, 16, 14, { taps: 0.06 })),
+    v('kunststof', plaat(16.4, 24, 15.2, 2.4, { zak: 0.3 })),
+    v('donker', romp(20, 17.6, 8, 5, { taps: 0.02 })),
+    v('water', bol(22, 20, 0.9), { glans: 1 }),
+    v('vuur', bol(25.6, 20, 0.9), { glans: 1 }),
+    v('kunststofwit', bol(24, 9.6, 6.6)),
+    v('scherm', ovaal(24.8, 10, 4.4, 3.4), { glans: 1 }),
+    v('donker', romp(16.2, 36.4, 7.6, 3.6, { taps: 0.04 })),
+    v('donker', romp(24.2, 36.4, 7.6, 3.6, { taps: 0.04 })),
+    vloer('metaal', plaat(12, 39.8, 24, 2.6, { zak: 0.4 })),
+  ],
+
+  // Vier schermen in een rek: een controlekamer, een studio, een etalage.
+  monitorwand: [
+    v('metaal', staaf(8.6, 5, 8.6, 40, 2.2)),
+    v('metaal', staaf(39.4, 5, 39.4, 40, 2.2)),
+    v('donker', romp(7, 5, 16.6, 11.6, { taps: 0.004 })),
+    v('donker', romp(24.4, 5, 16.6, 11.6, { taps: 0.004 })),
+    v('donker', romp(7, 18, 16.6, 11.6, { taps: 0.004 })),
+    v('donker', romp(24.4, 18, 16.6, 11.6, { taps: 0.004 })),
+    v('scherm', romp(8.2, 6.2, 14.2, 9.2, { taps: 0.004 }), { glans: 1 }),
+    v('scherm', romp(25.6, 6.2, 14.2, 9.2, { taps: 0.004 }), { glans: 1 }),
+    v('scherm', romp(8.2, 19.2, 14.2, 9.2, { taps: 0.004 }), { glans: 1 }),
+    v('scherm', romp(25.6, 19.2, 14.2, 9.2, { taps: 0.004 }), { glans: 1 }),
+    streep('water', 1, 'M10.4 9.4 H17 M10.4 12 H20'),
+    streep('neon', 1.1, 'M27.4 13.4 L30.4 10 L33.4 12 L37.6 8.2'),
+    v('vuur', bol(15.4, 23.8, 2.4), { glans: 1 }),
+    streep('kunststof', 1, 'M27.6 26 V23 M30.6 26 V21.6 M33.6 26 V24 M36.6 26 V22.4'),
+    v('metaal', plaat(8, 31.4, 32, 2, { zak: 0.3 })),
+    vloer('donker', plaat(6, 39.6, 36, 3, { zak: 0.4 })),
+  ],
+
+  // Een klok van nu heeft geen wijzers: rode cijfers op een zwart bord.
+  tijdscherm: [
+    v('metaal', staaf(13, 25, 12, 38.6, 2.2)),
+    v('metaal', staaf(35, 25, 36, 38.6, 2.2)),
+    v('donker', romp(6, 10, 36, 16, { taps: 0.01 })),
+    v('donker', romp(8.4, 12.4, 31.2, 11.2, { taps: 0.004 })),
+    streep('vuur', 1.7, 'M11.4 14.4 V21.6 M14.4 14.4 H18.4 V18 H14.4 V21.6 H18.4 M23 14.4 H27 V21.6 H23 M23 18 H27 M29.8 14.4 H33.8 V21.6 H29.8 V14.4'),
+    v('vuur', bol(20.7, 16.2, 0.8), { glans: 1 }),
+    v('vuur', bol(20.7, 19.8, 0.8), { glans: 1 }),
+    streep('water', 1, 'M35.8 21.6 H37.6'),
+    vloer('metaal', plaat(9, 38.4, 30, 2.6, { zak: 0.4 })),
+  ],
+
+  // Een sporttas op de grond: geen leren koffer met beslag.
+  sporttas: [
+    vloer('stofblauw', rol(10.4, 22, 27.2, 16, { rond: 5 })),
+    v('donker', ovaal(9.8, 30, 2.6, 7.2)),
+    v('donker', ovaal(38.2, 30, 2.6, 7.2)),
+    v('kunststof', plaat(10.6, 29, 26.8, 2.6, { zak: 0.3 })),
+    streep('metaal', 0.9, 'M12.4 23.6 Q24 21.8 35.6 23.6'),
+    v('donker', 'M16.6 22.8 Q19.4 13.6 24 14.2 Q28.6 13.6 31.4 22.8 L29.2 22.8 Q27.2 16.4 24 16.4 Q20.8 16.4 18.8 22.8 Z'),
+    v('papier', bol(24, 34, 1.6)),
+  ],
+
+  // Een rolkoffer met een uitschuifbare beugel. Gegoten schaal, ribbels,
+  // twee wieltjes.
+  rolkoffer: [
+    v('metaal', staaf(19, 4.4, 19, 14, 1.6, { krimp: 0 })),
+    v('metaal', staaf(29, 4.4, 29, 14, 1.6, { krimp: 0 })),
+    v('donker', plaat(17.4, 3, 13.2, 2.6, { zak: 0.3 })),
+    vloer('kunststofroze', romp(13, 13, 22, 25, { taps: 0.01, bol: 0.9 })),
+    streep('kunststofroze', 1, 'M17.6 15.4 V35.6 M24 15 V36.2 M30.4 15.4 V35.6'),
+    v('donker', plaat(21, 16.6, 6, 1.8, { zak: 0.2 })),
+    v('donker', bol(16.4, 39.6, 2.2)),
+    v('donker', bol(31.6, 39.6, 2.2)),
+  ],
+
+  // Een vat van nu: blauw gegoten kunststof, twee ribbels, een etiket en
+  // twee doppen bovenop. Het eikenhouten vat met hoepels is van vroeger.
+  drum: [
+    vloer('kunststofblauw', zuilvorm(24, 10, 22, 22, 29, { bol: 0.7 })),
+    v('kunststofblauw', ovaal(24, 10.2, 11, 2.4)),
+    v('kunststofblauw', plaat(12.4, 19, 23.2, 2.2, { zak: 0.4 })),
+    v('kunststofblauw', plaat(12.4, 30, 23.2, 2.2, { zak: 0.4 })),
+    v('kunststofwit', romp(18.6, 22.6, 10.8, 6, { taps: 0.02 })),
+    streep('donker', 0.8, 'M20.4 24.8 H27.6 M20.4 26.8 H25.6'),
+    v('kunststofwit', bol(18.4, 9.6, 1.5)),
+    v('kunststofwit', bol(29.4, 9.8, 1.1)),
+  ],
+
+  // Een drukvat op poten: bolle kop, een meter, een kraan, een gele band.
+  gastank: [
+    v('metaal', staaf(16, 31, 13.6, 39.8, 2.2)),
+    v('metaal', staaf(32, 31, 34.4, 39.8, 2.2)),
+    v('metaal', 'M14 14 Q14 6.4 24 6.4 Q34 6.4 34 14 L34 31.4 Q34 37.4 24 37.4 Q14 37.4 14 31.4 Z'),
+    v('kunststof', plaat(14, 22.4, 20, 3.6, { zak: 0.4 })),
+    streep('donker', 1, 'M16.4 23.4 L18 25.4 M20.4 23.4 L22 25.4 M24.4 23.4 L26 25.4 M28.4 23.4 L30 25.4'),
+    v('kunststofwit', bol(28.4, 14.6, 3.4)),
+    streep('vuur', 0.8, 'M28.4 14.6 L30.2 12.6'),
+    v('koper', romp(22.2, 2.6, 3.6, 4, { taps: 0.04 })),
+    v('koper', ovaal(24, 2.8, 4.2, 1.2)),
+    vloer('donker', plaat(10, 39.4, 28, 2.6, { zak: 0.4 })),
+  ],
+
+  // Een wastafel van nu: een witte kom op een kastje en een kraan uit de
+  // muur. Geen lampetkan, geen marmeren blad.
+  wasbak: [
+    v('spiegel', ovaal(24, 6.4, 9, 5), { glans: 1 }),
+    vloer('kunststofwit', romp(10, 25.4, 28, 15.6, { taps: 0.01 })),
+    streep('metaal', 0.8, 'M24 27.6 V39.4'),
+    v('metaal', plaat(20, 29.6, 2.6, 1.6, { zak: 0.1 })),
+    v('metaal', plaat(25.4, 29.6, 2.6, 1.6, { zak: 0.1 })),
+    v('kunststofwit', plaat(8, 22, 32, 3.8, { zak: 0.4 })),
+    v('kunststofwit', bak(24, 17.6, 20, 15, 5.4)),
+    v('water', plaat(17.6, 18.6, 12.8, 1.6, { zak: 0.3 }), { glans: 1 }),
+    v('metaal', staaf(24, 11.6, 24, 17.6, 1.8, { krimp: 0 })),
+    v('metaal', staaf(24, 12.2, 27.8, 13.6, 1.6)),
+  ],
+
+  // Het opstapje van nu is van plastic, met twee treden en een handgreep.
+  opstapkrukje: [
+    vloer('kunststof', 'M10 40 L10 26.4 Q10 25.4 11 25.4 L23.6 25.4 L23.6 14.6 Q23.6 13.6 24.6 13.6 L37 13.6 Q38 13.6 38 14.6 L38 40 Q24 40.8 10 40 Z'),
+    v('donker', plaat(9.4, 24.2, 15.6, 2.6, { zak: 0.3 })),
+    v('donker', plaat(23, 12.4, 15.6, 2.6, { zak: 0.3 })),
+    v('donker', romp(28, 18.4, 6, 3, { taps: 0 })),
+    v('donker', 'M13.4 40 Q13.4 36.4 16.4 36.4 L32 36.4 Q35 36.4 35 40 Z'),
+    streep('kunststof', 0.8, 'M12.6 30.6 H21 M26.4 25 H35.4 M26.4 30.6 H35.4'),
+  ],
+
+  // Een vakwerkmast met een schotel en een knipperlicht.
+  antennemast: [
+    v('metaal', staaf(18, 40, 22.4, 7, 2.2, { krimp: 0.2 })),
+    v('metaal', staaf(30, 40, 25.6, 7, 2.2, { krimp: 0.2 })),
+    streep('metaal', 0.9, 'M18.9 34 H29.1 M18.9 34 L28.2 28 M19.8 28 H28.2 M19.8 28 L27.4 22 M20.6 22 H27.4 M20.6 22 L26.5 16 M21.5 16 H26.5 M21.5 16 L25.6 10.4'),
+    v('metaal', staaf(26.4, 17, 31, 17.4, 1.4)),
+    v('kunststofwit', 'M29.4 11.6 Q36.8 9 40.6 15.8 Q41.8 21 37.6 23.4 Q34.2 18 29.4 11.6 Z'),
+    v('metaal', staaf(35.4, 16.6, 31.4, 18.4, 1.2)),
+    v('metaal', romp(22.4, 5.4, 3.2, 2.6, { taps: 0.04 })),
+    v('vuur', bol(24, 4.2, 1.7), { glans: 1 }),
+    vloer('donker', plaat(13, 39.4, 22, 3, { zak: 0.4 })),
+  ],
+
+  // Buizen op een stapel, met de kopse kanten naar je toe: dan zie je dat
+  // het buizen zijn en geen boomstammen.
+  buizenstapel: [
+    v('metaal', ring(13.4, 34.2, 5.2, 1.6), { gat: true }),
+    v('metaal', ring(24, 34.2, 5.2, 1.6), { gat: true }),
+    v('metaal', ring(34.6, 34.2, 5.2, 1.6), { gat: true }),
+    v('kunststof', ring(18.7, 25.2, 5.2, 1.6), { gat: true }),
+    v('kunststof', ring(29.3, 25.2, 5.2, 1.6), { gat: true }),
+    v('metaal', ring(24, 16.2, 5.2, 1.6), { gat: true }),
+    v('donker', 'M5 39.6 L8 33.6 L8.6 39.6 Z'),
+    v('donker', 'M43 39.6 L40 33.6 L39.4 39.6 Z'),
+    vloer('donker', plaat(5, 39.4, 38, 2.6, { zak: 0.3 })),
+  ],
+
+  // Tegels op een pallet, met een spanband eromheen.
+  tegelstapel: [
+    v('hout', romp(8, 37.2, 5, 3.2, { taps: 0 })),
+    v('hout', romp(21.5, 37.2, 5, 3.2, { taps: 0 })),
+    v('hout', romp(35, 37.2, 5, 3.2, { taps: 0 })),
+    v('hout', plaat(7, 34.8, 34, 2.6, { zak: 0.3 })),
+    v('steen', plaat(8.6, 32, 30.8, 2.8, { zak: 0.2 })),
+    v('steenkoel', plaat(8.6, 29.2, 30.8, 2.8, { zak: 0.2 })),
+    v('steen', plaat(8.6, 26.4, 30.8, 2.8, { zak: 0.2 })),
+    v('steenkoel', plaat(8.6, 23.6, 30.8, 2.8, { zak: 0.2 })),
+    v('steen', plaat(8.6, 20.8, 30.8, 2.8, { zak: 0.2 })),
+    v('steenkoel', plaat(8.6, 18, 30.8, 2.8, { zak: 0.2 })),
+    streep('kunststof', 1.2, 'M15 17.8 V34.6 M33 17.8 V34.6'),
+    vloer('hout', plaat(7, 39.6, 34, 2.4, { zak: 0.3 })),
+  ],
+
+  // Vier tuinstoelen van plastic in elkaar geschoven.
+  stoelenstapel: [
+    v('kunststofwit', staaf(15.6, 30, 12.6, 40, 2)),
+    v('kunststofwit', staaf(30.4, 30, 33.4, 40, 2)),
+    v('kunststofwit', staaf(30.6, 29, 32.4, 16.4, 2.6)),
+    v('kunststofwit', plaat(13, 28, 19.6, 2.6, { zak: 0.5 })),
+    v('kunststofwit', staaf(30.6, 25.4, 32.4, 12.8, 2.6)),
+    v('kunststofwit', plaat(13, 24.6, 19.6, 2.6, { zak: 0.5 })),
+    v('kunststofwit', staaf(30.6, 22, 32.4, 9.4, 2.6)),
+    v('kunststofwit', plaat(13, 21.2, 19.6, 2.6, { zak: 0.5 })),
+    v('kunststofwit', 'M29.4 18.4 L31 5.4 Q34 4.8 36 6.4 L33.8 18.8 Z'),
+    v('kunststofwit', plaat(13, 17.8, 19.6, 2.6, { zak: 0.5 })),
+    streep('kunststofwit', 0.8, 'M31.6 8.6 L34.4 9 M31.2 11.6 L34 12'),
+    vloer('metaal', plaat(10, 39.6, 26, 2, { zak: 0.4 })),
+  ],
+
+  // Een drinkfontein op een zuil: een kom, een straaltje, een drukknop.
+  drinkfontein: [
+    v('metaal', zuilvorm(24, 18, 8, 10, 20)),
+    v('kunststofblauw', plaat(19.6, 26, 8.8, 2.2, { zak: 0.2 })),
+    v('kunststofblauw', bol(30.6, 21.6, 1.6)),
+    v('metaal', bak(24, 12.6, 21, 14, 6)),
+    v('water', plaat(16.6, 13.2, 14.8, 1.4, { zak: 0.4 }), { glans: 1 }),
+    v('metaal', staaf(28.4, 14, 26.4, 10.4, 1.6)),
+    streep('water', 1.1, 'M26 9.8 Q21.4 3.6 17.6 11.4'),
+    v('metaal', plaat(17, 37.4, 14, 2.6, { zak: 0.3 })),
+    vloer('steenkoel', ovaal(24, 40.6, 10.6, 2.4)),
+  ],
+
+  // Een kogelbarbecue op drie poten, met rook die onder het deksel uit kruipt.
+  barbecue: [
+    v('metaal', staaf(16, 27, 11.6, 39.6, 1.8)),
+    v('metaal', staaf(32, 27, 36.4, 39.6, 1.8)),
+    v('metaal', staaf(24, 29, 24, 39.4, 1.8)),
+    v('donker', bak(24, 19.4, 25, 13, 10)),
+    v('vuur', plaat(12.6, 17.8, 22.8, 1.4, { zak: 0.2 }), { glans: 1 }),
+    v('donker', 'M11.6 17.6 Q11.6 6.6 24 6.6 Q36.4 6.6 36.4 17.6 Z'),
+    v('metaal', plaat(20.6, 4.4, 6.8, 2, { zak: 0.2 })),
+    streep('metaal', 0.9, 'M16 12 H19 M29 12 H32'),
+    streep('papier', 1, 'M37.4 15.4 Q41 12 38.6 8.6 Q36.6 5.4 40 2.6'),
+    v('donker', bol(11.6, 38.8, 1.8)),
+    vloer('metaal', ovaal(24, 40.2, 12.6, 1.8)),
+  ],
+
+  // Een terrasverwarmer: een gasfles als voet, een paal, een gloeiende
+  // kooi en een schotel erboven. Geen kampvuur.
+  terrasheater: [
+    vloer('metaal', zuilvorm(24, 30, 10, 11.4, 9)),
+    v('metaal', zuilvorm(24, 13, 2.4, 3, 18)),
+    v('vuur', romp(20.4, 8, 7.2, 7, { taps: 0.08 }), { glans: 1 }),
+    streep('donker', 0.7, 'M22.2 8.4 V14.6 M24 8.2 V15 M25.8 8.4 V14.6'),
+    v('metaal', kap(24, 1.6, 30, 6, { buik: 0.6 })),
+    v('metaal', bol(24, 1.6, 1.2)),
+    v('donker', plaat(19.6, 33.4, 8.8, 2.2, { zak: 0.2 })),
+  ],
+
+  // Een laadpaal: een witte zuil met een schermpje, een groen lichtje, de
+  // bliksem en een kabel die in een lus naar beneden hangt.
+  laadpaal: [
+    vloer('kunststofwit', romp(16, 9, 16, 31, { taps: 0.03 })),
+    v('stofgroen', plaat(15, 6.4, 18, 3.2, { zak: 0.3 })),
+    v('scherm', romp(18.6, 11.6, 10.8, 7, { taps: 0.01 }), { glans: 1 }),
+    v('kunststof', 'M24.8 20.4 L21.4 26.2 L24 26.2 L22.8 31 L26.8 24.6 L24.2 24.6 Z'),
+    v('donker', bol(24, 34.2, 2.2)),
+    v('water', bol(29.4, 15, 0.9), { glans: 1 }),
+    streep('donker', 1.8, 'M31.6 28 Q41 30 39.2 36.4 Q38 40.6 32 39.4'),
+    v('donker', romp(29.4, 37.6, 3.6, 3.4, { taps: 0.04 })),
+  ],
+
+  // Een onderhoudsrobot op rupsbanden, met een vizier en een sprietje.
+  robot: [
+    v('metaal', staaf(24, 6.6, 24, 3.4, 1)),
+    v('vuur', bol(24, 2.8, 1.3), { glans: 1 }),
+    v('metaal', staaf(15.4, 19.4, 10.4, 27, 2.6)),
+    v('metaal', staaf(32.6, 19.4, 37.6, 27, 2.6)),
+    v('kunststof', bol(10, 28, 1.8)),
+    v('kunststof', bol(38, 28, 1.8)),
+    v('metaal', zuilvorm(24, 15, 4, 4, 3)),
+    v('kunststofwit', romp(15, 17, 18, 15, { taps: 0.06 })),
+    v('neon', bol(24, 23, 2.2), { glans: 1 }),
+    streep('donker', 0.8, 'M19 27.4 H29'),
+    v('kunststofwit', romp(16.6, 6.4, 14.8, 9.4, { taps: 0.04 })),
+    v('scherm', romp(18.2, 8.2, 11.6, 5.4, { taps: 0.02 }), { glans: 1 }),
+    v('water', bol(21.6, 10.8, 1.1), { glans: 1 }),
+    v('water', bol(26.4, 10.8, 1.1), { glans: 1 }),
+    vloer('donker', rol(13.4, 32, 21.2, 7.6, { rond: 3.4 })),
+    v('metaal', bol(16.4, 35.8, 2)),
+    v('metaal', bol(24, 35.8, 2)),
+    v('metaal', bol(31.6, 35.8, 2)),
+  ],
+
+  // Een pingpongtafel voor buiten: een blauw blad, een netje, een batje en
+  // een balletje.
+  pingpongtafel: [
+    v('metaal', staaf(10, 24, 9, 39.6, 2.2)),
+    v('metaal', staaf(38, 24, 39, 39.6, 2.2)),
+    v('metaal', staaf(10, 31, 38, 31, 1.6)),
+    v('kunststofblauw', plaat(4, 20, 40, 4, { zak: 0.4 })),
+    streep('kunststofwit', 0.9, 'M5.4 20.6 H42.6'),
+    v('donker', romp(23, 12.6, 2, 7.6, { taps: 0 })),
+    streep('kunststofwit', 0.6, 'M23.2 15 H24.8 M23.2 17.4 H24.8'),
+    v('kunststofroze', ovaal(11.4, 15.6, 3.2, 2.8)),
+    v('hout', staaf(13.6, 17.4, 15.4, 19.6, 1.4)),
+    v('kunststofwit', bol(33, 12.6, 1.3)),
+    vloer('steenkoel', plaat(6, 39.4, 36, 2.6, { zak: 0.3 })),
+  ],
+
+  // Een zitzak: een zak vol bolletjes met een kuil waar je in zakt.
+  zitzak: [
+    vloer('stof', 'M10 40 Q5.4 31 11 22.6 Q16.4 14.4 25 15 Q34.6 15.4 38 23.6 Q42.6 32.6 38.4 40 Q24 42 10 40 Z'),
+    v('stof', 'M13.4 28.4 Q24 34.4 34.6 27.4 Q30.4 22.4 24 22.6 Q17.4 22.6 13.4 28.4 Z'),
+    streep('stof', 0.9, 'M25 15.4 Q22 20 23.6 22.6 M10.8 33 Q16 36.4 22 35.4'),
+    v('papier', romp(31.4, 33, 4, 3, { taps: 0.02 })),
+  ],
+
+  // Een witte kast met glazen deuren en flesjes erachter. Geen eiken
+  // kabinet met laatjes vol kruiden.
+  glaskast: [
+    vloer('kunststofwit', romp(10, 5, 28, 36, { taps: 0.01 })),
+    v('glas', romp(12.4, 7.4, 11, 20, { taps: 0.004 }), { glans: 0.6 }),
+    v('glas', romp(24.6, 7.4, 11, 20, { taps: 0.004 }), { glans: 0.6 }),
+    v('metaal', plaat(12.4, 16.6, 23.2, 1.2, { zak: 0.2 })),
+    v('water', kruik(15.4, 9.6, 1.8, 1.6, 11.8, 4, 4.6)),
+    v('kunststofroze', kruik(20, 10.2, 1.6, 1.4, 12.2, 3.4, 4.2)),
+    v('stofgroen', kruik(28, 9.4, 2, 1.6, 11.6, 4.4, 4.8)),
+    v('kunststof', romp(31.4, 11.6, 3, 4.8, { taps: 0.02 })),
+    v('kunststofwit', romp(14, 19.6, 5, 6.4, { taps: 0.02 })),
+    v('water', kruik(23.6, 18.8, 1.8, 1.6, 21, 4.4, 5)),
+    v('kunststofroze', romp(28.6, 20, 5, 6, { taps: 0.02 })),
+    streep('kunststofwit', 0.8, 'M14 25.6 L21.6 9.6 M26.6 25.6 L33.4 11'),
+    v('kunststofwit', romp(12.4, 29.4, 11, 9.6, { taps: 0.004 })),
+    v('kunststofwit', romp(24.6, 29.4, 11, 9.6, { taps: 0.004 })),
+    v('metaal', plaat(20.6, 31.4, 1.8, 3, { zak: 0 })),
+    v('metaal', plaat(25.6, 31.4, 1.8, 3, { zak: 0 })),
+  ],
+
+  // Een zuurkast: een kast met een glazen schuifraam en een afzuigbuis
+  // erboven. Het laboratorium van nu kookt niet in een koperen ketel.
+  zuurkast: [
+    v('metaal', zuilvorm(31, 1.8, 5, 5, 7)),
+    v('kunststofwit', romp(6, 8, 36, 17, { taps: 0.01 })),
+    v('donker', romp(8.4, 10.4, 31.2, 12.6, { taps: 0.004 })),
+    v('stofgroen', kruik(16, 12.6, 2, 1.6, 15.6, 6, 6.2), { glans: 1 }),
+    v('metaal', staaf(22, 22.6, 22, 13, 1)),
+    v('water', kruik(28, 14.6, 1.6, 1.4, 17, 4.4, 5), { glans: 1 }),
+    v('glas', romp(8.4, 10.4, 31.2, 7, { taps: 0.004 }), { glans: 0.7 }),
+    v('metaal', plaat(9.4, 16.6, 29.2, 1.6, { zak: 0.2 })),
+    v('donker', plaat(5, 24.4, 38, 2.8, { zak: 0.4 })),
+    vloer('kunststofwit', romp(6, 27, 36, 14, { taps: 0.01 })),
+    streep('metaal', 0.8, 'M24 29 V39.4'),
+    v('kunststof', 'M14.4 30.4 L17.6 36 L11.2 36 Z'),
+    v('donker', plaat(31, 31.4, 5, 1.6, { zak: 0.1 })),
+  ],
+
+  // Een autoclaaf: een witte doos met een ronde deur, een display en een
+  // hendel. Hij steriliseert met stoom.
+  autoclaaf: [
+    vloer('kunststofwit', romp(7, 10, 34, 31, { taps: 0.01 })),
+    v('glas', bol(20, 26, 7.4), { glans: 1 }),
+    v('metaal', ring(20, 26, 9.4, 2.2), { gat: true }),
+    v('metaal', staaf(29.6, 26, 33.4, 26, 2.2)),
+    v('scherm', romp(29.4, 13, 8.6, 5, { taps: 0.01 }), { glans: 1 }),
+    streep('water', 0.9, 'M31 15.6 H35.8'),
+    v('kunststof', bol(31.4, 21.4, 1.2)),
+    v('stofgroen', bol(35.4, 21.4, 1.2), { glans: 1 }),
+    streep('kunststofwit', 1, 'M15 3.4 Q13 6 15.4 8.4 M20 2.4 Q18 5.4 20.4 8.4'),
+    v('metaal', plaat(6, 8, 36, 2.6, { zak: 0.3 })),
+  ],
+
+  // Een slijpmachine op een zuil: twee schijven onder een kap, en vonken.
+  slijpmachine: [
+    v('metaal', zuilvorm(24, 22, 5, 7, 16)),
+    v('steenkoel', bol(12, 16, 5)),
+    v('steenkoel', bol(36, 16, 5)),
+    v('metaal', 'M6.4 16.4 Q6.4 9.4 12 9.4 Q17.6 9.4 17.6 16.4 Z'),
+    v('metaal', 'M30.4 16.4 Q30.4 9.4 36 9.4 Q41.6 9.4 41.6 16.4 Z'),
+    v('kunststofblauw', romp(16.6, 10.6, 14.8, 10.6, { taps: 0.03 })),
+    v('donker', plaat(17, 20.4, 14, 2, { zak: 0.2 })),
+    v('vuur', bol(27.6, 14, 1), { glans: 1 }),
+    streep('vuur', 0.9, 'M9.6 21.4 L5.4 27 M11.6 22 L9.6 29.4 M13.8 21.6 L15.2 27.4'),
+    v('metaal', plaat(16.4, 37.6, 15.2, 2.4, { zak: 0.3 })),
+    vloer('donker', ovaal(24, 40.6, 11, 2.2)),
+  ],
+
+  // Een microscoop van nu: wit gegoten, met een lampje onder de tafel.
+  microscoop: [
+    v('kunststofwit', 'M28.4 34.6 Q35 26 31.6 16 Q29.6 10.4 25 8.6 L23.2 11.8 Q26.8 13.8 27.6 18 Q29.4 26.4 23.6 34.6 Z'),
+    v('metaal', staaf(22.6, 7, 17.4, 20.6, 4.6, { krimp: 0.1 })),
+    v('donker', staaf(23.6, 3, 22.2, 8, 3.2, { krimp: 0 })),
+    v('metaal', romp(15.6, 19.6, 3.4, 3.4, { taps: 0.1 })),
+    v('donker', plaat(11.4, 24, 18.6, 2.6, { zak: 0.2 })),
+    v('glas', plaat(14.6, 22.8, 10, 1.4, { zak: 0 }), { glans: 1 }),
+    v('donker', bol(30.4, 26.4, 2.4)),
+    v('water', bol(19.4, 29.4, 1.6), { glans: 1 }),
+    vloer('kunststofwit', romp(11.6, 34.4, 23, 6, { taps: 0.06 })),
+  ],
+
+  // Een staande fietspomp met een drukmeter en een slang.
+  fietspomp: [
+    v('donker', staaf(14, 7.6, 34, 7.6, 2.8, { krimp: 0 })),
+    v('metaal', staaf(24, 8.6, 24, 13, 1.4, { krimp: 0 })),
+    v('kunststofroze', zuilvorm(24, 12, 5, 5.6, 25)),
+    v('kunststofwit', bol(24, 30.4, 3.4)),
+    streep('vuur', 0.8, 'M24 30.4 L25.8 28.6'),
+    streep('donker', 1.5, 'M26.8 33.6 Q37 35 36 25 Q35 16.4 30.4 14.6'),
+    v('donker', romp(28.6, 12.6, 3.2, 3.4, { taps: 0.04 })),
+    v('donker', plaat(14, 36.6, 20, 2, { zak: 0.2 })),
+    vloer('donker', plaat(12.6, 38.6, 22.8, 2.4, { zak: 0.3 })),
+  ],
+
+  // Een radarscherm in een console: ringen, een veeg licht en twee stipjes.
+  radar: [
+    v('donker', romp(9, 24, 30, 15.6, { taps: 0.04 })),
+    v('donker', bol(24, 13.6, 10)),
+    v('scherm', bol(24, 13.6, 8.2), { glans: 1 }),
+    streep('water', 0.6, 'M19 13.6 a5 5 0 0 1 10 0 a5 5 0 0 1 -10 0 M21.4 13.6 a2.6 2.6 0 0 1 5.2 0 a2.6 2.6 0 0 1 -5.2 0 M16 13.6 H32 M24 5.6 V21.6'),
+    streep('stofgroen', 1.3, 'M24 13.6 L29.6 7.8'),
+    v('vuur', bol(28.6, 16.4, 1), { glans: 1 }),
+    v('kunststof', bol(19.4, 9.6, 0.9), { glans: 1 }),
+    streep('metaal', 0.8, 'M13 29 H22 M13 32 H19 M26 29 H35'),
+    v('stofgroen', bol(30.6, 32.6, 1.2), { glans: 1 }),
+    v('vuur', bol(34.4, 32.6, 1.2), { glans: 1 }),
+    vloer('donker', plaat(8, 39.2, 32, 2.8, { zak: 0.4 })),
+  ],
+
+  // Een linnenkar: een zak aan een frame op wieltjes, schone handdoeken
+  // erbovenop.
+  linnenkar: [
+    v('metaal', staaf(10.4, 9, 10.4, 37.6, 2, { krimp: 0 })),
+    v('metaal', staaf(37.6, 9, 37.6, 37.6, 2, { krimp: 0 })),
+    v('stofblauw', doek(11.6, 10.6, 24.8, 22, { golf: 1.6 })),
+    v('metaal', plaat(9, 8.6, 30, 2.2, { zak: 0.4 })),
+    v('papier', romp(12.4, 3.8, 11, 4.8, { taps: 0.02 })),
+    v('kunststofwit', romp(25, 4.8, 10.4, 3.8, { taps: 0.02 })),
+    v('stof', plaat(12.8, 2.4, 10.2, 1.8, { zak: 0.2 })),
+    vloer('metaal', plaat(9, 35.6, 30, 2.2, { zak: 0.3 })),
+    v('donker', bol(11.6, 39.6, 2.2)),
+    v('donker', bol(36.4, 39.6, 2.2)),
+  ],
+
+  // Een informatiezuil met een aanraakscherm vol tegeltjes en een i.
+  infozuil: [
+    v('kunststofwit', romp(16, 5.6, 16, 33, { taps: 0.02 })),
+    v('scherm', romp(18.2, 8.2, 11.6, 13.4, { taps: 0.004 }), { glans: 1 }),
+    v('kunststof', romp(19.6, 10, 3.6, 3.4, { taps: 0 })),
+    v('kunststofroze', romp(24.4, 10, 3.6, 3.4, { taps: 0 })),
+    v('stofgroen', romp(19.6, 14.6, 3.6, 3.4, { taps: 0 })),
+    v('kunststofwit', romp(24.4, 14.6, 3.6, 3.4, { taps: 0 })),
+    v('kunststofblauw', bol(24, 28.6, 2.8)),
+    streep('kunststofwit', 1, 'M24 27.6 V30.4'),
+    vloer('donker', plaat(13, 38.4, 22, 2.8, { zak: 0.4 })),
+  ],
+
+  // Een basketbalpaal: een bord met een vierkantje, een ring met netje, en
+  // de bal eronder.
+  basketbalpaal: [
+    v('metaal', zuilvorm(13, 9, 2.6, 3.6, 29)),
+    v('metaal', staaf(13, 10, 21, 10, 2)),
+    v('kunststofwit', romp(20, 3, 21, 14, { taps: 0.004 })),
+    streep('vuur', 1, 'M26.4 13.4 V8.4 H34.6 V13.4'),
+    v('vuur', plaat(25.4, 16.4, 10, 1.8, { zak: 0.4 })),
+    streep('kunststofwit', 0.7, 'M26 18.2 L27.6 24 M29 18.2 L29.6 24 M32 18.2 L31.4 24 M35 18.2 L33.4 24 M26.6 21 H34.4 M27.4 24 H33.4'),
+    v('kunststof', bol(33.4, 35, 3.6)),
+    streep('donker', 0.6, 'M29.8 35 H37 M33.4 31.4 Q31 35 33.4 38.6'),
+    v('metaal', plaat(7.6, 37, 11, 2.6, { zak: 0.3 })),
+    vloer('steenkoel', ovaal(13.2, 40.4, 8.4, 2.2)),
+  ],
+
+  // Een waterkoeler: een blauwe fles ondersteboven op een wit kastje, een
+  // koude en een warme kraan.
+  waterkoeler: [
+    v('water', zuilvorm(24, 14.4, 5, 5, 6), { glans: 1 }),
+    v('water', 'M18.4 15 Q15.6 15 15.6 11.6 L15.6 6.4 Q15.6 2.4 24 2.4 Q32.4 2.4 32.4 6.4 L32.4 11.6 Q32.4 15 29.6 15 Z', { glans: 1 }),
+    streep('kunststofwit', 0.8, 'M16.4 6.4 Q24 7.6 31.6 6.4 M16.4 10.4 Q24 11.6 31.6 10.4'),
+    vloer('kunststofwit', romp(15, 19.6, 18, 21.4, { taps: 0.02 })),
+    v('kunststofblauw', bol(20.4, 24.4, 1.5)),
+    v('stof', bol(27.6, 24.4, 1.5)),
+    v('donker', romp(17.4, 27.4, 13.2, 6, { taps: 0.01 })),
+    v('kunststofwit', bak(22, 29, 3.6, 2.8, 3.4)),
+    v('metaal', plaat(17.4, 33, 13.2, 1.4, { zak: 0.1 })),
+  ],
+
+  // Een handdoekrek met drie handdoeken eroverheen.
+  handdoekrek: [
+    v('metaal', staaf(10, 8, 10, 39.6, 2, { krimp: 0 })),
+    v('metaal', staaf(38, 8, 38, 39.6, 2, { krimp: 0 })),
+    v('stofblauw', doek(12, 9.6, 8.6, 22, { golf: 1.2 })),
+    v('stof', doek(21.2, 9.6, 7.6, 17, { golf: 1.2 })),
+    v('stofgroen', doek(29.4, 9.6, 7, 24, { golf: 1.2 })),
+    streep('papier', 0.9, 'M12.4 26 H20.2 M21.6 22 H28.4 M29.8 29 H36'),
+    v('metaal', plaat(8.6, 8.2, 30.8, 2.2, { zak: 0.3 })),
+    vloer('metaal', plaat(6.6, 39.4, 34.8, 2.4, { zak: 0.4 })),
+  ],
+
+  // Een wit kastje met een la en een lampje erop. Het nachtkastje uit de
+  // basisset heeft een kaars, en een kaars hoort niet naast een
+  // ziekenhuisbed of in een kantoor.
+  kastje: [
+    vloer('kunststofwit', romp(13, 22, 22, 18.6, { taps: 0.01 })),
+    v('kunststofwit', plaat(11.6, 19.6, 24.8, 3, { zak: 0.3 })),
+    v('kunststofwit', romp(15, 24.4, 18, 5.6, { taps: 0.004 })),
+    v('metaal', plaat(21, 26.4, 6, 1.4, { zak: 0.1 })),
+    v('kunststofwit', romp(15, 31.6, 18, 7, { taps: 0.004 })),
+    v('metaal', bol(30.4, 35, 1)),
+    v('metaal', zuilvorm(19, 12.6, 1.4, 2, 7)),
+    v('metaal', ovaal(19, 19.4, 3.6, 1)),
+    v('kunststof', 'M14.4 13.4 Q14.4 8.2 19 8.2 Q23.6 8.2 23.6 13.4 Z', { glans: 1 }),
+    v('donker', romp(26, 17.2, 6.4, 2.4, { taps: 0.02 })),
+    v('scherm', romp(26.8, 17.6, 4.8, 1.2, { taps: 0 }), { glans: 1 }),
+  ],
+
+  // Een scanner: een grote witte ring met een ligbank erdoorheen.
+  scanner: [
+    vloer('kunststofwit', romp(8, 31, 24, 9.6, { taps: 0.02 })),
+    v('kunststofwit', ring(20, 19.4, 13.6, 5.2), { gat: true }),
+    v('kunststofblauw', ring(20, 19.4, 8.8, 1.4), { gat: true }),
+    streep('water', 1.1, 'M10 10.6 Q20 3.6 30 10.6'),
+    v('kunststofwit', romp(31, 27.6, 9, 12, { taps: 0.04 })),
+    v('kunststofwit', plaat(13, 24.4, 33, 3.4, { zak: 0.4 })),
+    v('stofblauw', plaat(16, 22.6, 26, 2, { zak: 0.3 })),
+    v('scherm', romp(23, 33, 6, 3.6, { taps: 0.01 }), { glans: 1 }),
+  ],
+
+  // Een kopieerapparaat: lades met papier, een klep, een paneeltje.
+  kopieerapparaat: [
+    vloer('kunststofwit', romp(8, 16, 32, 25, { taps: 0.01 })),
+    v('donker', plaat(7, 12.4, 34, 3.6, { zak: 0.3 })),
+    v('donker', romp(28.4, 16.6, 10, 4.6, { taps: 0.02 })),
+    v('scherm', romp(29.6, 17.4, 5, 2.8, { taps: 0 }), { glans: 1 }),
+    v('stofgroen', bol(36.4, 18.8, 0.9), { glans: 1 }),
+    v('donker', plaat(10, 21.4, 16, 1.6, { zak: 0.2 })),
+    v('papier', romp(11.4, 18.6, 13, 2.8, { taps: 0.01 })),
+    v('kunststofwit', romp(10, 25.6, 28, 5.4, { taps: 0.004 })),
+    v('kunststofwit', romp(10, 32.4, 28, 5.4, { taps: 0.004 })),
+    v('metaal', plaat(20, 27.4, 8, 1.4, { zak: 0.1 })),
+    v('metaal', plaat(20, 34.2, 8, 1.4, { zak: 0.1 })),
+  ],
+
+  // ============================================ Sterrenschip Zwaluw
+  //
+  // Een schip dat reist, geen station dat hangt. Vijf stukken die het schip
+  // van zichzelf heeft, en vier die in de gedeelde moderne set horen
+  // (projector, gamestoel, speaker, spelcomputer): een ontspanningsdek op
+  // een sterrenschip ziet er niet anders uit dan een woonkamer van nu.
+
+  // De stoel van de piloot: hoge rug, gordels, twee stuurknuppels.
+  stuurstoel: [
+    v('metaal', zuilvorm(24, 30, 4, 5.4, 8)),
+    v('donker', romp(15, 5, 18, 21, { taps: 0.1 })),
+    v('donker', romp(18.6, 2.4, 10.8, 4.4, { taps: 0.04 })),
+    streep('neon', 1.1, 'M17.6 7.4 V23.6 M30.4 7.4 V23.6'),
+    streep('kunststof', 1, 'M19.4 8.4 L28.4 22 M28.6 8.4 L19.6 22'),
+    v('donker', kussen(12.6, 23.6, 22.8, 6.4)),
+    v('metaal', plaat(8.6, 22.4, 8.4, 2.4, { zak: 0.3 })),
+    v('metaal', plaat(31, 22.4, 8.4, 2.4, { zak: 0.3 })),
+    v('donker', staaf(12.2, 22.6, 12.8, 16.6, 1.8)),
+    v('donker', staaf(35.8, 22.6, 35.2, 16.6, 1.8)),
+    v('vuur', bol(12.8, 16, 1.7), { glans: 1 }),
+    v('water', bol(35.2, 16, 1.7), { glans: 1 }),
+    vloer('metaal', ovaal(24, 40, 11.4, 2.4)),
+  ],
+
+  // Een hologramtafel: een schijf die licht omhoog werpt, en daarboven
+  // draait een planeet met een ring.
+  hologram: [
+    v('metaal', romp(14, 30, 20, 9.6, { taps: -0.12 })),
+    v('donker', ovaal(24, 29.4, 13, 3)),
+    v('water', ovaal(24, 29, 9, 1.8), { glans: 1 }),
+    streep('water', 0.7, 'M16.4 28.4 L19.6 15 M31.6 28.4 L28.4 15 M24 28 V22'),
+    v('scherm', bol(24, 13.6, 7), { glans: 1 }),
+    streep('water', 0.6, 'M17.4 12.6 Q24 15.4 30.6 12.6 M24 6.8 Q19.6 13.6 24 20.4'),
+    streep('neon', 1.2, 'M13.6 16.6 Q24 21 34.4 11.4'),
+    v('neon', bol(34, 6.4, 1.7), { glans: 1 }),
+    vloer('metaal', plaat(12, 39.2, 24, 2.8, { zak: 0.4 })),
+  ],
+
+  // De energiekern: een glazen buis met een gloeiende kern en een
+  // bliksemstraal erin, tussen twee stalen kappen.
+  energiekern: [
+    v('metaal', staaf(13.4, 34.4, 6.6, 30, 2.4)),
+    v('metaal', staaf(34.6, 34.4, 41.4, 30, 2.4)),
+    v('neon', romp(16.4, 9, 15.2, 23.4, { taps: 0 }), { glans: 1 }),
+    v('water', romp(21.2, 10, 5.6, 21.4, { taps: 0 }), { glans: 1 }),
+    streep('kunststofwit', 1, 'M24 11 L21.8 15.4 L26 18.6 L22 22.4 L26 26 L24 30'),
+    v('metaal', plaat(14.4, 15, 19.2, 2.2, { zak: 0.3 })),
+    v('metaal', plaat(14.4, 24.4, 19.2, 2.2, { zak: 0.3 })),
+    v('metaal', romp(14, 3, 20, 6.4, { taps: 0.08 })),
+    v('vuur', bol(24, 5.8, 1.2), { glans: 1 }),
+    vloer('metaal', romp(12.6, 32, 22.8, 8.6, { taps: -0.06 })),
+  ],
+
+  // Een vrachtcontainer van nu: gegoten, met hoekstukken, een lichtstrip en
+  // een streepjescode. Een kleinere kist erbovenop.
+  vrachtcontainer: [
+    vloer('kunststof', romp(7, 17, 34, 24, { taps: 0.01 })),
+    streep('donker', 1, 'M14 19 V39 M34 19 V39'),
+    v('water', plaat(9, 21, 30, 1.6, { zak: 0.2 }), { glans: 1 }),
+    v('kunststofwit', romp(17, 27, 13, 7.4, { taps: 0.01 })),
+    streep('donker', 0.7, 'M18.6 28.6 V32.6 M19.8 28.6 V32.6 M21.6 28.6 V32.6 M22.6 28.6 V32.6 M24.4 28.6 V32.6 M26 28.6 V32.6 M27.6 28.6 V32.6'),
+    v('donker', romp(6.4, 16, 4, 4, { taps: 0 })),
+    v('donker', romp(37.6, 16, 4, 4, { taps: 0 })),
+    v('kunststofblauw', romp(11, 7.6, 19, 9.4, { taps: 0.02 })),
+    v('donker', plaat(17, 9.4, 7, 1.6, { zak: 0.1 })),
+    v('neon', bol(27, 11.4, 0.9), { glans: 1 }),
+  ],
+
+  // Een voedselprinter: een witte kast met een raam, en daarachter wordt
+  // laag voor laag een roze taart geprint.
+  voedselprinter: [
+    vloer('kunststofwit', romp(8, 7, 32, 34, { taps: 0.01 })),
+    v('glas', romp(11, 11, 26, 19, { taps: 0.004 }), { glans: 0.6 }),
+    v('metaal', plaat(13, 13, 22, 2.2, { zak: 0.2 })),
+    v('donker', romp(23, 15, 2.4, 3.4, { taps: 0.1 })),
+    v('kunststofroze', bak(24, 21.4, 11, 9, 6.4)),
+    streep('kunststofwit', 0.8, 'M19.6 23.6 H28.4 M20 26 H28'),
+    v('donker', plaat(13, 28.4, 22, 1.6, { zak: 0.2 })),
+    v('scherm', romp(26, 32.4, 10, 5, { taps: 0.01 }), { glans: 1 }),
+    v('stofgroen', bol(14.6, 34.8, 1.4), { glans: 1 }),
+    v('kunststof', bol(19, 34.8, 1.4)),
+  ],
+
+  // Een projector op een statief, met de lichtbundel ervoor.
+  projector: [
+    v('metaal', staaf(23, 22, 13.6, 39.6, 1.8)),
+    v('metaal', staaf(25, 22, 34.4, 39.6, 1.8)),
+    v('metaal', staaf(24, 22, 24, 39.6, 1.8)),
+    v('kunststofwit', romp(11, 13, 21, 9.6, { taps: 0.02 })),
+    streep('donker', 0.7, 'M13.4 16 H20 M13.4 18.2 H20'),
+    v('stofgroen', bol(16, 20.2, 0.8), { glans: 1 }),
+    v('donker', ring(29.6, 17.8, 3.8, 1.2), { gat: true }),
+    v('glas', bol(29.6, 17.8, 2.6), { glans: 1 }),
+    streep('kunststof', 0.8, 'M33.6 16 L46 9.6 M33.6 19.6 L46 26 M33.8 17.8 H46'),
+    vloer('donker', ovaal(24, 40.6, 12, 2)),
+  ],
+
+  // Een gamestoel: hoog, zwart en roze, met een kussen in de nek.
+  gamestoel: [
+    v('donker', romp(14.6, 3, 18.8, 23, { taps: 0.12 })),
+    v('kunststofroze', romp(19.6, 5.6, 8.8, 18, { taps: 0.06 })),
+    v('kunststofroze', kussen(18.6, 6, 10.8, 4.4)),
+    v('donker', kussen(12, 24.4, 24, 6.2)),
+    v('kunststofroze', plaat(14, 25.6, 20, 1.6, { zak: 0.4 })),
+    v('metaal', staaf(12, 25, 12, 19.4, 2)),
+    v('metaal', staaf(36, 25, 36, 19.4, 2)),
+    v('donker', plaat(9.4, 18.4, 6, 2.2, { zak: 0.2 })),
+    v('donker', plaat(32.6, 18.4, 6, 2.2, { zak: 0.2 })),
+    v('metaal', staaf(24, 30.6, 24, 37, 2.6)),
+    v('metaal', staaf(13, 39.4, 35, 39.4, 2.2)),
+    v('donker', bol(13, 40.6, 1.6)),
+    v('donker', bol(35, 40.6, 1.6)),
+    vloer('metaal', ovaal(24, 41.4, 13, 2.2)),
+  ],
+
+  // Een speakertoren met een ledstrip en noten die eruit dansen.
+  luidspreker: [
+    vloer('donker', romp(14, 5, 19, 36, { taps: 0.02 })),
+    streep('neon', 1, 'M15.8 7.4 V38.4'),
+    v('metaal', bol(24, 9.4, 1.9)),
+    v('metaal', ring(24, 18, 4.8, 1.1), { gat: true }),
+    v('donker', bol(24, 18, 3.6)),
+    v('metaal', ring(24, 30, 6.6, 1.4), { gat: true }),
+    v('donker', bol(24, 30, 5.2)),
+    v('metaal', bol(24, 30, 1.6)),
+    v('kunststof', bol(37.2, 11.6, 1.6)),
+    streep('kunststof', 0.9, 'M38.6 11.4 V5 L42.4 4 V8.6'),
+    v('kunststof', bol(41, 8.8, 1.4)),
+  ],
+
+  // Een tv-meubel met een spelcomputer, een controller en twee spellen.
+  spelcomputer: [
+    vloer('kunststofwit', romp(5, 27, 38, 14, { taps: 0.01 })),
+    streep('donker', 0.8, 'M24 29 V39'),
+    v('metaal', plaat(18, 33, 4, 1.2, { zak: 0.1 })),
+    v('metaal', plaat(26, 33, 4, 1.2, { zak: 0.1 })),
+    v('donker', romp(9, 20.4, 15, 6.6, { taps: 0.02 })),
+    v('water', plaat(10.6, 24, 11.8, 1, { zak: 0.1 }), { glans: 1 }),
+    v('kunststofroze', 'M27.4 24.6 Q27.4 21.4 30.6 21.4 L36.8 21.4 Q40 21.4 40 24.6 Q40 27.6 37.8 27.6 Q36 27.6 35.4 25.8 L32 25.8 Q31.4 27.6 29.6 27.6 Q27.4 27.6 27.4 24.6 Z'),
+    v('donker', bol(31, 23.6, 1)),
+    v('kunststofwit', bol(36.4, 23.2, 0.8)),
+    v('kunststofwit', bol(37.6, 24.6, 0.8)),
+    v('kunststofblauw', romp(7.4, 15.6, 9, 4.8, { taps: 0.01 })),
+    v('kunststof', romp(9, 11.6, 7.4, 4, { taps: 0.01 })),
+  ],
+
+  // ======================================================== Hoogstad
+  //
+  // Een stad van nu bij avond: metro, skatepark, wasserette en een flat
+  // met een loungebank. De slimme koelkast, de loungebank en de ledlamp
+  // horen ook bij de gedeelde moderne set.
+
+  // Een toegangspoortje in de metro: twee zuilen, twee glazen klepjes en
+  // een kaartlezer met een groen lichtje.
+  poortje: [
+    v('metaal', romp(5, 17, 10, 23.4, { taps: 0.02 })),
+    v('metaal', romp(33, 17, 10, 23.4, { taps: 0.02 })),
+    v('glas', 'M15 21.4 L23 23.6 L23 31.6 L15 33.8 Z', { glans: 1 }),
+    v('glas', 'M33 21.4 L25 23.6 L25 31.6 L33 33.8 Z', { glans: 1 }),
+    v('donker', romp(7, 13.4, 6, 4.4, { taps: 0.04 })),
+    v('stofgroen', bol(10, 15.4, 1.1), { glans: 1 }),
+    v('donker', romp(35, 13.4, 6, 4.4, { taps: 0.04 })),
+    v('stof', bol(38, 15.4, 1.1), { glans: 1 }),
+    streep('water', 1, 'M7 24 V37 M41 24 V37'),
+    vloer('donker', plaat(3.6, 39.6, 40.8, 2.6, { zak: 0.3 })),
+  ],
+
+  // Een skateramp: een kwartpijp met een stalen rand, een tag erop en een
+  // skateboard aan de voet.
+  skateramp: [
+    vloer('hout', 'M5 40 L5 35.4 Q22 35.4 29 20 Q32 13 32 8 L41 8 L41 40 Z'),
+    streep('houtdonker', 0.9, 'M12 40 V35.6 M20 40 V32.6 M27 40 V24 M34 40 V9'),
+    v('metaal', staaf(31.4, 7.6, 41.6, 7.6, 2.2, { krimp: 0 })),
+    streep('kunststofroze', 1.3, 'M33.6 19 q2 -3 4 0 q-2 3 2 4 M34.4 27 h4'),
+    streep('donker', 1.4, 'M8 36.4 Q14 38 20 36.4'),
+    v('kunststof', bol(10, 38.6, 1.3)),
+    v('kunststof', bol(18, 38.6, 1.3)),
+  ],
+
+  // Een deelscooter: een plankje, twee wielen, een stuur met een schermpje.
+  deelscooter: [
+    v('stofgroen', staaf(33.4, 34.6, 30, 8.4, 2.4)),
+    v('donker', staaf(25.6, 8.4, 35.4, 8.4, 2, { krimp: 0 })),
+    v('scherm', bol(30.4, 9.6, 1.4), { glans: 1 }),
+    v('kunststofwit', bol(31.4, 14.4, 1.2), { glans: 1 }),
+    v('kunststofwit', romp(29.6, 18.4, 3.6, 5.2, { taps: 0.04 })),
+    v('stofgroen', plaat(9.4, 33.4, 26, 3, { zak: 0.3 })),
+    v('donker', bol(11.6, 38.2, 3.4)),
+    v('metaal', bol(11.6, 38.2, 1.3)),
+    v('donker', bol(34.6, 38.2, 3.4)),
+    v('metaal', bol(34.6, 38.2, 1.3)),
+    vloer('donker', ovaal(23, 41.6, 15, 1.4)),
+  ],
+
+  // Een slimme koelkast: twee deuren, een scherm in de linker en een
+  // waterkraantje in de rechter.
+  slimmekoelkast: [
+    vloer('metaal', romp(8.6, 4, 30.8, 37, { taps: 0.01 })),
+    streep('donker', 0.9, 'M24 6 V39'),
+    v('metaal', staaf(21.4, 10, 21.4, 22, 1.6, { krimp: 0 })),
+    v('metaal', staaf(26.6, 10, 26.6, 22, 1.6, { krimp: 0 })),
+    v('scherm', romp(11.4, 9, 8.6, 12, { taps: 0.004 }), { glans: 1 }),
+    streep('kunststofwit', 0.8, 'M13 12.4 H18.4 M13 15 H17 M13 17.6 H18'),
+    v('donker', romp(28.6, 12, 7.6, 9, { taps: 0.01 })),
+    v('water', bol(32.4, 15.4, 1.3), { glans: 1 }),
+    v('stofgroen', bol(36.4, 7.4, 0.8), { glans: 1 }),
+  ],
+
+  // Een wasmachine: een strookje knoppen bovenaan en een ronde deur met
+  // was die ronddraait.
+  wasmachine: [
+    vloer('kunststofwit', romp(9, 7, 30, 34, { taps: 0.01 })),
+    v('kunststofwit', plaat(9, 7, 30, 6, { zak: 0.2 })),
+    v('scherm', romp(14, 8.6, 10, 3.4, { taps: 0 }), { glans: 1 }),
+    v('metaal', bol(32.4, 10.2, 2.2)),
+    v('water', bol(24, 27, 7.4), { glans: 1 }),
+    v('kunststofroze', 'M17.6 30.6 Q18 26 22.4 26.4 Q25.4 27 24.6 31.4 Q21 33.4 17.6 30.6 Z'),
+    v('kunststof', 'M24.4 24.4 Q27.4 21.6 30 24.2 Q31 27.4 27.6 28.2 Q24.6 27.6 24.4 24.4 Z'),
+    v('kunststofwit', bol(28.4, 31, 0.9)),
+    v('metaal', ring(24, 27, 9.4, 2.2), { gat: true }),
+  ],
+
+  // Een loungebank: laag en breed, met grote kussens en een roze kussen
+  // in de hoek.
+  loungebank: [
+    v('stofgroen', kussen(6, 14.6, 17.4, 12)),
+    v('stofgroen', kussen(24.6, 14.6, 17.4, 12)),
+    v('kunststofroze', kussen(31, 17, 8.4, 7.4)),
+    vloer('stofgroen', romp(4, 26, 40, 10, { taps: 0.01 })),
+    v('stofgroen', kussen(7, 23, 17, 5.4)),
+    v('stofgroen', kussen(24, 23, 17, 5.4)),
+    v('stofgroen', romp(2.4, 19, 5.4, 17, { taps: 0.04 })),
+    v('stofgroen', romp(40.2, 19, 5.4, 17, { taps: 0.04 })),
+    v('metaal', staaf(8, 36, 7, 40.4, 1.4)),
+    v('metaal', staaf(40, 36, 41, 40.4, 1.4)),
+  ],
+
+  // Een booglamp: een zware voet, een boog en een witte kap met een ledje.
+  ledlamp: [
+    streep('metaal', 2.2, 'M13.6 38.6 Q12.4 6 33.6 7.4'),
+    v('kunststofwit', kap(34, 6.4, 11, 5.4)),
+    v('kunststof', ovaal(34, 12, 3.4, 1.2), { glans: 1 }),
+    streep('kunststof', 0.7, 'M31 13.6 L28 22 M34 13.6 V23 M37 13.6 L40 22'),
+    v('metaal', zuilvorm(13.6, 35.6, 3, 4, 3.6)),
+    vloer('donker', ovaal(13.6, 40.4, 7.4, 2)),
+  ],
+
+  // ============================================= Escaperoom Klokslag
+  //
+  // Een escaperoom is een gebouw van nu waarin alles een puzzel is. De
+  // spiegels zijn panelen met een ledrand, geen vergulde lijsten; de kluis
+  // heeft een cijferslot.
+
+  // Een spiegelpaneel zonder lijst, met een ledrand en twee pootjes.
+  spiegelpaneel: [
+    v('metaal', staaf(15, 34, 12, 39.8, 2)),
+    v('metaal', staaf(33, 34, 36, 39.8, 2)),
+    v('spiegel', romp(12, 3, 24, 32, { taps: 0.004 }), { glans: 1 }),
+    streep('neon', 1, 'M12.8 4.4 V33.6 M35.2 4.4 V33.6'),
+    streep('kunststofwit', 1.4, 'M16 26 L26 8 M20 30 L31 11'),
+    v('kunststof', bol(30, 9.4, 1.4), { glans: 1 }),
+    vloer('metaal', plaat(9.6, 39.4, 28.8, 2.4, { zak: 0.3 })),
+  ],
+
+  // Een vitrine op een sokkel, met een edelsteen onder het glas.
+  vitrine: [
+    vloer('kunststofwit', romp(14, 26, 20, 15, { taps: 0.02 })),
+    v('donker', plaat(13, 23.6, 22, 2.6, { zak: 0.3 })),
+    v('glas', romp(15, 7, 18, 16.8, { taps: 0 }), { glans: 0.5 }),
+    v('stof', kussen(19.4, 19.6, 9.2, 3.4)),
+    v('neon', 'M24 11.6 L28 16 L24 20.6 L20 16 Z', { glans: 1 }),
+    streep('kunststofwit', 0.8, 'M21 16 H27 M24 11.8 L22 16 L24 20.4 M24 11.8 L26 16 L24 20.4'),
+    streep('kunststofwit', 1.2, 'M16.6 21 L22 8.6'),
+    v('donker', plaat(14, 5.4, 20, 2.2, { zak: 0.2 })),
+    v('kunststof', bol(24, 6.6, 0.9), { glans: 1 }),
+  ],
+
+  // Een laserpaal: rode stralen dwars door de gang naar een ontvanger.
+  laserpaal: [
+    v('donker', zuilvorm(40, 10, 3, 4, 29)),
+    streep('vuur', 1, 'M14.6 12 L38.6 16 M14.6 20 L38.6 22.4 M14.6 28 L38.6 26.4'),
+    v('donker', zuilvorm(12, 6, 4.4, 5.4, 33)),
+    v('vuur', bol(14, 12, 1.5), { glans: 1 }),
+    v('vuur', bol(14, 20, 1.5), { glans: 1 }),
+    v('vuur', bol(14, 28, 1.5), { glans: 1 }),
+    v('kunststof', bol(12, 5.4, 1.2), { glans: 1 }),
+    vloer('donker', plaat(6, 39.6, 38, 2.4, { zak: 0.3 })),
+  ],
+
+  // Een bewakingscamera op een paal, met een rood opnamelichtje.
+  camerapaal: [
+    v('metaal', zuilvorm(16, 10, 2.4, 3.6, 28)),
+    v('metaal', staaf(16, 10.4, 24, 10.4, 2)),
+    v('donker', plaat(20.4, 3.6, 18, 2.2, { zak: 0.2 })),
+    v('kunststofwit', 'M21 6.6 L37 5.4 L37.6 12.4 L22 13.6 Z'),
+    v('donker', romp(17.6, 7.4, 4.6, 5, { taps: 0.04 })),
+    v('scherm', bol(19.4, 9.8, 1.5), { glans: 1 }),
+    v('vuur', bol(34.4, 8.4, 0.9), { glans: 1 }),
+    v('metaal', plaat(11, 37, 10, 2.6, { zak: 0.3 })),
+    vloer('steenkoel', ovaal(16, 40.4, 8.4, 2.2)),
+  ],
+
+  // Een kluis met een cijferslot, een draaiwiel en een groen lichtje.
+  kluis: [
+    vloer('donker', romp(8, 8, 32, 33, { taps: 0.01 })),
+    v('metaal', romp(11, 11, 26, 27, { taps: 0.004 })),
+    v('donker', romp(13.6, 13.4, 10, 12.6, { taps: 0.01 })),
+    v('scherm', romp(14.6, 14.4, 8, 3, { taps: 0 }), { glans: 1 }),
+    streep('kunststofwit', 1.3, 'M16 20 h.01 M18.6 20 h.01 M21.2 20 h.01 M16 22.6 h.01 M18.6 22.6 h.01 M21.2 22.6 h.01'),
+    v('metaal', ring(30, 24, 4.6, 1.3), { gat: true }),
+    streep('metaal', 1, 'M30 19.8 V28.2 M25.8 24 H34.2'),
+    v('metaal', bol(30, 24, 1.4)),
+    v('stofgroen', bol(18.6, 31, 1), { glans: 1 }),
+    v('metaal', plaat(10.2, 14, 1.8, 4, { zak: 0 })),
+    v('metaal', plaat(10.2, 30, 1.8, 4, { zak: 0 })),
+  ],
+
+  // Een kostuumrek op wieltjes: twee blouses en een cape aan hangertjes.
+  kledingrek: [
+    v('metaal', staaf(9, 8, 9, 38, 2, { krimp: 0 })),
+    v('metaal', staaf(39, 8, 39, 38, 2, { krimp: 0 })),
+    v('metaal', staaf(8, 8, 40, 8, 2, { krimp: 0 })),
+    streep('metaal', 0.8, 'M16.4 8 V10.4 M25 8 V10.4 M33 8 V10.4'),
+    v('stofblauw', 'M11.4 12.4 L14.6 10.8 Q16.4 12.8 18.2 10.8 L21.4 12.4 L22 16 L20.2 16.4 L20.2 31 L12.6 31 L12.6 16.4 L10.8 16 Z'),
+    v('kunststof', 'M20 12.4 L23.2 10.8 Q25 12.8 26.8 10.8 L30 12.4 L30.6 16 L28.8 16.4 L28.8 27 L21.2 27 L21.2 16.4 L19.4 16 Z'),
+    v('stof', doek(28.6, 10.4, 9, 26, { golf: 1.6 })),
+    v('goud', bol(33, 12, 1)),
+    vloer('metaal', plaat(7, 37.4, 34, 2.2, { zak: 0.3 })),
+    v('donker', bol(9.4, 40.6, 1.8)),
+    v('donker', bol(38.6, 40.6, 1.8)),
+  ],
+
+  // ================================================ Pretpark Zonnestraal
+  //
+  // Daglicht, suikerspin en harde muziek. Tien stukken die je alleen op
+  // een pretpark of een festival ziet.
+
+  // Een suikerspinkraam: een gestreept dakje, een kom met roze wolk erin.
+  suikerspin: [
+    v('metaal', staaf(12, 23, 12, 8.4, 1.4, { krimp: 0 })),
+    v('metaal', staaf(36, 23, 36, 8.4, 1.4, { krimp: 0 })),
+    v('kunststofwit', doek(9, 4.4, 30, 6.4, { golf: 1.4 })),
+    streep('stof', 2.4, 'M14 5 V9.6 M21 5 V9.8 M28 5 V9.8 M35 5 V9.6'),
+    v('kunststofroze', hoop(24, 18.4, 15, 6)),
+    v('metaal', bak(24, 17.4, 19, 12, 5.4)),
+    v('kunststofroze', romp(9, 22.4, 30, 13.6, { taps: 0.02 })),
+    streep('kunststofwit', 1.6, 'M14 23.6 V35 M20 23.6 V35.4 M26 23.6 V35.4 M32 23.6 V35'),
+    v('kunststofroze', ovaal(40.4, 15, 3.6, 3.4)),
+    v('papier', staaf(40.4, 18.4, 40.4, 23.4, 0.9, { krimp: 0 })),
+    v('donker', bol(14.6, 38.4, 3)),
+    v('donker', bol(33.4, 38.4, 3)),
+    vloer('donker', ovaal(24, 41.2, 15, 1.4)),
+  ],
+
+  // Een tros ballonnen aan een gewicht.
+  ballonnen: [
+    streep('kunststofwit', 0.7, 'M24 34 L15 17.4 M24 34 L24 13.6 M24 34 L33 17.4 M24 34 L19.6 25 M24 34 L28.6 25'),
+    v('kunststofroze', ovaal(15, 11.6, 5, 6)),
+    v('kunststof', ovaal(24, 7.6, 5, 6)),
+    v('kunststofblauw', ovaal(33, 11.6, 5, 6)),
+    v('neon', ovaal(19.6, 20, 4.4, 5.2)),
+    v('stof', ovaal(28.6, 20, 4.4, 5.2)),
+    vloer('kunststofwit', romp(18, 33.4, 12, 7.6, { taps: 0.06 })),
+    v('kunststof', plaat(18.4, 35.6, 11.2, 1.6, { zak: 0.2 })),
+  ],
+
+  // Een botsautootje met een paal naar het plafond en een vonkje.
+  botsauto: [
+    v('metaal', staaf(36, 24, 36, 4, 1.4, { krimp: 0 })),
+    v('vuur', bol(36, 3.4, 1.5), { glans: 1 }),
+    streep('kunststof', 0.8, 'M33.6 2 L31.4 0.6 M38.4 2 L40.6 0.6'),
+    v('donker', romp(26, 15, 9, 10, { taps: 0.06 })),
+    v('kunststofroze', 'M6 32 Q6 24 14 24 L34 24 Q42 24 42 32 L42 35.6 L6 35.6 Z'),
+    v('donker', staaf(19, 24.4, 16.4, 18.6, 1.4)),
+    v('donker', ovaal(15.6, 18, 3.2, 1.3)),
+    v('kunststofwit', bol(12.4, 29.4, 2.8)),
+    streep('donker', 0.9, 'M11.2 28 H13.6 L12 31'),
+    v('kunststof', 'M30 27.4 L31 29.4 L33.2 29.6 L31.6 31 L32 33.2 L30 32.2 L28 33.2 L28.4 31 L26.8 29.6 L29 29.4 Z'),
+    vloer('donker', plaat(4, 34.4, 40, 4.6, { zak: 0.5 })),
+  ],
+
+  // Een wegwijzer met drie bordjes in drie kleuren.
+  wegwijzer: [
+    v('hout', zuilvorm(20, 5, 2.6, 3.2, 34)),
+    v('kunststof', 'M22 7.4 L37 7.4 L40.6 11 L37 14.6 L22 14.6 Z'),
+    v('kunststofblauw', 'M18.6 17.4 L7.4 17.4 L3.8 21 L7.4 24.6 L18.6 24.6 Z'),
+    v('kunststofroze', 'M22 27 L35 27 L38.6 30.4 L35 33.8 L22 33.8 Z'),
+    streep('donker', 0.9, 'M24.4 11 H34 M8.6 21 H16.4 M24.4 30.4 H32'),
+    vloer('steenkoel', ovaal(20, 40.4, 7.4, 2)),
+  ],
+
+  // Een foodtruck: een geel busje met een luik, een luifel en een menubord.
+  foodtruck: [
+    v('kunststof', 'M4 34.6 L4 12.4 Q4 10 6.4 10 L33.6 10 Q36 10 36 12.4 L36 34.6 Z'),
+    v('kunststof', 'M36 34.6 L36 18 L41.6 18 Q45 20 45 26 L45 34.6 Z'),
+    v('glas', 'M37.4 19.6 L41.4 19.6 Q43.4 21 43.6 25 L37.4 25 Z', { glans: 1 }),
+    v('donker', romp(8, 15.6, 22, 9.6, { taps: 0.004 })),
+    v('kunststofroze', bol(13, 22.8, 1.8)),
+    v('kunststofwit', bol(18, 23, 1.6)),
+    v('metaal', plaat(7, 25, 24, 2, { zak: 0.2 })),
+    v('stof', plaat(6, 12.4, 26, 3.2, { zak: 1.1 })),
+    streep('kunststofwit', 1.4, 'M10 12.8 V15 M16 13 V15.4 M22 13 V15.4 M28 12.8 V15'),
+    v('donker', romp(10, 3.6, 18, 6, { taps: 0.01 })),
+    streep('kunststofwit', 0.8, 'M12.4 6 H25 M12.4 7.8 H21'),
+    v('donker', bol(12, 37, 3.6)),
+    v('metaal', bol(12, 37, 1.4)),
+    v('donker', bol(39, 37, 3.6)),
+    v('metaal', bol(39, 37, 1.4)),
+    vloer('donker', ovaal(24, 41.2, 20, 1.2)),
+  ],
+
+  // Een spotlamp op een statief, met een gekleurde bundel.
+  spot: [
+    v('metaal', staaf(23, 22, 13.6, 39.6, 1.8)),
+    v('metaal', staaf(25, 22, 34.4, 39.6, 1.8)),
+    v('metaal', staaf(24, 22, 24, 39.6, 1.8)),
+    v('metaal', staaf(24, 15, 24, 22.4, 2)),
+    v('donker', 'M17 9.4 L31 5 L34.4 15 L20.4 19.4 Z'),
+    v('kunststof', ovaal(18.6, 14.4, 2.6, 5.2), { glans: 1 }),
+    streep('kunststof', 0.8, 'M16 10 L5 4.4 M16.6 18.6 L5 23.6'),
+    streep('neon', 0.8, 'M16.2 14.2 L4.4 14'),
+    vloer('donker', ovaal(24, 40.6, 12, 2)),
+  ],
+
+  // Een dj-tafel: twee draaitafels, een mengpaneel, een koptelefoon, en
+  // lampjes die op de maat meespringen.
+  djtafel: [
+    vloer('donker', romp(4, 22, 40, 19, { taps: 0.01 })),
+    streep('neon', 1.2, 'M5.4 25.6 H42.6'),
+    streep('kunststof', 1.6, 'M12 37 V33 M15 37 V30.4 M18 37 V32 M21 37 V29 M27 37 V31 M30 37 V28.4 M33 37 V32.4 M36 37 V30'),
+    v('metaal', plaat(5, 19.4, 15, 2.6, { zak: 0.2 })),
+    v('donker', ovaal(12.4, 19.4, 5.2, 1.1)),
+    v('metaal', plaat(28, 19.4, 15, 2.6, { zak: 0.2 })),
+    v('donker', ovaal(35.6, 19.4, 5.2, 1.1)),
+    v('donker', romp(20.6, 16.2, 6.8, 4.6, { taps: 0.04 })),
+    v('kunststofroze', bol(22.6, 18, 0.9)),
+    v('water', bol(25.4, 18, 0.9), { glans: 1 }),
+    streep('donker', 1.6, 'M30.4 13.6 Q34 7.4 37.6 13.6'),
+    v('donker', bol(30.4, 14.4, 1.8)),
+    v('donker', bol(37.6, 14.4, 1.8)),
+  ],
+
+  // Een rek vol knuffels die je kunt winnen.
+  knuffelrek: [
+    vloer('kunststofwit', romp(7, 6, 34, 35, { taps: 0.01 })),
+    v('donker', romp(9, 8, 30, 31, { taps: 0.004 })),
+    v('kunststofwit', plaat(8, 19, 32, 2, { zak: 0.3 })),
+    v('kunststofwit', plaat(8, 30.4, 32, 2, { zak: 0.3 })),
+    v('kunststofroze', bol(10.8, 11.6, 1.4)),
+    v('kunststofroze', bol(15.2, 11.6, 1.4)),
+    v('kunststofroze', bol(13, 14.6, 3.8)),
+    v('kunststof', bol(21.8, 11.6, 1.4)),
+    v('kunststof', bol(26.2, 11.6, 1.4)),
+    v('kunststof', bol(24, 14.6, 3.8)),
+    v('kunststofblauw', bol(32.8, 11.6, 1.4)),
+    v('kunststofblauw', bol(37.2, 11.6, 1.4)),
+    v('kunststofblauw', bol(35, 14.6, 3.8)),
+    v('stofgroen', bol(14, 26, 4)),
+    v('neon', bol(24, 26, 4)),
+    v('stof', bol(34, 26, 4)),
+    streep('donker', 1, 'M12 14 h.01 M14 14 h.01 M23 14 h.01 M25 14 h.01 M34 14 h.01 M36 14 h.01 M13 25.4 h.01 M15 25.4 h.01 M23 25.4 h.01 M25 25.4 h.01 M33 25.4 h.01 M35 25.4 h.01'),
+    v('kunststof', romp(13, 33.4, 22, 5, { taps: 0.02 })),
+  ],
+
+  // Een kassa op een toonbankje: een scherm op een steeltje, een la, een
+  // pinapparaat met een groen lichtje en een bonnetje.
+  kassa: [
+    vloer('kunststofwit', romp(8, 24, 32, 17, { taps: 0.01 })),
+    v('donker', plaat(7, 21.4, 34, 3, { zak: 0.3 })),
+    v('donker', romp(13, 12.6, 18, 9, { taps: 0.06 })),
+    streep('kunststofwit', 1.1, 'M16 15.4 h.01 M19 15.4 h.01 M22 15.4 h.01 M16 18 h.01 M19 18 h.01 M22 18 h.01'),
+    v('metaal', staaf(27, 12.8, 29, 8.4, 1.6)),
+    v('scherm', romp(25, 3, 11, 6.4, { taps: 0.01 }), { glans: 1 }),
+    v('metaal', plaat(13, 19.6, 18, 1.8, { zak: 0.1 })),
+    v('donker', romp(34, 15.4, 4.4, 6, { taps: 0.04 })),
+    v('stofgroen', bol(36.2, 17.2, 0.9), { glans: 1 }),
+    v('papier', romp(13.6, 9.4, 3.4, 3.6, { taps: 0 })),
+  ],
+
+  // Een grijpmachine: een glazen kast vol knuffels, een grijper aan een
+  // draad, en een knop om het te proberen.
+  grijpmachine: [
+    vloer('kunststofroze', romp(9, 26, 30, 15, { taps: 0.01 })),
+    v('glas', romp(9.6, 6, 28.8, 20, { taps: 0 }), { glans: 0.5 }),
+    v('kunststof', bol(14.6, 22.6, 3)),
+    v('kunststofblauw', bol(20.4, 23, 3)),
+    v('stofgroen', bol(29.6, 22.8, 3)),
+    v('kunststofroze', bol(35, 23, 2.6)),
+    v('metaal', staaf(24, 6.6, 24, 12, 0.8, { krimp: 0 })),
+    v('metaal', 'M20.6 12 L27.4 12 L29 15.6 L27.4 15.6 L25.8 13.6 L22.2 13.6 L20.6 15.6 L19 15.6 Z'),
+    v('kunststof', plaat(8, 2.6, 32, 4, { zak: 0.3 })),
+    v('vuur', bol(14, 4.6, 0.9), { glans: 1 }),
+    v('water', bol(24, 4.6, 0.9), { glans: 1 }),
+    v('vuur', bol(34, 4.6, 0.9), { glans: 1 }),
+    v('kunststof', bol(16, 31, 2)),
+    v('donker', staaf(23, 33, 23, 29, 1.2)),
+    v('donker', bol(23, 28.6, 1.4)),
+    v('donker', romp(29, 31, 6.6, 6, { taps: 0.02 })),
+  ],
+
+  // ===================================================== de gedeelde set
+  //
+  // De laatste twee van de moderne set: een bureau met een laptop en een
+  // sta-bureau. Ze staan in de school, het kantoor en het ziekenhuis, waar
+  // eerst een kaartentafel met groen laken en een katheder stonden.
+
+  // Een bureau met een opengeklapte laptop, een mok en een ladeblok.
+  laptopbureau: [
+    v('metaal', staaf(9, 24.6, 9, 40, 2, { krimp: 0 })),
+    vloer('kunststofwit', romp(29, 24.6, 11, 15.8, { taps: 0.01 })),
+    streep('metaal', 0.8, 'M31 29.6 H38 M31 34.6 H38'),
+    v('kunststofwit', plaat(5, 21.6, 38, 3.2, { zak: 0.4 })),
+    v('donker', romp(13.6, 7.6, 20, 13, { taps: 0 })),
+    v('scherm', romp(15, 9, 17.2, 10.2, { taps: 0 }), { glans: 1 }),
+    streep('kunststofwit', 0.7, 'M17 12 H25 M17 14.4 H29 M17 16.8 H23'),
+    v('metaal', 'M12.4 19.4 L35.6 19.4 L39 22.2 L9 22.2 Z'),
+    streep('donker', 0.6, 'M14 20.8 H34'),
+    v('kunststofroze', romp(36, 16.6, 4, 5, { taps: 0.04 })),
+  ],
+
+  // Een sta-bureau: hoog, op twee telescooppoten, met een scherm en een
+  // toetsenbord erop en twee knopjes om hem hoger of lager te zetten.
+  stabureau: [
+    v('metaal', staaf(12, 21, 12, 38.6, 2.6, { krimp: 0.1 })),
+    v('metaal', staaf(36, 21, 36, 38.6, 2.6, { krimp: 0.1 })),
+    v('metaal', plaat(7, 38.4, 10, 2.4, { zak: 0.2 })),
+    vloer('metaal', plaat(31, 38.4, 10, 2.4, { zak: 0.2 })),
+    v('hout', plaat(5, 17.6, 38, 3.4, { zak: 0.4 })),
+    v('donker', romp(33.4, 21, 5, 2.2, { taps: 0 })),
+    v('stofgroen', bol(35, 22.1, 0.6), { glans: 1 }),
+    v('metaal', staaf(22, 12.4, 22, 17.6, 2)),
+    v('donker', romp(12, 2.6, 20, 11, { taps: 0 })),
+    v('scherm', romp(13.2, 3.8, 17.6, 8.6, { taps: 0 }), { glans: 1 }),
+    v('kunststofwit', plaat(14, 15.8, 14, 1.6, { zak: 0.1 })),
+  ],
 };

@@ -176,6 +176,58 @@ export const SOORT_VAN = {
   'de uilenvolière': 'buiten',
   'de picknickweide': 'buiten',
   'de souvenirwinkel': 'bibliotheek',
+  // Sterrenschip Zwaluw
+  'de cockpit': 'sterrenwacht',
+  'de hyperkern': 'werkplaats',
+  'het slaapdek': 'slaapkamer',
+  'de laadbaai': 'kelder',
+  'het holodek': 'zaal',
+  'de messzaal': 'keuken',
+  'de luchtsluis': 'gang',
+  'het observatiedek': 'sterrenwacht',
+  'de loopbrug': 'gang',
+  'de reddingscapsule': 'slaapkamer',
+  'de motorkamer': 'werkplaats',
+  'de bemanningslounge': 'zaal',
+  // Hoogstad
+  'de gamekamer': 'zaal',
+  'het metrostation': 'gang',
+  'het winkelcentrum': 'zaal',
+  'de daktuin': 'buiten',
+  'het skatepark': 'buiten',
+  'de foodcourt': 'keuken',
+  'de bioscoop': 'zaal',
+  'de lift': 'gang',
+  'de parkeergarage': 'kelder',
+  'de wasserette': 'werkplaats',
+  'de sportschool': 'zaal',
+  'het appartement': 'slaapkamer',
+  // Escaperoom Klokslag
+  'de lobby': 'zaal',
+  'de lasergang': 'gang',
+  'het spiegeldoolhof': 'zaal',
+  'het geheime lab': 'laboratorium',
+  'de controlekamer': 'werkplaats',
+  'de puzzelkamer': 'bibliotheek',
+  'de schuilkelder': 'kelder',
+  'de wachtzaal': 'zaal',
+  'de kluiskamer': 'werkplaats',
+  'de verborgen gang': 'gang',
+  'de archiefkamer': 'bibliotheek',
+  'de kostuumkamer': 'slaapkamer',
+  // Pretpark Zonnestraal
+  'de achtbaan': 'buiten',
+  'het spookhuis': 'gang',
+  'de foodtrucks': 'keuken',
+  'het podium': 'zaal',
+  'de botsautobaan': 'zaal',
+  'het kassahokje': 'gang',
+  'het reuzenrad': 'buiten',
+  'de draaimolen': 'buiten',
+  'het festivalterrein': 'buiten',
+  'de EHBO-tent': 'laboratorium',
+  'de backstage': 'kelder',
+  'de souvenirkraam': 'bibliotheek',
 };
 
 // De vloer per soort. dessin verwijst naar een patroon in board-rooms.js.
@@ -337,6 +389,18 @@ export const VOORZETSEL_VAN = {
   'de donkere veranda': 'op',
   'de achtertuin bij het hek': 'in',
   'de steenkring': 'in',
+  // Op een dek sta je, net als op een loopbrug.
+  'het slaapdek': 'op',
+  'het observatiedek': 'op',
+  'het holodek': 'op',
+  'de loopbrug': 'op',
+  // Je staat óp een station, ook onder de grond.
+  'het metrostation': 'op',
+  // Je staat óp een podium en bíj de foodtrucks, niet erin.
+  'het festivalterrein': 'op',
+  'het podium': 'op',
+  'de botsautobaan': 'op',
+  'de foodtrucks': 'bij',
 };
 
 // Een "of-aanwijzing" noemt twee plekken in één adem: "het hertenpad of de
@@ -469,6 +533,42 @@ export const VORM_VAN = {
   'de kelderkast': 'klein',
   'de naaikamer': 'klein',
   'het vleermuizenhok': 'klein',
+  // Sterrenschip Zwaluw
+  'de luchtsluis': 'smal',
+  'de loopbrug': 'smal',
+  'het slaapdek': 'smal',
+  'de laadbaai': 'groot',
+  'het holodek': 'groot',
+  'de messzaal': 'groot',
+  'het observatiedek': 'groot',
+  'de cockpit': 'klein',
+  'de reddingscapsule': 'klein',
+  // Hoogstad
+  'het metrostation': 'smal',
+  'het winkelcentrum': 'groot',
+  'de bioscoop': 'groot',
+  'het skatepark': 'groot',
+  'de parkeergarage': 'groot',
+  'de lift': 'klein',
+  'de gamekamer': 'klein',
+  'de wasserette': 'klein',
+  // Escaperoom Klokslag
+  'de lasergang': 'smal',
+  'de verborgen gang': 'smal',
+  'de lobby': 'groot',
+  'het spiegeldoolhof': 'groot',
+  'de wachtzaal': 'groot',
+  'de kluiskamer': 'klein',
+  'de schuilkelder': 'klein',
+  // Pretpark Zonnestraal
+  'de achtbaan': 'smal',
+  'het festivalterrein': 'groot',
+  'de botsautobaan': 'groot',
+  'het podium': 'groot',
+  'de foodtrucks': 'groot',
+  'het kassahokje': 'klein',
+  'de draaimolen': 'klein',
+  'de EHBO-tent': 'klein',
 };
 
 export const vormVan = (plek) => VORM_VAN[plek] ?? 'vrij';
@@ -532,6 +632,31 @@ export const WERELDVLOER = {
     kracht: 0.44,
     dessin: { planken: 'tapijt', 'planken-dwars': 'tapijt', steen: 'beton', ruiten: 'tapijt' },
   },
+  // Een schip dat reist: staalplaat overal, in het violet van de
+  // ledstrips. Geen hout, geen tapijt, geen steen.
+  ruimteschip: {
+    tint: '#6a55b8',
+    kracht: 0.6,
+    dessin: { planken: 'plaat', 'planken-dwars': 'plaat', steen: 'plaat', tapijt: 'tegels', ruiten: 'tegels', beton: 'plaat' },
+  },
+  // Een stad bij avond: alles schuift naar het blauw van de schemering.
+  // Beton in de garage, tegels op het station; het parket in de flat en de
+  // gamekamer mag blijven.
+  stad: {
+    tint: '#5d6fb0',
+    kracht: 0.32,
+    dessin: { steen: 'beton', ruiten: 'tegels' },
+  },
+  // Binnen, en het licht komt uit ledstrips: alles schuift naar een koel
+  // groenblauw. De kelder is beton, de gangen zijn tegels.
+  escaperoom: {
+    tint: '#3d8c86',
+    kracht: 0.4,
+    dessin: { steen: 'beton', ruiten: 'tegels', tapijt: 'tegels' },
+  },
+  // Zomer in een pretpark: alles een slag zonniger, en de paden zijn
+  // klinkers in plaats van tegels.
+  pretpark: { tint: '#ffe6a0', kracht: 0.22, dessin: { ruiten: 'bestrating', steen: 'beton' } },
 };
 
 // De vloer van één bepaalde plek, als de soort hem niet goed raadt.
@@ -592,6 +717,14 @@ export const VLOER_VAN_PLEK = {
   'de giraffenstal': { vul: '#cfae63', lijn: '#a78a44', dessin: 'gras' },
   'het voerhok': { vul: '#c0a673', lijn: '#9a8454', dessin: 'planken' },
   'de speeltuin': { vul: '#d8c48e', lijn: '#b09d6b', dessin: 'gras' },
+  // Hoogstad: beton onder het skatepark, tegels op het perron.
+  'het skatepark': { vul: '#a9aeb4', lijn: '#868b91', dessin: 'beton' },
+  'het metrostation': { vul: '#c6cbd2', lijn: '#9ea4ac', dessin: 'tegels' },
+  // Pretpark Zonnestraal: een stalen vloer onder de botsauto's, klinkers
+  // bij de foodtrucks, en een houten vloer op het podium.
+  'de botsautobaan': { vul: '#9aa3ad', lijn: '#79828c', dessin: 'plaat' },
+  'de foodtrucks': { vul: '#d4c6a6', lijn: '#ad9f80', dessin: 'bestrating' },
+  'het kassahokje': { vul: '#d8cbb0', lijn: '#b1a488', dessin: 'bestrating' },
 };
 
 // Waar het meubilair van gemaakt is, per wereld. De namen zijn de materialen
@@ -635,6 +768,21 @@ export const WERELDSTOF = {
   zwembad: { hout: 'metaal', houtdonker: 'donker', houtrood: 'stofblauw', goud: 'metaal' },
   // Een dierentuin mag juist wél hout hebben - hekken, stallen, bakken -
   // dus die staat hier met opzet niet in.
+  // Het schip is staal en gegoten plastic. Wat in de basisset rood hout is,
+  // wordt hier roze kunststof - de kleur van de ledstrips.
+  ruimteschip: {
+    hout: 'metaal', houtdonker: 'donker', houtrood: 'kunststofroze',
+    steen: 'metaal', steenkoel: 'donker', touw: 'metaal', koper: 'metaal',
+    stof: 'stofblauw', goud: 'metaal', papier: 'kunststofwit',
+  },
+  // Een stad van nu: donker fineer en staal, niets dat glimt als goud.
+  stad: { houtrood: 'houtdonker', goud: 'metaal', steen: 'steenkoel' },
+  // Een escaperoom is ingericht als decor, maar met spullen van nu: donker
+  // fineer, staal, en niets wat van goud glimt behalve een kostuum.
+  escaperoom: { houtrood: 'houtdonker', steen: 'steenkoel' },
+  // Een pretpark mag hout hebben (een wegwijzer, een kraam), maar geen
+  // mahonie en geen goud: alles is geverfd, gegoten of van staal.
+  pretpark: { houtrood: 'kunststofroze', goud: 'kunststof', steen: 'steenkoel' },
 };
 
 // ------------------------------------------------ hetzelfde meubel, andere wereld
@@ -662,43 +810,43 @@ export const WERELDMEUBELS = {
     volledig: true,
     zelfde: [
       'de gereedschapskist', 'het schakelpaneel', 'de magazijnstelling', 'de draaibank',
-      'de kweekbak', 'de telescoop', 'de sterrenkaart', 'de chronometer',
-    ],
+      'de kweekbak', 'de telescoop', 'de sterrenkaart',     ],
     anders: {
+      'de chronometer': ['het radarscherm', 'radar'],
       // de kombuis
       'het fornuis': ['de warmteplaat'],
       'de gootsteen': ['de watertap'],
       'de koelkast': ['de koelcel'],
       'het aanrecht': ['het werkblad'],
       'de spinde': ['de rantsoenkast'],
-      'het serviesbuffet': ['de sterilisator'],
+      'het serviesbuffet': ['de sterilisator', 'autoclaaf'],
       // het vrachtruim
       'het wijnrek': ['het cilinderrek', 'cilinderrek'],
-      'het eikenhouten vat': ['de druktank'],
-      'de kolenbunker': ['de afvalbunker'],
+      'het eikenhouten vat': ['de druktank', 'gastank'],
+      'de kolenbunker': ['de afvalbunker', 'afvalcontainer'],
       'de werktafel': ['de montagetafel'],
       'de touwhaspel': ['de kabelhaspel'],
       'de stapel kratten': ['de stapel vrachtkisten'],
       // de slaapcabines
       'het bed': ['de slaapcapsule', 'slaapcapsule'],
       'de kleerkast': ['de uitrustingskast'],
-      'het nachtkastje': ['het wandkastje'],
-      'het wasstel': ['de waterrecycler'],
-      'de hutkoffer': ['de persoonlijke locker'],
-      'de voetenbank': ['het opstapje'],
+      'het nachtkastje': ['het wandkastje', 'kastje'],
+      'het wasstel': ['de wasunit', 'wasbak'],
+      'de hutkoffer': ['de persoonlijke locker', 'lockerkast'],
+      'de voetenbank': ['het opstapje', 'opstapkrukje'],
       // de communicatiekoker
       'de kapstok': ['de pakkenstandaard', 'pakkenrek'],
       'de paraplubak': ['de gereedschapsbus'],
       'de console': ['de klaptafel'],
-      'de spiegelstandaard': ['het staande scherm'],
-      'het uurwerk': ['de wachtklok'],
-      'het harnas': ['het ruimtepak'],
+      'de spiegelstandaard': ['het staande scherm', 'beeldscherm'],
+      'het uurwerk': ['de wachtklok', 'tijdscherm'],
+      'het harnas': ['het ruimtepak', 'ruimtepak'],
       // de machinekamer
       'de stookpot': ['de reactorketel'],
-      'het slijpwiel': ['de slijptol'],
+      'het slijpwiel': ['de slijpmachine', 'slijpmachine'],
       // de hydrocultuur en de medische post
-      'het kruidenkabinet': ['de monsterkoffer'],
-      'de distilleerketel': ['de destillatiezuil'],
+      'het kruidenkabinet': ['het monsterkabinet', 'glaskast'],
+      'de distilleerketel': ['de afzuigkap', 'zuurkast'],
       'de weegschaal': ['de massameter', 'massameter'],
       'de kolvenrij': ['het analysestation'],
       'de kuipplant': ['de voedingsgoot'],
@@ -707,11 +855,11 @@ export const WERELDMEUBELS = {
       'het kaartenkabinet': ['het data-archief'],
       'de schrijflessenaar': ['de navigatieconsole', 'navigatieconsole'],
       // uitwijk: de grote ruimten
-      'de haard': ['de warmtecel'],
+      'de haard': ['de warmtewand', 'radiator'],
       'de leren fauteuil': ['de rustbank'],
-      'de staande klok': ['de tijdzuil'],
+      'de staande klok': ['de tijdzuil', 'klokzuil'],
       'de vleugel': ['de luchtmenger', 'luchtmenger'],
-      'de wandspiegel': ['het wandscherm'],
+      'de wandspiegel': ['de monitorwand', 'monitorwand'],
       'het borstbeeld': ['het gedenkbeeld'],
       // uitwijk: waar papier lag staat nu data
       'de boekenkast': ['het serverrek', 'serverrek'],
@@ -721,16 +869,16 @@ export const WERELDMEUBELS = {
       'de leesstoel': ['de verankerde stoel'],
       'de kaartentafel': ['de plantafel'],
       // uitwijk: de buitenkant van het station is nog steeds binnen
-      'de houtstapel': ['de buizenstapel'],
-      'de drinkbak': ['de waterbak'],
-      'de vuurplaats': ['de brander'],
-      'de omgevallen stam': ['de losgeraakte buis'],
-      'de waterput': ['de peilput'],
-      'de mosrichel': ['de zitkuip'],
-      'de regenton': ['de condensor'],
-      'de kruiwagen': ['de transportkar'],
-      'de boomstronk': ['het ankerblok'],
-      'de vogelverschrikker': ['de antennemast'],
+      'de houtstapel': ['de buizenstapel', 'buizenstapel'],
+      'de drinkbak': ['het drinkpunt', 'drinkfontein'],
+      'de vuurplaats': ['het laadstation', 'laadpaal'],
+      'de omgevallen stam': ['de onderhoudsrobot', 'robot'],
+      'de waterput': ['de afvalemmer', 'prullenbak'],
+      'de mosrichel': ['de zithoek', 'wachtbank'],
+      'de regenton': ['de waterdispenser', 'waterkoeler'],
+      'de kruiwagen': ['de transportkar', 'rolkar'],
+      'de boomstronk': ['het ankerblok', 'zitblok'],
+      'de vogelverschrikker': ['de antennemast', 'antennemast'],
     },
   },
 
@@ -811,51 +959,54 @@ export const WERELDMEUBELS = {
   school: {
     volledig: true,
     zelfde: [
-      'de koelkast', 'de vleugel', 'het borstbeeld', 'de boekenkast',
-      'de katheder', 'de globe', 'de werktafel',
-      'de stapel kratten', 'de kapstok', 'de gereedschapskist',
-      'het schakelpaneel', 'de magazijnstelling', 'het slijpwiel',
-      'de draaibank', 'de kruiwagen', 'de boomstronk', 'de kweekbak',
-      'de distilleerketel', 'de weegschaal', 'de kolvenrij', 'de kuipplant',
+      'het serviesbuffet',
+      'de koelkast', 'de vleugel', 'de boekenkast',
+      'de katheder', 'de globe',       'de stapel kratten', 'de kapstok', 'de gereedschapskist',
+      'het schakelpaneel', 'de magazijnstelling',       'de draaibank', 'de kruiwagen', 'de kweekbak',
+      'de weegschaal', 'de kolvenrij', 'de kuipplant',
     ],
     anders: {
+      'het borstbeeld': ['de beamer', 'projector'],
+      'het slijpwiel': ['de slijpmachine', 'slijpmachine'],
+      'de distilleerketel': ['de afzuigkap', 'zuurkast'],
+      'de werktafel': ['het werkblad'],
       'het fornuis': ['de grootkeukenoven'],
       'de gootsteen': ['de spoelbak'],
       'het aanrecht': ['de uitgiftebalie', 'balie'],
       'de spinde': ['de snoepautomaat', 'automaat'],
-      'het serviesbuffet': ['de vaatwasser'],
       'de haard': ['de radiator', 'radiator'],
       'de leren fauteuil': ['de bureaustoel', 'bureaustoel'],
       'de staande klok': ['de klokzuil', 'klokzuil'],
       'de wandspiegel': ['het whiteboard', 'whiteboard'],
       'de commode': ['het ladenblok', 'archiefkast'],
-      'de kaartentafel': ['de studietafel'],
-      'de leesstoel': ['de leeszitzak'],
+      'de kaartentafel': ['de laptoptafel', 'laptopbureau'],
+      'de leesstoel': ['de leeszitzak', 'zitzak'],
       'het wijnrek': ['het fietsenrek', 'fietsenrek'],
-      'het eikenhouten vat': ['de zoutton'],
+      'het eikenhouten vat': ['de zoutton', 'drum'],
       'de kolenbunker': ['de afvalcontainer', 'afvalcontainer'],
       'de touwhaspel': ['de kabelhaspel'],
       'het bed': ['de behandelbank', 'ziekenhuisbed'],
       'de kleerkast': ['de lockerkast', 'lockerkast'],
-      'het nachtkastje': ['het schoenenkastje'],
-      'het wasstel': ['de wasbak'],
-      'de hutkoffer': ['de kledingkist'],
-      'de voetenbank': ['het opstapbankje'],
+      'het nachtkastje': ['het schoenenkastje', 'kastje'],
+      'het wasstel': ['de wasbak', 'wasbak'],
+      'de hutkoffer': ['de sporttas', 'sporttas'],
+      'de voetenbank': ['het opstapkrukje', 'opstapkrukje'],
       'de paraplubak': ['de parapluhouder'],
-      'de console': ['de balie bij de ingang'],
+      'de console': ['het tafeltje bij de ingang'],
       'de spiegelstandaard': ['het mededelingenscherm', 'beeldscherm'],
-      'het uurwerk': ['de schoolklok'],
+      'het uurwerk': ['de schoolklok', 'tijdscherm'],
       'het harnas': ['de brandblusser', 'brandblusser'],
-      'de stookpot': ['de verfpot'],
-      'de houtstapel': ['de stapel stoeptegels'],
-      'de drinkbak': ['de drinkfontein'],
+      'de stookpot': ['de cv-ketel'],
+      'de houtstapel': ['de stapel stoeptegels', 'tegelstapel'],
+      'de drinkbak': ['de drinkfontein', 'drinkfontein'],
       'de vuurplaats': ['de lantaarnpaal', 'lantaarnpaal'],
-      'de omgevallen stam': ['de omgevallen boom'],
+      'de omgevallen stam': ['de pingpongtafel', 'pingpongtafel'],
       'de waterput': ['de prullenbak', 'prullenbak'],
       'de mosrichel': ['de bank bij de ingang', 'marmerbank'],
-      'de regenton': ['het regenvat'],
+      'de regenton': ['de basketbalpaal', 'basketbalpaal'],
       'de vogelverschrikker': ['de vlaggenmast', 'vlaggenmast'],
-      'het kruidenkabinet': ['het stoffenkabinet'],
+      'de boomstronk': ['het zitblok', 'zitblok'],
+      'het kruidenkabinet': ['het stoffenkabinet', 'glaskast'],
     },
   },
 
@@ -865,60 +1016,62 @@ export const WERELDMEUBELS = {
   ziekenhuis: {
     volledig: true,
     zelfde: [
-      'de koelkast', 'de kapstok', 'de stapel kratten', 'de kruiwagen',
-      'de boomstronk', 'de kweekbak', 'de weegschaal', 'de kolvenrij',
+      'het serviesbuffet',
+      'de kapstok', 'de stapel kratten', 'de kruiwagen',
+      'de kweekbak', 'de weegschaal', 'de kolvenrij',
       'de kuipplant',
     ],
     anders: {
+      'de koelkast': ['de medicijnkoelkast', 'slimmekoelkast'],
       'het fornuis': ['de kookplaat'],
       'de gootsteen': ['de spoelbak'],
       'het aanrecht': ['het werkblad'],
       'de spinde': ['de snackautomaat', 'automaat'],
-      'het serviesbuffet': ['de vaatwasser'],
       'de haard': ['de radiator', 'radiator'],
       'de leren fauteuil': ['de bureaustoel', 'bureaustoel'],
       'de staande klok': ['de klokzuil', 'klokzuil'],
       'de vleugel': ['het informatiescherm', 'beeldscherm'],
       'de wandspiegel': ['het prikbord', 'whiteboard'],
-      'het borstbeeld': ['het bronzen beeld'],
-      'de boekenkast': ['de medicijnkast'],
-      'de katheder': ['de uitgiftelessenaar'],
-      'de globe': ['de anatomiebol'],
+      'het borstbeeld': ['de loungebank', 'loungebank'],
+      'de boekenkast': ['de naslagkast'],
+      'de katheder': ['het sta-bureau', 'stabureau'],
+      'de globe': ['de wereldbol'],
       'de commode': ['het ladenblok', 'archiefkast'],
-      'de leesstoel': ['de bezoekersfauteuil'],
-      'de kaartentafel': ['de uitgiftetafel'],
-      'het wijnrek': ['het linnenrek'],
+      'de leesstoel': ['de bezoekersfauteuil', 'fauteuil'],
+      'de kaartentafel': ['de computerwerkplek', 'laptopbureau'],
+      'het wijnrek': ['de linnenkar', 'linnenkar'],
       'het eikenhouten vat': ['de wascontainer', 'afvalcontainer'],
       'de kolenbunker': ['de afvalemmer', 'prullenbak'],
       'de werktafel': ['de inpaktafel'],
       'de touwhaspel': ['de slangenhaspel'],
       'het bed': ['het ziekenhuisbed', 'ziekenhuisbed'],
       'de kleerkast': ['de patiëntenkast', 'lockerkast'],
-      'het nachtkastje': ['het nachtkastje'],
-      'het wasstel': ['de wasbak'],
+      'het nachtkastje': ['het nachtkastje', 'kastje'],
+      'het wasstel': ['de wasbak', 'wasbak'],
       'de hutkoffer': ['de infuusstandaard', 'infuusstandaard'],
-      'de voetenbank': ['het opstapbankje'],
+      'de voetenbank': ['het opstapkrukje', 'opstapkrukje'],
       'de paraplubak': ['de parapluhouder'],
-      'de console': ['de overdrachtskar'],
-      'de spiegelstandaard': ['de spiegel bij de lift'],
-      'het uurwerk': ['de gangklok'],
+      'de console': ['de overdrachtskar', 'rolkar'],
+      'de spiegelstandaard': ['het aanmeldscherm', 'infozuil'],
+      'het uurwerk': ['de digitale klok', 'tijdscherm'],
       'het harnas': ['de brandblusser', 'brandblusser'],
       'de gereedschapskist': ['de instrumentenkist'],
-      'de stookpot': ['de sterilisator'],
+      'de stookpot': ['de cv-ketel'],
       'het schakelpaneel': ['het bedieningspaneel'],
       'de magazijnstelling': ['de voorraadstelling'],
-      'het slijpwiel': ['het statief'],
-      'de draaibank': ['de scanner'],
-      'de houtstapel': ['de stapel tegels'],
-      'de drinkbak': ['de drinkfontein'],
+      'het slijpwiel': ['de microscoop', 'microscoop'],
+      'de draaibank': ['de scanner', 'scanner'],
+      'de houtstapel': ['de stapel tegels', 'tegelstapel'],
+      'de drinkbak': ['de drinkfontein', 'drinkfontein'],
       'de vuurplaats': ['de lantaarnpaal', 'lantaarnpaal'],
-      'de omgevallen stam': ['de omgevallen boom'],
+      'de omgevallen stam': ['de parasol', 'parasol'],
+      'de boomstronk': ['het zitblok', 'zitblok'],
       'de waterput': ['de ronde plantenbak', 'plantenbakrond'],
       'de mosrichel': ['de tuinbank', 'wachtbank'],
-      'de regenton': ['het regenvat'],
+      'de regenton': ['de laadpaal', 'laadpaal'],
       'de vogelverschrikker': ['de vlaggenmast', 'vlaggenmast'],
-      'het kruidenkabinet': ['het verbandkabinet'],
-      'de distilleerketel': ['de autoclaaf'],
+      'het kruidenkabinet': ['het verbandkabinet', 'glaskast'],
+      'de distilleerketel': ['de autoclaaf', 'autoclaaf'],
     },
   },
 
@@ -928,9 +1081,11 @@ export const WERELDMEUBELS = {
   kantoor: {
     volledig: true,
     zelfde: [
-      'de koelkast', 'de katheder', 'de globe', 'de kapstok',
+      'de globe', 'de kapstok',
     ],
     anders: {
+      'de koelkast': ['de slimme koelkast', 'slimmekoelkast'],
+      'de katheder': ['het sta-bureau', 'stabureau'],
       'het fornuis': ['de kookplaat'],
       'de gootsteen': ['de spoelbak'],
       'het aanrecht': ['de uitgiftebalie', 'balie'],
@@ -944,38 +1099,38 @@ export const WERELDMEUBELS = {
       'het borstbeeld': ['het kunstwerk op sokkel'],
       'de boekenkast': ['de dossierkast'],
       'de commode': ['het ladenblok', 'archiefkast'],
-      'de leesstoel': ['de directiefauteuil'],
-      'de kaartentafel': ['de overlegtafel'],
+      'de leesstoel': ['de directiefauteuil', 'fauteuil'],
+      'de kaartentafel': ['de flexplek', 'laptopbureau'],
       'het wijnrek': ['de fietsenstalling', 'fietsenrek'],
-      'het eikenhouten vat': ['het olievat'],
+      'het eikenhouten vat': ['het olievat', 'drum'],
       'de kolenbunker': ['de afvalcontainer', 'afvalcontainer'],
       'de werktafel': ['de montagetafel'],
       'de touwhaspel': ['de kabelhaspel'],
       'de stapel kratten': ['de stapel verhuisdozen'],
-      'het bed': ['het rustbed'],
+      'het bed': ['de loungebank', 'loungebank'],
       'de kleerkast': ['de lockerkast', 'lockerkast'],
-      'het nachtkastje': ['het bijzettafeltje'],
-      'het wasstel': ['de wasbak'],
-      'de hutkoffer': ['de archiefdoos'],
-      'de voetenbank': ['het voetenbankje'],
+      'het nachtkastje': ['het kastje', 'kastje'],
+      'het wasstel': ['de wasbak', 'wasbak'],
+      'de hutkoffer': ['de rolkoffer', 'rolkoffer'],
+      'de voetenbank': ['het opstapkrukje', 'opstapkrukje'],
       'de paraplubak': ['de parapluhouder'],
       'de console': ['de wandconsole'],
-      'de spiegelstandaard': ['de liftspiegel'],
-      'het uurwerk': ['de wandklok'],
+      'de spiegelstandaard': ['het infopunt', 'infozuil'],
+      'het uurwerk': ['de digitale klok', 'tijdscherm'],
       'het harnas': ['de brandblusser', 'brandblusser'],
       'de gereedschapskist': ['de gereedschapskoffer'],
       'de stookpot': ['het noodaggregaat'],
       'het schakelpaneel': ['het patchpaneel'],
       'de magazijnstelling': ['de pakketstelling'],
       'het slijpwiel': ['het dossierrek', 'dossierrek'],
-      'de draaibank': ['de frankeermachine'],
-      'de houtstapel': ['de stapel tegels'],
-      'de drinkbak': ['de drinkfontein'],
-      'de vuurplaats': ['de terrasbrander'],
-      'de omgevallen stam': ['de omgevallen parasol'],
+      'de draaibank': ['het kopieerapparaat', 'kopieerapparaat'],
+      'de houtstapel': ['de stapel tegels', 'tegelstapel'],
+      'de drinkbak': ['de drinkfontein', 'drinkfontein'],
+      'de vuurplaats': ['de terrasverwarmer', 'terrasheater'],
+      'de omgevallen stam': ['de terrasparasol', 'parasol'],
       'de waterput': ['de ronde plantenbak', 'plantenbakrond'],
       'de mosrichel': ['de terrasbank', 'wachtbank'],
-      'de regenton': ['de regenbak'],
+      'de regenton': ['de laadpaal', 'laadpaal'],
       'de kruiwagen': ['de bagagekar', 'rolkar'],
       'de boomstronk': ['de houten kubus', 'zitblok'],
       'de vogelverschrikker': ['de vlaggenmast', 'vlaggenmast'],
@@ -986,6 +1141,7 @@ export const WERELDMEUBELS = {
   zwembad: {
     volledig: true,
     zelfde: [
+      'de draaibank',
       'de kapstok', 'de stapel kratten', 'de gereedschapskist',
       'het schakelpaneel', 'de kuipplant',
       // De soort `bad` is al in zwembadtaal geschreven; hier valt niets
@@ -1008,29 +1164,28 @@ export const WERELDMEUBELS = {
       'de wandspiegel': ['het mededelingenbord', 'whiteboard'],
       'het borstbeeld': ['de zwembandenmand', 'zwembandenmand'],
       'het wijnrek': ['de voorraadstelling', 'dossierrek'],
-      'het eikenhouten vat': ['de chloorton'],
+      'het eikenhouten vat': ['de chloorton', 'drum'],
       'de kolenbunker': ['de afvalcontainer', 'afvalcontainer'],
       'de werktafel': ['de montagetafel'],
       'de touwhaspel': ['de slanghaspel'],
       'het bed': ['de kleedbank', 'wachtbank'],
       'de kleerkast': ['de lockerkast', 'lockerkast'],
-      'het nachtkastje': ['het muntkluisje'],
-      'het wasstel': ['de wasbak'],
-      'de hutkoffer': ['de zwemtas'],
-      'de voetenbank': ['het opstapbankje'],
-      'de paraplubak': ['de slippersmand'],
-      'de console': ['de handdoekplank'],
+      'het nachtkastje': ['het kastje', 'kastje'],
+      'het wasstel': ['de wasbak', 'wasbak'],
+      'de hutkoffer': ['de zwemtas', 'sporttas'],
+      'de voetenbank': ['het opstapkrukje', 'opstapkrukje'],
+      'de paraplubak': ['de parapluhouder'],
+      'de console': ['het handdoekrek', 'handdoekrek'],
       'de spiegelstandaard': ['de douchepaal', 'douchepaal'],
       'het uurwerk': ['de radiator', 'radiator'],
       'het harnas': ['de brandblusser', 'brandblusser'],
       'de stookpot': ['de boiler'],
       'de magazijnstelling': ['het fietsenrek', 'fietsenrek'],
-      'het slijpwiel': ['de fietspomp'],
-      'de draaibank': ['de reparatiebank'],
-      'de houtstapel': ['de stapel ligbedden'],
-      'de drinkbak': ['de drinkfontein'],
-      'de vuurplaats': ['de barbecue'],
-      'de omgevallen stam': ['de omgevallen bank', 'mosbank'],
+      'het slijpwiel': ['de fietspomp', 'fietspomp'],
+      'de houtstapel': ['de stapel tuinstoelen', 'stoelenstapel'],
+      'de drinkbak': ['de drinkfontein', 'drinkfontein'],
+      'de vuurplaats': ['de barbecue', 'barbecue'],
+      'de omgevallen stam': ['de zitzak', 'zitzak'],
       'de waterput': ['de ronde plantenbak', 'plantenbakrond'],
       'de mosrichel': ['de bank bij de ingang', 'marmerbank'],
       'de regenton': ['de prullenbak', 'prullenbak'],
@@ -1038,7 +1193,7 @@ export const WERELDMEUBELS = {
       'de boomstronk': ['het zitblok bij de ingang', 'zitblok'],
       'de vogelverschrikker': ['de vlaggenmast', 'vlaggenmast'],
       'de kweekbak': ['de brancard', 'ziekenhuisbed'],
-      'het kruidenkabinet': ['het verbandkabinet'],
+      'het kruidenkabinet': ['het verbandkabinet', 'glaskast'],
       'de distilleerketel': ['de infuusstandaard', 'infuusstandaard'],
       'de weegschaal': ['de weegschaal', 'massameter'],
       'de kolvenrij': ['de medicijntafel'],
@@ -1097,6 +1252,239 @@ export const WERELDMEUBELS = {
       'de oppotbak': ['de potgrondzak'],
     },
   },
+
+  // ------------------------------------------------ Sterrenschip Zwaluw
+  // Een schip dat reist, met een gamehoek op het ontspanningsdek. Elke naam
+  // hier heeft een tekening van nu; niets is een omgedoopt landhuisstuk.
+  ruimteschip: {
+    volledig: true,
+    zelfde: ['de gereedschapskist', 'het schakelpaneel'],
+    anders: {
+      // de cockpit en het observatiedek
+      'de telescoop': ['de stoel van de piloot', 'stuurstoel'],
+      'de hemelbol': ['het hologram', 'hologram'],
+      'de sterrenkaart': ['het navigatiescherm', 'monitorwand'],
+      'het kaartenkabinet': ['de stuurconsole', 'navigatieconsole'],
+      'de schrijflessenaar': ['het radarscherm', 'radar'],
+      'de chronometer': ['de scheepsklok', 'tijdscherm'],
+      // de hyperkern en de motorkamer
+      'de stookpot': ['de energiekern', 'energiekern'],
+      'de magazijnstelling': ['de onderdelenstelling', 'laadrek'],
+      'het slijpwiel': ['de slijpmachine', 'slijpmachine'],
+      'de draaibank': ['de reparatierobot', 'robot'],
+      // het slaapdek en de reddingscapsule
+      'het bed': ['de slaapcapsule', 'slaapcapsule'],
+      'de kleerkast': ['de lockerkast', 'lockerkast'],
+      'het nachtkastje': ['het kastje', 'kastje'],
+      'het wasstel': ['de wasunit', 'wasbak'],
+      'de hutkoffer': ['de plunjezak', 'sporttas'],
+      'de voetenbank': ['het opstapje', 'opstapkrukje'],
+      // de laadbaai
+      'het wijnrek': ['het cilinderrek', 'cilinderrek'],
+      'het eikenhouten vat': ['de brandstoftank', 'gastank'],
+      'de kolenbunker': ['de afvalcontainer', 'afvalcontainer'],
+      'de werktafel': ['de montagetafel', 'werkbank'],
+      'de touwhaspel': ['de kabelhaspel', 'touwhaspel'],
+      'de stapel kratten': ['de vrachtcontainer', 'vrachtcontainer'],
+      // de messzaal
+      'het fornuis': ['de voedselprinter', 'voedselprinter'],
+      'de gootsteen': ['de spoelbak', 'gootsteen'],
+      'de koelkast': ['de koelcel', 'koelkast'],
+      'het aanrecht': ['het werkblad', 'aanrecht'],
+      'de spinde': ['de snackautomaat', 'automaat'],
+      'het serviesbuffet': ['de koffiemachine', 'koffieautomaat'],
+      // het holodek en de bemanningslounge
+      'de haard': ['de holoprojector', 'projector'],
+      'de leren fauteuil': ['de gamestoel', 'gamestoel'],
+      'de staande klok': ['de tijdzuil', 'klokzuil'],
+      'de vleugel': ['de speakertoren', 'luidspreker'],
+      'de wandspiegel': ['het grote scherm', 'beeldscherm'],
+      'het borstbeeld': ['de spelcomputer', 'spelcomputer'],
+      // de luchtsluis en de loopbrug
+      'de kapstok': ['de pakkenstandaard', 'pakkenrek'],
+      'de paraplubak': ['de afvalemmer', 'prullenbak'],
+      'de console': ['het infopunt', 'infozuil'],
+      'de spiegelstandaard': ['het laadpunt', 'laadpaal'],
+      'het uurwerk': ['de brandblusser', 'brandblusser'],
+      'het harnas': ['het ruimtepak', 'ruimtepak'],
+    },
+  },
+
+  // --------------------------------------------------------- Hoogstad
+  // Metro, skatepark, foodcourt en een flat met een loungebank. Hout mag
+  // hier (een bank, een bed, een skateramp), ouderwets niet.
+  stad: {
+    volledig: true,
+    zelfde: [
+      'de gereedschapskist', 'de gootsteen', 'het bed', 'de kleerkast',
+      'de stapel kratten',
+    ],
+    anders: {
+      // de gamekamer, de bioscoop, het winkelcentrum, de sportschool
+      'de haard': ['de beamer', 'projector'],
+      'de leren fauteuil': ['de gamestoel', 'gamestoel'],
+      'de staande klok': ['de loungebank', 'loungebank'],
+      'de vleugel': ['de speakerbox', 'luidspreker'],
+      'de wandspiegel': ['de monitorwand', 'monitorwand'],
+      'het borstbeeld': ['de spelcomputer', 'spelcomputer'],
+      // het metrostation en de lift
+      'de kapstok': ['het toegangspoortje', 'poortje'],
+      'de paraplubak': ['de prullenbak', 'prullenbak'],
+      'de console': ['het infopunt', 'infozuil'],
+      'de spiegelstandaard': ['het vertrekbord', 'beeldscherm'],
+      'het uurwerk': ['de stationsklok', 'tijdscherm'],
+      'het harnas': ['de brandblusser', 'brandblusser'],
+      // de daktuin en het skatepark
+      'de houtstapel': ['de skateramp', 'skateramp'],
+      'de drinkbak': ['de drinkfontein', 'drinkfontein'],
+      'de vuurplaats': ['de barbecue', 'barbecue'],
+      'de omgevallen stam': ['de pingpongtafel', 'pingpongtafel'],
+      'de waterput': ['de ronde plantenbak', 'plantenbakrond'],
+      'de mosrichel': ['de zitbank', 'wachtbank'],
+      'de regenton': ['de laadpaal', 'laadpaal'],
+      'de kruiwagen': ['de deelscooter', 'deelscooter'],
+      'de boomstronk': ['de zitzak', 'zitzak'],
+      'de vogelverschrikker': ['de lantaarnpaal', 'lantaarnpaal'],
+      // de foodcourt
+      'het fornuis': ['de kookplaat'],
+      'de koelkast': ['de slimme koelkast', 'slimmekoelkast'],
+      'het aanrecht': ['de uitgiftebalie', 'balie'],
+      'de spinde': ['de snoepautomaat', 'automaat'],
+      'het serviesbuffet': ['de koffiemachine', 'koffieautomaat'],
+      // de parkeergarage
+      'het wijnrek': ['het fietsenrek', 'fietsenrek'],
+      'het eikenhouten vat': ['het olievat', 'drum'],
+      'de kolenbunker': ['de afvalcontainer', 'afvalcontainer'],
+      'de werktafel': ['het werkblad', 'werkbank'],
+      'de touwhaspel': ['de slanghaspel', 'touwhaspel'],
+      // het appartement
+      'het nachtkastje': ['het nachtkastje', 'kastje'],
+      'het wasstel': ['de wastafel', 'wasbak'],
+      'de hutkoffer': ['de rolkoffer', 'rolkoffer'],
+      'de voetenbank': ['de booglamp', 'ledlamp'],
+      // de wasserette
+      'de stookpot': ['de wasmachine', 'wasmachine'],
+      'het schakelpaneel': ['de meterkast', 'schakelkast'],
+      'de magazijnstelling': ['de opslagstelling', 'laadrek'],
+      'het slijpwiel': ['de fietspomp', 'fietspomp'],
+      'de draaibank': ['de droogtrommel', 'autoclaaf'],
+    },
+  },
+
+  // ---------------------------------------------- Escaperoom Klokslag
+  // Elke kamer is een puzzel: een kluis met een cijferslot, een gang vol
+  // lasers, een wand van spiegels. Ingericht als decor, maar alles van nu.
+  escaperoom: {
+    volledig: true,
+    zelfde: [
+      'de kapstok', 'de gereedschapskist', 'het schakelpaneel', 'de boekenkast',
+      'de globe', 'de stapel kratten', 'de kweekbak', 'de kuipplant',
+    ],
+    anders: {
+      // de lobby, het spiegeldoolhof, de wachtzaal
+      'de haard': ['de loungebank', 'loungebank'],
+      'de leren fauteuil': ['de leunstoel', 'fauteuil'],
+      'de staande klok': ['de aftelklok', 'tijdscherm'],
+      'de vleugel': ['de speakerbox', 'luidspreker'],
+      'de wandspiegel': ['de spiegelwand', 'spiegelpaneel'],
+      'het borstbeeld': ['de vitrine', 'vitrine'],
+      // de lasergang en de verborgen gang
+      'de paraplubak': ['de prullenbak', 'prullenbak'],
+      'de console': ['het infopunt', 'infozuil'],
+      'de spiegelstandaard': ['de laserpaal', 'laserpaal'],
+      'het uurwerk': ['de bewakingscamera', 'camerapaal'],
+      'het harnas': ['de brandblusser', 'brandblusser'],
+      // het geheime lab
+      'het kruidenkabinet': ['de glazen kast', 'glaskast'],
+      'de distilleerketel': ['de afzuigkap', 'zuurkast'],
+      'de weegschaal': ['de microscoop', 'microscoop'],
+      'de kolvenrij': ['de proefopstelling', 'proeventafel'],
+      // de controlekamer en de kluiskamer
+      'de stookpot': ['de camerawand', 'monitorwand'],
+      'de magazijnstelling': ['de stelling met rekwisieten', 'laadrek'],
+      'het slijpwiel': ['de regietafel', 'navigatieconsole'],
+      'de draaibank': ['het kopieerapparaat', 'kopieerapparaat'],
+      // de puzzelkamer en de archiefkamer
+      'de katheder': ['de lessenaar', 'lessenaar'],
+      'de commode': ['het ladenblok', 'archiefkast'],
+      'de leesstoel': ['de zitzak', 'zitzak'],
+      'de kaartentafel': ['de codekluis', 'kluis'],
+      // de schuilkelder
+      'het wijnrek': ['het ordnerrek', 'dossierrek'],
+      'het eikenhouten vat': ['het watervat', 'drum'],
+      'de kolenbunker': ['de noodvoorraad', 'vrachtcontainer'],
+      'de werktafel': ['de werkbank', 'werkbank'],
+      'de touwhaspel': ['de kabelhaspel', 'touwhaspel'],
+      // de kostuumkamer
+      'het bed': ['het kostuumrek', 'kledingrek'],
+      'de kleerkast': ['de lockerkast', 'lockerkast'],
+      'het nachtkastje': ['het kastje', 'kastje'],
+      'het wasstel': ['de wastafel', 'wasbak'],
+      'de hutkoffer': ['de rolkoffer', 'rolkoffer'],
+      'de voetenbank': ['het opstapkrukje', 'opstapkrukje'],
+    },
+  },
+
+  // ---------------------------------------------- Pretpark Zonnestraal
+  // Suikerspin, botsauto's en een podium met een dj. Overdag, en alles
+  // even fel als het eruitziet.
+  pretpark: {
+    volledig: true,
+    zelfde: [
+      'de koelkast', 'de gootsteen', 'de kuipplant', 'de touwhaspel',
+    ],
+    anders: {
+      // de achtbaan, het reuzenrad, de draaimolen, het festivalterrein
+      'de houtstapel': ['de stapel tuinstoelen', 'stoelenstapel'],
+      'de drinkbak': ['de drinkfontein', 'drinkfontein'],
+      'de vuurplaats': ['de suikerspinkraam', 'suikerspin'],
+      'de omgevallen stam': ['de tros ballonnen', 'ballonnen'],
+      'de waterput': ['de ronde plantenbak', 'plantenbakrond'],
+      'de mosrichel': ['de rij stoeltjes', 'wachtbank'],
+      'de regenton': ['de prullenbak', 'prullenbak'],
+      'de kruiwagen': ['het botsautootje', 'botsauto'],
+      'de boomstronk': ['de zitzak', 'zitzak'],
+      'de vogelverschrikker': ['de wegwijzer', 'wegwijzer'],
+      // de foodtrucks
+      'het fornuis': ['de foodtruck', 'foodtruck'],
+      'het aanrecht': ['de uitgiftebalie', 'balie'],
+      'de spinde': ['de drankautomaat', 'automaat'],
+      'het serviesbuffet': ['de koffiemachine', 'koffieautomaat'],
+      // het podium en de botsautobaan
+      'de haard': ['de spotlamp', 'spot'],
+      'de leren fauteuil': ['de loungebank', 'loungebank'],
+      'de staande klok': ['de klokzuil', 'klokzuil'],
+      'de vleugel': ['de speakertoren', 'luidspreker'],
+      'de wandspiegel': ['het grote scherm', 'beeldscherm'],
+      'het borstbeeld': ['de dj-tafel', 'djtafel'],
+      // het spookhuis en het kassahokje
+      'de kapstok': ['het toegangspoortje', 'poortje'],
+      'de paraplubak': ['de parapluhouder', 'paraplubak'],
+      'de console': ['het infopunt', 'infozuil'],
+      'de spiegelstandaard': ['de lachspiegel', 'spiegelpaneel'],
+      'het uurwerk': ['de wachttijdklok', 'tijdscherm'],
+      'het harnas': ['de brandblusser', 'brandblusser'],
+      // de EHBO-tent
+      'de kweekbak': ['de brancard', 'ziekenhuisbed'],
+      'het kruidenkabinet': ['het verbandkabinet', 'glaskast'],
+      'de distilleerketel': ['de infuusstandaard', 'infuusstandaard'],
+      'de weegschaal': ['de waterkoeler', 'waterkoeler'],
+      'de kolvenrij': ['de medicijntafel', 'proeventafel'],
+      // de backstage
+      'het wijnrek': ['het kostuumrek', 'kledingrek'],
+      'het eikenhouten vat': ['het watervat', 'drum'],
+      'de kolenbunker': ['de afvalcontainer', 'afvalcontainer'],
+      'de werktafel': ['het werkblad', 'werkbank'],
+      'de stapel kratten': ['de stapel flightcases', 'vrachtcontainer'],
+      // de souvenirkraam
+      'de boekenkast': ['het knuffelrek', 'knuffelrek'],
+      'de katheder': ['de kassa', 'kassa'],
+      'de globe': ['de grijpmachine', 'grijpmachine'],
+      'de commode': ['het ladenblok', 'archiefkast'],
+      'de leesstoel': ['de draaistoel', 'bureaustoel'],
+      'de kaartentafel': ['de ronde tafel', 'kaartentafel'],
+    },
+  },
 };
 
 
@@ -1144,7 +1532,67 @@ export const WERELDVERWANT = {
     laboratorium: ['keuken', 'bibliotheek'],
     serre: ['keuken', 'bibliotheek'],
   },
+  // Het schip heeft geen bibliotheek, geen tuin en geen kelder met
+  // wijnrekken: alles wijkt uit naar een ruimte die het schip zelf heeft.
+  ruimteschip: {
+    sterrenwacht: ['werkplaats', 'zaal'],
+    werkplaats: ['kelder', 'sterrenwacht'],
+    zaal: ['gang', 'slaapkamer'],
+  },
+  // In Hoogstad staat geen bibliotheek: de grote zalen wijken uit naar de
+  // gangen en de flat.
+  stad: { zaal: ['gang', 'slaapkamer'] },
+  // Een escaperoom heeft geen sterrenwacht, geen keuken en geen tuin: elke
+  // uitwijk blijft binnen het gebouw.
+  escaperoom: {
+    bibliotheek: ['zaal', 'gang'],
+    werkplaats: ['kelder', 'laboratorium'],
+    kelder: ['werkplaats', 'gang'],
+  },
+  // Een pretpark heeft geen werkplaats en geen sterrenwacht: het terrein
+  // wijkt uit naar de opslag achter het podium, de EHBO naar de kraampjes.
+  pretpark: {
+    buiten: ['kelder', 'zaal'],
+    gang: ['zaal', 'buiten'],
+    laboratorium: ['keuken', 'bibliotheek'],
+    kelder: ['keuken', 'buiten'],
+    bibliotheek: ['zaal', 'gang'],
+  },
 };
+
+// ------------------------------------------------- tekeningen van vroeger
+//
+// Een wereldlaag kan namen omdopen, geen beeld. Op het ruimtestation heette
+// het harnas "het ruimtepak", de staande klok "de tijdzuil" en de
+// vogelverschrikker "de antennemast" - en op het bord stond gewoon een
+// ridder, een staande klok en een vogelverschrikker. Guus: "een ridder in
+// een ruimteschip, dat kan niet".
+//
+// Dit zijn de tekeningen die bij een landhuis van 1930 horen, een bos of een
+// grafkelder, en in een wereld van nu niets anders kunnen zijn dan wat ze
+// zijn. tools/check-kamers.mjs faalt zodra een wereld uit MODERNE_WERELDEN
+// er eentje op een bord kan zetten, onder welke naam ook.
+export const OUDERWETS = [
+  // het landhuis
+  'harnas', 'staandespiegel', 'wandspiegel', 'haard', 'staandeklok', 'gangklok',
+  'hutkoffer', 'vat', 'kolenkist', 'wastafel', 'voetenbank', 'wijnrek',
+  'kruidenkast', 'distilleerketel', 'slijpsteen', 'chronometer',
+  // het erf en het bos
+  'vogelverschrikker', 'put', 'houtstapel', 'vuur', 'stam', 'boomstronk',
+  'regenton', 'mosbank', 'drinkbak',
+  // de grafkelder
+  'zandloper', 'sarcofaag', 'knekelnis', 'grafzerk', 'bidbank', 'kaarsentafel',
+  'lampenstaander', 'reliekkast',
+];
+
+// De werelden die nu spelen. Hier mag niets uit OUDERWETS op een bord komen.
+export const MODERNE_WERELDEN = [
+  'station', 'school', 'ziekenhuis', 'kantoor', 'zwembad',
+  'ruimteschip',
+  'stad',
+  'escaperoom',
+  'pretpark',
+];
 
 // De naam en de tekening die in deze wereld bij een meubelstuk horen.
 const omdopen = ([naam, icoon], laag) => {
