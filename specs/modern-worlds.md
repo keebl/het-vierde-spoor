@@ -31,7 +31,7 @@ can actually put on a board (`meubelsVoor` over its room kinds and fallbacks):
   (pendulum clock), `de stapel stoeptegels` (log pile).
 - **zwembad**: `de chloorton` (barrel), `de stapel ligbedden` (log pile), `de barbecue`
   (campfire), `de zwemtas` (trunk), `de slippersmand`, `de handdoekplank` (already noted in
-  `HANDOFF.md`).
+  `STATUS.md`).
 
 Constraint that shapes the fix: every room kind supplies exactly 18 names (6 own + 12 from
 two related kinds), and `buildKamerPuzzle` caps furniture at the scarcest kind
@@ -209,7 +209,7 @@ Work on a branch (`feat/modern-worlds`); nothing reaches `main` until step 14 �
 14. **Library, shared set, release** — at least one fixed case per new world in
     `catalog.js`; shared modern pieces added to `school`/`kantoor`/`ziekenhuis` room kinds
     (keeping 18 per kind); `npm run check:all` green (background, ~20 min with four more
-    worlds); screenshots light/dark × phone/desktop for all four; `HANDOFF.md`; merge to
+    worlds); screenshots light/dark × phone/desktop for all four; `STATUS.md`; merge to
     `main`, push, verify live. — 2 h
 
 Risks:
