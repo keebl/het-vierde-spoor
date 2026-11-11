@@ -7,15 +7,18 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Nothing in progress. Working tree clean on `main` at `dda4cb4`; everything is live on
-  https://keebl.github.io/het-vierde-spoor/ with the keuring green on all seven checks
-  (last full run on `dc6ab54`, `volledige keuring exit=0`; the sweep alone now takes
-  nearly twelve minutes, the whole thing a good quarter of an hour). `main` has moved on
-  since to `521030e`: the step-bounded `naSnoei`, a `.env` parser without a backtracking
-  regex, and a logged dress-up failure.
-- This branch (`chore/adopt-standard`, pull request #1) adds the project standard and
-  nothing else: no application code, dependencies or CI were touched. Until it merges,
-  half the documentation exists only here.
+- Nothing in progress. Working tree clean on `main` at `e58ee1d`; everything is live on
+  https://keebl.github.io/het-vierde-spoor/.
+- The project standard was merged on 2026-11-11 (pull request #1, merge commit `e58ee1d`):
+  documentation only, no application code, dependencies or CI. `HANDOFF.md` and
+  `ARCHITECTUUR.md` are gone from the root; this file and `docs/ARCHITECTURE.md` replace
+  them, and standing guidance lives in `CLAUDE.md`.
+- The keuring was last run in full on `dc6ab54`, green on all seven checks
+  (`volledige keuring exit=0`; the sweep alone takes nearly twelve minutes, the whole thing
+  a good quarter of an hour). The four engine and server commits after it (`edcbd24`
+  onwards: the step-bounded `naSnoei`, a `.env` parser without a backtracking regex, a
+  logged dress-up failure) have had `check:snel` only — **a full keuring is owed before the
+  next release.**
 
 ## Next
 1. **Show her the cheerful restyle and write down what she says.** The daughter's verdict
