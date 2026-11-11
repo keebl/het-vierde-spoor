@@ -10,7 +10,9 @@ standing guidance rather than state moved to `CLAUDE.md`.
 - Nothing in progress. Working tree clean on `main` at `dda4cb4`; everything is live on
   https://keebl.github.io/het-vierde-spoor/ with the keuring green on all seven checks
   (last full run on `dc6ab54`, `volledige keuring exit=0`; the sweep alone now takes
-  nearly twelve minutes, the whole thing a good quarter of an hour).
+  nearly twelve minutes, the whole thing a good quarter of an hour). `main` has moved on
+  since to `521030e`: the step-bounded `naSnoei`, a `.env` parser without a backtracking
+  regex, and a logged dress-up failure.
 - This branch (`chore/adopt-standard`, pull request #1) adds the project standard and
   nothing else: no application code, dependencies or CI were touched. Until it merges,
   half the documentation exists only here.
@@ -49,12 +51,15 @@ standing guidance rather than state moved to `CLAUDE.md`.
 - **Cloudflare Worker deferred.** `worker/` is written but not deployed: the free plan
   gives 10 ms CPU per request and verifying a puzzle costs up to three seconds. Works on
   the paid plan (~$5/month) or a host with a higher limit. Deliberately postponed.
-- **Should `naSnoei` keep its wall clock?** Repairing it shifts the clues of existing
-  boards (see Known gaps), so decide before touching it.
 - **TODO(guus): licence.** The repository is public and has no `LICENSE`. Default per the
   standard is "all rights reserved"; MIT only by decision (ADR).
 
 ## Recent decisions
+- 2026-11-11 — A 16×16 board now follows entirely from its seed (`edcbd24`). `naSnoei`
+  stopped after 900 ms of wall-clock time, so a busy machine or a slow phone gave the same
+  link different clues; it now stops after a fixed budget of 480,000 solver steps. The
+  fixed cases are unchanged; of 31 measured level-6 boards, 2 got different clues (a
+  one-off, agreed with the owner).
 - 2026-11-10 — A drawing may never contradict its own name. The station, the school, the
   hospital, the office and the pool borrowed half their furniture from the manor and only
   renamed it ("het ruimtepak" was the knight's armour, "de tijdzuil" the longcase clock).
@@ -91,11 +96,6 @@ standing guidance rather than state moved to `CLAUDE.md`.
 - 2026-11-08 — Not every case is a murder: disappearances and thefts too (`zaken.js`).
 
 ## Known gaps not yet scheduled
-- **A 16×16 board does not follow entirely from its seed.** `naSnoei` in
-  `generate-rooms.js` stops after 900 ms of wall-clock time, so on a busy machine (or a
-  slow phone) it prunes less and the same link gets a different set of clues. Seen on
-  2026-11-10 while the keuring was running alongside it. The floor plan and the solution
-  stay the same, the clues do not.
 - The keuring never draws the board frames, so a fault in `bordrand.js` that only breaks at
   draw time is not caught.
 - The solution sits in the page; anyone who opens the console can read it.

@@ -78,6 +78,9 @@ function route() {
             zetWereldThema(dressed.world?.id);
             renderPlayer(dressed, app);
           }
+        }).catch((err) => {
+          // Mislukt het aankleden, dan blijft de gewone puzzel gewoon staan.
+          console.error(err);
         });
       } catch (err) {
         // De technische oorzaak hoort in de console, niet op het scherm.

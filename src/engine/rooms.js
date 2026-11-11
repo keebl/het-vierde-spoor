@@ -402,6 +402,8 @@ function personenIn(c) {
 // een ongelukkige combinatie van rooster en aanwijzingen minutenlang doorgaan,
 // en dan staat iemand te wachten op een puzzel. Loopt hij eruit, dan zegt hij
 // eerlijk "ik weet het niet" (opgegeven) en gooit de generator die poging weg.
+// stappen zegt hoeveel werk de telling kostte; de tweede snoeironde in de
+// generator houdt daarmee zijn budget bij.
 export function telPlaatsingen(rooster, aanwijzingen, cap = 2, budget = 120000) {
   const { n } = rooster;
   const plaats = new Array(n).fill(null);
@@ -412,7 +414,7 @@ export function telPlaatsingen(rooster, aanwijzingen, cap = 2, budget = 120000) 
   // rij voor rij zoeken liep boven acht bij acht vast: negen bij negen kostte
   // dertig seconden.
   const { dom, kapot } = domeinenVan(rooster, aanwijzingen);
-  if (kapot) return { count: 0, plaatsing: null };
+  if (kapot) return { count: 0, plaatsing: null, stappen: 0 };
   const kandidaten = dom.map((d) => [...d]);
 
   const perPersoon = new Map();
@@ -481,7 +483,7 @@ export function telPlaatsingen(rooster, aanwijzingen, cap = 2, budget = 120000) 
   };
 
   zoek(0);
-  return { count: gevonden, plaatsing: eerste, opgegeven };
+  return { count: gevonden, plaatsing: eerste, opgegeven, stappen };
 }
 
 // ------------------------------------------------- menselijk doorredeneren

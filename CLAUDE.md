@@ -22,8 +22,7 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
   it**, not from your shell's exit code. `npm run` can report green while a check was red.
 - **The keuring takes a good quarter of an hour.** Start it in the background and keep
   working. If you change the engine while it runs, the verdict is worthless — kill it and
-  restart. It also eats the machine: `naSnoei` stops on a 900 ms wall clock, so a board
-  built while the keuring runs can get a different set of clues.
+  restart.
 - **Pushing is deploying.** `main` → GitHub Pages, no build step. Say explicitly when
   something is *not* live yet.
 - **A reload that is not a reload.** Navigating to a URL the tab is already on only changes
@@ -31,8 +30,10 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
   `cache-control: max-age=600`, but that is usually not the cause.)
 - **A duplicate key in an object literal is swallowed silently by JavaScript.** There is a
   keuring rule for this, but only for the tables in `kamersoorten.js`.
-- **Everything follows from the seed.** Adding a draw mid-sequence shifts every puzzle
-  after it. Give anything new its own rng: `makeRng(\`${seed}:zaak\`)`.
+- **Everything follows from the seed, including where we stop.** Adding a draw
+  mid-sequence shifts every puzzle after it. Give anything new its own rng:
+  `makeRng(\`${seed}:zaak\`)`. And never bound work by a clock: `naSnoei` counts solver
+  steps, because a 900 ms wall clock made the same link depend on how busy the machine was.
 - **A new world is ~37 new words, and every word needs an icon.** Budget for it. A world
   set in the present goes in `MODERNE_WERELDEN`, and the keuring then refuses every
   `OUDERWETS` drawing in it, including through the fallback to a related kind.
