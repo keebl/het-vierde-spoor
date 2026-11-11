@@ -79,8 +79,8 @@ antennemast" de vogelverschrikker, "het linnenrek" het wijnrek. Nu:
   van 18 borden per wereld (plattegrond, meubelplaatsen, figuren,
   oplossing, aanwijzingen) is identiek aan `f74d2b8`. Alleen de namen van
   de meubels zijn veranderd. (Eén meting gaf voor halloween op niveau 6
-  een ander resultaat; bij herhalen was het weer gelijk. Dat is de klok
-  in `naSnoei`, zie "Eerder opgemerkt".)
+  een ander resultaat; bij herhalen was het weer gelijk. Dat was de
+  klok in `naSnoei`; die is vervangen, zie hieronder.)
 - Daarbij ook de omgedoopte stukken die niet in de lijst staan maar wel
   logen: een nachtkastje met een kaars in het ziekenhuis (nu een wit
   kastje), "de scanner" en "de frankeermachine" die een draaibank waren
@@ -279,14 +279,14 @@ Erbij gekomen: `ARCHITECTUUR.md` (de kaart van de code) en dit bestand.
   keuring. **De les blijft: als een tekening liegt, teken hem. Een
   wereldlaag kan namen omdopen, geen beeld.**
 
-**Eerder opgemerkt, nog niet opgelost**
+**Een 16×16-bord volgt nu helemaal uit de seed** (`edcbd24`, 11 november).
+`naSnoei` stopte na 900 ms wandkloktijd, zodat een drukke machine of een
+trage telefoon voor dezelfde link andere aanwijzingen kreeg. Hij stopt nu
+na een vast budget van 480.000 solverstappen. De vaste zaken blijven gelijk;
+van 31 gemeten niveau-6-borden kregen er 2 andere aanwijzingen (eenmalig,
+met de eigenaar afgesproken).
 
-- **Een 16×16-bord volgt niet helemaal uit de seed.** `naSnoei` in
-  `generate-rooms.js` stopt na 900 ms wandkloktijd. Op een drukke machine
-  (of een trage telefoon) snoeit hij minder weg, en dan krijgt dezelfde
-  link een andere set aanwijzingen. Gezien op 10 november toen de keuring
-  tegelijk liep. De plattegrond en de oplossing blijven gelijk, de
-  aanwijzingen niet. Repareren verschuift bestaande borden: eerst beslissen.
+**Eerder opgemerkt, nog niet opgelost**
 
 - Een afsluiting als je het goed hebt. Nu staat er alleen "Opgelost".
   Daar hoort de dader in beeld te komen, met een slotzin en een knop naar
