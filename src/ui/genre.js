@@ -10,7 +10,7 @@
 export function verdiep(hex) {
   const m = /^#?([0-9a-f]{6})$/i.exec(hex ?? '');
   if (!m) return 'rgb(58 46 34)';
-  const n = parseInt(m[1], 16);
+  const n = Number.parseInt(m[1], 16);
   const r = Math.round(((n >> 16) & 255) * 0.3 + 18);
   const g = Math.round(((n >> 8) & 255) * 0.3 + 14);
   const b = Math.round((n & 255) * 0.3 + 12);

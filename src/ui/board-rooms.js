@@ -99,7 +99,7 @@ function schetspad(x1, y1, x2, y2, amp = 1.5) {
 // even donker is, is geen vloer maar een vlak - dat is waar "kil" vandaan
 // kwam.
 export function schuif(hex, factor) {
-  const n = parseInt(hex.slice(1), 16);
+  const n = Number.parseInt(hex.slice(1), 16);
   const kanaal = (v) => Math.max(0, Math.min(255, Math.round(v * factor)));
   const r = kanaal((n >> 16) & 255);
   const g = kanaal((n >> 8) & 255);
