@@ -122,7 +122,7 @@ export const ASSIGNMENTS = [
     id: 'dader',
     name: 'Wie deed het?',
     short: 'Dader',
-    blurb: 'Een misdrijf, een handvol verdachten, en genoeg tegenstrijdigheden om ze een voor een af te strepen.',
+    blurb: 'Er is iets gebeurd, en je streept de verdachten een voor een weg.',
     mechanics: ['kamer', 'grid', 'map'],
     buildSpec(world, params, rng, mechanic) {
       const n = params.slots;
@@ -219,7 +219,10 @@ export const ASSIGNMENTS = [
     },
     intro(world, spec, sol) {
       const target = spec.cats.find((c) => c.id === 'hidden').items[0].name;
-      return `${world.findLead} Het is op precies één van deze plekken. Welke, dat volgt uit de aanwijzingen.`;
+      // Alleen de aanleiding. "Het is op precies één van deze plekken, welke
+      // dat is volgt uit de aanwijzingen" stond hier, en dat zegt de vraag
+      // eronder al: het las als opvulling.
+      return world.findLead;
     },
   },
 
@@ -254,7 +257,7 @@ export const ASSIGNMENTS = [
       };
     },
     intro(world) {
-      return `${world.assignLead} Los het raster op en de rest volgt.`;
+      return world.assignLead;
     },
   },
 

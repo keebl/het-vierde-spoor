@@ -106,7 +106,7 @@ export function renderHome(mount) {
         el('h1', {}, ['Puzzels die je ', el('span', { class: 'markeer', text: 'uitredeneert' })]),
         el('p', {
           class: 'lede',
-          text: 'Een handvol verdachten, een paar aanwijzingen, en één antwoord dat past. Je komt er door te schrappen wat niet kan. Gokken hoeft nooit, ook niet bij de moeilijkste.',
+          text: 'Je krijgt een paar verdachten en een lijstje aanwijzingen. Streep weg wat niet kan, en er blijft één antwoord over. Gokken hoeft nooit, ook niet bij de moeilijkste.',
         }),
       ]),
       el('p', { class: 'label', text: 'Hoe zwaar wil je het hebben?' }),

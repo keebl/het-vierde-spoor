@@ -9,6 +9,10 @@ day the changelog was introduced; everything before that is in git history only.
 
 ## [Unreleased]
 
+### Fixed
+- A missing woman was referred to as "him" in the intro ("heeft hem als laatste
+  gesproken"). The case sentences now repeat the name instead of using a pronoun.
+
 ### Added
 - Project standard adopted (CLAUDE.md, STATUS.md, docs, specs, security baseline).
 - Two daylight settings: Het Openluchtbad and Dierenpark De Wildhoek. Until then all
@@ -19,6 +23,10 @@ day the changelog was introduced; everything before that is in git history only.
   step under "Zo werkt het".
 
 ### Changed
+- Plainer story text. The opening line of each setting no longer gives away a death before
+  the case is known (it read "it was already too late" above a theft), the case sentences
+  are shorter, and stock phrases such as "which one follows from the clues" are gone. The
+  model-written intros are no longer used.
 - The atmosphere drawings on the library cards are painted rather than flat: a gradient per
   depth layer, the setting's colour over the whole drawing, a real glow around each light,
   haze, a vignette and grain. Four silhouettes redrawn.

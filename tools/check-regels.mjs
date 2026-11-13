@@ -535,30 +535,35 @@ for (const [id, tekst] of Object.entries(aiTeksten)) {
 
   const p = buildPuzzle(catalogSettings(entry));
   herschreven++;
-  keurZin(tekst.intro ?? '', waar);
-  eis('de herschreven inleiding verklapt het antwoord niet',
-    !(tekst.intro ?? '').includes(p.question.answer), waar);
-  // De inleiding van een moordzaak geeft een feit weg dat je nodig hebt:
-  // waar het gebeurde en wat er lag. Laat de herschrijving dat vallen, dan
-  // is de puzzel niet meer op te lossen. Dit is de enige plek waar de AI de
-  // logica zou kunnen raken, dus hier wordt hij nagerekend.
-  const klein = (tekst.intro ?? '').toLowerCase();
-  for (const c of (p._rawClues ?? []).filter((x) => x.intro)) {
-    for (const key of ['a', 'b']) {
-      const ref = c[key];
-      if (!ref) continue;
-      const cat = ref.c === p._spec.anchor.id
-        ? p._spec.anchor
-        : p._spec.cats.find((x) => x.id === ref.c);
-      const naam = cat.items[ref.i].name;
-      eis('het gratis feit staat ook in de herschreven inleiding',
-        klein.includes(naam.toLowerCase()), waar, `${naam} ontbreekt`);
+  // Een herschreven inleiding is optioneel: sinds 2026-11-13 staan er geen
+  // meer in, omdat ze klonken als een taalmodel en de eigen zinnen beter
+  // waren. Is er wel een, dan wordt die nagerekend zoals altijd.
+  if (typeof tekst.intro === 'string') {
+    keurZin(tekst.intro, waar);
+    eis('de herschreven inleiding verklapt het antwoord niet',
+      !(tekst.intro ?? '').includes(p.question.answer), waar);
+    // De inleiding van een moordzaak geeft een feit weg dat je nodig hebt:
+    // waar het gebeurde en wat er lag. Laat de herschrijving dat vallen, dan
+    // is de puzzel niet meer op te lossen. Dit is de enige plek waar de AI de
+    // logica zou kunnen raken, dus hier wordt hij nagerekend.
+    const klein = (tekst.intro ?? '').toLowerCase();
+    for (const c of (p._rawClues ?? []).filter((x) => x.intro)) {
+      for (const key of ['a', 'b']) {
+        const ref = c[key];
+        if (!ref) continue;
+        const cat = ref.c === p._spec.anchor.id
+          ? p._spec.anchor
+          : p._spec.cats.find((x) => x.id === ref.c);
+        const naam = cat.items[ref.i].name;
+        eis('het gratis feit staat ook in de herschreven inleiding',
+          klein.includes(naam.toLowerCase()), waar, `${naam} ontbreekt`);
+      }
     }
-  }
-  // Het slachtoffer moet er ook in blijven staan: de vraag gaat over hem.
-  if (p.kind === 'kamer') {
-    eis('het slachtoffer staat ook in de herschreven inleiding',
-      klein.includes(p.slachtofferNaam.toLowerCase()), waar, p.slachtofferNaam);
+    // Het slachtoffer moet er ook in blijven staan: de vraag gaat over hem.
+    if (p.kind === 'kamer') {
+      eis('het slachtoffer staat ook in de herschreven inleiding',
+        klein.includes(p.slachtofferNaam.toLowerCase()), waar, p.slachtofferNaam);
+    }
   }
   eis('er zijn evenveel herschreven aanwijzingen als aanwijzingen',
     (tekst.aanwijzingen ?? []).length === p.clues.length, waar,

@@ -1,6 +1,5 @@
 {
   "vinden.kerst.map.3.kerst-3": {
-    "intro": "Op kerstavond is een cadeau verdwenen voordat het onder de boom lag. Het ligt op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -37,7 +36,6 @@
     ]
   },
   "toewijzing.kerst.grid.2.kerst-4": {
-    "intro": "Op Kerstavond bracht iedereen iets mee. De naamkaartjes zijn van de pakjes gevallen. Los het raster op en de rest volgt.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -66,7 +64,6 @@
     ]
   },
   "vinden.halloween.map.3.hall-3": {
-    "intro": "Achter een van de deuren hangt het echte masker, en dat is geen kostuum. Het kan op precies één van deze plekken zijn, en de aanwijzingen wijzen die plek aan.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -107,7 +104,6 @@
     ]
   },
   "dader.noir.grid.2.kade-1": {
-    "intro": "Het regende die nacht met bakken uit de hemel, en niemand hoorde iets boven het water uit. De kroegbaas lag in het hotel aan de kade, met een pakje bankbiljetten naast zich. Wie daar was, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -128,7 +124,6 @@
     ]
   },
   "dader.noir.grid.4.kade-7": {
-    "intro": "De regen kwam die nacht met bakken naar beneden, en niemand hoorde iets boven het water uit. De nachtportier werd aangetroffen in de nachtapotheek, met een verzilverde aansteker ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -177,7 +172,6 @@
     ]
   },
   "dader.noir.map.3.neon-3": {
-    "intro": "De regen kwam die nacht met bakken naar beneden, en niemand hoorde iets boven het water uit. De kroegbaas werd aangetroffen in de jazzkelder, met een flesje chloraal ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -202,7 +196,6 @@
     ]
   },
   "vinden.noir.map.2.bewijs-2": {
-    "intro": "Ergens in dit blok ligt het bewijs dat de hele zaak omgooit, en je hebt maar één nacht. Het ligt op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -231,7 +224,6 @@
     ]
   },
   "toewijzing.noir.grid.2.bureau-5": {
-    "intro": "Getuigen die elkaar tegenspreken, verhalen die niet sluiten en een bureau vol spullen waarvan niemand meer weet van wie ze zijn. Vul het raster in en de rest volgt vanzelf.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -260,7 +252,6 @@
     ]
   },
   "dader.landhuis.grid.1.erfenis-1": {
-    "intro": "Na het dessert viel de stroom uit, en pas toen het licht terugkwam, bleek het te laat. Grootvader Valkenhorst lag in de dienstgang, met een paar leren handschoenen naast zich. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -277,7 +268,6 @@
     ]
   },
   "dader.landhuis.grid.3.erfenis-4": {
-    "intro": "Na het dessert viel de stroom uit in Huize Valkenhorst, en toen het licht terugkwam was het al te laat. De rentmeester werd aangetroffen in de bibliotheek, met een antieke briefopener ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -310,7 +300,6 @@
     ]
   },
   "dader.landhuis.grid.5.erfenis-8": {
-    "intro": "Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat. De rentmeester werd aangetroffen in de keuken, met een jachtgeweer ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -371,7 +360,6 @@
     ]
   },
   "dader.landhuis.map.4.dienstgang-2": {
-    "intro": "Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat. Grootvader Valkenhorst werd aangetroffen in de biljartkamer, met een vervalste cheque ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -412,7 +400,6 @@
     ]
   },
   "vinden.landhuis.map.3.kluis-3": {
-    "intro": "Het testament lag gisteren nog in de kluis, maar nu is het weg, en Huize Valkenhorst is groot. Het ligt op precies één van de plekken in het huis. Welke dat is, volgt uit de aanwijzingen.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -449,7 +436,6 @@
     ]
   },
   "toewijzing.landhuis.grid.1.cadeau-1": {
-    "intro": "In Huize Valkenhorst bracht iedereen iets mee voor de gastheer, maar niemand geeft toe wat. Los het raster op en de rest volgt.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -470,7 +456,6 @@
     ]
   },
   "dader.station.grid.3.koeling-2": {
-    "intro": "De koeling viel uit op Ruimtestation Meridiaan en het alarm werd pas veel later gehoord. Commandant Ngoie werd aangetroffen in de centrifuge, met een gesmolten zekering ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -507,7 +492,6 @@
     ]
   },
   "dader.station.map.4.sluis-5": {
-    "intro": "De koeling viel uit op Ruimtestation Meridiaan en het alarm werd pas veel later gehoord. De ladingmeester werd aangetroffen in de hydrocultuur, met een hoofdsleutel ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -544,7 +528,6 @@
     ]
   },
   "vinden.station.map.2.baken-1": {
-    "intro": "Iemand heeft het noodbaken uitgezet. Het hangt nog ergens aan boord, op precies één van deze plekken. Wat je moet weten, volgt uit de aanwijzingen.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -573,7 +556,6 @@
     ]
   },
   "vinden.station.map.5.baken-9": {
-    "intro": "Iemand heeft het noodbaken uitgezet. Het hangt nog ergens aan boord, op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -650,7 +632,6 @@
     ]
   },
   "toewijzing.station.grid.3.manifest-3": {
-    "intro": "Bij de laatste bevoorrading kreeg iedereen op Ruimtestation Meridiaan een persoonlijk pakket. De manifesten zijn gewist. Los het raster op en de rest volgt.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -687,7 +668,6 @@
     ]
   },
   "vinden.woud.map.1.bron-1": {
-    "intro": "De bron verlegt zich elke eeuw. Deze keer is hij hier, ergens tussen de bomen, op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -708,7 +688,6 @@
     ]
   },
   "vinden.woud.map.4.bron-5": {
-    "intro": "De bron verlegt zich elke eeuw. Deze keer ligt hij ergens tussen de bomen, op precies één van deze plekken. Welke dat is, volgt uit de aanwijzingen.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -765,7 +744,6 @@
     ]
   },
   "dader.woud.grid.3.grenssteen-2": {
-    "intro": "Er werd iemand gevonden met zijn hand om iets wat er niet meer is. De veerman lag in de doornenkom, met een zakje gedroogde maanbloem naast zich. Wie daar was, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -802,7 +780,6 @@
     ]
   },
   "toewijzing.woud.grid.2.gave-3": {
-    "intro": "Reizigers kwamen het woud in en ieder droeg een gave bij zich. Het woud heeft alles door elkaar gehusseld. Los het raster op en de rest volgt vanzelf.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -831,7 +808,6 @@
     ]
   },
   "vinden.catacomben.map.2.uitgang-1": {
-    "intro": "Er is een uitgang. De kaart liegt erover, de luchtstroom niet. Het is op precies één van deze plekken. Welke, dat volgt uit de aanwijzingen.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -860,7 +836,6 @@
     ]
   },
   "vinden.catacomben.map.5.uitgang-6": {
-    "intro": "Er is een uitgang in de Catacomben van Sint-Oda. De kaart liegt erover, de luchtstroom niet. Het is op precies één van deze plekken, en welke dat is, volgt uit de aanwijzingen.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -925,7 +900,6 @@
     ]
   },
   "dader.catacomben.grid.4.gids-2": {
-    "intro": "Iemand liep vooruit met de enige kaart, en de kaart kwam terug. De voorste gids werd aangetroffen in de smalle schacht, met een gebroken kompas ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -974,7 +948,6 @@
     ]
   },
   "toewijzing.catacomben.grid.1.rugzak-1": {
-    "intro": "Afdalers, rugzakken, en in het donker raakt alles verwisseld. Los het raster op en de rest volgt.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -995,7 +968,6 @@
     ]
   },
   "dader.academie.grid.2.rector-1": {
-    "intro": "Tijdens het avondgebed is iemand op Academie Morgenstond in steen veranderd. Niemand van de aanwezigen geeft iets toe. De huisbewaarder werd aangetroffen in het ketelhok, met een dode kanarie ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -1020,7 +992,6 @@
     ]
   },
   "dader.academie.grid.5.rector-8": {
-    "intro": "Tijdens het avondgebed is er iemand in steen veranderd, maar niemand van de aanwezigen geeft iets toe. De huisbewaarder werd aangetroffen in de verboden trappenhal, met een inktvlek die niet weggaat ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -1089,7 +1060,6 @@
     ]
   },
   "dader.academie.map.3.trappen-3": {
-    "intro": "Tijdens het avondgebed op Academie Morgenstond is iemand in steen veranderd. Niemand van de aanwezigen geeft iets toe. De rector werd aangetroffen in het herbarium, met een gebarsten toverstaf ernaast, en wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -1110,7 +1080,6 @@
     ]
   },
   "vinden.academie.map.3.leerstoel-2": {
-    "intro": "Een van de zalen houdt de verdwenen leerstoel verborgen. De school zelf werkt tegen. Het is op precies één van deze plekken. Welke, dat volgt uit de aanwijzingen.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -1147,7 +1116,6 @@
     ]
   },
   "toewijzing.academie.grid.2.proef-1": {
-    "intro": "Leerlingen van Academie Morgenstond leverden een meesterproef in. De naamkaartjes zijn weggebrand. Los het raster op en de rest volgt.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -1172,7 +1140,6 @@
     ]
   },
   "dader.noir.grid.1.start-1": {
-    "intro": "Die nacht stortte de regen met bakken uit de lucht, en boven het water uit hoorde niemand iets. In het pandjeshuis lag de kroegbaas, met een pakje bankbiljetten naast zich. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -1185,7 +1152,6 @@
     ]
   },
   "dader.landhuis.grid.2.start-2": {
-    "intro": "Na het dessert viel de stroom uit, en toen het licht terugkwam was het al te laat. Oom Aldert werd aangetroffen op de koetshuiszolder, met een zilveren kandelaar ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -1210,7 +1176,6 @@
     ]
   },
   "dader.station.grid.3.start-3": {
-    "intro": "Op Ruimtestation Meridiaan viel de koeling uit en het alarm werd pas veel later gehoord. De ladingmeester werd aangetroffen in de medische post, met een geleegde spuit ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -1243,7 +1208,6 @@
     ]
   },
   "dader.academie.grid.4.start-4": {
-    "intro": "Tijdens het avondgebed is er iemand in steen veranderd en niemand van de aanwezigen geeft iets toe. De rector werd aangetroffen in de studiecel, met een stuk steenhuid ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,
@@ -1284,7 +1248,6 @@
     ]
   },
   "dader.woud.grid.5.start-5": {
-    "intro": "Er werd iemand gevonden met zijn hand om iets wat er niet meer is. De veerman lag in de steenkring, met een afgebroken hoorn ernaast. Wie zich daar bevond, is de dader.",
     "aanwijzingen": [
       {
         "n": 1,

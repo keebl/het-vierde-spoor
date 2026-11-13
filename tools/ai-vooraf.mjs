@@ -86,7 +86,11 @@ for (const entry of CATALOG) {
     continue;
   }
 
-  bestaand[id] = { intro: uit.intro, aanwijzingen: uit.aanwijzingen };
+  // Alleen de aanwijzingen. De herschreven inleidingen klonken als een
+  // taalmodel ("Welke dat is, volgt uit de aanwijzingen", "De kaart liegt
+  // erover, de luchtstroom niet"); de eigen zinnen uit worlds.js en
+  // zaken.js zijn beter, dus die blijven staan.
+  bestaand[id] = { aanwijzingen: uit.aanwijzingen };
   gedaan++;
   gehouden += uit.gehouden;
   afgekeurd += uit.afgekeurd;
