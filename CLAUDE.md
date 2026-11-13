@@ -16,6 +16,7 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - Build: none — `main` is deployed to GitHub Pages as-is
 - Where it runs: https://keebl.github.io/het-vierde-spoor/
 - One puzzle as text: `node tools/show.mjs dader grid landhuis 3 demo-7`
+- Print proof as PDF (server must run): `node tools/printproef.mjs /tmp/proef "http://localhost:4173/#/puzzel/<id>"`
 
 ## Gotchas
 - **Read the verdict from the `volledige keuring exit=` line and the goed/FOUT table above
@@ -42,6 +43,10 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
   count. This is most of the work when naming a new world.
 - **A board frame draws anything you must be able to read inside `b.rechtop(x, y)`**, or
   it comes out rotated on three of the four sides.
+- **Check printing with a PDF, not by reasoning about `@media print`.** Headless
+  `--print-to-pdf` hangs on this site (the scene never stops animating, so virtual time
+  never runs out) and macOS has no `timeout`; use `tools/printproef.mjs`, which drives
+  Brave over DevTools. A closed `<details>` prints only its summary.
 - **The API key is never read, echoed or committed.** `.env` is git-ignored; the owner
   types the key himself.
 
