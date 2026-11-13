@@ -10,13 +10,16 @@ day the changelog was introduced; everything before that is in git history only.
 ## [Unreleased]
 
 ### Changed
-- On a wide screen (1100 px and up) the question and the clues stand in a right-hand
-  column that starts beside the title and stays in view while you scroll, so you never
-  scroll to reach them. When there is room the clues are set in two columns, so a long
-  list usually fits without scrolling.
+- On a wide screen (1100 px and up) the clues stand in a right-hand column that starts
+  beside the puzzle and stays in view while you scroll; the question and the rules stand
+  beside the case text above it. When there is room the clues are set in two columns,
+  so a long list usually fits without scrolling. More space between the question, the
+  rules and the buttons.
 - On a phone or narrow window a floating "Aanwijzingen" button opens the clues as a sheet
   over the lower half of the screen; the board stays playable above it.
-- Printing puts the board on the first sheet and the clues on the second.
+- Printing gives two sheets: the case, the question and the board on the first; the
+  rules and the clues, in two columns, on the second. On-screen controls no longer
+  print as empty headings, and the rules print open also with Cmd+P.
 - The decorated frame around the board is about a third thinner; the squares stay the
   same size. The scene picture above the case is lower on a wide screen.
 - A long case text is folded to three lines with a "Lees verder" link on a phone.

@@ -823,7 +823,9 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 
 /* De spelregels bij de puzzel: dichtgeklapt, maar altijd binnen handbereik. */
 .spelregels {
-  margin: calc(var(--s6) * -1) 0 var(--s6);
+  /* Onder de vraag, maar los ervan: tegen elkaar aan lazen de twee als
+     één blok met een knop die nergens bij hoorde. */
+  margin: calc(var(--s6) * -1 + var(--s3)) 0 var(--s6);
   border: 1px solid var(--line);
   border-radius: var(--r);
   background: var(--surface-2, var(--surface));
@@ -867,12 +869,13 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 .aanwijzingen-vraag { display: none; }
 .vraagblok .spelregels { margin-bottom: 0; }
 
-/* Op een breed scherm twee kolommen. Links het verhaal, de namenrij, het
-   bord en de knoppen; rechts de vraag en de aanwijzingen, in een kolom die
-   al naast de titel begint en onder de kop blijft staan terwijl je
-   scrolt. Eerder begon die kolom pas bij de namenrij, zodat je eerst
-   omlaag moest om hem te zien - en daarvoor stonden de aanwijzingen onder
-   het bord. De pagina mag hiervoor breder; het bord niet (zie .kamerbord). */
+/* Op een breed scherm twee kolommen. Bovenaan het verhaal links en de
+   vraag met de regels rechts. Daaronder links de namenrij, het bord en de
+   knoppen, en rechts de aanwijzingen: ze beginnen naast de puzzel en
+   lopen mee terwijl je scrolt. Een versie waarin de kolom al naast de
+   titel begon, liet de aanwijzingen hoger staan dan het bord waar ze over
+   gaan; dat las niet als een paar. De pagina mag breder; het bord niet
+   (zie .kamerbord). */
 @media screen and (min-width: 1100px) {
   main:has(> .play) { max-width: 1360px; }
   .play {
@@ -884,19 +887,23 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
     column-gap: var(--s7);
     row-gap: var(--s5);
   }
-  .play > .puzzle-head, .play > .boards, .play > .aanwijzingen-kolom + * { grid-column: 1; }
-  .play > .puzzle-head { max-width: none; }
-  .play > .puzzle-head .puzzle-zijkant { display: none; }
+  .play > .boards, .play > .aanwijzingen-kolom + * { grid-column: 1; }
+  /* De kop over beide kolommen, met dezelfde kolomgrenzen als eronder. */
+  .play > .puzzle-head {
+    grid-column: 1 / -1;
+    max-width: none;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: end;
+  }
+  .play > .puzzle-head .puzzle-verhaal { grid-column: 1; }
+  .play > .puzzle-head .puzzle-zijkant { grid-column: 2; }
   .play > .puzzle-head .intro { margin-bottom: 0; }
   /* Op een breed scherm is het verhaal drie of vier regels: niet inklappen. */
   .play .intro-dicht { display: inline; -webkit-line-clamp: none; line-clamp: none; overflow: visible; }
-  /* De vraag in de kolom: dezelfde vraag, minder vak, zodat er meer
-     aanwijzingen onder passen. */
-  .aanwijzingen-vraag .question { padding: var(--s2) var(--s4); }
-  .aanwijzingen-vraag .question b { font-size: var(--t-base, 1rem); }
   .play > .aanwijzingen-kolom {
     grid-column: 2;
-    grid-row: 1 / -1;
+    grid-row: 2 / -1;
     position: sticky;
     top: calc(var(--kop-hoogte) + var(--s4));
     max-height: calc(100vh - var(--kop-hoogte) - 2 * var(--s4));
@@ -905,8 +912,7 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
     scrollbar-width: thin;
     container-type: inline-size;
   }
-  .aanwijzingen-kolom > .aanwijzingen-vraag { display: block; }
-  .aanwijzingen-kolom > .paneel { margin-top: var(--s4); }
+  .aanwijzingen-kolom > .paneel { margin-top: 0; }
   .aanwijzingen-knop { display: none; }
 
   /* Compacter, zodat een lijst van zeventien zinnen past zonder dat de
@@ -1048,7 +1054,7 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 .toolbar {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
-  gap: var(--s2);
+  gap: var(--s3);
   margin-top: var(--s5);
 }
 .toolbar .btn { justify-content: center; }
@@ -1598,23 +1604,54 @@ table.latin td.cell { width: 78px; height: 46px; }
 
   main { max-width: none; padding: 0; }
 
-  /* Het bord op het eerste vel, zo groot als het kan; de aanwijzingen op
-     het tweede. Naast elkaar scheelde het een vel, maar dan werd het bord
-     te klein om op te tekenen. */
+  /* Het bord op het eerste vel, de aanwijzingen op het tweede. Naast
+     elkaar scheelde het een vel, maar dan werd het bord te klein om op te
+     tekenen. Een proefdruk als pdf gaf eerst vijf vellen: het bord paste
+     niet onder de kop en schoof door, en de klepjes en schakelaars eronder
+     kwamen als losse lege koppen mee. Wat je op papier niet kunt bedienen,
+     gaat eruit; de namen staan al bij de aanwijzingen. */
   .play { display: block; }
   .play > .boards { break-inside: avoid; }
   .play > .aanwijzingen-kolom { break-before: page; }
+  .palet,
+  .bordschakelaars,
+  .paneel[data-paneel="uitleg"],
+  .boards .paneel:not([open]) { display: none !important; }
+  .crumbs .sep:first-of-type { display: none; }
+  /* De aanwijzingen in twee kolommen en dichter op elkaar: zo past een
+     lijst van zeventien op één vel. */
+  .aanwijzingen-kolom .paneel { border: 0; background: none; }
+  .aanwijzingen-kolom .paneel > summary { padding: 0 0 2mm; background: none; }
+  .aanwijzingen-kolom .paneel-binnen { padding: 0; columns: 2; column-gap: 8mm; }
+  .aanwijzingen-kolom .clue-groep, .aanwijzingen-kolom .clue { break-inside: avoid; }
+  .aanwijzingen-kolom .legend, .aanwijzingen-kolom .feiten { column-span: all; }
+  .aanwijzingen-kolom .clue-groep { margin-bottom: 2mm; }
+  .aanwijzingen-kolom .clue-kop { margin: 0; }
   .intro-dicht { display: block; -webkit-line-clamp: none; line-clamp: none; overflow: visible; }
   .intro-verder { display: none !important; }
-  .aanwijzingen-knop, .aanwijzingen-sluit, .aanwijzingen-vraag { display: none !important; }
+  .aanwijzingen-knop, .aanwijzingen-sluit { display: none !important; }
+  /* Vel 1: zaak, vraag en bord. Vel 2: de regels en de aanwijzingen. */
+  .puzzle-head .spelregels,
+  .aanwijzingen-vraag .question { display: none !important; }
+  .aanwijzingen-vraag { display: block !important; }
+  .aanwijzingen-kolom .paneel > summary::before { display: none !important; }
+  .aanwijzingen-kolom .paneel > summary { display: block; }
 
   .puzzle-head { max-width: none; }
   .puzzle-head h1 { font-size: 16pt; margin-bottom: 4mm; }
-  .intro { font-size: 10pt; border-left: 2px solid #000; }
-  .spelregels { break-inside: avoid; }
-  .spelregels > summary { font-weight: 700; }
-  .question { border: 1px solid #000; }
+  .intro { font-size: 10pt; border-left: 2px solid #000; padding: 2mm 4mm; margin-bottom: 3mm; }
+  /* De kop zo kort als het kan: alles wat hij hoger is, gaat van het bord
+     af, en bord en kop moeten samen op het eerste vel. */
+  .puzzel-ondertitel { margin: -2mm 0 2mm; }
+  .crumbs { margin-bottom: 2mm; }
+  .spelregels { break-inside: avoid; margin: 2mm 0 4mm; }
+  .spelregels > summary { font-weight: 700; padding: 1.5mm 3mm; }
+  .spelregels > summary::before { content: none; }
+  .regellijst { columns: 2; column-gap: 6mm; display: block; font-size: 8.5pt; padding: 1.5mm 3mm 2mm 7mm; }
+  .regellijst li { break-inside: avoid; margin-bottom: 1mm; }
+  .question { border: 1px solid #000; padding: 2mm 4mm; margin-bottom: 5mm; }
   .question b { font-size: 11pt; }
+  .aanwijzingen-kolom .paneel[open] > summary { background: none; }
 
   .clue { font-size: 9.5pt; padding: 1.5mm 0; border-bottom: 1px solid #ddd; }
   .clue[aria-pressed="true"] { color: #000; }
@@ -1623,7 +1660,7 @@ table.latin td.cell { width: 78px; height: 46px; }
   .kamerbord {
     /* Met de kop erboven moet het bord op het eerste vel passen; een A4
        heeft na de marges zo'n 27 cm hoogte. */
-    max-width: min(100%, 170mm);
+    max-width: min(100%, 160mm);
     margin: 0 auto;
     box-shadow: none;
     background: #fff;

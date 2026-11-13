@@ -94,6 +94,29 @@ export function renderPlayer(puzzle, mount) {
   const blad = aanwijzingenKnop(clueCol);
   mount.append(blad.knop);
 
+  // Een dichtgeklapt blok drukt niet af. Wie de puzzel meeneemt naar de
+  // trein moet de regels er wel bij hebben. Dit zat eerst alleen achter de
+  // knop Printen, en wie Cmd+P gebruikte kreeg een lege kop op papier. Op
+  // papier staan ze op het tweede vel, boven de aanwijzingen (de kopie in
+  // de kolom, zie vraagBlok): op het eerste vel duwden ze het bord eraf.
+  const regelsOpPapier = () => play.querySelector('.aanwijzingen-vraag .spelregels');
+  let regelsStonden = null;
+  const voorPrint = () => {
+    if (!play.isConnected) { window.removeEventListener('beforeprint', voorPrint); return; }
+    const regels = regelsOpPapier();
+    if (!regels) return;
+    regelsStonden = regels.open;
+    regels.open = true;
+  };
+  const naPrint = () => {
+    if (!play.isConnected) { window.removeEventListener('afterprint', naPrint); return; }
+    const regels = regelsOpPapier();
+    if (regels && regelsStonden !== null) regels.open = regelsStonden;
+    regelsStonden = null;
+  };
+  window.addEventListener('beforeprint', voorPrint);
+  window.addEventListener('afterprint', naPrint);
+
   const draw = () => {
     const aantal = puzzle.clues.length + (state.extra?.length ?? 0);
     // Een aanwijzing wegklikken tekent de lijst opnieuw. In een kolom of
@@ -232,13 +255,8 @@ export function renderPlayer(puzzle, mount) {
       draw();
     },
     print() {
-      // Een dichtgeklapt blok drukt niet af. Wie de puzzel meeneemt naar de
-      // trein moet de regels er wel bij hebben.
-      const regels = document.querySelector('.spelregels');
-      const stond = regels?.open;
-      if (regels) regels.open = true;
+      // De regels klappen open in opPrint hieronder, ook bij Cmd+P.
       window.print();
-      if (regels) regels.open = !!stond;
     },
     async share() {
       const url = location.href;
@@ -553,7 +571,7 @@ function perNaam(puzzle, extraClues, knopVoor) {
 // vindt zitten - en op een telefoon schelen ze een scherm.
 function klepje(sleutel, kop, standaard, inhoud) {
   const open = paneelOpen(sleutel, standaard);
-  const blok = el('details', { class: 'paneel', open: open ? '' : null }, [
+  const blok = el('details', { class: 'paneel', 'data-paneel': sleutel, open: open ? '' : null }, [
     el('summary', { text: kop }),
     el('div', { class: 'paneel-binnen' }, inhoud),
   ]);
