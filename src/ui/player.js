@@ -296,7 +296,7 @@ function head(puzzle) {
         // de dief?"). Bij een zelfgemaakte puzzel is dat precies wat er al
         // boven staat, en dan stond er twee keer dezelfde regel.
         kop === puzzle.title ? null : el('p', { class: 'puzzel-ondertitel', text: puzzle.title }),
-        el('p', { class: 'intro', text: puzzle.intro }),
+        ...introMetVerder(puzzle.intro),
       ]),
       el('div', { class: 'puzzle-zijkant' }, [
         el('div', { class: 'question' }, [
@@ -307,6 +307,26 @@ function head(puzzle) {
       ]),
     ]),
   ]);
+}
+
+// Het verhaal, ingeklapt op drie regels als het langer is. Of er iets is
+// weggevallen weet je pas als de tekst op het scherm staat en zijn breedte
+// heeft; daarom kijkt een ResizeObserver, ook na het draaien van een
+// telefoon of het breder maken van het venster.
+function introMetVerder(tekst) {
+  // Het inklappen zit op de tekst binnen het vak, niet op het vak: dat heeft
+  // een binnenrand, en daarin piepte een halve vierde regel onder de drie.
+  const intro = el('span', { class: 'intro-tekst intro-dicht', text: tekst });
+  const knop = el('button', { class: 'intro-verder', type: 'button', text: 'Lees verder', hidden: '' });
+  knop.addEventListener('click', () => {
+    const dicht = intro.classList.toggle('intro-dicht');
+    knop.textContent = dicht ? 'Lees verder' : 'Minder';
+  });
+  new ResizeObserver(() => {
+    if (!intro.classList.contains('intro-dicht')) return;
+    knop.hidden = intro.scrollHeight <= intro.clientHeight + 1;
+  }).observe(intro);
+  return [el('p', { class: 'intro' }, intro), knop];
 }
 
 // De spelregels bij de puzzel. Dichtgeklapt, want wie het spel kent heeft ze

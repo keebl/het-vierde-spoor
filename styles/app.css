@@ -751,6 +751,28 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
   border-left: 2px solid var(--accent);
 }
 
+/* Een lang verhaal staat ingeklapt op drie regels, met Lees verder eronder.
+   Op een telefoon was het tien regels proza voordat je de vraag zag. De
+   knop staat er alleen als er echt iets is weggevallen (zie head()). */
+.intro-dicht {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+.intro-verder {
+  display: block;
+  margin: calc(var(--s4) * -1) 0 var(--s5);
+  padding: var(--s1) 0 var(--s1) var(--s4);
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: 600 var(--t-sm)/1.4 var(--sans);
+  cursor: pointer;
+}
+.intro-verder[hidden] { display: none; }
+
 .puzzel-ondertitel {
   margin: calc(var(--s2) * -1) 0 var(--s4);
   color: var(--text-3);
@@ -832,6 +854,25 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
     align-items: end;
   }
   main:has(> .play) .puzzle-verhaal .intro { margin-bottom: var(--s6); }
+
+  /* Het bord zo groot als de kolom toelaat, maar nooit hoger dan wat er
+     onder de kop en de namenrij past: eerst stopte het bij 680 pixels en
+     liet het rechts een strook leeg, terwijl een groot bord toch al hoger
+     was dan een laptopscherm. De tekening blijft in het midden van zijn vak
+     (de svg houdt zijn verhouding). */
+  .play .kamerbord {
+    max-width: 100%;
+    max-height: calc(100vh - var(--kop-hoogte) - 130px);
+    min-height: 420px;
+  }
+  /* Namenrij en bord samen in beeld: minder lucht ertussen. */
+  .play > .boards { gap: var(--s4); }
+  .play .palet { margin-bottom: 0; }
+
+  /* De sfeerplaat lager, zodat het bord eerder in beeld komt. */
+  main:has(> .play) .scene-wrap,
+  main:has(> .play) .scene-wrap .scene { height: 120px; }
+  main:has(> .play) .puzzle-head h1 { margin-bottom: var(--s2); }
   .play { grid-template-columns: minmax(0, 1fr) minmax(320px, 400px); grid-template-rows: auto 1fr; column-gap: var(--s6); }
   .play > .boards, .play > .aanwijzingen-kolom + * { grid-column: 1; }
   .play > .aanwijzingen-kolom {
@@ -1501,6 +1542,8 @@ table.latin td.cell { width: 78px; height: 46px; }
   .play { display: block; }
   .play > .boards { break-inside: avoid; }
   .play > .aanwijzingen-kolom { break-before: page; }
+  .intro-dicht { display: block; -webkit-line-clamp: none; line-clamp: none; overflow: visible; }
+  .intro-verder { display: none !important; }
   .aanwijzingen-knop, .aanwijzingen-sluit { display: none !important; }
 
   .puzzle-head { max-width: none; }

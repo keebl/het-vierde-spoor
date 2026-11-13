@@ -17,6 +17,9 @@ day the changelog was introduced; everything before that is in git history only.
 - On a phone or narrow window a floating "Aanwijzingen" button opens the clues as a sheet
   over the lower half of the screen; the board stays playable above it.
 - Printing puts the board on the first sheet and the clues on the second.
+- On a wide screen the board grows with the window height, so the names row and the
+  whole board fit on one screen; the scene picture above the case is lower.
+- A long case text is folded to three lines with a "Lees verder" link.
 
 ### Fixed
 - A missing woman was referred to as "him" in the intro ("heeft hem als laatste
