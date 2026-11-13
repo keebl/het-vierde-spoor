@@ -14,7 +14,8 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - Typecheck: none (plain ES modules, no TypeScript)
 - Lint / format: none configured
 - Build: none — `main` is deployed to GitHub Pages as-is
-- Where it runs: https://keebl.github.io/het-vierde-spoor/
+- Where it runs: https://reconstructie.app/ (GitHub Pages; DNS at Cloudflare, set with
+  `node tools/cloudflare-dns.mjs status|github-pages`, token in `.env`)
 - One puzzle as text: `node tools/show.mjs dader grid landhuis 3 demo-7`
 - Print proof as PDF (server must run): `node tools/printproef.mjs /tmp/proef "http://localhost:4173/#/puzzel/<id>"`
 

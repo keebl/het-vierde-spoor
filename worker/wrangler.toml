@@ -12,7 +12,7 @@ cpu_ms = 10000
 
 [vars]
 # Alleen verzoeken van deze adressen komen erdoor.
-TOEGESTANE_HERKOMST = "https://keebl.github.io"
+TOEGESTANE_HERKOMST = "https://reconstructie.app"
 # Welk model de teksten herschrijft. Sonnet is ruim voldoende voor stijl en
 # kost een fractie van Opus; claude-haiku-5-5 is nog een stuk goedkoper.
 MODEL = "claude-sonnet-5-5"

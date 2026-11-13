@@ -198,9 +198,12 @@ correctheid — `npm run check:catalog` bouwt en keurt ze allemaal opnieuw.
 
 ## Online
 
-De site staat op **https://keebl.github.io/het-vierde-spoor/**, via GitHub
-Pages vanaf de `main`-branch. Elke push werkt hem binnen een minuut bij; er
-is geen bouwstap, want de site is gewone HTML, CSS en ES-modules.
+De site staat op **https://reconstructie.app/**, via GitHub Pages vanaf de
+`main`-branch. Het `CNAME`-bestand kiest het domein; het oude adres
+keebl.github.io/het-vierde-spoor verwijst ernaar door. De DNS staat bij
+Cloudflare en wordt gezet met `node tools/cloudflare-dns.mjs`. Elke push
+werkt de site binnen een minuut bij; er is geen bouwstap, want de site is
+gewone HTML, CSS en ES-modules.
 
 Dat betekent ook: op de live site draait geen server. Alles wat je daar ziet
 wordt in de browser van de bezoeker uitgerekend - de puzzel, de plattegrond,

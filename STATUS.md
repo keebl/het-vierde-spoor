@@ -7,8 +7,12 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Nothing in progress. Working tree clean on `main` at `c7136a5`; everything is live on
-  https://keebl.github.io/het-vierde-spoor/.
+- The site moved to its own domain on 2026-11-13: https://reconstructie.app/ (registered
+  at Cloudflare Registrar, DNS at Cloudflare via `tools/cloudflare-dns.mjs`, still served
+  by GitHub Pages). The old github.io address redirects there. The visible site name is
+  still "Het Vierde Spoor"; renaming the title, header and share texts to match the domain
+  is a separate step.
+- Earlier: working tree clean on `main` at `c7136a5`.
 - The project standard was merged on 2026-11-11 (pull request #1, merge commit `e58ee1d`):
   documentation only, no application code, dependencies or CI. `HANDOFF.md` and
   `ARCHITECTUUR.md` are gone from the root; this file and `docs/ARCHITECTURE.md` replace

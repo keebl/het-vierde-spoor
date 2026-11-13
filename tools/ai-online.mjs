@@ -119,7 +119,7 @@ Nog drie dingen, en dan werkt het:
      niet aan:
 
        curl -s -X POST ${adres}/ \\
-         -H 'origin: https://keebl.github.io' \\
+         -H 'origin: https://reconstructie.app' \\
          -H 'content-type: application/json' \\
          -d '{"id":"dader.noir.grid.2.kade-1"}'
 
@@ -128,7 +128,7 @@ Nog drie dingen, en dan werkt het:
        git add -A && git commit -m "AI-teksten op de live site" && git push
 
 Daarna staat het binnen een minuut op
-https://keebl.github.io/het-vierde-spoor/
+https://reconstructie.app/
 
 Weer uitzetten: maak WORKER_URL in src/ai/endpoint.js weer leeg, of haal de
 Worker weg met "npx wrangler delete" in de map worker/.`);
