@@ -290,7 +290,7 @@ function head(puzzle) {
   const uitCatalogus = CATALOG.find((e) => puzzleId(catalogSettings(e)) === puzzle.id);
   const kop = uitCatalogus?.titel ?? puzzle.title;
   try {
-    document.title = `${kop} · Het Vierde Spoor`;
+    document.title = `${kop} · Reconstructie`;
   } catch {
     /* geen document, geen titel */
   }

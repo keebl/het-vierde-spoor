@@ -1,4 +1,4 @@
-# Status — Het Vierde Spoor
+# Status — Reconstructie
 
 Last updated: 2026-11-11
 
@@ -9,9 +9,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
 ## Now
 - The site moved to its own domain on 2026-11-13: https://reconstructie.app/ (registered
   at Cloudflare Registrar, DNS at Cloudflare via `tools/cloudflare-dns.mjs`, still served
-  by GitHub Pages). The old github.io address redirects there. The visible site name is
-  still "Het Vierde Spoor"; renaming the title, header and share texts to match the domain
-  is a separate step.
+  by GitHub Pages). The old github.io address redirects there. The site is now called
+  **Reconstructie**, like the game type: title, header, footer, share texts and favicon
+  label. Internal names stay (`vierdespoor.*` storage keys, so nobody loses progress;
+  `VIERDESPOOR_*` env vars; the repository and package name).
 - Earlier: working tree clean on `main` at `c7136a5`.
 - The project standard was merged on 2026-11-11 (pull request #1, merge commit `e58ee1d`):
   documentation only, no application code, dependencies or CI. `HANDOFF.md` and
@@ -41,8 +42,9 @@ standing guidance rather than state moved to `CLAUDE.md`.
 2. **An ending when you solve it.** Today the screen only says "Opgelost". The culprit
    should appear, with a closing line and a button to the next case. Biggest gap for the
    intended player.
-3. **Rename the site.** "Het Vierde Spoor" is to change; the new name has not been chosen.
-   The game type was renamed to **Reconstructie** (was "Speurdoku", too close to Murdoku).
+3. **The logo.** The mark (three dots and a fourth to find) was made for "Het Vierde
+   Spoor". It still reads as "find the missing trace", but check whether it should change
+   with the name.
 4. **Keyboard and screen reader.** Board cells are `rect` elements without focus, so the
    game cannot be played without a mouse.
 5. **Modernise the base furniture set.** Done for the present-day worlds (see Recent
@@ -53,7 +55,6 @@ standing guidance rather than state moved to `CLAUDE.md`.
    drawing lies, draw it. A world layer can rename things, not redraw them.
 
 ## Blocked / open questions
-- **TODO(guus): the new site name.** Everything else about the rename is ready.
 - **Cloudflare Worker deferred.** `worker/` is written but not deployed: the free plan
   gives 10 ms CPU per request and verifying a puzzle costs up to three seconds. Works on
   the paid plan (~$5/month) or a host with a higher limit. Deliberately postponed.

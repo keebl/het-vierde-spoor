@@ -1,4 +1,4 @@
-# Het Vierde Spoor
+# Reconstructie (was: Het Vierde Spoor)
 
 A browser app with no build step that generates Dutch deduction puzzles and verifies them
 on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first.

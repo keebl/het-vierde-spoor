@@ -1,4 +1,4 @@
-# Product — Het Vierde Spoor
+# Product — Reconstructie
 
 ## Problem
 The puzzle book *Murdoku* by Manuel Garand contains a finite number of deduction puzzles.
@@ -63,8 +63,6 @@ Web only — any modern browser, phone and desktop. Static hosting on GitHub Pag
 - Monetisation: none. Not a trader under the DSA.
 
 ## Open product questions
-- TODO(guus): the new name for the site. "Het Vierde Spoor" is to change; the game type is
-  now called Reconstructie.
 - TODO(guus): licence for the public repository — "all rights reserved" by default, or MIT
   by decision.
 - TODO(guus): whether the three hidden game types (Kruisverhoor, Rondgang, Dienstrooster)

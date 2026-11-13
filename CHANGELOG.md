@@ -10,6 +10,8 @@ day the changelog was introduced; everything before that is in git history only.
 ## [Unreleased]
 
 ### Changed
+- The site is now called **Reconstructie** and lives at https://reconstructie.app/. The
+  old address keebl.github.io/het-vierde-spoor redirects there; saved progress is kept.
 - On a wide screen (1100 px and up) the clues stand in a right-hand column that starts
   beside the puzzle and stays in view while you scroll; the question and the rules stand
   beside the case text above it. When there is room the clues are set in two columns,

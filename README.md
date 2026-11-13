@@ -1,4 +1,7 @@
-# Het Vierde Spoor
+# Reconstructie
+
+_Tot 2026-11-13 heette de site Het Vierde Spoor; de repository en de interne
+sleutels (`vierdespoor.*`) dragen die naam nog._
 
 Deductiepuzzels in zeventien werelden en zes moeilijkheidsgraden. Je kiest
 alleen hoe zwaar je het wilt hebben; het decor krijg je. Elke druk op de knop

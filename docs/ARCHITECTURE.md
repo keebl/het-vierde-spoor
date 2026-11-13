@@ -1,4 +1,4 @@
-# Architecture — Het Vierde Spoor
+# Architecture — Reconstructie
 
 This document explains *why* the code is shaped the way it is. The *what* is in the code.
 Translated from `ARCHITECTUUR.md`, which lived at the repository root until the project

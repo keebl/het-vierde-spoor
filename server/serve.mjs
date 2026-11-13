@@ -45,7 +45,7 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Het Vierde Spoor staat op http://localhost:${PORT}`);
+  console.log(`Reconstructie staat op http://localhost:${PORT}`);
   console.log(hasKey() ? `AI-teksten beschikbaar via ${MODEL}` : 'AI-teksten uit (geen ANTHROPIC_API_KEY gevonden)');
   if (hasKey()) {
     console.log(LAN_AI
