@@ -49,7 +49,7 @@ export function renderUitleg(mount) {
         el('p', { text: 'Je ziet een plattegrond met kamers en meubels. Daar zet je de figuren op: één per rij en één per kolom, en nooit op een meubelstuk. Eén van die figuren is waar de zaak om draait, en die staat gemerkt op het bord: met een kruis als er iemand vermoord is, een vraagteken als er iemand verdwenen is, een opengebroken slot als er iets gestolen is. Waar die figuur stond moet je dus net zo goed uitzoeken.' }),
         el('p', {}, [
           el('b', { text: 'Wie als enige bij die figuur in de kamer blijkt te staan, is het antwoord. ' }),
-          el('span', { text: 'De dader, de dief, of degene die hem het laatst zag — boven de puzzel staat welke van de drie het is. Dat weet je pas als alles op zijn plek staat, en daarom moet je eerst de hele plattegrond rondkrijgen.' }),
+          el('span', { text: 'De dader, de dief, of degene die de vermiste het laatst zag — boven de puzzel staat welke van de drie het is. Dat weet je pas als alles op zijn plek staat, en daarom moet je eerst de hele plattegrond rondkrijgen.' }),
         ]),
         el('p', {}, [
           el('b', { text: 'Naast is naast. ' }),

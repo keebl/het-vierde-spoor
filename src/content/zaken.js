@@ -11,7 +11,7 @@
 //
 //   merk          wat er op het bord door die figuur heen staat
 //   rolwoord      hoe je hem noemt: het slachtoffer, de vermiste
-//   antwoordwoord wie je zoekt: de dader, de dief
+//   antwoordwoord wie je zoekt: de dader, de dief, de laatste getuige
 //   regel         de zin hierover in de spelregels bij de puzzel
 //   opdracht      drie toonaarden, want dezelfde zin bij elke zaak leest
 //                 als een herhaling
@@ -22,30 +22,36 @@
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
 export const ZAKEN = [
+  // Geen "hij" of "hem" in deze zinnen: het slachtoffer is net zo vaak een
+  // vrouw, en dan stond er "Mathilde ... heeft hem als laatste gesproken".
+  // De naam herhalen leest prima en kan niet mis.
+  //
+  // En kort: de vraag staat al in het vak eronder en de regel in de
+  // spelregels. Hier hoort alleen wat er gebeurd is en wat je moet doen.
   {
     id: 'moord',
     merk: 'kruis',
     rolwoord: 'het slachtoffer',
     antwoordwoord: 'de dader',
-    regel: 'Het slachtoffer staat zelf ook ergens op het bord. Wie als enige bij hem in dezelfde kamer blijkt te staan, is de dader.',
+    regel: 'Het slachtoffer staat zelf ook ergens op het bord. Wie als enige bij het slachtoffer in dezelfde kamer blijkt te staan, is de dader.',
     vraag: (naam, zelfde) => `Wie stond er als enige bij ${naam} ${zelfde}?`,
     opdracht: [
-      (naam, rol, zelfde) => `${naam}, ${rol}, is dood aangetroffen. Niemand weet meer wie waar stond, en zelfs waar ${naam} lag is onduidelijk. Zet iedereen op zijn plek: wie dan als enige bij ${naam} ${zelfde} blijkt te staan, is de dader.`,
-      (naam, rol, zelfde) => `Er is die avond iemand omgebracht: ${naam}, ${rol}. Van wat er gebeurde is geen plattegrond gemaakt. Zet iedereen terug op de plek waar hij stond, ${naam} incluis - want wie als enige bij ${naam} ${zelfde} eindigt, heeft het gedaan.`,
-      (naam, rol, zelfde) => `Dit is een moordzaak. ${naam}, ${rol}, heeft het niet gehaald. Reconstrueer wie waar stond, ${naam} zelf incluis, want zelfs dat is niet meer bekend. Wie dan als enige bij ${naam} ${zelfde} staat, is de dader.`,
+      (naam, rol, zelfde) => `${naam}, ${rol}, is dood gevonden. Niemand weet nog wie waar stond, en ook niet waar ${naam} lag. Zet iedereen terug op het bord. Wie dan als enige bij ${naam} ${zelfde} staat, is de dader.`,
+      (naam, rol, zelfde) => `${naam}, ${rol}, is vermoord. Zet alle figuren terug op het bord, ${naam} ook. Wie als enige bij ${naam} ${zelfde} uitkomt, heeft het gedaan.`,
+      (naam, rol, zelfde) => `${naam}, ${rol}, leeft niet meer. Waar iedereen stond, ${naam} zelf ook, moet je uitzoeken. De enige die bij ${naam} ${zelfde} staat, is de dader.`,
     ],
   },
   {
     id: 'verdwijning',
     merk: 'vraag',
     rolwoord: 'de vermiste',
-    antwoordwoord: 'wie hem het laatst zag',
-    regel: 'De vermiste staat zelf ook ergens op het bord. Wie als enige bij hem in dezelfde kamer blijkt te staan, heeft hem het laatst gezien.',
+    antwoordwoord: 'de laatste getuige',
+    regel: 'De vermiste staat zelf ook ergens op het bord. Wie als enige bij de vermiste in dezelfde kamer blijkt te staan, heeft de vermiste het laatst gezien.',
     vraag: (naam, zelfde) => `Wie stond er als enige bij ${naam} ${zelfde}?`,
     opdracht: [
-      (naam, rol, zelfde) => `${naam}, ${rol}, is sindsdien niet meer gezien. Niemand weet meer wie waar stond, en waar ${naam} het laatst was weet ook niemand. Zet iedereen op zijn plek: wie dan als enige bij ${naam} ${zelfde} blijkt te staan, heeft hem als laatste gesproken.`,
-      (naam, rol, zelfde) => `Er is iemand spoorloos: ${naam}, ${rol}. Van dat uur is geen plattegrond gemaakt. Zet iedereen terug op de plek waar hij stond, ${naam} incluis - want wie als enige bij ${naam} ${zelfde} eindigt, weet waar hij gebleven is.`,
-      (naam, rol, zelfde) => `${naam} is verdwenen. ${cap(rol)} liep weg en kwam niet terug, en niemand weet meer waar iemand stond. Zet ze allemaal neer; de enige die daarna bij ${naam} ${zelfde} staat, heeft hem het laatst gezien.`,
+      (naam, rol, zelfde) => `${naam}, ${rol}, is sindsdien zoek. Niemand weet nog wie waar stond, en ook niet waar ${naam} was. Zet iedereen terug op het bord. Wie dan als enige bij ${naam} ${zelfde} staat, heeft ${naam} het laatst gezien.`,
+      (naam, rol, zelfde) => `Niemand heeft ${naam}, ${rol}, daarna nog gezien. Zet alle figuren terug op het bord, ${naam} ook. Wie als enige bij ${naam} ${zelfde} uitkomt, was de laatste die ${naam} sprak.`,
+      (naam, rol, zelfde) => `${naam} is verdwenen. ${cap(rol)} liep even weg en kwam niet meer terug. Zoek uit waar iedereen stond. De enige die bij ${naam} ${zelfde} staat, heeft ${naam} het laatst gezien.`,
     ],
   },
   {
@@ -53,12 +59,12 @@ export const ZAKEN = [
     merk: 'slot',
     rolwoord: 'de bestolene',
     antwoordwoord: 'de dief',
-    regel: 'De bestolene staat zelf ook ergens op het bord. Wie als enige bij hem in dezelfde kamer blijkt te staan, heeft het weggenomen.',
+    regel: 'De bestolene staat zelf ook ergens op het bord. Wie als enige bij de bestolene in dezelfde kamer blijkt te staan, heeft het weggenomen.',
     vraag: (naam, zelfde) => `Wie stond er als enige bij ${naam} ${zelfde}?`,
     opdracht: [
-      (naam, rol, zelfde, ding) => `${naam}, ${rol}, had ${ding} bij zich - en het is weg. Niemand weet meer wie waar stond. Zet iedereen op zijn plek: wie dan als enige bij ${naam} ${zelfde} blijkt te staan, heeft het weggenomen.`,
-      (naam, rol, zelfde, ding) => `${cap(ding)} is uit de handen van ${naam}, ${rol}, verdwenen. Van dat moment is geen plattegrond gemaakt. Zet iedereen terug, ${naam} incluis - want wie als enige bij ${naam} ${zelfde} eindigt, is de dief.`,
-      (naam, rol, zelfde, ding) => `Er is gestolen: ${ding}. ${naam}, ${rol}, droeg het bij zich en merkte pas later dat het weg was. Zet iedereen neer; de enige die daarna bij ${naam} ${zelfde} staat, heeft het.`,
+      (naam, rol, zelfde, ding) => `${naam}, ${rol}, had ${ding} bij zich, en nu is het weg. Niemand weet nog wie waar stond. Zet iedereen terug op het bord. Wie dan als enige bij ${naam} ${zelfde} staat, heeft het gepakt.`,
+      (naam, rol, zelfde, ding) => `${cap(ding)} van ${naam}, ${rol}, is gestolen. Zet alle figuren terug op het bord, ${naam} ook. Wie als enige bij ${naam} ${zelfde} uitkomt, is de dief.`,
+      (naam, rol, zelfde, ding) => `${naam}, ${rol}, merkte pas later dat ${ding} weg was. Zoek uit waar iedereen stond. De enige die bij ${naam} ${zelfde} staat, heeft het.`,
     ],
   },
 ];
