@@ -73,19 +73,23 @@ export function renderPlayer(puzzle, mount) {
   };
 
   mount.replaceChildren();
-  mount.append(head(puzzle));
+  const { decor, kop } = head(puzzle);
+  mount.append(decor);
 
   const boards = el('div', { class: 'boards' });
   const notes = el('div');
   const clueCol = el('div', { class: 'aanwijzingen-kolom' });
 
-  // Op een breed scherm staan de aanwijzingen naast het bord, in een kolom
-  // die meeloopt en zelf scrolt (zie .play in app.css). Ze stonden eerst in
-  // een smalle kolom ernaast, toen eronder - en dan scrol je bij elke stap
-  // heen en weer tussen bord en zinnen, en dat was de klacht. Op een smal
-  // scherm staan ze nog eronder, plus een zwevende knop die ze als blad
-  // over de onderkant van het scherm legt (zie aanwijzingenKnop).
-  const play = el('div', { class: 'play' }, [boards, clueCol, notes]);
+  // Op een breed scherm staan de vraag en de aanwijzingen in een kolom
+  // rechts, die al naast de titel begint en meeloopt (zie .play in
+  // app.css). Ze stonden eerst in een smalle kolom naast het bord, toen
+  // eronder, toen naast het bord maar pas vanaf de namenrij - en elke keer
+  // moest je scrollen om ze te zien. Nu staan ze er vanaf het begin. Op een
+  // smal scherm staan ze onder het bord, plus een zwevende knop die ze als
+  // blad over de onderkant van het scherm legt (zie aanwijzingenKnop).
+  // De kop zit in hetzelfde raster, dus hij krijgt de kleuren van de wereld
+  // hier mee en niet van de sfeerplaat.
+  const play = el('div', { class: 'play', style: genreStijl(puzzle.world) }, [kop, boards, clueCol, notes]);
   mount.append(play);
   const blad = aanwijzingenKnop(clueCol);
   mount.append(blad.knop);
@@ -95,7 +99,7 @@ export function renderPlayer(puzzle, mount) {
     // Een aanwijzing wegklikken tekent de lijst opnieuw. In een kolom of
     // blad dat zelf scrolt sprong je dan terug naar de eerste zin.
     const scroll = clueCol.scrollTop;
-    clueCol.replaceChildren(blad.sluiter(), klepje(
+    clueCol.replaceChildren(blad.sluiter(), vraagBlok(puzzle, 'aanwijzingen-vraag'), klepje(
       'aanwijzingen', `Aanwijzingen (${aantal})`, true, [cluePanel(puzzle, state, draw, persist)],
     ));
     clueCol.scrollTop = scroll;
@@ -283,12 +287,14 @@ function head(puzzle) {
     deel(puzzle.depth === 1 ? 'doorstrepen volstaat' : 'aanname nodig'),
   ]);
 
-  return el('div', { class: 'puzzel-genre', style: genreStijl(puzzle.world) }, [
-    el('div', { class: 'scene-wrap' }, sceneVoor(puzzle.world.id, puzzle.world.accent)),
-    // Twee helften, zodat ze op een breed scherm naast elkaar kunnen staan
-    // in dezelfde kolommen als bord en aanwijzingen eronder (zie
-    // .puzzle-head in app.css). Op een smal scherm gewoon onder elkaar.
-    el('div', { class: 'puzzle-head' }, [
+  return {
+    decor: el('div', { class: 'puzzel-genre', style: genreStijl(puzzle.world) }, [
+      el('div', { class: 'scene-wrap' }, sceneVoor(puzzle.world.id, puzzle.world.accent)),
+    ]),
+    // Het verhaal en de vraag. Op een breed scherm staat de vraag niet hier
+    // maar boven aan de aanwijzingen (zie vraagBlok); app.css verbergt dan
+    // de zijkant.
+    kop: el('div', { class: 'puzzle-head' }, [
       el('div', { class: 'puzzle-verhaal' }, [
         crumbs,
         el('h1', { text: kop }),
@@ -298,14 +304,22 @@ function head(puzzle) {
         kop === puzzle.title ? null : el('p', { class: 'puzzel-ondertitel', text: puzzle.title }),
         ...introMetVerder(puzzle.intro),
       ]),
-      el('div', { class: 'puzzle-zijkant' }, [
-        el('div', { class: 'question' }, [
-          el('span', { class: 'label', text: 'De vraag' }),
-          el('b', { text: puzzle.question.text }),
-        ]),
-        spelregelBlok(puzzle),
-      ]),
+      el('div', { class: 'puzzle-zijkant' }, vraagBlok(puzzle)),
     ]),
+  };
+}
+
+// De vraag met de spelregels eronder. Hij staat twee keer in de pagina:
+// in de kop, en boven aan de aanwijzingen. Welke je ziet hangt af van het
+// scherm - op een breed scherm boven de aanwijzingen, waar je kijkt terwijl
+// je puzzelt; in het blad op een telefoon ook, want daar zie je de kop niet.
+function vraagBlok(puzzle, extra = '') {
+  return el('div', { class: `vraagblok ${extra}`.trim() }, [
+    el('div', { class: 'question' }, [
+      el('span', { class: 'label', text: 'De vraag' }),
+      el('b', { text: puzzle.question.text }),
+    ]),
+    spelregelBlok(puzzle),
   ]);
 }
 
@@ -558,7 +572,7 @@ function aanwijzingenKnop(kolom) {
   const zet = (open) => {
     kolom.classList.toggle('aanwijzingen-blad', open);
     if (open) {
-      const paneel = kolom.querySelector('details');
+      const paneel = kolom.querySelector('details.paneel');
       if (paneel) paneel.open = true;
       kolom.scrollTop = 0;
     }

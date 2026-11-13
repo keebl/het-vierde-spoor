@@ -41,7 +41,11 @@ const CEL = 76;
 // derde op het grootste - genoeg voor een verte, een middengrond en iets
 // vlak voor je neus. Op een bord van twaalf bij twaalf krimpt hij mee,
 // anders wordt de puzzel zelf te klein op een telefoon.
-const randVan = (n) => Math.round(Math.max(58, Math.min(104, 760 / n)));
+//
+// 2026-11-13: ruim een derde smaller. Op de pagina was hij heel dik
+// aanwezig, en wat erin staat schaalt mee met de dikte (zie bordrand.js),
+// dus de compositie blijft gelijk, alleen kleiner.
+const randVan = (n) => Math.round(Math.max(38, Math.min(64, 470 / n)));
 // Lucht buiten de lijst. Dit was ruimte voor dingen die over het bord heen
 // staken; die staan nu in de band zelf, dus er hoeft alleen nog plek te zijn
 // voor de slagschaduw onder het bord.
@@ -135,6 +139,8 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
   const svg = el('svg', {
     viewBox: `0 0 ${breedte} ${hoogte}`,
     class: 'kamerbord',
+    // Zo breed dat een vakje hooguit 72 pixels wordt (zie .kamerbord).
+    style: `--bordmax: ${Math.round(breedte * 72 / CEL)}px`,
     role: 'img',
     'aria-label': `Plattegrond van ${n} bij ${n} vakjes`,
   });

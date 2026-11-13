@@ -10,16 +10,19 @@ day the changelog was introduced; everything before that is in git history only.
 ## [Unreleased]
 
 ### Changed
-- On a wide screen (1100 px and up) the clues stand beside the board in a column that
-  stays in view and scrolls on its own, so you no longer scroll back and forth between
-  board and clues. The puzzle page uses more of the screen width, and the case text with
-  the question beside it follows the same two columns.
+- On a wide screen (1100 px and up) the question and the clues stand in a right-hand
+  column that starts beside the title and stays in view while you scroll, so you never
+  scroll to reach them. When there is room the clues are set in two columns, so a long
+  list usually fits without scrolling.
 - On a phone or narrow window a floating "Aanwijzingen" button opens the clues as a sheet
   over the lower half of the screen; the board stays playable above it.
 - Printing puts the board on the first sheet and the clues on the second.
-- On a wide screen the board grows with the window height, so the names row and the
-  whole board fit on one screen; the scene picture above the case is lower.
-- A long case text is folded to three lines with a "Lees verder" link.
+- The decorated frame around the board is about a third thinner; the squares stay the
+  same size. The scene picture above the case is lower on a wide screen.
+- A long case text is folded to three lines with a "Lees verder" link on a phone.
+- The whole site is wider (1240 px, text up to 74 characters). On the explanation page
+  the headings stand in a column beside the text, and the six levels on the front page
+  are laid out as three and three.
 
 ### Fixed
 - A missing woman was referred to as "him" in the intro ("heeft hem als laatste

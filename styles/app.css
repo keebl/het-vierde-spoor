@@ -74,8 +74,10 @@
   /* Hoe hoog de kop is. De namenbalk plakt hieronder vast. */
   --kop-hoogte: 53px;
 
-  --page: 1080px;
-  --prose: 62ch;
+  /* Was 1080 en 62 tekens: op een groot scherm stond alles in een smalle
+     strook in het midden. 74 tekens leest nog prettig en vult meer. */
+  --page: 1240px;
+  --prose: 74ch;
 }
 
 * { box-sizing: border-box; }
@@ -219,6 +221,28 @@ h2 {
 .section-head h2 { margin: 0; }
 .section-head p { margin: 0; color: var(--text-3); font-size: var(--t-sm); }
 
+/* Een stuk lopende tekst onder een kop (de uitleg): op een breed scherm de
+   kop als smalle kolom links en de tekst ernaast. Eerst stond de tekst in
+   een strook links en het halve scherm ernaast was leeg; breder zetten
+   maakt regels van honderd tekens, en die lees je niet. */
+@media (min-width: 1100px) {
+  .section:has(> .section-head + .prose) {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    column-gap: var(--s7);
+    align-items: start;
+  }
+  .section:has(> .section-head + .prose) > .section-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s2);
+    padding-bottom: var(--s3);
+    position: sticky;
+    top: calc(var(--kop-hoogte) + var(--s5));
+  }
+  .section:has(> .section-head + .prose) > .prose { max-width: var(--prose); }
+}
+
 /* =============================================================== hero */
 
 .hero {
@@ -235,10 +259,12 @@ h2 {
 @media (min-width: 900px) {
   .hero-met-bord {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
     column-gap: var(--s7);
     align-items: center;
   }
+  /* Zes niveaus als drie en drie, niet als vier en een losse twee. */
+  .hero-met-bord .niveaukiezer { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .hero-met-bord > :first-child { grid-column: 1; }
   .hero-met-bord .hero-actions,
   .hero-met-bord .hero-note { grid-column: 1; }
@@ -836,35 +862,75 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
    daar naar boven zonder te scrollen. */
 .play > *, .boards > * { min-width: 0; }
 
-/* Op een breed scherm naast het bord. Eerder stonden ze in een smalle
-   kolom ernaast, toen eronder; eronder betekende bij elke stap heen en weer
-   scrollen tussen bord en zinnen. Nu een brede kolom die onder de kop blijft
-   staan en zelf scrolt, zodat bord en lijst samen in beeld zijn. De pagina
-   mag daarvoor breder: het bord houdt zijn 680 pixels. */
-@media screen and (min-width: 1100px) {
-  main:has(> .play) { max-width: 1320px; }
-  /* De kop in dezelfde twee kolommen: het verhaal over de volle breedte van
-     het bord, de vraag en de regels erboven waar de aanwijzingen staan. Hij
-     stond in 62 tekens en liet rechts een leeg halve scherm. */
-  main:has(> .play) .puzzle-head {
-    max-width: none;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
-    column-gap: var(--s6);
-    align-items: end;
-  }
-  main:has(> .play) .puzzle-verhaal .intro { margin-bottom: var(--s6); }
+/* De vraag staat twee keer in de pagina (zie vraagBlok in player.js): in
+   de kop en boven aan de aanwijzingen. Standaard alleen die in de kop. */
+.aanwijzingen-vraag { display: none; }
+.vraagblok .spelregels { margin-bottom: 0; }
 
-  /* Het bord zo groot als de kolom toelaat, maar nooit hoger dan wat er
-     onder de kop en de namenrij past: eerst stopte het bij 680 pixels en
-     liet het rechts een strook leeg, terwijl een groot bord toch al hoger
-     was dan een laptopscherm. De tekening blijft in het midden van zijn vak
-     (de svg houdt zijn verhouding). */
-  .play .kamerbord {
-    max-width: 100%;
-    max-height: calc(100vh - var(--kop-hoogte) - 130px);
-    min-height: 420px;
+/* Op een breed scherm twee kolommen. Links het verhaal, de namenrij, het
+   bord en de knoppen; rechts de vraag en de aanwijzingen, in een kolom die
+   al naast de titel begint en onder de kop blijft staan terwijl je
+   scrolt. Eerder begon die kolom pas bij de namenrij, zodat je eerst
+   omlaag moest om hem te zien - en daarvoor stonden de aanwijzingen onder
+   het bord. De pagina mag hiervoor breder; het bord niet (zie .kamerbord). */
+@media screen and (min-width: 1100px) {
+  main:has(> .play) { max-width: 1360px; }
+  .play {
+    /* Links zo breed als het bord (680) plus wat lucht; alles wat er
+       overblijft gaat naar de aanwijzingen, die er dan naast elkaar in
+       passen (zie de containerregel hieronder). */
+    grid-template-columns: minmax(0, 720px) minmax(340px, 1fr);
+    grid-template-rows: auto auto 1fr;
+    column-gap: var(--s7);
+    row-gap: var(--s5);
   }
+  .play > .puzzle-head, .play > .boards, .play > .aanwijzingen-kolom + * { grid-column: 1; }
+  .play > .puzzle-head { max-width: none; }
+  .play > .puzzle-head .puzzle-zijkant { display: none; }
+  .play > .puzzle-head .intro { margin-bottom: 0; }
+  /* Op een breed scherm is het verhaal drie of vier regels: niet inklappen. */
+  .play .intro-dicht { display: inline; -webkit-line-clamp: none; line-clamp: none; overflow: visible; }
+  /* De vraag in de kolom: dezelfde vraag, minder vak, zodat er meer
+     aanwijzingen onder passen. */
+  .aanwijzingen-vraag .question { padding: var(--s2) var(--s4); }
+  .aanwijzingen-vraag .question b { font-size: var(--t-base, 1rem); }
+  .play > .aanwijzingen-kolom {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    position: sticky;
+    top: calc(var(--kop-hoogte) + var(--s4));
+    max-height: calc(100vh - var(--kop-hoogte) - 2 * var(--s4));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    container-type: inline-size;
+  }
+  .aanwijzingen-kolom > .aanwijzingen-vraag { display: block; }
+  .aanwijzingen-kolom > .paneel { margin-top: var(--s4); }
+  .aanwijzingen-knop { display: none; }
+
+  /* Compacter, zodat een lijst van zeventien zinnen past zonder dat de
+     kolom zelf hoeft te scrollen. */
+  .aanwijzingen-kolom .clue { padding: 6px var(--s2); line-height: 1.4; }
+  .aanwijzingen-kolom .clue-groep { margin-bottom: var(--s2); }
+  .aanwijzingen-kolom .clue-kop { margin-bottom: 0; }
+  .aanwijzingen-kolom .clue-ook { margin: 0 0 0 var(--s2); }
+}
+
+/* Is de kolom breed genoeg, dan de groepen per naam in twee kolommen: een
+   lijst die half zo hoog is, past meestal zonder scrollen naast het bord. */
+@container (min-width: 520px) {
+  .aanwijzingen-kolom .paneel-binnen { columns: 2; column-gap: var(--s5); }
+  .aanwijzingen-kolom .clue-groep,
+  .aanwijzingen-kolom .clue,
+  .aanwijzingen-kolom .clue-feit { break-inside: avoid; }
+  .aanwijzingen-kolom .paneel-binnen .legend,
+  .aanwijzingen-kolom .paneel-binnen .feiten,
+  .aanwijzingen-kolom .paneel-binnen > div > .label { column-span: all; }
+}
+
+@media screen and (min-width: 1100px) {
+
   /* Namenrij en bord samen in beeld: minder lucht ertussen. */
   .play > .boards { gap: var(--s4); }
   .play .palet { margin-bottom: 0; }
@@ -872,20 +938,7 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
   /* De sfeerplaat lager, zodat het bord eerder in beeld komt. */
   main:has(> .play) .scene-wrap,
   main:has(> .play) .scene-wrap .scene { height: 120px; }
-  main:has(> .play) .puzzle-head h1 { margin-bottom: var(--s2); }
-  .play { grid-template-columns: minmax(0, 1fr) minmax(320px, 400px); grid-template-rows: auto 1fr; column-gap: var(--s6); }
-  .play > .boards, .play > .aanwijzingen-kolom + * { grid-column: 1; }
-  .play > .aanwijzingen-kolom {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    position: sticky;
-    top: calc(var(--kop-hoogte) + var(--s4));
-    max-height: calc(100vh - var(--kop-hoogte) - 2 * var(--s4));
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-  .aanwijzingen-kolom > .paneel { margin-top: 0; }
-  .aanwijzingen-knop { display: none; }
+  .play > .puzzle-head h1 { margin-bottom: var(--s2); }
 }
 
 /* De zwevende knop en het blad, alleen op een smal scherm. */
@@ -926,7 +979,13 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
     border-radius: var(--r) var(--r) 0 0;
     box-shadow: 0 -8px 24px rgba(36, 22, 58, 0.25);
   }
-  .aanwijzingen-blad > .paneel { margin-top: 0; border: 0; background: transparent; }
+  /* In het blad alleen de vraag, klein: de regels staan in de kop, en het
+     blad is er voor de aanwijzingen. */
+  .aanwijzingen-blad > .aanwijzingen-vraag { display: block; margin-top: var(--s3); }
+  .aanwijzingen-blad > .aanwijzingen-vraag .spelregels { display: none; }
+  .aanwijzingen-blad > .aanwijzingen-vraag .question { margin-bottom: 0; padding: var(--s2) var(--s3); }
+  .aanwijzingen-blad > .aanwijzingen-vraag .question b { font-size: var(--t-base); }
+  .aanwijzingen-blad > .paneel { margin-top: var(--s3); border: 0; background: transparent; }
   .aanwijzingen-blad > .paneel > summary { pointer-events: none; padding-left: 0; }
   .aanwijzingen-blad > .paneel > summary::before { display: none; }
   .aanwijzingen-blad > .paneel > .paneel-binnen { padding: 0; }
@@ -1180,7 +1239,10 @@ table.latin td.cell { width: 78px; height: 46px; }
 .kamerbord {
   width: 100%;
   height: auto;
-  max-width: min(680px, 100%);
+  /* Nooit breder dan 680 pixels, en bij een klein bord niet breder dan
+     vakjes van 72 pixels (--bordmax, gezet in board-rooms.js). Toen de
+     lijst dunner werd, zouden de vakjes anders vanzelf groter worden. */
+  max-width: min(680px, var(--bordmax, 680px), 100%);
   display: block;
   /* Geen achtergrond en geen schaduw meer op de svg zelf: die vullen ook de
      lucht om het bord, en dan kan er niets meer buiten het bord uitsteken.
@@ -1544,7 +1606,7 @@ table.latin td.cell { width: 78px; height: 46px; }
   .play > .aanwijzingen-kolom { break-before: page; }
   .intro-dicht { display: block; -webkit-line-clamp: none; line-clamp: none; overflow: visible; }
   .intro-verder { display: none !important; }
-  .aanwijzingen-knop, .aanwijzingen-sluit { display: none !important; }
+  .aanwijzingen-knop, .aanwijzingen-sluit, .aanwijzingen-vraag { display: none !important; }
 
   .puzzle-head { max-width: none; }
   .puzzle-head h1 { font-size: 16pt; margin-bottom: 4mm; }
