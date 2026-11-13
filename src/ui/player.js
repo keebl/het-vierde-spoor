@@ -77,19 +77,29 @@ export function renderPlayer(puzzle, mount) {
 
   const boards = el('div', { class: 'boards' });
   const notes = el('div');
-  const clueCol = el('div');
+  const clueCol = el('div', { class: 'aanwijzingen-kolom' });
 
-  // Eén kolom, in de volgorde waarin je werkt: eerst het bord, dan de
-  // legenda, dan de aanwijzingen. De aanwijzingen stonden in een smalle
-  // kolom naast het bord; nu staan ze eronder, zoals gevraagd.
+  // Op een breed scherm staan de aanwijzingen naast het bord, in een kolom
+  // die meeloopt en zelf scrolt (zie .play in app.css). Ze stonden eerst in
+  // een smalle kolom ernaast, toen eronder - en dan scrol je bij elke stap
+  // heen en weer tussen bord en zinnen, en dat was de klacht. Op een smal
+  // scherm staan ze nog eronder, plus een zwevende knop die ze als blad
+  // over de onderkant van het scherm legt (zie aanwijzingenKnop).
   const play = el('div', { class: 'play' }, [boards, clueCol, notes]);
   mount.append(play);
+  const blad = aanwijzingenKnop(clueCol);
+  mount.append(blad.knop);
 
   const draw = () => {
     const aantal = puzzle.clues.length + (state.extra?.length ?? 0);
-    clueCol.replaceChildren(klepje(
+    // Een aanwijzing wegklikken tekent de lijst opnieuw. In een kolom of
+    // blad dat zelf scrolt sprong je dan terug naar de eerste zin.
+    const scroll = clueCol.scrollTop;
+    clueCol.replaceChildren(blad.sluiter(), klepje(
       'aanwijzingen', `Aanwijzingen (${aantal})`, true, [cluePanel(puzzle, state, draw, persist)],
     ));
+    clueCol.scrollTop = scroll;
+    blad.knop.textContent = `Aanwijzingen (${aantal})`;
     boards.replaceChildren(...boardNodes(puzzle, state, onCell, toonMeubel, actions));
     notes.replaceChildren(toolbar(puzzle, state, actions), noteNode(state));
   };
@@ -275,19 +285,26 @@ function head(puzzle) {
 
   return el('div', { class: 'puzzel-genre', style: genreStijl(puzzle.world) }, [
     el('div', { class: 'scene-wrap' }, sceneVoor(puzzle.world.id, puzzle.world.accent)),
+    // Twee helften, zodat ze op een breed scherm naast elkaar kunnen staan
+    // in dezelfde kolommen als bord en aanwijzingen eronder (zie
+    // .puzzle-head in app.css). Op een smal scherm gewoon onder elkaar.
     el('div', { class: 'puzzle-head' }, [
-      crumbs,
-      el('h1', { text: kop }),
-      // De ondertitel is de algemene naam van de zaak ("Regenstad: Wie is
-      // de dief?"). Bij een zelfgemaakte puzzel is dat precies wat er al
-      // boven staat, en dan stond er twee keer dezelfde regel.
-      kop === puzzle.title ? null : el('p', { class: 'puzzel-ondertitel', text: puzzle.title }),
-      el('p', { class: 'intro', text: puzzle.intro }),
-      el('div', { class: 'question' }, [
-        el('span', { class: 'label', text: 'De vraag' }),
-        el('b', { text: puzzle.question.text }),
+      el('div', { class: 'puzzle-verhaal' }, [
+        crumbs,
+        el('h1', { text: kop }),
+        // De ondertitel is de algemene naam van de zaak ("Regenstad: Wie is
+        // de dief?"). Bij een zelfgemaakte puzzel is dat precies wat er al
+        // boven staat, en dan stond er twee keer dezelfde regel.
+        kop === puzzle.title ? null : el('p', { class: 'puzzel-ondertitel', text: puzzle.title }),
+        el('p', { class: 'intro', text: puzzle.intro }),
       ]),
-      spelregelBlok(puzzle),
+      el('div', { class: 'puzzle-zijkant' }, [
+        el('div', { class: 'question' }, [
+          el('span', { class: 'label', text: 'De vraag' }),
+          el('b', { text: puzzle.question.text }),
+        ]),
+        spelregelBlok(puzzle),
+      ]),
     ]),
   ]);
 }
@@ -508,6 +525,45 @@ function klepje(sleutel, kop, standaard, inhoud) {
   ]);
   blok.addEventListener('toggle', () => zetPaneel(sleutel, blok.open));
   return blok;
+}
+
+// De zwevende knop op een smal scherm. Hij legt dezelfde kolom met
+// aanwijzingen als blad over de onderste helft van het scherm, zodat je het
+// bord erboven houdt en er zelfs op kunt blijven zetten. Geen kopie van de
+// lijst: wegstrepen in het blad is wegstrepen in de lijst. De knop staat
+// alleen in beeld zolang de lijst dat niet is - wie er al bij is gescrold,
+// heeft hem niet nodig. Op een breed scherm verbergt app.css hem helemaal.
+function aanwijzingenKnop(kolom) {
+  const knop = el('button', { class: 'aanwijzingen-knop', type: 'button' });
+  const zet = (open) => {
+    kolom.classList.toggle('aanwijzingen-blad', open);
+    if (open) {
+      const paneel = kolom.querySelector('details');
+      if (paneel) paneel.open = true;
+      kolom.scrollTop = 0;
+    }
+  };
+  knop.addEventListener('click', () => zet(true));
+  const sluiter = () => {
+    const dicht = el('button', { class: 'aanwijzingen-sluit', type: 'button', text: 'Sluiten', 'aria-label': 'Aanwijzingen sluiten' });
+    dicht.addEventListener('click', () => zet(false));
+    return dicht;
+  };
+
+  // Pas weg als de lijst de onderste derde van het scherm voorbij is: een
+  // kop die net onderaan piept, is nog geen lijst die je kunt lezen.
+  const kijker = new IntersectionObserver(([ding]) => {
+    if (!knop.isConnected) { kijker.disconnect(); return; }
+    knop.classList.toggle('aanwijzingen-knop-weg', ding.isIntersecting);
+  }, { rootMargin: '0px 0px -35% 0px' });
+  kijker.observe(kolom);
+  const opEscape = (e) => {
+    if (!knop.isConnected) { document.removeEventListener('keydown', opEscape); return; }
+    if (e.key === 'Escape') zet(false);
+  };
+  document.addEventListener('keydown', opEscape);
+
+  return { knop, sluiter };
 }
 
 function boardNodes(puzzle, state, onCell, toonMeubel, actions) {

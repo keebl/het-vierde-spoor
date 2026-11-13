@@ -9,6 +9,15 @@ day the changelog was introduced; everything before that is in git history only.
 
 ## [Unreleased]
 
+### Changed
+- On a wide screen (1100 px and up) the clues stand beside the board in a column that
+  stays in view and scrolls on its own, so you no longer scroll back and forth between
+  board and clues. The puzzle page uses more of the screen width, and the case text with
+  the question beside it follows the same two columns.
+- On a phone or narrow window a floating "Aanwijzingen" button opens the clues as a sheet
+  over the lower half of the screen; the board stays playable above it.
+- Printing puts the board on the first sheet and the clues on the second.
+
 ### Fixed
 - A missing woman was referred to as "him" in the intro ("heeft hem als laatste
   gesproken"). The case sentences now repeat the name instead of using a pronoun.

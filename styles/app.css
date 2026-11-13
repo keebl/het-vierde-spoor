@@ -808,11 +808,105 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 .blok-paar .label { color: var(--text-3); }
 
 .play { display: grid; gap: var(--s6); align-items: start; }
-/* Eén kolom, op elk scherm: bord, legenda, aanwijzingen, knoppen. De
-   aanwijzingen stonden in een smalle kolom naast het bord; nu staan ze
-   eronder. Dat leest in de volgorde waarin je werkt, en op een telefoon
-   zag je anders eerst veertien zinnen voordat je het bord vond. */
+/* Op een smal scherm één kolom: bord, legenda, aanwijzingen, knoppen. Op
+   een telefoon zag je anders eerst veertien zinnen voordat je het bord vond.
+   Het blad met de zwevende knop (aanwijzingenKnop in player.js) haalt ze
+   daar naar boven zonder te scrollen. */
 .play > *, .boards > * { min-width: 0; }
+
+/* Op een breed scherm naast het bord. Eerder stonden ze in een smalle
+   kolom ernaast, toen eronder; eronder betekende bij elke stap heen en weer
+   scrollen tussen bord en zinnen. Nu een brede kolom die onder de kop blijft
+   staan en zelf scrolt, zodat bord en lijst samen in beeld zijn. De pagina
+   mag daarvoor breder: het bord houdt zijn 680 pixels. */
+@media screen and (min-width: 1100px) {
+  main:has(> .play) { max-width: 1320px; }
+  /* De kop in dezelfde twee kolommen: het verhaal over de volle breedte van
+     het bord, de vraag en de regels erboven waar de aanwijzingen staan. Hij
+     stond in 62 tekens en liet rechts een leeg halve scherm. */
+  main:has(> .play) .puzzle-head {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+    column-gap: var(--s6);
+    align-items: end;
+  }
+  main:has(> .play) .puzzle-verhaal .intro { margin-bottom: var(--s6); }
+  .play { grid-template-columns: minmax(0, 1fr) minmax(320px, 400px); grid-template-rows: auto 1fr; column-gap: var(--s6); }
+  .play > .boards, .play > .aanwijzingen-kolom + * { grid-column: 1; }
+  .play > .aanwijzingen-kolom {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    position: sticky;
+    top: calc(var(--kop-hoogte) + var(--s4));
+    max-height: calc(100vh - var(--kop-hoogte) - 2 * var(--s4));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .aanwijzingen-kolom > .paneel { margin-top: 0; }
+  .aanwijzingen-knop { display: none; }
+}
+
+/* De zwevende knop en het blad, alleen op een smal scherm. */
+.aanwijzingen-sluit { display: none; }
+@media screen and (max-width: 1099px) {
+  .aanwijzingen-knop {
+    position: fixed;
+    right: var(--s4);
+    bottom: calc(var(--s4) + env(safe-area-inset-bottom));
+    z-index: 30;
+    padding: var(--s3) var(--s5);
+    border: 0;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font: 600 var(--t-sm)/1.2 var(--sans);
+    box-shadow: 0 6px 18px rgba(36, 22, 58, 0.28);
+    cursor: pointer;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+  .aanwijzingen-knop-weg { opacity: 0; transform: translateY(8px); pointer-events: none; }
+
+  /* Het blad bedekt de onderste helft; het bord blijft erboven bespeelbaar.
+     De ruimte onder de pagina zorgt dat je ook de onderkant van het bord
+     boven het blad kunt scrollen. */
+  .aanwijzingen-kolom.aanwijzingen-blad {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    max-height: 55vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0 var(--s4) calc(var(--s4) + env(safe-area-inset-bottom));
+    background: var(--bg);
+    border-top: 2px solid var(--accent);
+    border-radius: var(--r) var(--r) 0 0;
+    box-shadow: 0 -8px 24px rgba(36, 22, 58, 0.25);
+  }
+  .aanwijzingen-blad > .paneel { margin-top: 0; border: 0; background: transparent; }
+  .aanwijzingen-blad > .paneel > summary { pointer-events: none; padding-left: 0; }
+  .aanwijzingen-blad > .paneel > summary::before { display: none; }
+  .aanwijzingen-blad > .paneel > .paneel-binnen { padding: 0; }
+  .aanwijzingen-blad > .aanwijzingen-sluit {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    margin: 0 calc(-1 * var(--s4));
+    width: calc(100% + 2 * var(--s4));
+    padding: var(--s3) var(--s4);
+    border: 0;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--bg);
+    color: var(--accent);
+    font: 600 var(--t-sm)/1.2 var(--sans);
+    text-align: right;
+    cursor: pointer;
+  }
+  main:has(.aanwijzingen-blad) { padding-bottom: 55vh; }
+}
 
 /* Wat vaststaat staat boven de aanwijzingen, en ziet er anders uit: je kunt
    het niet wegstrepen, want het is geen stap maar een gegeven. */
@@ -1401,9 +1495,13 @@ table.latin td.cell { width: 78px; height: 46px; }
 
   main { max-width: none; padding: 0; }
 
-  /* Aanwijzingen naast het bord in plaats van eronder: scheelt een vel. */
-  .play { grid-template-columns: 1fr 1fr; gap: 10mm; }
-  .play > * { break-inside: avoid; }
+  /* Het bord op het eerste vel, zo groot als het kan; de aanwijzingen op
+     het tweede. Naast elkaar scheelde het een vel, maar dan werd het bord
+     te klein om op te tekenen. */
+  .play { display: block; }
+  .play > .boards { break-inside: avoid; }
+  .play > .aanwijzingen-kolom { break-before: page; }
+  .aanwijzingen-knop, .aanwijzingen-sluit { display: none !important; }
 
   .puzzle-head { max-width: none; }
   .puzzle-head h1 { font-size: 16pt; margin-bottom: 4mm; }
@@ -1418,7 +1516,10 @@ table.latin td.cell { width: 78px; height: 46px; }
   .clue[aria-pressed="true"] .clue-text { text-decoration: none; }
 
   .kamerbord {
-    max-width: 100%;
+    /* Met de kop erboven moet het bord op het eerste vel passen; een A4
+       heeft na de marges zo'n 27 cm hoogte. */
+    max-width: min(100%, 170mm);
+    margin: 0 auto;
     box-shadow: none;
     background: #fff;
     border: 1px solid #000;
