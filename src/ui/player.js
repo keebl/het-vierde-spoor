@@ -278,8 +278,8 @@ function head(puzzle) {
     el('div', { class: 'puzzle-head' }, [
       crumbs,
       el('h1', { text: kop }),
-      // De ondertitel is de algemene naam van de zaak ("Regenstad: Wie stond
-      // er alleen?"). Bij een zelfgemaakte puzzel is dat precies wat er al
+      // De ondertitel is de algemene naam van de zaak ("Regenstad: Wie is
+      // de dief?"). Bij een zelfgemaakte puzzel is dat precies wat er al
       // boven staat, en dan stond er twee keer dezelfde regel.
       kop === puzzle.title ? null : el('p', { class: 'puzzel-ondertitel', text: puzzle.title }),
       el('p', { class: 'intro', text: puzzle.intro }),

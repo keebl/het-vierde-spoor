@@ -28,14 +28,15 @@ export function zinVoor(c, w) {
       return hoofdletter(c.ja
         ? `${P} en ${Q} stonden ${ZELFDE}.`
         : `${P} en ${Q} stonden niet ${ZELFDE}.`);
+    // "Precies één iemand" stond hier, en dat is geen Nederlands.
     case 'aantalKamer': {
       if (c.aantal === 0) return hoofdletter(`${V} ${K} stond niemand.`);
-      if (c.aantal === 1) return hoofdletter(`${V} ${K} stond precies één iemand.`);
+      if (c.aantal === 1) return hoofdletter(`${V} ${K} stond precies één persoon.`);
       return hoofdletter(`${V} ${K} stonden precies ${telwoord(c.aantal)} mensen.`);
     }
     case 'aantalNaast': {
       if (c.aantal === 0) return hoofdletter(`er stond niemand naast ${M}.`);
-      if (c.aantal === 1) return hoofdletter(`precies één iemand stond naast ${M}.`);
+      if (c.aantal === 1) return hoofdletter(`er stond precies één persoon naast ${M}.`);
       return hoofdletter(`er stonden ${telwoord(c.aantal)} mensen naast ${M}.`);
     }
     case 'rand':

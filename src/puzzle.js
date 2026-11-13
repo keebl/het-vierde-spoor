@@ -399,7 +399,9 @@ function buildKamerPuzzle({ world, settings }) {
     id: puzzleId(settings),
     seed,
     settings: { ...settings },
-    title: `${world.name}: Wie stond er alleen?`,
+    // Niet "Wie stond er alleen?": het antwoord is juist de enige die
+    // NIET alleen stond, maar bij het slachtoffer.
+    title: `${world.name}: Wie is ${zaak.antwoordwoord}?`,
     world: { id: world.id, name: world.name, icon: world.icon, accent: world.accent },
     opdracht: { id: 'dader', name: `Wie is ${zaak.antwoordwoord}?` },
     mechaniek: 'kamer',

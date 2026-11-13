@@ -12,6 +12,13 @@ day the changelog was introduced; everything before that is in git history only.
 ### Fixed
 - A missing woman was referred to as "him" in the intro ("heeft hem als laatste
   gesproken"). The case sentences now repeat the name instead of using a pronoun.
+- Puzzle titles that contradicted the puzzle. "Wie stond er alleen?" asked the opposite of
+  the answer (the culprit is the one who was *not* alone), and fixed library titles
+  promised a body, a lie or an emptied safe above a case that turned out to be a theft or
+  a disappearance. The keuring now refuses a title that contradicts the case.
+- "Precies één iemand" in clues is now "precies één persoon".
+- A stolen item no longer names a second owner ("Nordin, de conciërge, ... de sleutelbos
+  van de conciërge"; "de startkaart van de kapitein van Nuru").
 
 ### Added
 - Project standard adopted (CLAUDE.md, STATUS.md, docs, specs, security baseline).

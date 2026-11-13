@@ -19,8 +19,6 @@
 //
 // `ding` is wat er gestolen is; dat staat per wereld in `gestolen`.
 
-const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
-
 export const ZAKEN = [
   // Geen "hij" of "hem" in deze zinnen: het slachtoffer is net zo vaak een
   // vrouw, en dan stond er "Mathilde ... heeft hem als laatste gesproken".
@@ -51,7 +49,7 @@ export const ZAKEN = [
     opdracht: [
       (naam, rol, zelfde) => `${naam}, ${rol}, is sindsdien zoek. Niemand weet nog wie waar stond, en ook niet waar ${naam} was. Zet iedereen terug op het bord. Wie dan als enige bij ${naam} ${zelfde} staat, heeft ${naam} het laatst gezien.`,
       (naam, rol, zelfde) => `Niemand heeft ${naam}, ${rol}, daarna nog gezien. Zet alle figuren terug op het bord, ${naam} ook. Wie als enige bij ${naam} ${zelfde} uitkomt, was de laatste die ${naam} sprak.`,
-      (naam, rol, zelfde) => `${naam} is verdwenen. ${cap(rol)} liep even weg en kwam niet meer terug. Zoek uit waar iedereen stond. De enige die bij ${naam} ${zelfde} staat, heeft ${naam} het laatst gezien.`,
+      (naam, rol, zelfde) => `${naam}, ${rol}, liep even weg en kwam niet meer terug. Zoek uit waar iedereen stond. De enige die bij ${naam} ${zelfde} staat, heeft ${naam} het laatst gezien.`,
     ],
   },
   {
@@ -63,7 +61,9 @@ export const ZAKEN = [
     vraag: (naam, zelfde) => `Wie stond er als enige bij ${naam} ${zelfde}?`,
     opdracht: [
       (naam, rol, zelfde, ding) => `${naam}, ${rol}, had ${ding} bij zich, en nu is het weg. Niemand weet nog wie waar stond. Zet iedereen terug op het bord. Wie dan als enige bij ${naam} ${zelfde} staat, heeft het gepakt.`,
-      (naam, rol, zelfde, ding) => `${cap(ding)} van ${naam}, ${rol}, is gestolen. Zet alle figuren terug op het bord, ${naam} ook. Wie als enige bij ${naam} ${zelfde} uitkomt, is de dief.`,
+      // Niet "${ding} van ${naam}": veel dingen hebben al een eigenaar in de
+      // naam, en dan stond er "de startkaart van de kapitein van Nuru".
+      (naam, rol, zelfde, ding) => `${naam}, ${rol}, is bestolen: ${ding} is weg. Zet alle figuren terug op het bord, ${naam} ook. Wie als enige bij ${naam} ${zelfde} uitkomt, is de dief.`,
       (naam, rol, zelfde, ding) => `${naam}, ${rol}, merkte pas later dat ${ding} weg was. Zoek uit waar iedereen stond. De enige die bij ${naam} ${zelfde} staat, heeft het.`,
     ],
   },

@@ -4,22 +4,22 @@
 
 export const CATALOG = [
   // ---- Kerstavond en Halloweennacht --------------------------------------
-  { seed: 'kerst-1', titel: 'Wie at de laatste kerststol?', sub: 'Zes familieleden, een donker moment en een cadeau dat niemand gaf.', opdracht: 'dader', wereld: 'kerst', mechaniek: 'kamer', niveau: 2 },
-  { seed: 'kerst-2', titel: 'Stroomstoring op kerstavond', sub: 'Negen mensen in een huis vol kaarsen. Eentje stond er alleen.', opdracht: 'dader', wereld: 'kerst', mechaniek: 'kamer', niveau: 4 },
+  { seed: 'kerst-1', titel: 'Het pakje met het rode lint', sub: 'Zes familieleden in het donker, en daarna was er een cadeau weg.', opdracht: 'dader', wereld: 'kerst', mechaniek: 'kamer', niveau: 2 },
+  { seed: 'kerst-2', titel: 'Stroomstoring op kerstavond', sub: 'Negen mensen in een huis vol kaarsen, en één van hen leeft niet meer.', opdracht: 'dader', wereld: 'kerst', mechaniek: 'kamer', niveau: 4 },
   { seed: 'kerst-3', titel: 'Het verdwenen cadeau', sub: 'Het lag onder de boom. Nu niet meer.', opdracht: 'vinden', wereld: 'kerst', mechaniek: 'map', niveau: 3 },
   { seed: 'kerst-4', titel: 'Wie bracht welk pakje mee', sub: 'De naamkaartjes zijn van de pakjes gevallen.', opdracht: 'toewijzing', wereld: 'kerst', mechaniek: 'grid', niveau: 2 },
-  { seed: 'hall-1', titel: 'Het echte masker', sub: 'Iedereen kwam verkleed. Eentje deed zijn kostuum nooit meer uit.', opdracht: 'dader', wereld: 'halloween', mechaniek: 'kamer', niveau: 3 },
+  { seed: 'hall-1', titel: 'Het echte masker', sub: 'Iedereen kwam verkleed, en één gast is daarna niet meer gezien.', opdracht: 'dader', wereld: 'halloween', mechaniek: 'kamer', niveau: 3 },
   { seed: 'hall-2', titel: 'Middernacht', sub: 'Twaalf bij twaalf, en buiten slaat de klok.', opdracht: 'dader', wereld: 'halloween', mechaniek: 'kamer', niveau: 5 },
   { seed: 'hall-3', titel: 'Achter welke deur', sub: 'Het masker hangt ergens in huis, en het is geen kostuum.', opdracht: 'vinden', wereld: 'halloween', mechaniek: 'map', niveau: 3 },
   { seed: 'hall-4', titel: 'Het rondje langs de deuren', sub: 'Wie stond waar, en wanneer?', opdracht: 'reconstructie', wereld: 'halloween', mechaniek: 'latin', niveau: 3 },
 
   // ---- Kamerraster: zet de verdachten zelf neer ---------------------------
-  { seed: 'kamer-1', titel: 'Wie stond er alleen?', sub: 'Vijf verdachten op een plattegrond die je nog in één blik overziet.', opdracht: 'dader', wereld: 'landhuis', mechaniek: 'kamer', niveau: 1 },
+  { seed: 'kamer-1', titel: 'Wie pakte de kandelaar?', sub: 'Vijf verdachten op een plattegrond die je nog in één blik overziet.', opdracht: 'dader', wereld: 'landhuis', mechaniek: 'kamer', niveau: 1 },
   { seed: 'kamer-2', titel: 'Het natte uur', sub: 'Regenstad bij nacht: zes verdachten en een lichaam.', opdracht: 'dader', wereld: 'noir', mechaniek: 'kamer', niveau: 2 },
   { seed: 'kamer-3', titel: 'Stilstand in de centrifuge', sub: 'Zeven bemanningsleden, en niemand die twee keer op dezelfde rij staat.', opdracht: 'dader', wereld: 'station', mechaniek: 'kamer', niveau: 3 },
   { seed: 'kamer-4', titel: 'Onder de wilgen', sub: 'Het woud als rooster. Let op wie waar naast staat.', opdracht: 'dader', wereld: 'woud', mechaniek: 'kamer', niveau: 3 },
   { seed: 'kamer-5', titel: 'Onder de bidkapel', sub: 'Negen bij negen onder de grond, en geen enkele directe aanwijzing.', opdracht: 'dader', wereld: 'catacomben', mechaniek: 'kamer', niveau: 4 },
-  { seed: 'kamer-6', titel: 'Avondgebed', sub: 'Twaalf bij twaalf, in een school die niet meewerkt.', opdracht: 'dader', wereld: 'academie', mechaniek: 'kamer', niveau: 5 },
+  { seed: 'kamer-6', titel: 'Avondgebed', sub: 'Twaalf bij twaalf, in de school na het avondgebed.', opdracht: 'dader', wereld: 'academie', mechaniek: 'kamer', niveau: 5 },
   { seed: 'kamer-7', titel: 'Het uur van de butler', sub: 'Terug naar Valkenhorst, nu met negen verdachten.', opdracht: 'dader', wereld: 'landhuis', mechaniek: 'kamer', niveau: 4 },
   { seed: 'kamer-8', titel: 'Laatste wacht', sub: 'Twaalf bemanningsleden en een gesloten sluis.', opdracht: 'dader', wereld: 'station', mechaniek: 'kamer', niveau: 5 },
 
@@ -27,13 +27,13 @@ export const CATALOG = [
   // Sinds alleen de Reconstructie te zien is, is dit de hele etalage. Vijf per
   // niveau, en de decors lopen er doorheen: je kiest hoe zwaar je het wilt,
   // niet in welk decor je nog een keer wilt rondlopen.
-  { seed: 'kamer-9', titel: 'Vijf bij de bron', sub: 'Vijf wandelaars, vier plekken, en eentje stond er alleen.', opdracht: 'dader', wereld: 'woud', mechaniek: 'kamer', niveau: 1 },
-  { seed: 'kamer-10', titel: 'Het eerste gewelf', sub: 'Vijf verdachten onder de grond. Kort, maar donker.', opdracht: 'dader', wereld: 'catacomben', mechaniek: 'kamer', niveau: 1 },
+  { seed: 'kamer-9', titel: 'Vijf bij de bron', sub: 'Vijf wandelaars en vier plekken. Kort genoeg voor de eerste keer.', opdracht: 'dader', wereld: 'woud', mechaniek: 'kamer', niveau: 1 },
+  { seed: 'kamer-10', titel: 'Het eerste gewelf', sub: 'Vijf verdachten onder de grond. Een korte om mee te beginnen.', opdracht: 'dader', wereld: 'catacomben', mechaniek: 'kamer', niveau: 1 },
   { seed: 'kamer-11', titel: 'Voor het eten', sub: 'Vijf gasten, en de kerststol was al aangesneden.', opdracht: 'dader', wereld: 'kerst', mechaniek: 'kamer', niveau: 1 },
   { seed: 'kamer-12', titel: 'Na de avondklok', sub: 'Zes leerlingen die ergens anders hadden moeten zijn.', opdracht: 'dader', wereld: 'academie', mechaniek: 'kamer', niveau: 2 },
   { seed: 'kamer-13', titel: 'Bij het wilgenhoofd', sub: 'Zes wandelaars, vijf kamers en een pad dat doodloopt.', opdracht: 'dader', wereld: 'woud', mechaniek: 'kamer', niveau: 2 },
-  { seed: 'kamer-14', titel: 'Het lege kostuum', sub: 'Zes gasten, en onder een van de maskers zat niemand meer.', opdracht: 'dader', wereld: 'halloween', mechaniek: 'kamer', niveau: 2 },
-  { seed: 'kamer-15', titel: 'Zeven in de steeg', sub: 'Zeven verdachten, zes kamers, en eentje die loog.', opdracht: 'dader', wereld: 'noir', mechaniek: 'kamer', niveau: 3 },
+  { seed: 'kamer-14', titel: 'De volle snoepzak', sub: 'Zes gasten in kostuum, en de snoepzak is weg.', opdracht: 'dader', wereld: 'halloween', mechaniek: 'kamer', niveau: 2 },
+  { seed: 'kamer-15', titel: 'Zeven in de steeg', sub: 'Zeven mensen in de steeg, en één van hen zag de vermiste als laatste.', opdracht: 'dader', wereld: 'noir', mechaniek: 'kamer', niveau: 3 },
   { seed: 'kamer-16', titel: 'Langs de dienstbodentrap', sub: 'Zeven mensen in een huis met te veel gangen.', opdracht: 'dader', wereld: 'landhuis', mechaniek: 'kamer', niveau: 3 },
   { seed: 'kamer-17', titel: 'Negen onder de bomen', sub: 'Negen wandelaars, en geen enkele aanwijzing die iets weggeeft.', opdracht: 'dader', wereld: 'woud', mechaniek: 'kamer', niveau: 4 },
   { seed: 'kamer-18', titel: 'De kade om twee uur', sub: 'Negen verdachten in de regen, en niemand met een alibi.', opdracht: 'dader', wereld: 'noir', mechaniek: 'kamer', niveau: 4 },
@@ -42,16 +42,16 @@ export const CATALOG = [
   { seed: 'kamer-21', titel: 'Het hele huis', sub: 'Zestien bij zestien door Valkenhorst. Het zwaarste wat er is.', opdracht: 'dader', wereld: 'landhuis', mechaniek: 'kamer', niveau: 6 },
   { seed: 'kamer-22', titel: 'Volledige bemanning', sub: 'Zestien aan boord en geen hoek om je in te verstoppen.', opdracht: 'dader', wereld: 'station', mechaniek: 'kamer', niveau: 6 },
   { seed: 'kamer-23', titel: 'Allerzielen', sub: 'Zestien bij zestien, en buiten houdt de klok op met slaan.', opdracht: 'dader', wereld: 'halloween', mechaniek: 'kamer', niveau: 6 },
-  { seed: 'kamer-24', titel: 'Het grote tentamen', sub: 'Zestien bij zestien in een school die niet meewerkt.', opdracht: 'dader', wereld: 'academie', mechaniek: 'kamer', niveau: 6 },
+  { seed: 'kamer-24', titel: 'Het grote tentamen', sub: 'Zestien bij zestien door de hele academie.', opdracht: 'dader', wereld: 'academie', mechaniek: 'kamer', niveau: 6 },
   { seed: 'kamer-25', titel: 'De langste nacht van Regenstad', sub: 'Zestien bij zestien. Niemand gaat vanavond naar huis.', opdracht: 'dader', wereld: 'noir', mechaniek: 'kamer', niveau: 6 },
 
   // ---- Vier werelden van nu ----------------------------------------------
   { seed: 'zwaluw-1', titel: 'Midden in een sprong', sub: 'Zes bemanningsleden, en net op dat moment gaan de lampen uit.', opdracht: 'dader', wereld: 'ruimteschip', mechaniek: 'kamer', niveau: 2 },
-  { seed: 'zwaluw-2', titel: 'Het holodek staat nog aan', sub: 'Negen aan boord, en eentje stond ergens alleen.', opdracht: 'dader', wereld: 'ruimteschip', mechaniek: 'kamer', niveau: 4 },
+  { seed: 'zwaluw-2', titel: 'Het holodek staat nog aan', sub: 'Negen aan boord, en de startkaart van het schip is weg.', opdracht: 'dader', wereld: 'ruimteschip', mechaniek: 'kamer', niveau: 4 },
   { seed: 'hoogstad-1', titel: 'Stroomstoring op vrijdag', sub: 'Zeven vrienden in het donker, ergens in het blok.', opdracht: 'dader', wereld: 'stad', mechaniek: 'kamer', niveau: 3 },
   { seed: 'hoogstad-2', titel: 'De laatste metro', sub: 'Twaalf bij twaalf, en de lift zit vast.', opdracht: 'dader', wereld: 'stad', mechaniek: 'kamer', niveau: 5 },
   { seed: 'klokslag-1', titel: 'Nog tien minuten', sub: 'Vijf spelers, vier kamers, en de klok tikt door.', opdracht: 'dader', wereld: 'escaperoom', mechaniek: 'kamer', niveau: 1 },
-  { seed: 'klokslag-2', titel: 'De laatste code', sub: 'Negen spelers en een kluis die al open was.', opdracht: 'dader', wereld: 'escaperoom', mechaniek: 'kamer', niveau: 4 },
+  { seed: 'klokslag-2', titel: 'De laatste code', sub: 'Negen spelers, en na afloop was er één minder.', opdracht: 'dader', wereld: 'escaperoom', mechaniek: 'kamer', niveau: 4 },
   { seed: 'zonnestraal-1', titel: 'Stilstand in het reuzenrad', sub: 'Zes bezoekers, en niemand weet wie er bovenin zat.', opdracht: 'dader', wereld: 'pretpark', mechaniek: 'kamer', niveau: 2 },
   { seed: 'zonnestraal-2', titel: 'De hele zaterdag', sub: 'Zestien bij zestien door het hele park. Neem er de tijd voor.', opdracht: 'dader', wereld: 'pretpark', mechaniek: 'kamer', niveau: 6 },
 

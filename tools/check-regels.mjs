@@ -476,6 +476,24 @@ function keurBelofte(p, entry, waar) {
   }
 
   const tekst = `${entry.titel} ${entry.sub}`;
+  // De titel staat vast, maar welke zaak het wordt volgt uit de seed. Zo
+  // stond er "zes verdachten en een lichaam" boven wat een diefstal bleek,
+  // en "Wie stond er alleen?" boven een puzzel waarin het antwoord juist
+  // de enige is die NIET alleen stond. Een titel mag de zaak dus niet
+  // tegenspreken.
+  if (p.kind === 'kamer' && p.zaak) {
+    const tegen = [
+      [/stond er (ergens )?alleen/i, 'het antwoord is juist wie niet alleen stond'],
+      [/\blo(og|gen)\b|\blieg/i, 'alle aanwijzingen zijn waar; niemand liegt'],
+    ];
+    if (p.zaak.id !== 'moord') tegen.push([/lichaam|\bdood\b|\bdode\b|vermoord|leeft niet meer|nooit meer uit/i, `het is een ${p.zaak.id}, geen moord`]);
+    if (p.zaak.id !== 'diefstal') tegen.push([/gestolen|al open was|\bat de\b/i, `het is een ${p.zaak.id}, geen diefstal`]);
+    if (p.zaak.id !== 'verdwijning') tegen.push([/zat niemand meer|niet meer gezien|kwam niet (meer )?terug|één minder/i, `het is een ${p.zaak.id}, geen verdwijning`]);
+    for (const [patroon, waarom] of tegen) {
+      const m = tekst.match(patroon);
+      eis('de titel spreekt de zaak niet tegen', !m, waar, `"${m?.[0]}": ${waarom}`);
+    }
+  }
   for (const m of tekst.matchAll(TELBAAR)) {
     const getal = TELWOORDEN[m[1].toLowerCase()];
     eis('wat de titel belooft, krijg je ook',
@@ -583,8 +601,20 @@ for (const [id, tekst] of Object.entries(aiTeksten)) {
 console.log(`  ${herschreven} puzzels met een herschreven tekst`);
 
 console.log('\nDe werelden');
+// Alle rollen uit alle werelden, zonder lidwoord: "conciërge", "dj".
+const ALLE_ROLLEN = new Set(WORLDS.flatMap((x) => [
+  ...(x.victims ?? []), ...(x.rollen?.m ?? []), ...(x.rollen?.v ?? []),
+]).map((r) => r.replace(/^de /, '').toLowerCase()));
 for (const w of WORLDS) {
   const waar = `  ${w.name}`;
+  // Wat er gestolen is, is van het slachtoffer. Noemt het ding zelf een
+  // andere eigenaar, dan stond er "Nordin, de conciërge, merkte dat de
+  // sleutelbos van de conciërge weg was": twee conciërges. En "het
+  // gestolen relikwie is gestolen" zegt het twee keer.
+  const eigenaar = (w.gestolen ?? '').match(/ van de (.+)$/)?.[1]?.toLowerCase();
+  eis('wat er gestolen is, noemt geen andere eigenaar',
+    !(eigenaar && ALLE_ROLLEN.has(eigenaar)) && !/gestolen/.test(w.gestolen ?? ''),
+    waar, w.gestolen);
   // De beginletter staat op de penning op het bord, en elke figuur in een
   // puzzel hoort er een eigen te hebben (zie regel 9 hierboven, die dat per
   // puzzel narekent). Hier staat wat de wereld daarvoor moet aanleveren.
