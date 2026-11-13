@@ -1,10 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Reconstructie">
-  <!-- Het beeldmerk: drie sporen die iedereen ziet, en een vierde dat je zelf
-       moet vinden. Vandaar drie gevulde stippen en een open vierde. -->
-  <rect width="64" height="64" rx="14" fill="#3a2e22"/>
-  <rect x="4" y="4" width="56" height="56" rx="11" fill="none" stroke="#7a6349" stroke-width="2"/>
-  <circle cx="23" cy="24" r="6" fill="#d9a235"/>
-  <circle cx="41" cy="24" r="6" fill="#d9a235"/>
-  <circle cx="23" cy="42" r="6" fill="#d9a235"/>
-  <circle cx="41" cy="42" r="6" fill="none" stroke="#d9a235" stroke-width="2.5" stroke-dasharray="3 3"/>
+  <!-- Het beeldmerk: een R getekend als muren van een plattegrond, met in de
+       kamer die de boog vormt een figuur die je terugzet. Dezelfde tegel als
+       in de kop van de site (.brand-mark): roze naar oranje. Het vorige merk,
+       drie stippen en een open vierde, hoorde bij de oude naam Het Vierde
+       Spoor; op zestien pixels las het als een dobbelsteen. -->
+  <defs>
+    <linearGradient id="tegel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff4f9a"/>
+      <stop offset="1" stop-color="#ff9f1c"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#tegel)"/>
+  <path d="M19 52 V12 H38 a11 11 0 0 1 0 22 H19 M33 34 L46 52" fill="none" stroke="#fff"
+        stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="35" cy="23" r="4.6" fill="#2a1b3d"/>
 </svg>

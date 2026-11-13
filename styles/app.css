@@ -127,8 +127,11 @@ button { font-family: inherit; }
 
 .brand-mark { display: inline-flex; color: var(--accent); }
 .brand-mark svg { display: block; }
-.brand-mark circle { fill: currentColor; }
-.brand-mark .spoor-vier { fill: none; stroke: currentColor; stroke-width: 1.8; }
+.brand-mark .r-muur {
+  fill: none; stroke: currentColor; stroke-width: 2.6;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.brand-mark .r-figuur { fill: #2a1b3d; }
 
 .nav { display: flex; gap: var(--s1); }
 

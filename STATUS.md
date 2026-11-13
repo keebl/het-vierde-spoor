@@ -42,9 +42,6 @@ standing guidance rather than state moved to `CLAUDE.md`.
 2. **An ending when you solve it.** Today the screen only says "Opgelost". The culprit
    should appear, with a closing line and a button to the next case. Biggest gap for the
    intended player.
-3. **The logo.** The mark (three dots and a fourth to find) was made for "Het Vierde
-   Spoor". It still reads as "find the missing trace", but check whether it should change
-   with the name.
 4. **Keyboard and screen reader.** Board cells are `rect` elements without focus, so the
    game cannot be played without a mouse.
 5. **Modernise the base furniture set.** Done for the present-day worlds (see Recent
