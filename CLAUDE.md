@@ -31,9 +31,9 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - AI layer worker (not deployed, see STATUS.md): Cloudflare Workers — plugin `cloudflare`
   (not signed in on 2026-11-14), `npx wrangler` (not on the PATH) — worker `vierdespoor-ai`
   per `worker/wrangler.toml`; the account listed no workers on 2026-11-14
-- Static analysis: SonarCloud — browser, sonarcloud.io — organisation `keebl`; config in
-  `.sonarcloud.properties`, but no project for this repository was listed there on
-  2026-11-14
+- Static analysis: SonarCloud — browser, sonarcloud.io (sign in: the project is not
+  visible anonymously) — project `keebl_het-vierde-spoor` in organisation `keebl`, config
+  in `.sonarcloud.properties`; results arrive as a check and a comment on each pull request
 
 ## Gotchas
 - **Read the verdict from the `volledige keuring exit=` line and the goed/FOUT table above

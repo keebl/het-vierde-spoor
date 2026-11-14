@@ -159,6 +159,9 @@ standing guidance rather than state moved to `CLAUDE.md`.
 - 2026-11-14 — `tools`: the Cloudflare plugin waits for a sign-in, `wrangler` is not on the
   PATH and the project's own `tools/cloudflare-dns.mjs` needs `.env`, which a worktree
   does not have; only the deprecated Cloudflare connector answered (0 workers).
+- 2026-11-14 — The CI template runs `npm ci` without `--ignore-scripts`; SonarCloud flags
+  that as a security issue and fails the quality gate on the first pull request that adds
+  it. Fix the template in `_workbench/templates/github/workflows/`.
 - 2026-11-14 — The pre-commit hook goes into the shared `.git/hooks`, so installing it from
   a worktree also changes the main checkout and every other worktree.
 
