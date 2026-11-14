@@ -1,5 +1,8 @@
 # Product — Reconstructie
 
+## Name
+Name: Reconstructie — final (2026-11-14)
+
 ## Problem
 The puzzle book *Murdoku* by Manuel Garand contains a finite number of deduction puzzles.
 The owner's daughter finished it and wanted more; there are no more. This project is the
@@ -14,6 +17,11 @@ elegant.
   for fun. Knows the format from the book; needs no explanation of the genre.
 - **Anyone who finds the public link** — secondary. Gets the same site; no account, no
   onboarding beyond the Uitleg page.
+
+## Why now
+She finished the book and asked for more, and there is no second volume to buy (assumption:
+no sequel is out). A generator that verifies its own puzzles is cheap to build now and gives
+her an endless supply; the longer the wait, the more likely she moves on to something else.
 
 ## Scope (what it does)
 - Generates a Reconstructie puzzle on demand: figures on a floor plan, one per row and one
@@ -54,6 +62,7 @@ elegant.
 ## Platforms
 Web only — any modern browser, phone and desktop. Static hosting on GitHub Pages. See
 `docs/ARCHITECTURE.md` for the stack.
+UI: yes
 
 ## Data, privacy and money
 - Personal data: **none**. No accounts, no analytics, no server-side storage. Only

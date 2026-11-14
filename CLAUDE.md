@@ -13,11 +13,27 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - Test (fast): `npm run check:snel` — the 3 checks that build no puzzles, ~1 second
 - Typecheck: none (plain ES modules, no TypeScript)
 - Lint / format: none configured
+- Static check in place of typecheck/lint: `npm run check:snel` — the content lint
+  (icons, room kinds, AI guard), ~1 second; read the `volledige keuring exit=` line
 - Build: none — `main` is deployed to GitHub Pages as-is
 - Where it runs: https://reconstructie.app/ (GitHub Pages; DNS at Cloudflare, set with
   `node tools/cloudflare-dns.mjs status|github-pages`, token in `.env`)
 - One puzzle as text: `node tools/show.mjs dader grid landhuis 3 demo-7`
 - Print proof as PDF (server must run): `node tools/printproef.mjs /tmp/proef "http://localhost:4173/#/puzzel/<id>"`
+
+## Tools
+<!-- One line per service: job: service — how Claude reaches it — the name here. Services and access paths: `_workbench/standard/toolbox.json`. No keys, tokens or e-mail addresses. -->
+- Code, pull requests and hosting: GitHub (incl. GitHub Pages) — `gh` CLI — repository
+  `keebl/het-vierde-spoor`, Pages from `main` `/`, custom domain `reconstructie.app`
+- DNS and registrar: Cloudflare — `node tools/cloudflare-dns.mjs` (token in `.env`), else
+  plugin `cloudflare` (waits for a sign-in via /mcp) or dash.cloudflare.com — zone
+  `reconstructie.app`
+- AI layer worker (not deployed, see STATUS.md): Cloudflare Workers — plugin `cloudflare`
+  (not signed in on 2026-11-14), `npx wrangler` (not on the PATH) — worker `vierdespoor-ai`
+  per `worker/wrangler.toml`; the account listed no workers on 2026-11-14
+- Static analysis: SonarCloud — browser, sonarcloud.io (sign in: the project is not
+  visible anonymously) — project `keebl_het-vierde-spoor` in organisation `keebl`, config
+  in `.sonarcloud.properties`; results arrive as a check and a comment on each pull request
 
 ## Gotchas
 - **Read the verdict from the `volledige keuring exit=` line and the goed/FOUT table above

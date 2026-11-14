@@ -1,6 +1,7 @@
 # Status — Reconstructie
 
 Last updated: 2026-11-11
+Live: yes (since 2026-11-13)
 
 Translated and restructured from `HANDOFF.md`, which lived at the repository root until the
 project standard was adopted; the original is in git history. The parts of it that are
@@ -50,6 +51,32 @@ standing guidance rather than state moved to `CLAUDE.md`.
    academy and Regenstad. Redrawing it is direction 2 of `specs/visual-liveliness.md` and a
    decision of its own, because it touches every world. The lesson stands either way: if a
    drawing lies, draw it. A world layer can rename things, not redraw them.
+6. **Error monitoring with Sentry** (owner's choice, 2026-11-14). Owner, in the Sentry
+   console: create a project on the free Developer plan, platform "Browser JavaScript",
+   name `reconstructie`, and set Settings → Security & Privacy → "Data Scrubber" and
+   "Prevent Storing of IP Addresses" on. Then a session adds the SDK: no build step, so
+   the loader script and its DSN sit in `index.html` (a browser DSN is public by design,
+   not a secret), with `sendDefaultPii: false` and a `beforeSend` that drops URLs' hash
+   (puzzle ids are not personal, but keep the payload minimal). In the same change: the
+   "no tracking" non-goal in `docs/PRODUCT.md`, the privacy statement in
+   `store/privacy-policy.md` and `docs/RELEASE.md` Operations must say what Sentry
+   receives — and the site must still work when the Sentry script is blocked or offline.
+7. **Uptime monitor** (owner's choice, 2026-11-14). Owner: create a free UptimeRobot
+   account, add an HTTP(s) monitor for `https://reconstructie.app/` at a 5-minute
+   interval, alert contact = the UptimeRobot phone app. Then record "UptimeRobot, free,
+   5 min, alerts to phone" under Uptime monitoring in `docs/RELEASE.md` Operations.
+
+## Risks
+- **Technical — a push to `main` is a deploy with no gate.** The keuring runs only when
+  someone starts it by hand (twelve minutes), and nothing stops a red engine from going
+  live. (assumption: until CI runs at least the fast checks on pull requests)
+- **Product — the one player loses interest.** Her verdict on the look was "dull", and a
+  solved puzzle still ends on a bare "Opgelost". If she stops asking for puzzles, the
+  project has no user. (assumption)
+- **Legal — the public repository has no licence, and the format is borrowed.** Without a
+  `LICENSE` it is "all rights reserved" by default; the README names *Murdoku* as the
+  inspiration. Puzzle rules are not protected, but the book's name, art or puzzles must
+  never be copied in. (assumption: no legal advice taken)
 
 ## Blocked / open questions
 - **Cloudflare Worker deferred.** `worker/` is written but not deployed: the free plan
@@ -59,6 +86,9 @@ standing guidance rather than state moved to `CLAUDE.md`.
   standard is "all rights reserved"; MIT only by decision (ADR).
 
 ## Recent decisions
+- 2026-11-14 — Workbench repair round: the site counts as live since 2026-11-13, the name
+  Reconstructie is final, and `LICENSE` now says "all rights reserved" (the standard's
+  default; MIT would need an ADR) — which answers the licence question below.
 - 2026-11-11 — A 16×16 board now follows entirely from its seed (`edcbd24`). `naSnoei`
   stopped after 900 ms of wall-clock time, so a busy machine or a slow phone gave the same
   link different clues; it now stops after a fixed budget of 480,000 solver steps. The
@@ -104,6 +134,36 @@ standing guidance rather than state moved to `CLAUDE.md`.
   draw time is not caught.
 - The solution sits in the page; anyone who opens the console can read it.
 - 16×16 stays cramped on a phone, even with the frame switched off.
+
+## Deferred
+- `tests` — the keuring (`tools/check-*.mjs`, `npm run check:all`) is the test suite by
+  decision (ADR-0003), and `project-check` does not count it; no separate unit tests
+  (until the monthly review)
+- `design-refs` — candidates are listed in `docs/DESIGN.md` References; the owner picks
+  three to six in a separate round (until 2026-11-28)
+- `error-monitoring` — chosen, but needs a Sentry project in the owner's console first;
+  steps in Next, item 6 (until 2026-11-28)
+
+## Workbench feedback
+- 2026-11-14 — `project-check` reports `stack: typescript` for any `package.json`; this is
+  plain JavaScript with no TypeScript, so the CI template `ci-typescript.yml` (`tsc`) did
+  not fit and was rewritten by hand.
+- 2026-11-14 — `tests` counts only `*.test.*` files or `tests/` folders; a project whose
+  test suite is `tools/check-*.mjs` (ADR-0003) can only defer the item. A `tests` path
+  setting, or reading the test command from `CLAUDE.md`, would fix it.
+- 2026-11-14 — `commands` wants a backticked command on a typecheck/lint line; "Typecheck:
+  none" is a valid answer that the check rejects, so a stand-in line had to be added.
+- 2026-11-14 — Answering the live question moved the stage from building to production in
+  one step, which doubled the round (12 new items) after the confirmation round was spent;
+  the session-start report could warn that the live answer pulls in the production items.
+- 2026-11-14 — `tools`: the Cloudflare plugin waits for a sign-in, `wrangler` is not on the
+  PATH and the project's own `tools/cloudflare-dns.mjs` needs `.env`, which a worktree
+  does not have; only the deprecated Cloudflare connector answered (0 workers).
+- 2026-11-14 — The CI template runs `npm ci` without `--ignore-scripts`; SonarCloud flags
+  that as a security issue and fails the quality gate on the first pull request that adds
+  it. Fix the template in `_workbench/templates/github/workflows/`.
+- 2026-11-14 — The pre-commit hook goes into the shared `.git/hooks`, so installing it from
+  a worktree also changes the main checkout and every other worktree.
 
 ## Health
 Version: 0.1.0 (private, unreleased) · Build: no build step — a push to `main` is a deploy ·
