@@ -9,11 +9,11 @@ standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
 - Open sessions: none (2026-11-14). The five finished sessions were archived with Guus's
-  approval. Their leftovers: mark three `rng.js` Sonar findings false positive; check the
-  hidden game types and the furniture per world; uncommitted `.env.example` change and
-  untracked `specs/paid-printing.md` in the main checkout · waiting on Guus. Open
-  Dependabot pull requests #3 (`actions/checkout` 7), #4 (`actions/setup-node` 7), #5
-  (`@anthropic-ai/sdk` 1.8.0): CI green, not reviewed, so not merged · waiting on Guus.
+  approval and their worktrees removed. Leftovers: mark three `rng.js` Sonar findings false
+  positive; check the hidden game types and the furniture per world; the uncommitted
+  `.env.example` change in the main checkout · waiting on Guus. Dependabot pull requests
+  #3, #4 and #5 (`actions/checkout` 7, `actions/setup-node` 7, `@anthropic-ai/sdk` 1.8.0)
+  merged on Guus's request with CI green; `specs/paid-printing.md` committed as a draft.
 - The site moved to its own domain on 2026-11-13: https://reconstructie.app/ (registered
   at Cloudflare Registrar, DNS at Cloudflare via `tools/cloudflare-dns.mjs`, still served
   by GitHub Pages). The old github.io address redirects there. The site is now called
@@ -151,6 +151,8 @@ standing guidance rather than state moved to `CLAUDE.md`.
   steps in Next, item 6 (until 2026-11-28)
 
 ## Workbench feedback
+- 2026-11-14 — A hook blocks reading `.env.example` (even `git diff`), so a session cannot
+  check that the placeholder file holds no secret before committing it; allow `.env.example`.
 - 2026-11-14 — `/main-session` merges only PRs that are green *and* reviewed; Dependabot
   PRs get no review, so they pile up. Decide whether green Dependabot PRs may be merged.
 - 2026-11-14 — The session-start report ran on a stale local `main` (PR #2 was merged on
