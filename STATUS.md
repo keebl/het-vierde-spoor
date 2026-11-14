@@ -8,18 +8,12 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Open sessions (intake by the main session, 2026-11-14): none working, no pull request of
-  a session open. Five idle sessions, all filed in the `Puzzels` group and finished:
-  "Website en puzzels: vrolijke kleuren voor tieners" (pull request #1 merged), "Build
-  modern worlds and honest modern drawings" (`claude/adoring-noyce-f45804`, merged; left
-  over: mark three `rng.js` Sonar findings false positive), "Make 16x16 clues independent
-  of machine load" (`claude/hopeful-mclaren-610a28`, merged as `edcbd24`), "Teksten puzzels
-  en site" (pushed as `0bbbdb4`; left over: check the hidden game types and the furniture
-  per world), "Aanwijzingen naast puzzel op pc" (new logo, pushed as `b997c41`; left over:
-  uncommitted `.env.example` change in the main checkout). Also uncommitted in the main
-  checkout: `specs/paid-printing.md` · waiting on Guus. Open Dependabot pull requests #3
-  (`actions/checkout` 7), #4 (`actions/setup-node` 7), #5 (`@anthropic-ai/sdk` 1.8.0): CI
-  green, not reviewed, so not merged · waiting on Guus.
+- Open sessions: none (2026-11-14). The five finished sessions were archived with Guus's
+  approval. Their leftovers: mark three `rng.js` Sonar findings false positive; check the
+  hidden game types and the furniture per world; uncommitted `.env.example` change and
+  untracked `specs/paid-printing.md` in the main checkout · waiting on Guus. Open
+  Dependabot pull requests #3 (`actions/checkout` 7), #4 (`actions/setup-node` 7), #5
+  (`@anthropic-ai/sdk` 1.8.0): CI green, not reviewed, so not merged · waiting on Guus.
 - The site moved to its own domain on 2026-11-13: https://reconstructie.app/ (registered
   at Cloudflare Registrar, DNS at Cloudflare via `tools/cloudflare-dns.mjs`, still served
   by GitHub Pages). The old github.io address redirects there. The site is now called
