@@ -1,0 +1,61 @@
+# CI for Reconstructie. Drafted from _workbench/templates/github/workflows/ci-typescript.yml,
+# rewritten for this project: no TypeScript, no linter, no unit-test runner — the keuring
+# (`tools/keuring.mjs`) is the test suite. Keep the commands equal to CLAUDE.md "Commands".
+#
+# The verdict is read from the `volledige keuring exit=` line, not from npm's exit code:
+# `npm run` can report green while a check was red (CLAUDE.md, Gotchas).
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  snel:
+    name: keuring (fast, 3 checks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm ci
+      - name: Fast keuring
+        run: |
+          npm run check:snel 2>&1 | tee keuring.txt
+          grep -q 'volledige keuring exit=0' keuring.txt
+
+  volledig:
+    name: keuring (all 7 checks)
+    # Twelve minutes on an idle laptop; a hosted runner is slower. Pull requests only, so a
+    # push to main is not held up by a second full run of what the pull request already ran.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm ci
+      - name: Full keuring
+        run: |
+          npm run check:all 2>&1 | tee keuring.txt
+          grep -q 'volledige keuring exit=0' keuring.txt
+
+  secrets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks
+        run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 git /repo --redact --no-banner

@@ -1,0 +1,13 @@
+# Dependabot: one npm dependency (@anthropic-ai/sdk, tooling only) and the GitHub Actions
+# used by .github/workflows/ci.yml. Weekly, so the pull requests stay few.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
