@@ -10,8 +10,8 @@ standing guidance rather than state moved to `CLAUDE.md`.
 ## Now
 - Open sessions: none (2026-11-14). The five finished sessions were archived with Guus's
   approval and their worktrees removed. Leftovers: mark three `rng.js` Sonar findings false
-  positive; check the hidden game types and the furniture per world; the uncommitted
-  `.env.example` change in the main checkout · waiting on Guus. Dependabot pull requests
+  positive; check the hidden game types and the furniture per world. `.env.example`
+  committed on 2026-11-15 after Guus confirmed it holds only placeholders. Dependabot pull requests
   #3, #4 and #5 (`actions/checkout` 7, `actions/setup-node` 7, `@anthropic-ai/sdk` 1.8.0)
   merged on Guus's request with CI green; `specs/paid-printing.md` committed as a draft.
 - The site moved to its own domain on 2026-11-13: https://reconstructie.app/ (registered
