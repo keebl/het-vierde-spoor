@@ -73,14 +73,15 @@ standing guidance rather than state moved to `CLAUDE.md`.
    5 min, alerts to phone" under Uptime monitoring in `docs/RELEASE.md` Operations.
 
 ## Risks
-- **Technical — a push to `main` is a deploy with no gate.** The keuring runs only when
-  someone starts it by hand (twelve minutes), and nothing stops a red engine from going
-  live. (assumption: until CI runs at least the fast checks on pull requests)
+- **Technical — a direct push to `main` is a deploy with no gate.** Since 2026-11-14 CI
+  runs the keuring on every pull request, but commits pushed straight to `main` (most
+  work so far) skip it, so a red engine can still go live. (assumption: until engine
+  changes always go through a pull request)
 - **Product — the one player loses interest.** Her verdict on the look was "dull", and a
   solved puzzle still ends on a bare "Opgelost". If she stops asking for puzzles, the
   project has no user. (assumption)
-- **Legal — the public repository has no licence, and the format is borrowed.** Without a
-  `LICENSE` it is "all rights reserved" by default; the README names *Murdoku* as the
+- **Legal — the format is borrowed.** `LICENSE` says "all rights reserved" (2026-11-14);
+  the README names *Murdoku* as the
   inspiration. Puzzle rules are not protected, but the book's name, art or puzzles must
   never be copied in. (assumption: no legal advice taken)
 
@@ -88,8 +89,6 @@ standing guidance rather than state moved to `CLAUDE.md`.
 - **Cloudflare Worker deferred.** `worker/` is written but not deployed: the free plan
   gives 10 ms CPU per request and verifying a puzzle costs up to three seconds. Works on
   the paid plan (~$5/month) or a host with a higher limit. Deliberately postponed.
-- **TODO(guus): licence.** The repository is public and has no `LICENSE`. Default per the
-  standard is "all rights reserved"; MIT only by decision (ADR).
 
 ## Recent decisions
 - 2026-11-14 — Workbench repair round: the site counts as live since 2026-11-13, the name
