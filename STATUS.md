@@ -8,7 +8,8 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Open sessions: none (2026-11-14). The five finished sessions were archived with Guus's
+- Open sessions (2026-11-15): "Spec: ontknoping na het oplossen" (writes
+  `specs/solved-ending.md` with Guus, docs PR to follow) · working. Earlier, 2026-11-14: The five finished sessions were archived with Guus's
   approval and their worktrees removed. Leftovers (the three `rng.js` Sonar findings
   were already marked false positive on 2026-11-12): check the hidden game types and the furniture per world. `.env.example`
   committed on 2026-11-15 after Guus confirmed it holds only placeholders. Dependabot pull requests
