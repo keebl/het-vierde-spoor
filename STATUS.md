@@ -8,7 +8,14 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Open sessions (2026-11-16): none working. All three sessions finished and their pull
+- Open sessions (2026-11-16, later): "Build specs/clues-on-phone.md" (`local_0ebd3844…`),
+  branch `claude/clues-on-phone-b8abcd`, PR #10 open, CI pending — merge when green
+  (reviewer findings handled). "Fix: victim gets no linked clue" (`local_9c52134a…`), branch
+  `claude/victim-no-clue-010ea9`, no PR yet — Guus chose option A (no clue names the
+  victim at all; every room puzzle link shifts); waits on its keuring, then push and PR.
+  Rule from mission control: one full keuring at a time across sessions.
+  `.claude/settings.json` env deny rules narrowed (`7f84e7d`); `.env.example` readable.
+- Earlier the same day: none working. All three sessions finished and their pull
   requests are merged (squash, CI green on all four checks): #9 the ending sheet, the
   next-case order across levels and a permanent "Volgende puzzel" button (`9c2ed7f`,
   tested in CI on top of #7); #7 the suspect palette with a "Neerzetten" mode and every
