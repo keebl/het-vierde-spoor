@@ -13,7 +13,7 @@ import { kamerParams } from './engine/difficulty.js';
 import { zinVoor, namenIn } from './content/rooms-text.js';
 import { soortVan, meubelsVoor, vormVan } from './content/kamersoorten.js';
 import { makeRng } from './engine/rng.js';
-import { ZAKEN } from './content/zaken.js';
+import { ZAKEN, stilSlot } from './content/zaken.js';
 import { geslachtVan } from './content/namen.js';
 
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
@@ -418,6 +418,13 @@ function buildKamerPuzzle({ world, settings }) {
     zaak: {
       id: zaak.id, merk: zaak.merk, rolwoord: zaak.rolwoord,
       antwoordwoord: zaak.antwoordwoord, regel: zaak.regel,
+      // De slotzin van de ontknoping, met een eigen trekking: uit zRng
+      // trekken zou de volgende puzzelwoorden verschuiven, en dan geeft
+      // een bestaande link een ander bord.
+      slot: makeRng(`${seed}:ontknoping`).pick(zaak.slot)(
+        namen[gen.dader], slachtofferNaam, zelfde, world.gestolen,
+      ),
+      stil: stilSlot(zaak),
     },
     // het bord
     n: gen.rooster.n,

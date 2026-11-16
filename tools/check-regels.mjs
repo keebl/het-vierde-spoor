@@ -464,6 +464,43 @@ const MAAT = new RegExp(
   'gi'
 );
 
+// Woorden die een zaak tegenspreken. De titel heeft ze het eerst nodig
+// gehad, de slotzin van de ontknoping net zo goed: "Niemand anders stond
+// bij Mathilde. De zaak is gesloten" boven een diefstal mag, maar "het
+// lichaam" in een verdwijning niet. Eén tabel, zodat een nieuw verboden
+// woord voor allebei geldt.
+function tegenspraak(zaakId) {
+  const tegen = [
+    [/stond er (ergens )?alleen/i, 'het antwoord is juist wie niet alleen stond'],
+    [/\blo(og|gen)\b|\blieg/i, 'alle aanwijzingen zijn waar; niemand liegt'],
+  ];
+  if (zaakId !== 'moord') tegen.push([/lichaam|\bdood\b|\bdode\b|vermoord|leeft niet meer|nooit meer uit/i, `het is een ${zaakId}, geen moord`]);
+  if (zaakId !== 'diefstal') tegen.push([/gestolen|al open was|\bat de\b|\bdief\b/i, `het is een ${zaakId}, geen diefstal`]);
+  if (zaakId !== 'verdwijning') tegen.push([/zat niemand meer|niet meer gezien|kwam niet (meer )?terug|één minder|het laatst gezien/i, `het is een ${zaakId}, geen verdwijning`]);
+  return tegen;
+}
+
+// De slotzin van de ontknoping: wat je te lezen krijgt als je de puzzel
+// hebt opgelost. Hij volgt uit de seed, dus hij wordt hier voor elke
+// Reconstructie gebouwd en nagerekend zoals de titel. Hij noemt het
+// antwoord en het slachtoffer bij naam en nooit met "hij" of "zij": het
+// slachtoffer is net zo vaak een vrouw (zie de opmerking boven ZAKEN).
+function keurSlot(p, waar) {
+  const slot = p.zaak?.slot;
+  const stil = p.zaak?.stil;
+  if (!eis('een opgeloste zaak heeft een slotzin', typeof slot === 'string' && slot.length > 0, waar)) return;
+  eis('een opgeloste zaak heeft een stille slotzin', typeof stil === 'string' && stil.length > 0, waar);
+  keurZin(slot, waar, [p.question.answer, p.slachtofferNaam]);
+  for (const [patroon, waarom] of tegenspraak(p.zaak.id)) {
+    const m = slot.match(patroon);
+    eis('de slotzin past bij de zaak', !m, waar, `"${m?.[0]}": ${waarom} — ${slot}`);
+  }
+  eis('de slotzin noemt het antwoord bij naam', slot.includes(p.question.answer), waar, slot);
+  eis('de slotzin noemt het slachtoffer bij naam', slot.includes(p.slachtofferNaam), waar, slot);
+  const voornaamwoord = slot.match(/\b(hij|hem|zij|haar)\b/i);
+  eis('de slotzin zegt geen hij, hem, zij of haar', !voornaamwoord, waar, `"${voornaamwoord?.[0]}" in: ${slot}`);
+}
+
 function keurBelofte(p, entry, waar) {
   const echte = new Set([p.clues.length]);
   if (p.kind === 'kamer') {
@@ -482,14 +519,7 @@ function keurBelofte(p, entry, waar) {
   // de enige is die NIET alleen stond. Een titel mag de zaak dus niet
   // tegenspreken.
   if (p.kind === 'kamer' && p.zaak) {
-    const tegen = [
-      [/stond er (ergens )?alleen/i, 'het antwoord is juist wie niet alleen stond'],
-      [/\blo(og|gen)\b|\blieg/i, 'alle aanwijzingen zijn waar; niemand liegt'],
-    ];
-    if (p.zaak.id !== 'moord') tegen.push([/lichaam|\bdood\b|\bdode\b|vermoord|leeft niet meer|nooit meer uit/i, `het is een ${p.zaak.id}, geen moord`]);
-    if (p.zaak.id !== 'diefstal') tegen.push([/gestolen|al open was|\bat de\b/i, `het is een ${p.zaak.id}, geen diefstal`]);
-    if (p.zaak.id !== 'verdwijning') tegen.push([/zat niemand meer|niet meer gezien|kwam niet (meer )?terug|één minder/i, `het is een ${p.zaak.id}, geen verdwijning`]);
-    for (const [patroon, waarom] of tegen) {
+    for (const [patroon, waarom] of tegenspraak(p.zaak.id)) {
       const m = tekst.match(patroon);
       eis('de titel spreekt de zaak niet tegen', !m, waar, `"${m?.[0]}": ${waarom}`);
     }
@@ -520,7 +550,7 @@ function keur(settings, waar, entry = null) {
   gekeurd++;
   keurAlgemeen(p, waar);
   if (entry) keurBelofte(p, entry, waar);
-  if (p.kind === 'kamer') keurKamer(p, waar);
+  if (p.kind === 'kamer') { keurKamer(p, waar); keurSlot(p, waar); }
   else if (p.kind === 'assign') keurAssign(p, waar);
   else keurLatin(p, waar);
 
