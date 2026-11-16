@@ -8,12 +8,13 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Open sessions (2026-11-16), all started by the main session, each in its own worktree:
-  "Bouw: ontknoping en volgende zaak" (builds `specs/solved-ending.md`, asks Guus about
-  level progression and a permanent next-puzzle button) · working; "Palet: invulstand
-  zichtbaar, verdachten in twee rijen" · working; "Spec: aanwijzingen lezen op de
-  telefoon" (writes `specs/clues-on-phone.md`) · working. The spec session for the ending
-  is archived (pull request #6 merged).
+- Open sessions (2026-11-16): none working. All three sessions finished and their pull
+  requests are merged (squash, CI green on all four checks): #9 the ending sheet, the
+  next-case order across levels and a permanent "Volgende puzzel" button (`9c2ed7f`,
+  tested in CI on top of #7); #7 the suspect palette with a "Neerzetten" mode and every
+  suspect in view on a phone (`b3930d7`); #8 the approved spec `specs/clues-on-phone.md`
+  (`0ef6da1`, not built). Not verified: the print proof of the ending sheet (the sandbox
+  blocked Brave) · waiting on Guus.
   Earlier, 2026-11-14: The five finished sessions were archived with Guus's
   approval and their worktrees removed. Leftovers (the three `rng.js` Sonar findings
   were already marked false positive on 2026-11-12): check the hidden game types and the furniture per world. `.env.example`
@@ -166,6 +167,11 @@ standing guidance rather than state moved to `CLAUDE.md`.
   steps in Next, item 6 (until 2026-11-28)
 
 ## Workbench feedback
+- 2026-11-16 — `/main-session` says "merge"; this repository now allows squash merges only,
+  so `gh pr merge --merge` fails. Detect the allowed method before merging.
+- 2026-11-16 — Two PRs touching the same file were each green against the old `main`;
+  the main session had to update the second branch and wait a full CI run again. The
+  skill could say: after merging one, update the next before merging.
 - 2026-11-14 — A hook blocks reading `.env.example` (even `git diff`), so a session cannot
   check that the placeholder file holds no secret before committing it; allow `.env.example`.
 - 2026-11-14 — `/main-session` merges only PRs that are green *and* reviewed; Dependabot
