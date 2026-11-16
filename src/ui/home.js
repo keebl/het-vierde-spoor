@@ -15,9 +15,9 @@
 import { el } from './boards.js';
 import { ZICHTBARE_LEVEL_IDS, LEVELS, KAMER_LEVELS } from '../engine/difficulty.js';
 import { laatsteNiveau, zetNiveau } from './state.js';
-import { puzzleId, buildPuzzle, wereldVoorSeed } from '../puzzle.js';
+import { puzzleId, buildPuzzle } from '../puzzle.js';
+import { nieuwePuzzel } from './volgende.js';
 import { renderKamerbord } from './board-rooms.js';
-import { randomSeed } from '../engine/rng.js';
 import { bordminiatuur, stapplaatje } from './bordminiatuur.js';
 import { genreStijl } from './genre.js';
 import { WORLD_BY_ID } from '../content/worlds.js';
@@ -39,20 +39,6 @@ const STAPPEN = [
     tekst: 'Wat overblijft is het antwoord. Vastgelopen? Een hint geeft je geen stukje oplossing maar een extra aanwijzing, gekozen op wat je er vanaf jouw bord mee kunt.',
   },
 ];
-
-// Elke druk op de knop een ander decor. Welke dat wordt volgt uit de seed
-// en niet uit een tweede loting - zo geeft dezelfde link altijd dezelfde
-// puzzel terug. Zie wereldVoorSeed in puzzle.js.
-function nieuwePuzzel(niveau) {
-  const seed = randomSeed();
-  return puzzleId({
-    opdracht: 'dader',
-    wereld: wereldVoorSeed(seed),
-    mechaniek: 'kamer',
-    niveau,
-    seed,
-  });
-}
 
 export function renderHome(mount) {
   let niveau = laatsteNiveau();
