@@ -2,6 +2,11 @@
 //
 //   node tools/printproef.mjs <uitmap> <url>...
 //   node tools/printproef.mjs /tmp/proef "http://localhost:4173/#/puzzel/dader.noir.kamer.4.kamer-18"
+//   node tools/printproef.mjs --klik Oplossing /tmp/proef "<url>"
+//
+// --klik <knoptekst>: druk na het laden op de knop met die tekst. Het
+// profiel is leeg, dus een opgeloste puzzel (met de ontknoping open) krijg
+// je alleen zo op papier; zonder deze optie bleef die proef liggen.
 //
 // Waarom zo en niet met `--print-to-pdf`: die bleef hangen, omdat de pagina
 // nooit stilvalt (animaties, de regen in de sfeerplaat) en de virtuele klok
@@ -17,9 +22,12 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-const [uit, ...urls] = process.argv.slice(2);
+const args = process.argv.slice(2);
+let klik = null;
+if (args[0] === '--klik') { klik = args[1]; args.splice(0, 2); }
+const [uit, ...urls] = args;
 if (!uit || !urls.length) {
-  console.error('gebruik: node tools/printproef.mjs <uitmap> <url>...');
+  console.error('gebruik: node tools/printproef.mjs [--klik <knoptekst>] <uitmap> <url>...');
   process.exit(1);
 }
 mkdirSync(uit, { recursive: true });
@@ -62,6 +70,14 @@ try {
   for (const [n, url] of urls.entries()) {
     await stuur('Page.navigate', { url });
     await wacht(5000);
+    if (klik) {
+      const r = await stuur('Runtime.evaluate', {
+        expression: `(() => { const k = [...document.querySelectorAll('button')].find((b) => b.textContent.trim() === ${JSON.stringify(klik)}); k?.click(); return !!k; })()`,
+        returnByValue: true,
+      });
+      if (!r.result?.result?.value) console.log('geen knop', JSON.stringify(klik), url);
+      await wacht(2000);
+    }
     // A4 in inches; de marges komen uit @page in app.css.
     const r = await stuur('Page.printToPDF', { preferCSSPageSize: true, printBackground: true, paperWidth: 8.27, paperHeight: 11.69 });
     if (!r.result) { console.log('fout', url, JSON.stringify(r.error)); continue; }
