@@ -96,7 +96,7 @@ export function renderPlayer(puzzle, mount) {
     // achteraan. Alleen bordacties - een naam of stand kiezen, een
     // aanwijzing wegstrepen of een hint vragen gaan er niet in.
     geschiedenis: Array.isArray(saved.geschiedenis)
-      ? saved.geschiedenis.filter((f) => typeof f === 'string').slice(-TERUG_MAX)
+      ? saved.geschiedenis.filter(isBordFoto).slice(-TERUG_MAX)
       : [],
   };
 
@@ -244,10 +244,11 @@ export function renderPlayer(puzzle, mount) {
     // bord ook echt verandert, is een stap terug waard. Een figuur alleen
     // aantikken om hem vast te pakken verandert niets.
     const voor = puzzle.kind === 'kamer' && args[0] !== null ? bordFoto(state) : null;
+    const voorTekst = voor && JSON.stringify(voor);
     if (puzzle.kind === 'latin') cycleLatin(puzzle, state, ...args);
     else if (puzzle.kind === 'kamer') zetNeer(puzzle, state, ...args);
     else cycleMark(puzzle, state, ...args);
-    if (voor !== null && voor !== bordFoto(state)) {
+    if (voor && voorTekst !== JSON.stringify(bordFoto(state))) {
       state.geschiedenis = [...state.geschiedenis, voor].slice(-TERUG_MAX);
     }
     state.wrong = new Set();
@@ -415,10 +416,14 @@ export function renderPlayer(puzzle, mount) {
   // tekstveld, waar het van de browser is; zonder Shift, want dat is
   // opnieuw doen, en dat is er niet.
   if (puzzle.kind === 'kamer') {
+    // Ingedrukt houden herhaalt niet: dat veegde in een tel dertig stappen
+    // weg. En niet terwijl het blad van de ontknoping openstaat, want dan
+    // verandert het bord erachter zonder dat je het ziet.
     const opToets = (e) => {
       if (!play.isConnected) { document.removeEventListener('keydown', opToets); return; }
-      if (e.key.toLowerCase() !== 'z' || e.shiftKey || e.altKey || !(e.ctrlKey || e.metaKey)) return;
+      if ((e.key ?? '').toLowerCase() !== 'z' || e.shiftKey || e.altKey || !(e.ctrlKey || e.metaKey)) return;
       if (e.target.closest?.('input, textarea, select, [contenteditable="true"]')) return;
+      if (e.repeat || document.querySelector('dialog[open]')) { e.preventDefault(); return; }
       e.preventDefault();
       actions.terug();
     };
@@ -1137,19 +1142,33 @@ function zetNeer(puzzle, state, cel, keuze) {
 // Wat Terug terugzet: alleen het bord zelf. De automatische kruisjes en de
 // verborgen schetsletters zitten er niet in, want het bord leidt die bij
 // elke tekening af uit plaats - ze gaan dus vanzelf mee terug.
+//
+// Een foto is een gewoon object, geen JSON-tekst: tekst in de bewaarde
+// voortgang wordt nog een keer gecodeerd, met een schuine streep voor elk
+// aanhalingsteken, en die opslag is gedeeld door 120 puzzels.
 function bordFoto(state) {
-  return JSON.stringify({
-    plaats: state.plaats,
+  return {
+    plaats: { ...state.plaats },
     kruis: [...state.kruis].sort((a, b) => a - b),
-    schets: state.schets,
-  });
+    schets: Object.fromEntries(Object.entries(state.schets).map(([cel, l]) => [cel, [...l]])),
+  };
+}
+
+// Wat uit localStorage komt, kan van alles zijn. Een foto die niet klopt
+// wordt bij het laden overgeslagen, niet bij Terug pas ontdekt.
+function isBordFoto(f) {
+  return f != null && typeof f === 'object'
+    && f.plaats != null && typeof f.plaats === 'object' && !Array.isArray(f.plaats)
+    && Array.isArray(f.kruis) && f.kruis.every(Number.isInteger)
+    && f.schets != null && typeof f.schets === 'object' && !Array.isArray(f.schets)
+    && Object.values(f.schets).every((l) => Array.isArray(l) && l.every(Number.isInteger))
+    && Object.values(f.plaats).every(Number.isInteger);
 }
 
 function zetBordTerug(state, foto) {
-  const { plaats, kruis, schets } = JSON.parse(foto);
-  state.plaats = plaats ?? {};
-  state.kruis = new Set(kruis ?? []);
-  state.schets = schets ?? {};
+  state.plaats = { ...foto.plaats };
+  state.kruis = new Set(foto.kruis);
+  state.schets = Object.fromEntries(Object.entries(foto.schets).map(([cel, l]) => [cel, [...l]]));
 }
 
 function fillSolution(puzzle, state) {
