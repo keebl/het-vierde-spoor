@@ -11,6 +11,8 @@ import { buildPuzzle } from '../src/puzzle.js';
 import { countSolutions } from '../src/engine/assign.js';
 import { countLatinSolutions } from '../src/engine/latin.js';
 import { telPlaatsingen } from '../src/engine/rooms.js';
+import { extraAanwijzing } from '../src/engine/generate-rooms.js';
+import { makeRng } from '../src/engine/rng.js';
 import { LEVEL_IDS, levelParams } from '../src/engine/difficulty.js';
 
 const combos = [];
@@ -59,12 +61,20 @@ for (const { a, m, w, l } of combos) {
       // Waar het lichaam ligt moet je uitpuzzelen: geen aanwijzing mag de
       // kamer van het slachtoffer rechtstreeks noemen, en geen aanwijzing mag
       // zeggen wie er bij hem stond.
+      // En sinds 2026-11-16 noemt geen enkele aanwijzing het slachtoffer:
+      // het kreeg in elke puzzel een eigen rijtje in de lijst, alsof het een
+      // verdachte was. Zijn plek volgt uit de rest.
       for (const c of p._ruwe) {
+        if (c.p === p.slachtofferIdx || c.q === p.slachtofferIdx) problems.push(`noemt het slachtoffer: ${c.soort}`);
         if (c.soort === 'kamer' && c.ja && c.p === p.slachtofferIdx) problems.push('verraadt waar het lichaam ligt');
         if (c.soort === 'zelfdeKamer' && c.ja && (c.p === p.slachtofferIdx || c.q === p.slachtofferIdx)) {
           problems.push('verraadt de dader');
         }
       }
+      // De hint komt uit dezelfde vijver, maar pas tijdens het spelen. Die
+      // regel moet dus ook voor de eerste hint van een leeg bord gelden.
+      const hint = extraAanwijzing(p._rooster, p.oplossing, p.slachtofferIdx, p._ruwe, [], makeRng(`${p.id}:keuringhint`));
+      if (hint && (hint.p === p.slachtofferIdx || hint.q === p.slachtofferIdx)) problems.push(`hint noemt het slachtoffer: ${hint.soort}`);
       for (const c of p.clues) {
         if (!c.text || /undefined|NaN/.test(c.text)) problems.push(`rare zin: ${c.text}`);
       }

@@ -6,7 +6,8 @@
 //
 // Het slachtoffer is zelf een van de figuren op het bord. Waar het lichaam
 // ligt moet je dus net zo goed uitpuzzelen, en pas als alles staat zie je wie
-// er als enige bij in de kamer stond.
+// er als enige bij in de kamer stond. Geen aanwijzing noemt het slachtoffer:
+// zijn plek is wat overblijft (zie zet() in bouwVijver).
 //
 // Een extra regel: geen enkele aanwijzing mag de dader rechtstreeks noemen.
 // "X stond in dezelfde kamer als het slachtoffer" is daarom verboden - dat is
@@ -25,6 +26,13 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten) {
   const vijver = [];
   const zet = (soort, c) => {
     if (!gewichten[soort]) return;
+    // Over het slachtoffer wordt niets gezegd, ook niet in de aanwijzing van
+    // een ander ("Bram stond ten noorden van Max"). Elke puzzel gaf het
+    // slachtoffer een eigen rijtje aanwijzingen, en dat leest alsof het een
+    // verdachte is (de dochter, 2026-11-16). Waar het lichaam ligt volgt
+    // nu uit de rest: het vakje dat over is als alle anderen staan, en de
+    // tellingen, die over iedereen gaan en dus mogen blijven.
+    if (c.p === slachtofferIdx || c.q === slachtofferIdx) return;
     vijver.push({ ...c, soort, gewicht: gewichten[soort] });
   };
 
