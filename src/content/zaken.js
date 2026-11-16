@@ -16,6 +16,10 @@
 //   opdracht      drie toonaarden, want dezelfde zin bij elke zaak leest
 //                 als een herhaling
 //   vraag         wat er in het vak "De vraag" komt te staan
+//   slot          de slotzin van de ontknoping, als je hem zelf hebt
+//                 opgelost; drie stuks, gekozen met een eigen trekking
+//   stil          de zin als je de oplossing hebt laten zien: geen feest,
+//                 wel een uitnodiging voor de volgende
 //
 // `ding` is wat er gestolen is; dat staat per wereld in `gestolen`.
 
@@ -33,6 +37,11 @@ export const ZAKEN = [
     antwoordwoord: 'de dader',
     regel: 'Het slachtoffer staat zelf ook ergens op het bord. Wie als enige bij het slachtoffer in dezelfde kamer blijkt te staan, is de dader.',
     vraag: (naam, zelfde) => `Wie stond er als enige bij ${naam} ${zelfde}?`,
+    slot: [
+      (dader, naam, zelfde) => `${dader} stond als enige bij ${naam} ${zelfde}. De zaak is gesloten.`,
+      (dader, naam) => `Het klopt: ${dader} was de enige bij ${naam}. ${dader} heeft het gedaan.`,
+      (dader, naam, zelfde) => `Niemand anders stond bij ${naam} ${zelfde}. ${dader} is de dader.`,
+    ],
     opdracht: [
       (naam, rol, zelfde) => `${naam}, ${rol}, is dood gevonden. Niemand weet nog wie waar stond, en ook niet waar ${naam} lag. Zet iedereen terug op het bord. Wie dan als enige bij ${naam} ${zelfde} staat, is de dader.`,
       (naam, rol, zelfde) => `${naam}, ${rol}, is vermoord. Zet alle figuren terug op het bord, ${naam} ook. Wie als enige bij ${naam} ${zelfde} uitkomt, heeft het gedaan.`,
@@ -46,6 +55,11 @@ export const ZAKEN = [
     antwoordwoord: 'de laatste getuige',
     regel: 'De vermiste staat zelf ook ergens op het bord. Wie als enige bij de vermiste in dezelfde kamer blijkt te staan, heeft de vermiste het laatst gezien.',
     vraag: (naam, zelfde) => `Wie stond er als enige bij ${naam} ${zelfde}?`,
+    slot: [
+      (dader, naam, zelfde) => `${dader} stond als enige bij ${naam} ${zelfde}. ${dader} heeft ${naam} het laatst gezien.`,
+      (dader, naam) => `Het spoor van ${naam} loopt naar ${dader}: de enige die ${naam} nog sprak.`,
+      (dader, naam, zelfde) => `Niemand anders was bij ${naam} ${zelfde}. ${dader} weet meer.`,
+    ],
     opdracht: [
       (naam, rol, zelfde) => `${naam}, ${rol}, is sindsdien zoek. Niemand weet nog wie waar stond, en ook niet waar ${naam} was. Zet iedereen terug op het bord. Wie dan als enige bij ${naam} ${zelfde} staat, heeft ${naam} het laatst gezien.`,
       (naam, rol, zelfde) => `Niemand heeft ${naam}, ${rol}, daarna nog gezien. Zet alle figuren terug op het bord, ${naam} ook. Wie als enige bij ${naam} ${zelfde} uitkomt, was de laatste die ${naam} sprak.`,
@@ -59,6 +73,11 @@ export const ZAKEN = [
     antwoordwoord: 'de dief',
     regel: 'De bestolene staat zelf ook ergens op het bord. Wie als enige bij de bestolene in dezelfde kamer blijkt te staan, heeft het weggenomen.',
     vraag: (naam, zelfde) => `Wie stond er als enige bij ${naam} ${zelfde}?`,
+    slot: [
+      (dader, naam, zelfde, ding) => `${dader} stond als enige bij ${naam} ${zelfde}. ${dader} heeft ${ding}.`,
+      (dader, naam) => `Het klopt: ${dader} was de enige bij ${naam}. ${dader} is de dief.`,
+      (dader, naam, zelfde, ding) => `Niemand anders kwam bij ${naam} ${zelfde}. Zoek ${ding} maar bij ${dader}.`,
+    ],
     opdracht: [
       (naam, rol, zelfde, ding) => `${naam}, ${rol}, had ${ding} bij zich, en nu is het weg. Niemand weet nog wie waar stond. Zet iedereen terug op het bord. Wie dan als enige bij ${naam} ${zelfde} staat, heeft het gepakt.`,
       // Niet "${ding} van ${naam}": veel dingen hebben al een eigenaar in de
@@ -68,5 +87,10 @@ export const ZAKEN = [
     ],
   },
 ];
+
+// De stille slotzin: je hebt op Oplossing gedrukt. Dan geen "het klopt",
+// want jij hebt het niet gevonden - wel wie het was, en een duwtje naar de
+// volgende.
+export const stilSlot = (zaak) => `Dit was ${zaak.antwoordwoord}. De volgende vind je zelf?`;
 
 export const ZAAK_BY_ID = new Map(ZAKEN.map((z) => [z.id, z]));

@@ -9,6 +9,16 @@ day the changelog was introduced; everything before that is in git history only.
 
 ## [Unreleased]
 
+### Added
+- Solving a Reconstructie now ends the case: a sheet slides over the board with the
+  answer's portrait, name and role, one closing line that fits the case (murder,
+  disappearance or theft), a little confetti and a "Volgende zaak" button. After
+  Oplossing the sheet is quieter. It opens again when you reopen a solved case, and an
+  "Ontknoping" button brings it back after closing.
+- A "Volgende puzzel" button next to Controleer and Printen. Both it and "Volgende zaak"
+  follow the library's order: the next unsolved case of your level, then the first
+  unsolved case of the next level.
+
 ### Changed
 - The bar above the board has three modes, Neerzetten, Schetsen and Uitsluiten, of which
   exactly one is on and shown filled and bold. Placing a suspect used to be what you had

@@ -10,6 +10,9 @@ import { solvedIds, onthuldIds, bewaardePuzzels } from './state.js';
 import { puzzleId, parsePuzzleId } from '../puzzle.js';
 import { WORLD_BY_ID } from '../content/worlds.js';
 import { catalogSettings } from '../content/catalog.js';
+// Alleen de Reconstructies; dezelfde lijst waar "Volgende zaak" doorheen
+// loopt (zie volgende.js).
+import { TEZIEN } from './volgende.js';
 
 // Twee keuzelijsten is genoeg. 'Soort spel' is eruit omdat er voorlopig maar
 // één soort te zien is, en 'Wat je uitzoekt' omdat dat bijna altijd hetzelfde
@@ -21,8 +24,6 @@ const FILTERS = [
   { key: 'niveau', label: 'Moeilijkheidsgraad', opties: () => ZICHTBARE_LEVEL_IDS.map((l) => [String(l), `${l} - ${LEVELS[l].label}`]) },
 ];
 
-// Alleen de Reconstructies. Zie ZICHTBARE_MECHANICS in assignments.js.
-const TEZIEN = CATALOG.filter((p) => mechaniekZichtbaar(p.mechaniek) && ZICHTBARE_LEVEL_IDS.includes(p.niveau));
 
 // Het decorfilter blijft wel werken via de link (#/puzzels?wereld=noir), want
 // de tegels op de voorpagina wijzen daarheen.
