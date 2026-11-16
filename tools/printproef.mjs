@@ -36,6 +36,15 @@ try {
   for (let i = 0; i < 40 && !lijst; i++) {
     try { lijst = await (await fetch(`http://127.0.0.1:${poort}/json`)).json(); } catch { await wacht(250); }
   }
+  // Kwam de browser niet op, zeg dat dan, in plaats van een TypeError. In
+  // de Bash-sandbox van een Claude-sessie gebeurt dat altijd (geen
+  // Mach-poort voor Chromium); daar is tools/printweergave.js het
+  // alternatief.
+  if (!lijst) {
+    console.error(`${browser} kwam niet op (poort ${poort}). In een sandbox: gebruik tools/printweergave.js.`);
+    proc.kill();
+    process.exit(1);
+  }
   const ws = new WebSocket(lijst.find((t) => t.type === 'page').webSocketDebuggerUrl);
   await new Promise((r) => ws.addEventListener('open', r));
   let id = 0;

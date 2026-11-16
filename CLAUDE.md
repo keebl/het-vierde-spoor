@@ -20,6 +20,7 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
   `node tools/cloudflare-dns.mjs status|github-pages`, token in `.env`)
 - One puzzle as text: `node tools/show.mjs dader grid landhuis 3 demo-7`
 - Print proof as PDF (server must run): `node tools/printproef.mjs /tmp/proef "http://localhost:4173/#/puzzel/<id>"`
+  — not inside the session sandbox; there, `tools/printweergave.js` in the browser pane
 
 ## Tools
 <!-- One line per service: job: service — how Claude reaches it — the name here. Services and access paths: `_workbench/standard/toolbox.json`. No keys, tokens or e-mail addresses. -->
@@ -63,7 +64,10 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - **Check printing with a PDF, not by reasoning about `@media print`.** Headless
   `--print-to-pdf` hangs on this site (the scene never stops animating, so virtual time
   never runs out) and macOS has no `timeout`; use `tools/printproef.mjs`, which drives
-  Brave over DevTools. A closed `<details>` prints only its summary.
+  Brave over DevTools. A closed `<details>` prints only its summary. **Brave cannot start
+  inside a session's Bash sandbox**; there, paste `tools/printweergave.js` into the
+  browser pane (it shows the `@media print` rules on screen, not the page breaks) and
+  leave the PDF to the owner's terminal.
 - **The API key is never read, echoed or committed.** `.env` is git-ignored; the owner
   types the key himself.
 
