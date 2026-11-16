@@ -660,9 +660,28 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
   // Potloodnotities: de beginletters van iedereen die hier nog zou kunnen
   // staan. Je legt niets vast, je houdt alleen bij wat je al weet - precies
   // wat je bij een puzzel op papier in de hoek van een vakje zou krabbelen.
+  //
+  // Een letter die een geplaatste figuur onmogelijk maakt, staat er niet:
+  // de letter van wie al ergens anders staat, en de letter van iemand in de
+  // rij of kolom van een ander (één verdachte per rij en per kolom). Een
+  // tester (2026-11-16) liet ze anders zelf staan en las dan haar eigen
+  // notities verkeerd. Ze worden verborgen, niet gewist, net als de
+  // kruisjes hierboven: pak je de figuur weer op, dan zijn je notities er
+  // nog. Met Kruisjes vanzelf uit leidt het bord ook hier niets af.
+  const leidAf = opties.kruisjesVanzelf !== false;
+  const onmogelijk = (fi, cel) => {
+    if (!leidAf) return false;
+    for (const [p, plek] of Object.entries(state.plaats)) {
+      if (plek == null) continue;
+      if (Number(p) === fi) return plek !== cel;
+      if (rij(plek) === rij(cel) || kol(plek) === kol(cel)) return true;
+    }
+    return false;
+  };
   const schetsen = el('g');
-  for (const [celTekst, figuren] of Object.entries(state.schets ?? {})) {
+  for (const [celTekst, alle] of Object.entries(state.schets ?? {})) {
     const cel = Number(celTekst);
+    const figuren = alle.filter((fi) => !onmogelijk(fi, cel));
     if (!figuren.length) continue;
     if (!bruikbaar(cel)) continue;
     if (state.plaatsVanCel(cel) != null) continue;
