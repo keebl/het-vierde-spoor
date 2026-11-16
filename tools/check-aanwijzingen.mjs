@@ -12,7 +12,7 @@
 
 import { CATALOG, catalogSettings } from '../src/content/catalog.js';
 import { buildPuzzle } from '../src/puzzle.js';
-import { aanwijzingenPerPersoon } from '../src/aanwijzingen.js';
+import { aanwijzingenPerPersoon, heeftIedereen } from '../src/aanwijzingen.js';
 import { extraAanwijzing } from '../src/engine/generate-rooms.js';
 import { makeRng } from '../src/engine/rng.js';
 
@@ -22,6 +22,10 @@ let fouten = 0;
 let puzzels = 0;
 let zinnen = 0;
 let hints = 0;
+// De weigerkant: er moeten puzzels zijn zonder Iedereen-knop en namen
+// waar niets over gezegd wordt, anders keurt deze toets die paden nooit.
+let zonderIedereen = 0;
+let legeNamen = 0;
 const fout = (titel, wat) => {
   fouten++;
   if (fouten <= 40) console.log(`FOUT  ${titel}: ${wat}`);
@@ -41,7 +45,13 @@ for (const entry of CATALOG) {
   const extra = hint ? [hint] : [];
   if (hint) hints++;
 
-  const { perPersoon, algemeen, feiten } = aanwijzingenPerPersoon(p, extra);
+  const indeling = aanwijzingenPerPersoon(p, extra);
+  const { perPersoon, algemeen, feiten } = indeling;
+  if (heeftIedereen(indeling) !== (algemeen.length + feiten.length > 0)) fout(entry.titel, 'Iedereen-knop klopt niet met de inhoud');
+  // Zonder hint: dan pas is een lege naam echt leeg.
+  const kaal = aanwijzingenPerPersoon(p);
+  if (!heeftIedereen(kaal)) zonderIedereen++;
+  legeNamen += kaal.perPersoon.filter((l) => l.length === 0).length;
   if (perPersoon.length !== p.personen.length) fout(entry.titel, 'niet elke naam heeft een groep');
 
   const telling = p.clues.length + extra.length;
@@ -68,5 +78,7 @@ for (const entry of CATALOG) {
   for (const f of feiten) if (NUMMER.test(f)) fout(entry.titel, `nummer in een vast feit: "${f}"`);
 }
 
-console.log(`\n${puzzels} Reconstructies, ${zinnen} geplaatste zinnen, ${hints} met een hint erbij, ${fouten} fouten`);
+if (!zonderIedereen) fout('bibliotheek', 'geen enkele puzzel zonder Iedereen-knop; dat pad is niet gekeurd');
+if (!legeNamen) fout('bibliotheek', 'geen enkele naam zonder aanwijzingen; "Hierover staat niets" is niet gekeurd');
+console.log(`\n${puzzels} Reconstructies, ${zinnen} geplaatste zinnen, ${hints} met een hint erbij, ${zonderIedereen} zonder Iedereen, ${legeNamen} lege namen, ${fouten} fouten`);
 process.exit(fouten ? 1 : 0);

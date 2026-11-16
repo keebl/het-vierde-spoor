@@ -50,3 +50,8 @@ export function aanwijzingenPerPersoon(puzzle, extra = []) {
   }
   return { perPersoon, algemeen, feiten: puzzle.feiten ?? [] };
 }
+
+// Of de knop Iedereen er moet staan: alleen als er iets is om te laten zien.
+export function heeftIedereen(indeling) {
+  return indeling.algemeen.length > 0 || indeling.feiten.length > 0;
+}

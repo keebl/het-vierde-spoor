@@ -20,7 +20,7 @@ import { LEVEL_IDS } from '../engine/difficulty.js';
 import { telwoord, hoofdletter } from '../content/woorden.js';
 import { extraAanwijzing, bekendAlsAanwijzingen } from '../engine/generate-rooms.js';
 import { zinVoor } from '../content/rooms-text.js';
-import { aanwijzingenPerPersoon } from '../aanwijzingen.js';
+import { aanwijzingenPerPersoon, heeftIedereen } from '../aanwijzingen.js';
 import { makeRng } from '../engine/rng.js';
 import { openOntknoping, sluitOntknoping } from './ontknoping.js';
 import { volgendeZaak } from './volgende.js';
@@ -809,7 +809,7 @@ function personenPalet(puzzle, state, onCell, knopVoorAanwijzing) {
   // Iedereen: de tellingen die over niemand in het bijzonder gaan, en wat
   // vaststaat. Geen figuur om neer te zetten, dus geen portret. Zonder
   // zulke zinnen is er niets te laten zien, en dan staat de knop er niet.
-  if (indeling.algemeen.length || indeling.feiten.length) {
+  if (heeftIedereen(indeling)) {
     const iedereen = el('button', {
       class: 'palet-knop palet-iedereen',
       type: 'button',
@@ -850,8 +850,10 @@ function aanwijzingenKastje(puzzle, state, indeling, knopVoorAanwijzing) {
   const kastje = el('div', {
     class: 'palet-kastje',
     role: 'region',
+    // Geen aria-live: draw() vervangt het kastje bij elke tik, en een
+    // vervangen knoop wordt niet voorgelezen. De gekozen naam staat al als
+    // aria-pressed op zijn knop.
     'aria-label': `Aanwijzingen over ${naam ?? 'niemand'}`,
-    'aria-live': 'polite',
     'data-van': String(wie),
   });
   if (iedereen) {

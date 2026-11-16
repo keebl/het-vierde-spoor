@@ -1673,6 +1673,10 @@ table.latin td.cell { width: 78px; height: 46px; }
   /* Tussen de rijen van .boards zit 32; de standen hoorden met 8 onder de
      namen, zoals toen ze nog in hetzelfde blok stonden. */
   .palet-standen { margin-top: calc(var(--s2) - var(--s6)); }
+  /* Altijd even hoog, ook bij een naam met één zin. Groeide het kastje mee,
+     dan schoof het bord eronder bij elke andere naam een paar regels op, en
+     tikte je naast het vakje dat je bedoelde. */
+  .palet-kastje { height: calc(4 * 1.4 * var(--t-sm) + 2 * var(--s1)); }
   /* De zwevende knop met het blad is niet meer nodig: wat over de gekozen
      naam gezegd wordt staat al in het kastje. Verborgen, niet weg (zie
      aanwijzingenKnop). */
@@ -1685,7 +1689,7 @@ table.latin td.cell { width: 78px; height: 46px; }
    naar twee regels, en kop plus plak nemen nooit meer dan de helft van het
    scherm; wat dan niet past, scrolt in de plak. */
 @media screen and (max-width: 1099px) and (max-height: 500px) {
-  .palet-kastje { max-height: calc(2 * 1.4 * var(--t-sm) + 2 * var(--s1)); }
+  .palet-kastje { height: calc(2 * 1.4 * var(--t-sm) + 2 * var(--s1)); }
   /* De helft van het scherm voor alles wat plakt, de kop meegeteld: die
      plakt vanaf 641 breed ook (gemeten 812×375: kop 62, plak eerst 187). */
   .palet-plak { max-height: calc(50vh - var(--kop-hoogte)); overflow-y: auto; overscroll-behavior: contain; }
