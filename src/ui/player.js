@@ -20,6 +20,7 @@ import { LEVEL_IDS } from '../engine/difficulty.js';
 import { telwoord, hoofdletter } from '../content/woorden.js';
 import { extraAanwijzing, bekendAlsAanwijzingen } from '../engine/generate-rooms.js';
 import { zinVoor } from '../content/rooms-text.js';
+import { aanwijzingenPerPersoon } from '../aanwijzingen.js';
 import { makeRng } from '../engine/rng.js';
 import { openOntknoping, sluitOntknoping } from './ontknoping.js';
 import { volgendeZaak } from './volgende.js';
@@ -505,7 +506,7 @@ function cluePanel(puzzle, state, draw, persist) {
   const blokken = [feitenBlok];
 
   if (puzzle.kind === 'kamer') {
-    blokken.push(...perNaam(puzzle, extraClues, knopVoor));
+    blokken.push(...perNaam(puzzle, state.extra ?? [], knopVoor));
   } else {
     const list = el('div', { class: 'clues' });
     for (const clue of puzzle.clues) list.append(knopVoor(clue));
@@ -540,26 +541,14 @@ function cluePanel(puzzle, state, draw, persist) {
 //
 // Tellingen ("in de keuken stonden precies twee mensen") gaan over niemand
 // in het bijzonder en staan apart, onderaan.
-function perNaam(puzzle, extraClues, knopVoor) {
-  const ruw = puzzle._ruwe ?? [];
-  const alle = [...puzzle.clues.map((c, i) => ({ clue: c, r: ruw[i] })),
-                ...extraClues.map((c) => ({ clue: c, r: c.ruw }))];
-
+function perNaam(puzzle, extra, knopVoor) {
+  const { perPersoon, algemeen } = aanwijzingenPerPersoon(puzzle, extra);
   const groepen = new Map();
   const ookIn = new Map();
-  const algemeen = [];
-  for (const { clue, r } of alle) {
-    if (!r || r.p == null) {
-      algemeen.push(clue);
-      continue;
-    }
-    if (!groepen.has(r.p)) groepen.set(r.p, []);
-    groepen.get(r.p).push(clue);
-    if (r.q != null) {
-      if (!ookIn.has(r.q)) ookIn.set(r.q, []);
-      ookIn.get(r.q).push(clue.n);
-    }
-  }
+  perPersoon.forEach((lijst, p) => {
+    groepen.set(p, lijst.filter((c) => c.ruw.p === p));
+    ookIn.set(p, lijst.filter((c) => c.ruw.p !== p).map((c) => c.n));
+  });
 
   const uit = [];
 
