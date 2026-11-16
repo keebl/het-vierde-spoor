@@ -1488,11 +1488,9 @@ table.latin td.cell { width: 78px; height: 46px; }
 .legenda-item svg { flex: none; }
 
 /* het palet met verdachten
-   Twee rijen: de namen boven, de twee standen (Uitsluiten, Schetsen)
-   eronder. En hij plakt vast onder de kop, zodat de namen en het bord
-   altijd samen op één scherm staan - op een telefoon stond je anders
-   steeds te scrollen tussen de naam die je wilt pakken en het vakje waar
-   hij moet komen. */
+   Twee rijen: de namen boven, de standen eronder. Op een smal scherm
+   plakken de namen weer, met het kastje aanwijzingen eronder, maar de
+   standen niet meer (zie .palet-plak). */
 /* 2026-11-10: niet meer plakkend. De balk lag bij het scrollen over het bord
    heen, en dat bleef de klacht ook nadat hij lager was gemaakt. Hij staat nu
    gewoon boven het bord. */
@@ -1648,6 +1646,55 @@ table.latin td.cell { width: 78px; height: 46px; }
 .palet-kastje .feiten .label { margin: var(--s1) var(--s2) 0; }
 .palet-kastje .clue-feit { padding: 2px var(--s2); line-height: 1.4; font-size: var(--t-sm); }
 
+/* Op een smal scherm plakken de namen en het kastje bovenaan terwijl je
+   langs het bord scrolt, zodat je de zin over iemand leest en hem
+   tegelijk neerzet (specs/clues-on-phone.md). De standen plakken niet mee:
+   in 2026-11-10 plakte de hele balk, en die lag te dik over het bord.
+   Daarom wordt .palet hier een doorgeefluik (display: contents): namen
+   met kastje en de standen zijn dan elk een eigen rij van .boards, en
+   alleen de eerste plakt - binnen .boards, dus hij laat los als het bord en
+   zijn klepjes voorbij zijn. Een plakkend element binnen .palet zelf zou
+   nergens heen kunnen: .palet is precies zo hoog als zijn inhoud.
+   Gemeten budget (375×812): kop van het bord tegen de plak aan, dan moeten
+   plak en bord samen in beeld. Wie de plak hoger maakt, meet het opnieuw
+   met zestien namen (niveau 6). */
+@media screen and (max-width: 1099px) {
+  .palet { display: contents; }
+  .palet-plak {
+    position: sticky;
+    /* Tot 640 breed plakt de kop zelf niet (zie .top); daarboven wel, en
+       dan hoort de plak eronder en niet erachter. */
+    top: var(--kop-hoogte);
+    z-index: 5;
+    padding: var(--s2) 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  /* Tussen de rijen van .boards zit 32; de standen hoorden met 8 onder de
+     namen, zoals toen ze nog in hetzelfde blok stonden. */
+  .palet-standen { margin-top: calc(var(--s2) - var(--s6)); }
+  /* De zwevende knop met het blad is niet meer nodig: wat over de gekozen
+     naam gezegd wordt staat al in het kastje. Verborgen, niet weg (zie
+     aanwijzingenKnop). */
+  .aanwijzingen-knop { display: none; }
+}
+@media screen and (max-width: 640px) {
+  .palet-plak { top: 0; }
+}
+/* Een telefoon dwars: plak en bord passen nooit samen. Het kastje gaat
+   naar twee regels, en kop plus plak nemen nooit meer dan de helft van het
+   scherm; wat dan niet past, scrolt in de plak. */
+@media screen and (max-width: 1099px) and (max-height: 500px) {
+  .palet-kastje { max-height: calc(2 * 1.4 * var(--t-sm) + 2 * var(--s1)); }
+  /* De helft van het scherm voor alles wat plakt, de kop meegeteld: die
+     plakt vanaf 641 breed ook (gemeten 812×375: kop 62, plak eerst 187). */
+  .palet-plak { max-height: calc(50vh - var(--kop-hoogte)); overflow-y: auto; overscroll-behavior: contain; }
+}
+/* Op een breed scherm staat de hele lijst al naast het bord. */
+@media screen and (min-width: 1100px) {
+  .palet-kastje { display: none; }
+}
+
 /* ============================================================== afdrukken */
 
 /* Een puzzel hoort ook op papier te kunnen. Wat op het scherm hoort maar niet
@@ -1710,7 +1757,7 @@ table.latin td.cell { width: 78px; height: 46px; }
   .aanwijzingen-kolom .clue-kop { margin: 0; }
   .intro-dicht { display: block; -webkit-line-clamp: none; line-clamp: none; overflow: visible; }
   .intro-verder { display: none !important; }
-  .aanwijzingen-knop, .aanwijzingen-sluit { display: none !important; }
+  .aanwijzingen-knop, .aanwijzingen-sluit, .palet-kastje { display: none !important; }
   /* Vel 1: zaak, vraag en bord. Vel 2: de regels en de aanwijzingen. */
   .puzzle-head .spelregels,
   .aanwijzingen-vraag .question { display: none !important; }
