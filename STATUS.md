@@ -62,10 +62,19 @@ standing guidance rather than state moved to `CLAUDE.md`.
   Point 4 is built with `specs/solved-ending.md` (amended 2026-11-16): "Volgende zaak"
   moves up a level when a level is done, and a permanent "Volgende puzzel" button sits
   next to Controleer and Printen.
-  Point 1 is built with `specs/clues-on-phone.md` (2026-11-16, pull request pending):
+  Point 1 is built with `specs/clues-on-phone.md` (2026-11-16, merged and live the same day):
   on a phone the names and a box with the chosen name's clues stick over the board, and
   clue numbers are gone. Not yet checked: a print PDF (page count; the list is longer now
   that a clue stands under both its names) and a real phone with Safari's bars.
+- **Daughter, second round, 2026-11-16.** (a) Clues are too easy, too alike and repeat
+  a lot. "Same row as X" plus "same column as Y" already says where someone stands;
+  say which room someone is in instead. At most one clue per person, none too easy.
+  (b) A sketch letter should disappear from a cell once a placed figure makes it
+  impossible there. (c) An undo button (arrow back). (d) The victim should get no clue:
+  fixed and live the same day in pull request #11 (`37c8fca`), so she probably played
+  before that; ask her to check again on a fresh case.
+  (a) changes the generator and the difficulty curve and needs a spec first; (b) and (c)
+  are player changes in `src/ui/player.js` (there is no undo history today).
 1. **Show her the cheerful restyle and write down what she says.** The daughter's verdict
    was: dull colours, dull drawings, no artistic life. The owner answered the opening
    question of `specs/visual-liveliness.md` with "both", and directions 1 and 5 of that
