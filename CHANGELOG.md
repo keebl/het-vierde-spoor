@@ -18,8 +18,15 @@ day the changelog was introduced; everything before that is in git history only.
 - A "Volgende puzzel" button next to Controleer and Printen. Both it and "Volgende zaak"
   follow the library's order: the next unsolved case of your level, then the first
   unsolved case of the next level.
+- A "Terug" button (an arrow back) next to Neerzetten · Schetsen · Uitsluiten, and
+  Ctrl+Z / Cmd+Z, undo the last move on the board: placing or removing a figure, a
+  sketch letter or a cross. Up to 30 steps per puzzle, kept when you reload.
 
 ### Changed
+- A sketch letter no longer shows where a placed figure makes it impossible: that
+  figure's letter elsewhere, any letter under it, and other figures' letters in its row
+  and column. Pick the figure up and the letters come back. With "Kruisjes vanzelf" off
+  the board leaves your letters alone.
 - No clue or hint names the victim any more, not even in another suspect's clue. Where
   the victim stands follows from the rest of the board. In the clue list the victim's
   name carries one fixed line saying so, instead of a group of clues of its own. Every
