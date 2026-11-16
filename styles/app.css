@@ -71,8 +71,10 @@
   --schrift: "Patrick Hand", "Bradley Hand", "Segoe Print", cursive;
   --display: "Fredoka", "Avenir Next", var(--sans);
 
-  /* Hoe hoog de kop is. De namenbalk plakt hieronder vast. */
-  --kop-hoogte: 53px;
+  /* Hoe hoog de kop is. De namenbalk plakt hieronder vast. Stond op 53,
+     maar de knoppen rechts maken hem 62 (gemeten op 812, 1440 en 1920
+     breed), en dan schoof de plakkende namenrij er negen pixels onder. */
+  --kop-hoogte: 62px;
 
   /* Was 1080 en 62 tekens: op een groot scherm stond alles in een smalle
      strook in het midden. 74 tekens leest nog prettig en vult meer. */
@@ -833,17 +835,7 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
   border-radius: var(--r);
   background: var(--surface-2, var(--surface));
 }
-.spelregels > summary {
-  cursor: pointer;
-  padding: var(--s3) var(--s4);
-  font-size: var(--t-sm);
-  font-weight: 600;
-  color: var(--text-2);
-  list-style: none;
-}
-.spelregels > summary::-webkit-details-marker { display: none; }
-.spelregels > summary::before { content: '▸ '; color: var(--text-3); }
-.spelregels[open] > summary::before { content: '▾ '; }
+/* De kop van dit klepje ziet eruit als die van de panelen: zie .paneel. */
 .spelregels[open] > summary { border-bottom: 1px solid var(--line-soft); }
 .regellijst {
   margin: 0;
@@ -891,7 +883,8 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
     row-gap: var(--s5);
   }
   .play > .boards, .play > .aanwijzingen-kolom + * { grid-column: 1; }
-  /* De kop over beide kolommen, met dezelfde kolomgrenzen als eronder. */
+  /* De kop over beide kolommen, met dezelfde kolomgrenzen als eronder.
+     Verhaal en vraag eindigen op dezelfde lijn (align-items: end). */
   .play > .puzzle-head {
     grid-column: 1 / -1;
     max-width: none;
@@ -902,6 +895,16 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
   .play > .puzzle-head .puzzle-verhaal { grid-column: 1; }
   .play > .puzzle-head .puzzle-zijkant { grid-column: 2; }
   .play > .puzzle-head .intro { margin-bottom: 0; }
+  .play > .puzzle-head .question { margin-bottom: 0; }
+  /* De regels staan hier niet in de kop maar boven aan de aanwijzingen
+     (de kopie uit vraagBlok, dezelfde die op papier staat). In de kop
+     maakten ze de hele rij hoger als je ze opende, en met die rij zakten
+     het verhaal links en het bord eronder honderden pixels mee. In de
+     kolom groeien ze binnen de kolom, die zelf scrolt; links beweegt niets. */
+  .play > .puzzle-head .spelregels { display: none; }
+  .aanwijzingen-kolom > .aanwijzingen-vraag { display: block; }
+  .aanwijzingen-kolom > .aanwijzingen-vraag .question { display: none; }
+  .aanwijzingen-kolom > .aanwijzingen-vraag .spelregels { margin: 0 0 var(--s3); }
   /* Op een breed scherm is het verhaal drie of vier regels: niet inklappen. */
   .play .intro-dicht { display: inline; -webkit-line-clamp: none; line-clamp: none; overflow: visible; }
   .play > .aanwijzingen-kolom {
@@ -941,7 +944,21 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 
   /* Namenrij en bord samen in beeld: minder lucht ertussen. */
   .play > .boards { gap: var(--s4); }
-  .play .palet { margin-bottom: 0; }
+  /* De namen en de drie standen plakken onder de kop terwijl je langs het
+     bord scrolt: wie naar de onderste rij kijkt, moet nog een andere naam
+     kunnen pakken zonder eerst terug naar boven. Op een telefoon plakken
+     alleen de namen (zie .palet-plak), want daar lag de hele balk te dik
+     over het bord (2026-11-10). Hier is het kastje er niet en is er
+     hoogte genoeg. Gemeten op 1440×900: bij zes namen is de balk 111
+     hoog en past het bord er helemaal onder; bij zestien namen (niveau 6)
+     is hij 207 en valt alleen de bovenste rij onder de balk zolang je de
+     onderste bekijkt. Hij plakt binnen .boards, dus hij laat los als het
+     bord en zijn klepjes voorbij zijn. */
+  .play .palet {
+    position: sticky;
+    top: var(--kop-hoogte);
+    margin-bottom: 0;
+  }
 
   /* De sfeerplaat lager, zodat het bord eerder in beeld komt. */
   main:has(> .play) .scene-wrap,
@@ -1492,8 +1509,9 @@ table.latin td.cell { width: 78px; height: 46px; }
    plakken de namen weer, met het kastje aanwijzingen eronder, maar de
    standen niet meer (zie .palet-plak). */
 /* 2026-11-10: niet meer plakkend. De balk lag bij het scrollen over het bord
-   heen, en dat bleef de klacht ook nadat hij lager was gemaakt. Hij staat nu
-   gewoon boven het bord. */
+   heen, en dat bleef de klacht ook nadat hij lager was gemaakt. Wat nu
+   plakt, plakt per schermbreedte: op een smal scherm de namen met het
+   kastje (.palet-plak), op een breed scherm de hele balk (zie .play). */
 .palet {
   position: static;
   /* Onder de kop, niet eronder vandaan: die plakt zelf ook bovenaan (zie
@@ -2327,27 +2345,47 @@ body[data-wereld="pretpark"] .gloedrand { stop-color: #2a2010; }
   background: var(--surface);
   margin-top: var(--s4);
 }
-.paneel > summary {
+/* Elk klepje op de puzzelpagina heeft dezelfde kop: de regels, de
+   aanwijzingen, wat er op het bord staat, hoe je het bedient. Het waren er
+   twee soorten - een in hoofdletters met een klein driehoekje, een gewone
+   met een ▸ als letter ervoor - en dat driehoekje is een teken uit het
+   lettertype, dus het stond net te hoog of te laag naast de tekst, in elke
+   letter anders. Nu een gewone zin, en een hoekje dat uit twee randen
+   getekend is en daardoor altijd in het midden van de regel staat. Even
+   hoog als een vinger breed is, open of dicht. */
+.paneel > summary,
+.spelregels > summary {
   cursor: pointer;
-  padding: var(--s3) var(--s4);
-  font: 600 var(--t-sm)/1.4 var(--sans);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  min-height: 44px;
+  padding: var(--s2) var(--s4);
+  font: 600 var(--t-sm)/1.3 var(--sans);
   color: var(--text-2);
   list-style: none;
   display: flex;
   align-items: center;
-  gap: var(--s2);
+  gap: var(--s3);
 }
-.paneel > summary::-webkit-details-marker { display: none; }
-.paneel > summary::before {
-  content: "▸";
-  font-size: 0.8em;
+.paneel > summary::-webkit-details-marker,
+.spelregels > summary::-webkit-details-marker { display: none; }
+.paneel > summary::before,
+.spelregels > summary::before {
+  content: "";
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin: 0 2px;
+  border: solid currentColor;
+  border-width: 0 2px 2px 0;
   color: var(--text-3);
+  transform: rotate(-45deg);
   transition: transform 0.12s ease;
 }
-.paneel[open] > summary::before { transform: rotate(90deg); }
-.paneel > summary:hover { color: var(--text); }
+.paneel[open] > summary::before,
+.spelregels[open] > summary::before { transform: translateY(-2px) rotate(45deg); }
+.paneel > summary:hover,
+.spelregels > summary:hover { color: var(--text); }
+.paneel > summary:focus-visible,
+.spelregels > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .paneel-binnen { padding: 0 var(--s4) var(--s4); }
 .paneel-binnen > .legenda { margin-top: 0; }
 
@@ -2679,7 +2717,15 @@ select, input[type="text"] { border-radius: 999px; border-width: 2px; }
 .question::before { content: "🔍"; font-size: 1.3em; }
 .question .label { color: var(--accent); }
 .question b { font-size: var(--t-lg); font-weight: 700; }
-.spelregels { border-radius: var(--r-lg); border-width: 2px; }
+/* Zelfde doos als de panelen (zie .paneel hieronder): het is hetzelfde
+   soort klepje. */
+.spelregels {
+  border-radius: var(--r-lg);
+  border-width: 2px;
+  background: var(--surface);
+  box-shadow: 0 3px 0 var(--line);
+  overflow: hidden;
+}
 
 /* De namenbalk: dikke, ronde fiches om op te pakken. */
 .palet { background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); }
@@ -2706,9 +2752,12 @@ select, input[type="text"] { border-radius: 999px; border-width: 2px; }
   box-shadow: 0 3px 0 var(--line);
   overflow: hidden;
 }
-.paneel > summary { font-family: var(--display); letter-spacing: 0.02em; color: var(--text); }
-.paneel > summary::before { color: var(--accent); }
-.paneel[open] > summary { background: var(--accent-soft); }
+.paneel > summary,
+.spelregels > summary { font-family: var(--display); font-size: var(--t-base); letter-spacing: 0.01em; color: var(--text); }
+.paneel > summary::before,
+.spelregels > summary::before { color: var(--accent); }
+.paneel[open] > summary,
+.spelregels[open] > summary { background: var(--accent-soft); }
 .clue-kop-naam {
   display: inline-block;
   font-family: var(--display);

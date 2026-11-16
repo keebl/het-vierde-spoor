@@ -59,6 +59,10 @@ day the changelog was introduced; everything before that is in git history only.
   are laid out as three and three.
 
 ### Fixed
+- Puzzle page on a wide screen: opening the rules no longer pushes the story and the board
+  down (the rules now open at the top of the clues column), the names and the Neerzetten ·
+  Schetsen · Uitsluiten row stay under the header while you scroll down the board, and every
+  collapsible heading (rules, clues, board legend, controls) has the same look.
 - A missing woman was referred to as "him" in the intro ("heeft hem als laatste
   gesproken"). The case sentences now repeat the name instead of using a pronoun.
 - Puzzle titles that contradicted the puzzle. "Wie stond er alleen?" asked the opposite of
