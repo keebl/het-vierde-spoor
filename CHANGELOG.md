@@ -20,6 +20,11 @@ day the changelog was introduced; everything before that is in git history only.
   unsolved case of the next level.
 
 ### Changed
+- No clue or hint names the victim any more, not even in another suspect's clue. Where
+  the victim stands follows from the rest of the board. In the clue list the victim's
+  name carries one fixed line saying so, instead of a group of clues of its own. Every
+  Reconstructie board is generated anew: an existing link gives a different puzzle, and
+  a half-played one starts again from an empty board (solved stays solved).
 - On a phone, choosing a name shows what the clues say about that person in a small box
   right under the names, and the names with that box stay at the top while you scroll
   past the board. An "Iedereen" chip shows the clues about nobody in particular. The

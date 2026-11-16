@@ -25,8 +25,22 @@ import { makeRng } from '../engine/rng.js';
 import { openOntknoping, sluitOntknoping } from './ontknoping.js';
 import { volgendeZaak } from './volgende.js';
 
-export function renderPlayer(puzzle, mount) {
+// Welke versie van de kamergenerator de bewaarde stand maakte. Verandert
+// de generator zo dat dezelfde seed een ander bord geeft, dan gaat dit
+// getal omhoog. Een oude stand past dan niet meer: de figuren zouden op
+// vakjes van een ander bord staan, en bewaarde hints zouden onware zinnen
+// over het nieuwe bord worden - ook over het slachtoffer, waar sinds
+// 2026-11-16 niets over gezegd mag worden. Opgelost blijft opgelost.
+const BORDVERSIE = 2;
+
+function bewaardeStand(puzzle) {
   const saved = loadProgress(puzzle.id) ?? {};
+  if (puzzle.kind !== 'kamer' || saved.bordversie === BORDVERSIE) return saved;
+  return { solved: saved.solved, onthuld: saved.onthuld };
+}
+
+export function renderPlayer(puzzle, mount) {
+  const saved = bewaardeStand(puzzle);
   const state = {
     marks: saved.marks ?? (puzzle.kind === 'assign' ? emptyMarks(puzzle) : {}),
     // kamerraster: welke persoon staat op welk vakje, plus de kruisjes die
@@ -86,6 +100,7 @@ export function renderPlayer(puzzle, mount) {
       solved: state.solved,
       onthuld: state.onthuld,
       titel: puzzle.title,
+      bordversie: BORDVERSIE,
     });
   };
 
@@ -271,7 +286,9 @@ export function renderPlayer(puzzle, mount) {
       const hint = puzzle.kind === 'kamer' ? kamerHint(puzzle, state) : nextHint(puzzle, state);
       state.note = hint
         ? { kind: 'ok', text: hint.text }
-        : { kind: 'ok', text: 'Er valt niets meer bij te zeggen: alles wat waar is, staat er al.' };
+        : { kind: 'ok', text: puzzle.kind === 'kamer'
+          ? `Er valt niets meer bij te zeggen: alles wat waar is, staat er al. Over ${puzzle.zaak?.rolwoord ?? 'het slachtoffer'} staat met opzet niets; die plek is het vakje dat overblijft.`
+          : 'Er valt niets meer bij te zeggen: alles wat waar is, staat er al.' };
       const was = state.solved;
       if (isSolved(puzzle, state)) state.solved = true;
       persist();
@@ -576,7 +593,13 @@ function aanwijzingKnop(clue, state, opnieuw, waar) {
   return btn;
 }
 
-const NIETS_OVER = 'Hierover staat niets. Deze plek volgt uit de rest: als alle anderen staan, is er nog één vakje over.';
+// Over het slachtoffer staat nooit iets (zie zet() in generate-rooms.js),
+// en dat is zo bedoeld, niet overgebleven. Bij hem zegt de zin dat ook.
+function nietsOver(puzzle, p) {
+  return p === puzzle.slachtofferIdx
+    ? `Over ${puzzle.zaak?.rolwoord ?? 'het slachtoffer'} staat niets, met opzet. Die plek volgt uit de rest: als alle anderen staan, is er nog één vakje over.`
+    : 'Hierover staat niets. Deze plek volgt uit de rest: als alle anderen staan, is er nog één vakje over.';
+}
 
 // De aanwijzingen op een hoop was bij zestien bij zestien een lijst van
 // vierenvijftig zinnen waarin je niet terugvond wat er over Hendrik gezegd
@@ -625,7 +648,7 @@ function perNaam(puzzle, extra, knopVoor) {
       leeg
         ? el('p', {
           class: 'clue-leeg',
-          text: NIETS_OVER,
+          text: nietsOver(puzzle, p),
         })
         : lijst,
     ]));
@@ -867,7 +890,7 @@ function aanwijzingenKastje(puzzle, state, indeling, knopVoorAanwijzing) {
   const mijn = indeling.perPersoon[wie] ?? [];
   kastje.append(mijn.length
     ? el('div', { class: 'clues' }, mijn.map((c) => knopVoorAanwijzing(c, 'kastje')))
-    : el('p', { class: 'clue-leeg', text: NIETS_OVER }));
+    : el('p', { class: 'clue-leeg', text: nietsOver(puzzle, wie) }));
   return kastje;
 }
 

@@ -62,8 +62,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   (3) There is "Uitsluiten" and "Schetsen" but no visible "place" mode; add a third button
   and always show the active mode in bold. (4) No "next puzzle" button next to Controleer
   and Print; wants a logical order: puzzle 1, then the next, then the next level.
-  **Daughter, 2026-11-16:** the victim should not get a linked clue of its own (handed to
-  a fix session the same day).
+  **Daughter, 2026-11-16:** the victim should not get a linked clue of its own. Fixed the
+  same day (Guus chose option A): no clue or hint names the victim, its place follows from
+  the rest, and the keuring fails otherwise. Every room board shifted; half-played boards
+  restart. Pending her verdict.
   Point 4 is built with `specs/solved-ending.md` (amended 2026-11-16): "Volgende zaak"
   moves up a level when a level is done, and a permanent "Volgende puzzel" button sits
   next to Controleer and Printen.
