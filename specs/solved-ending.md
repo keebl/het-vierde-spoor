@@ -25,6 +25,13 @@ product risk ("the one player loses interest").
 - **Next case:** a puzzle from the library opens the next *unsolved* library case of the
   same level; if all are solved, or the puzzle was generated, a new random puzzle of the
   same level (the same id recipe as the start button on the home page).
+- **Amendment 2026-11-16** (tester feedback on a phone, STATUS Next; agreed by Guus the
+  same day): when every library case of level N is solved, "Volgende zaak" moves up to
+  the first unsolved library case of level N+1 — the order is puzzle 1, the next, then
+  the next level. Only when no higher visible level has an unsolved case either does it
+  fall back to a random puzzle of level N. And a permanent "Volgende puzzel" button
+  sits in the row under the board next to Controleer and Print, using the same
+  `volgendeZaak` logic, so the next case is reachable without solving this one.
 - **Solution requested** (`state.onthuld`): a quieter version — portrait and name, no
   closing line, no celebration, a line inviting her to try the next one herself. The
   next-case button stays.
@@ -41,6 +48,8 @@ product risk ("the one player loses interest").
 - A closing line per case type (`moord`, `verdwijning`, `diefstal`), three variants each,
   stored with the case words in `src/content/zaken.js`, chosen from the puzzle's own seed.
 - A "Volgende zaak" button and a close control on the sheet.
+- A permanent "Volgende puzzel" button in the action row under the board (Controleer,
+  Print), for `kamer` puzzles, with the same target as "Volgende zaak".
 - A small "Ontknoping" control in the toolbar of a solved puzzle that reopens the sheet
   after it was closed.
 - A keuring rule that every closing line fits its case type.
@@ -83,8 +92,10 @@ product risk ("the one player loses interest").
 10. Given a solved puzzle whose sheet was closed, then a toolbar control "Ontknoping"
     reopens it.
 11. Given a library puzzle of level N, when the player presses "Volgende zaak", then the
-    next library case of level N that this browser has not solved opens; given there is
-    none, a new random puzzle of level N opens.
+    next library case of level N (in the library's order) that this browser has not
+    solved opens; given there is none, the first unsolved library case of the lowest
+    higher visible level opens; given there is none of those either, a new random puzzle
+    of level N opens. (Amended 2026-11-16.)
 12. Given a generated puzzle of level N, when the player presses "Volgende zaak", then a
     new random puzzle of level N opens, its world following from its seed as on the home
     page.
@@ -104,6 +115,9 @@ product risk ("the one player loses interest").
     type (the same word table as the title rule in `tools/check-regels.mjs`), when it
     lacks the answer name or the victim name, or when it uses "hij", "hem", "zij" or
     "haar" for either of them.
+19. Given any `kamer` puzzle, solved or not, then the action row under the board shows a
+    "Volgende puzzel" button next to Controleer and Print that leads where "Volgende
+    zaak" would (AC 11, 12); it does not appear on paper. (Added 2026-11-16.)
 
 ## Edge cases and error states
 - **Solved, then a figure moved off its cell:** `state.solved` stays true today; the sheet
@@ -213,8 +227,9 @@ the browser pane after every UI step.
 2. **Next-case helper — ~1 h.** Move `nieuwePuzzel(niveau)` out of `src/ui/home.js` into
    a shared module (e.g. `src/ui/volgende.js`) and add `volgendeZaak(puzzle)`: for a
    catalog id, the next entry of the same level in `CATALOG` order (as `library.js`
-   lists it, via `TEZIEN`) not in `solvedIds()`; otherwise `nieuwePuzzel(niveau)`. Home
-   imports it from there; no behaviour change on the home page.
+   lists it, via `TEZIEN`) not in `solvedIds()`; then the first unsolved entry of the
+   next higher visible level (amendment 2026-11-16); otherwise `nieuwePuzzel(niveau)`.
+   Home imports it from there; no behaviour change on the home page.
 3. **The sheet — ~2 h.** New `src/ui/ontknoping.js` exporting
    `openOntknoping(puzzle, { onthuld, feest })`: a native `<dialog>` opened with
    `showModal()` (focus trap and Escape for free), with `portretElement` at 120/160 px on
@@ -227,7 +242,9 @@ the browser pane after every UI step.
    where `state.solved` turns true in `onCell`, `actions.check` and `actions.hint`; with
    `onthuld: true` in `actions.reveal`; on render when `saved.solved` (no confetti);
    close it in `actions.reset`. Add the "Ontknoping" control to the toolbar for a solved
-   `kamer` puzzle. Leave the existing note text as it is for non-`kamer` kinds.
+   `kamer` puzzle, and a permanent "Volgende puzzel" link in the action row with
+   Controleer and Print (amendment 2026-11-16). Leave the existing note text as it is
+   for non-`kamer` kinds.
 5. **Styling, motion, print — ~1.5 h.** In `styles/app.css`, next to the decoration
    block at the bottom: `.ontknoping` sheet (tokens only, `--r-lg`, `--schaduw-pop`,
    world colours, purple dark mode), slide-in and pop keyframes, confetti as inline SVG
