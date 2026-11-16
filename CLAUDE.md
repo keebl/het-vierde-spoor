@@ -68,6 +68,10 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
   inside a session's Bash sandbox**; there, paste `tools/printweergave.js` into the
   browser pane (it shows the `@media print` rules on screen, not the page breaks) and
   leave the PDF to the owner's terminal.
+- **`git switch -c` half-fails inside the session sandbox** (`could not lock config file
+  .git/config`), so the shell stays on the branch it was on. Chained with `&&`, the
+  commands after it stop; run one at a time and the next merge lands on `main`. To try a
+  merge locally, check `git branch --show-current` first, or merge in a scratch clone.
 - **The API key is never read, echoed or committed.** `.env` is git-ignored; the owner
   types the key himself.
 
