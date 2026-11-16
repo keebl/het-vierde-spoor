@@ -462,14 +462,17 @@ function cluePanel(puzzle, state, draw, persist) {
     ]);
   }
 
-  // De feiten uit de inleiding staan hier nog een keer, genummerd als V1, V2.
-  // Ze beperken de oplossing net zo hard als een aanwijzing; stonden ze
-  // alleen in het verhaal, dan kom je bij het natellen een aanwijzing tekort.
+  // De feiten uit de inleiding staan hier nog een keer. Ze beperken de
+  // oplossing net zo hard als een aanwijzing; stonden ze alleen in het
+  // verhaal, dan kom je bij het natellen een aanwijzing tekort.
+  //
+  // Zonder nummers, net als de aanwijzingen: V1, V2 en 1 tot en met 21
+  // zeiden de speler niets, want de volgorde betekent niets
+  // (specs/clues-on-phone.md).
   const feitenBlok = (puzzle.feiten ?? []).length
     ? el('div', { class: 'feiten' }, [
       el('p', { class: 'label', text: 'Wat vaststaat' }),
-      el('div', { class: 'clues' }, puzzle.feiten.map((tekst, i) => el('div', { class: 'clue clue-feit' }, [
-        el('span', { class: 'clue-n', text: `V${i + 1}.` }),
+      el('div', { class: 'clues' }, puzzle.feiten.map((tekst) => el('div', { class: 'clue clue-feit' }, [
         el('span', { class: 'clue-text', text: tekst }),
       ]))),
     ])
@@ -481,10 +484,7 @@ function cluePanel(puzzle, state, draw, persist) {
       class: 'clue',
       type: 'button',
       'aria-pressed': String(done),
-    }, [
-      el('span', { class: 'clue-n', text: `${clue.n}.` }),
-      el('span', { class: 'clue-text', text: clue.text }),
-    ]);
+    }, [el('span', { class: 'clue-text', text: clue.text })]);
     btn.addEventListener('click', () => {
       if (done) state.struck.delete(clue.n);
       else state.struck.add(clue.n);
@@ -495,8 +495,9 @@ function cluePanel(puzzle, state, draw, persist) {
   };
 
   // De hints die de speler heeft opgevraagd, als gewone aanwijzingen achter
-  // de andere. Ze krijgen doorlopende nummers, want ze zijn niet minder waar
-  // dan de rest - je hebt ze alleen zelf gevraagd.
+  // de andere, want ze zijn niet minder waar dan de rest - je hebt ze alleen
+  // zelf gevraagd. Hun `n` loopt door na de vaste aanwijzingen; dat is
+  // alleen de sleutel voor het wegstrepen, de speler ziet hem niet.
   const extraClues = (state.extra ?? []).map((c, i) => ({
     n: puzzle.clues.length + i + 1,
     text: zinVoor(c, puzzle.woorden),
@@ -534,29 +535,24 @@ function cluePanel(puzzle, state, draw, persist) {
 //
 // Elke naam krijgt een kopje, ook als er niets over hem gezegd wordt.
 //
-// Elke aanwijzing staat één keer, onder de eerste naam die erin voorkomt, en
-// houdt zijn eigen nummer. Komt iemand als tweede naam voor - "Ada stond ten
-// noorden van Bram" staat bij Ada - dan krijgt Bram eronder een verwijzing
-// naar dat nummer. Zonder dat zou je bij Bram de helft missen.
+// Een aanwijzing staat onder iedere naam die erin voorkomt: "Ada stond ten
+// noorden van Bram" staat bij Ada én bij Bram, als dezelfde zin. Eerder
+// stond hij alleen bij Ada en kreeg Bram "staat ook in aanwijzing 5" - maar
+// die nummers zeiden de speler niets, en wie bij Bram kijkt wil de zin
+// lezen. De indeling zelf staat in src/aanwijzingen.js, zodat het kastje
+// onder de namen op een telefoon precies dezelfde zinnen laat zien.
 //
 // Tellingen ("in de keuken stonden precies twee mensen") gaan over niemand
 // in het bijzonder en staan apart, onderaan.
 function perNaam(puzzle, extra, knopVoor) {
   const { perPersoon, algemeen } = aanwijzingenPerPersoon(puzzle, extra);
-  const groepen = new Map();
-  const ookIn = new Map();
-  perPersoon.forEach((lijst, p) => {
-    groepen.set(p, lijst.filter((c) => c.ruw.p === p));
-    ookIn.set(p, lijst.filter((c) => c.ruw.p !== p).map((c) => c.n));
-  });
 
   const uit = [];
 
   // Iedereen op het bord langs, in de volgorde van het palet, zodat de
   // lijst dezelfde volgorde heeft als de penningen erboven.
   for (let p = 0; p < puzzle.personen.length; p++) {
-    const mijn = groepen.get(p) ?? [];
-    const verwijzingen = ookIn.get(p) ?? [];
+    const mijn = perPersoon[p];
     // Een naam waar niets over gezegd wordt, werd hier overgeslagen. Op een
     // bord van vijf stonden er dan vier namen in de lijst, en dat leest als
     // een fout: alsof die ene vergeten is.
@@ -566,7 +562,7 @@ function perNaam(puzzle, extra, knopVoor) {
     // generate-rooms.js) - dus als iemands plek al volgt uit de rest, blijft
     // er niets over om over hem te zeggen. Dat is geen gat maar het laatste
     // zetje, en het hoort er dus te staan.
-    const leeg = !mijn.length && !verwijzingen.length;
+    const leeg = !mijn.length;
     const kop = el('p', { class: 'clue-kop' }, [
       el('span', { class: 'clue-kop-naam', text: puzzle.personen[p] }),
       p === puzzle.slachtofferIdx
@@ -583,12 +579,6 @@ function perNaam(puzzle, extra, knopVoor) {
           text: 'Hierover staat niets. Deze plek volgt uit de rest: als alle anderen staan, is er nog één vakje over.',
         })
         : lijst,
-      verwijzingen.length
-        ? el('p', {
-          class: 'clue-ook',
-          text: `Staat ook in ${verwijzingen.length === 1 ? 'aanwijzing' : 'de aanwijzingen'} ${verwijzingen.join(', ')}.`,
-        })
-        : null,
     ]));
   }
 
@@ -1038,9 +1028,10 @@ function kamerHint(puzzle, state) {
   );
   if (!extra) return null;
   state.extra = [...state.extra, extra];
-  const nummer = puzzle.clues.length + state.extra.length;
+  // Zonder nummer: de aanwijzingen hebben er geen meer. De zin staat nu bij
+  // de namen die erin voorkomen.
   return {
-    text: `Erbij als aanwijzing ${nummer}: ${zinVoor(extra, puzzle.woorden)}`,
+    text: `Erbij als aanwijzing: ${zinVoor(extra, puzzle.woorden)}`,
   };
 }
 
@@ -1076,7 +1067,10 @@ function nextHint(puzzle, state) {
       );
       const waar = `${puzzle.anchor.items[slot]}: ${cat.items[correct]}.`;
       return {
-        text: idx >= 0 ? `${waar} Dat volgt uit aanwijzing ${idx + 1}, samen met wat er al staat.` : waar,
+        // De zin zelf, geen nummer: de lijst nummert niet meer.
+        text: idx >= 0 && puzzle.clues[idx]
+          ? `${waar} Dat volgt uit "${puzzle.clues[idx].text}", samen met wat er al staat.`
+          : waar,
       };
     }
   }

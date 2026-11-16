@@ -923,7 +923,6 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
   .aanwijzingen-kolom .clue { padding: 6px var(--s2); line-height: 1.4; }
   .aanwijzingen-kolom .clue-groep { margin-bottom: var(--s2); }
   .aanwijzingen-kolom .clue-kop { margin-bottom: 0; }
-  .aanwijzingen-kolom .clue-ook { margin: 0 0 0 var(--s2); }
 }
 
 /* Is de kolom breed genoeg, dan de groepen per naam in twee kolommen: een
@@ -1021,16 +1020,12 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
    het niet wegstrepen, want het is geen stap maar een gegeven. */
 .feiten { margin-bottom: var(--s5); }
 .clue-feit {
-  display: grid;
-  grid-template-columns: 2.2rem 1fr;
-  gap: var(--s2);
-  align-items: baseline;
+  display: block;
   padding: var(--s3);
   border-bottom: 1px solid var(--line-soft);
   background: var(--surface);
   color: var(--text-2);
 }
-.clue-feit .clue-n { color: var(--accent); font-weight: 600; }
 
 .clues { border-top: 1px solid var(--line-soft); }
 
@@ -1050,7 +1045,6 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 }
 
 .clue:hover { background: var(--surface); }
-.clue-n { color: var(--text-3); font-variant-numeric: tabular-nums; min-width: 1.3em; }
 .clue[aria-pressed="true"] { color: var(--text-3); }
 .clue[aria-pressed="true"] .clue-text { text-decoration: line-through; }
 
@@ -2215,11 +2209,6 @@ body[data-wereld="pretpark"] .gloedrand { stop-color: #2a2010; }
   color: var(--text-2);
 }
 .clue-kop-merk { font-size: var(--t-xs); color: var(--text-3); font-style: italic; }
-.clue-ook {
-  margin: var(--s1) 0 0;
-  font-size: var(--t-xs);
-  color: var(--text-3);
-}
 
 /* Een naam waar niets over gezegd wordt. Die staat er nu wel, want anders
    mist er een naam in de lijst en dat leest als een fout. Hij is wel
@@ -2652,7 +2641,6 @@ select, input[type="text"] { border-radius: 999px; border-width: 2px; }
 .clue-kop { border-bottom: 0; }
 .clue { border-radius: var(--r-sm); border-bottom-color: transparent; }
 .clue:hover { background: var(--accent-soft); }
-.clue-n { color: var(--accent); font-weight: 700; }
 .note { border-width: 2px; border-radius: var(--r); font-weight: 600; }
 .note-good { background: color-mix(in srgb, var(--good) 12%, var(--surface)); }
 .note-good::before { content: "🎉 "; }
