@@ -1511,12 +1511,21 @@ table.latin td.cell { width: 78px; height: 46px; }
 /* De drie standen als één schuifknop: één vak gevuld, de andere twee leeg.
    Twee losse knoppen die allebei uit konden staan, zeiden niet in welke
    stand je zat - en precies die stand, Neerzetten, had geen knop. */
+/* De standen met Terug ernaast. De marge naar de namen zit op deze rij,
+   niet meer op de standen. */
+.palet-bediening {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin-top: var(--s2);
+}
 .palet-standen {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 3px;
+  flex: 1 1 auto;
+  min-width: 0;
   max-width: 26rem;
-  margin-top: var(--s2);
   padding: 3px;
   border: 2px solid var(--line);
   border-radius: 99px;
@@ -1554,6 +1563,28 @@ table.latin td.cell { width: 78px; height: 46px; }
 }
 .palet-stand[aria-pressed="true"] .palet-fiche { background: rgba(255, 255, 255, 0.3); color: inherit; }
 
+/* Terug: even hoog als de schuifknop ernaast, maar omlijnd en nooit
+   gevuld - het is geen stand, het doet meteen iets. */
+.palet-terug {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 46px;
+  padding: 4px 14px 4px 10px;
+  border: 2px solid var(--line);
+  border-radius: 99px;
+  background: var(--surface);
+  color: var(--text-2);
+  font: 500 var(--t-sm) var(--display);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.palet-terug:hover:not(:disabled) { color: var(--text); border-color: var(--accent); }
+.palet-terug:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.palet-terug:disabled { opacity: 0.45; cursor: default; }
+.palet-terug-pijl { display: inline-flex; }
+
 /* Op een telefoon: alle verdachten in beeld, zonder opzij te schuiven.
    Eerst stonden ze in één rij die je opzij schoof, zodat zestien namen niet
    het halve scherm namen. Een tester vond de rest daarna niet: op een
@@ -1579,11 +1610,28 @@ table.latin td.cell { width: 78px; height: 46px; }
   }
   .palet-namen .palet-portret svg { width: 22px; height: 22px; }
   .palet-standen { max-width: none; }
+  /* Op een telefoon alleen de pijl: met het woord erbij werd de schuifknop
+     zo smal dat "Neerzetten" eruit liep. Het woord blijft voor de
+     schermlezer (aria-label op de knop). */
+  .palet-terug { justify-content: center; width: 46px; padding: 0; }
+  .palet-terug-woord { display: none; }
+  .palet-terug-pijl svg { width: 22px; height: 22px; }
+  /* De standen staan nu naast Terug: wat smaller gestoken. */
+  .palet-stand { padding: 4px 2px; gap: 4px; }
 }
 /* Op 320 breed passen drie woorden met elk een fiche er niet naast elkaar;
    de balk duwde de hele pagina opzij. Het woord is wat telt, de fiche gaat. */
 @media (max-width: 360px) {
   .palet-stand .palet-fiche { display: none; }
+}
+/* Sinds Terug naast de standen staat, liep "Neerzetten" op 375 breed uit
+   zijn knop. Het potlood en het kruis gaan dan eerst: het woord zegt het
+   al. De letter op Neerzetten blijft, die zegt wie je neerzet. De kolommen
+   volgen dan hun inhoud, zodat Neerzetten de ruimte krijgt. */
+@media (max-width: 420px) {
+  .palet-standen { grid-template-columns: repeat(3, auto); }
+  .palet-schets .palet-fiche,
+  .palet-kruis .palet-fiche { display: none; }
 }
 
 .palet-knop {
@@ -1672,7 +1720,7 @@ table.latin td.cell { width: 78px; height: 46px; }
   }
   /* Tussen de rijen van .boards zit 32; de standen hoorden met 8 onder de
      namen, zoals toen ze nog in hetzelfde blok stonden. */
-  .palet-standen { margin-top: calc(var(--s2) - var(--s6)); }
+  .palet-bediening { margin-top: calc(var(--s2) - var(--s6)); }
   /* Altijd even hoog, ook bij een naam met één zin. Groeide het kastje mee,
      dan schoof het bord eronder bij elke andere naam een paar regels op, en
      tikte je naast het vakje dat je bedoelde. */
@@ -1732,7 +1780,8 @@ table.latin td.cell { width: 78px; height: 46px; }
   .crumbs a,
   .legend,
   .palet-kruis,
-  .palet-schets { display: none !important; }
+  .palet-schets,
+  .palet-terug { display: none !important; }
 
   main { max-width: none; padding: 0; }
 
