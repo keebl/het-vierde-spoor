@@ -48,6 +48,13 @@ standing guidance rather than state moved to `CLAUDE.md`.
   giveaways 71s, library 33s, the other three a tenth of a second each.
 
 ## Next
+- **Rename the project folder to `Reconstructie`** (prepared 2026-11-16). Only the folder
+  `~/Claude/Projects/Puzzels` carries the old name; the code does not. Once PR #10 and
+  #11 are merged and every worktree is gone, close the sessions in this folder and run
+  `bash ~/Claude/Projects/Puzzels/tools/hernoem-map.sh` (dry run), then with `--echt`, in
+  the owner's own Terminal. It moves the folder and copies the Claude memory along; then
+  start a new main session in the new folder. The GitHub repo `het-vierde-spoor` is a
+  separate, optional rename.
 - **Tester feedback, 2026-11-16** (an adult tester, phone, easy puzzles; positive about the
   look of the board and the puzzles). (1) On a phone you scroll back and forth between
   the clues, the board and the special items, and forget a clue's name on the way.
