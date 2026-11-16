@@ -591,7 +591,11 @@ function perNaam(puzzle, extraClues, knopVoor) {
       leeg
         ? el('p', {
           class: 'clue-leeg',
-          text: 'Hierover staat niets. Deze plek volgt uit de rest: als alle anderen staan, is er nog één vakje over.',
+          // Over het slachtoffer staat nooit iets (zie zet() in
+          // generate-rooms.js), en dat is zo bedoeld, niet overgebleven.
+          text: p === puzzle.slachtofferIdx
+            ? `Over ${puzzle.zaak?.rolwoord ?? 'het slachtoffer'} staat niets, met opzet. Die plek volgt uit de rest: als alle anderen staan, is er nog één vakje over.`
+            : 'Hierover staat niets. Deze plek volgt uit de rest: als alle anderen staan, is er nog één vakje over.',
         })
         : lijst,
       verwijzingen.length

@@ -20,6 +20,11 @@ day the changelog was introduced; everything before that is in git history only.
   unsolved case of the next level.
 
 ### Changed
+- No clue or hint names the victim any more, not even in another suspect's clue. Where
+  the victim stands follows from the rest of the board. In the clue list the victim's
+  name carries one fixed line saying so, instead of a group of clues of its own. Every
+  Reconstructie board is generated anew: an existing link gives a different puzzle, and
+  a half-played puzzle no longer fits its saved progress.
 - The bar above the board has three modes, Neerzetten, Schetsen and Uitsluiten, of which
   exactly one is on and shown filled and bold. Placing a suspect used to be what you had
   with the other two off, and had no button of its own.
