@@ -1,6 +1,6 @@
 # Spec: Reading the clues next to the board on a phone
 
-Status: approved
+Status: built
 Date: 2026-11-16
 
 ## Goal

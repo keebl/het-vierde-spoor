@@ -51,6 +51,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   Point 4 is built with `specs/solved-ending.md` (amended 2026-11-16): "Volgende zaak"
   moves up a level when a level is done, and a permanent "Volgende puzzel" button sits
   next to Controleer and Printen.
+  Point 1 is built with `specs/clues-on-phone.md` (2026-11-16, pull request pending):
+  on a phone the names and a box with the chosen name's clues stick over the board, and
+  clue numbers are gone. Not yet checked: a print PDF (page count; the list is longer now
+  that a clue stands under both its names) and a real phone with Safari's bars.
 1. **Show her the cheerful restyle and write down what she says.** The daughter's verdict
    was: dull colours, dull drawings, no artistic life. The owner answered the opening
    question of `specs/visual-liveliness.md` with "both", and directions 1 and 5 of that

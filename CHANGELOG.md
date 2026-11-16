@@ -20,6 +20,13 @@ day the changelog was introduced; everything before that is in git history only.
   unsolved case of the next level.
 
 ### Changed
+- On a phone, choosing a name shows what the clues say about that person in a small box
+  right under the names, and the names with that box stay at the top while you scroll
+  past the board. An "Iedereen" chip shows the clues about nobody in particular. The
+  floating "Aanwijzingen" button is gone on a phone; on desktop, choosing a name scrolls
+  its group into view in the clue column.
+- Clues no longer have numbers, anywhere. A clue that names two people now appears under
+  both names as the same sentence, instead of "Staat ook in aanwijzing 5".
 - The bar above the board has three modes, Neerzetten, Schetsen and Uitsluiten, of which
   exactly one is on and shown filled and bold. Placing a suspect used to be what you had
   with the other two off, and had no button of its own.
