@@ -13,8 +13,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   next-case order across levels and a permanent "Volgende puzzel" button (`9c2ed7f`,
   tested in CI on top of #7); #7 the suspect palette with a "Neerzetten" mode and every
   suspect in view on a phone (`b3930d7`); #8 the approved spec `specs/clues-on-phone.md`
-  (`0ef6da1`, not built). Not verified: the print proof of the ending sheet (the sandbox
-  blocked Brave) · waiting on Guus.
+  (`0ef6da1`, not built). Print of the ending sheet checked 2026-11-16 with
+  `tools/printweergave.js` in the browser pane: the sheet and the Ontknoping button stay off
+  paper, story, question and board stay on. No PDF yet (pagination unchecked): Brave cannot
+  start in the session sandbox.
   Earlier, 2026-11-14: The five finished sessions were archived with Guus's
   approval and their worktrees removed. Leftovers (the three `rng.js` Sonar findings
   were already marked false positive on 2026-11-12): check the hidden game types and the furniture per world. `.env.example`
@@ -167,6 +169,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   steps in Next, item 6 (until 2026-11-28)
 
 ## Workbench feedback
+- 2026-11-16 — Print proofs need a headless Chromium, and Chromium cannot start inside the
+  Bash sandbox (Mach bootstrap and ProcessSingleton socket denied, also with
+  `--no-sandbox`). Allow Brave in the sandbox, or give sessions a way to print to PDF from
+  the built-in browser; until then the screen emulation `tools/printweergave.js` stands in.
 - 2026-11-16 — `/main-session` says "merge"; this repository now allows squash merges only,
   so `gh pr merge --merge` fails. Detect the allowed method before merging.
 - 2026-11-16 — Two PRs touching the same file were each green against the old `main`;
