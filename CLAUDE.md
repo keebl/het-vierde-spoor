@@ -6,10 +6,10 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 ## Commands
 - Install: `npm install`
 - Run / stop: `npm start` / Ctrl-C — serves on http://localhost:4173
-- Test (all): `npm run check:all` — the keuring, 7 checks, about twelve minutes on an
+- Test (all): `npm run check:all` — the keuring, 8 checks, about twelve minutes on an
   idle laptop (the sweep alone is six), longer on a busy one
 - Test (one file): `npm run check:kamers` (also `check:regels`, `check:iconen`,
-  `check:catalog`, `check:weggevers`, `check:ai`, `check`)
+  `check:catalog`, `check:aanwijzingen`, `check:weggevers`, `check:ai`, `check`)
 - Test (fast): `npm run check:snel` — the 3 checks that build no puzzles, ~1 second
 - Typecheck: none (plain ES modules, no TypeScript)
 - Lint / format: none configured

@@ -8,7 +8,14 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Open sessions (2026-11-16): none working. All three sessions finished and their pull
+- Open sessions (2026-11-16, later): "Build specs/clues-on-phone.md" (`local_0ebd3844…`),
+  branch `claude/clues-on-phone-b8abcd`, PR #10 open, CI pending — merge when green
+  (reviewer findings handled). "Fix: victim gets no linked clue" (`local_9c52134a…`), branch
+  `claude/victim-no-clue-010ea9`, no PR yet — Guus chose option A (no clue names the
+  victim at all; every room puzzle link shifts); waits on its keuring, then push and PR.
+  Rule from mission control: one full keuring at a time across sessions.
+  `.claude/settings.json` env deny rules narrowed (`7f84e7d`); `.env.example` readable.
+- Earlier the same day: none working. All three sessions finished and their pull
   requests are merged (squash, CI green on all four checks): #9 the ending sheet, the
   next-case order across levels and a permanent "Volgende puzzel" button (`9c2ed7f`,
   tested in CI on top of #7); #7 the suspect palette with a "Neerzetten" mode and every
@@ -41,6 +48,13 @@ standing guidance rather than state moved to `CLAUDE.md`.
   giveaways 71s, library 33s, the other three a tenth of a second each.
 
 ## Next
+- **Rename the project folder to `Reconstructie`** (prepared 2026-11-16). Only the folder
+  `~/Claude/Projects/Puzzels` carries the old name; the code does not. Once PR #10 and
+  #11 are merged and every worktree is gone, close the sessions in this folder and run
+  `bash ~/Claude/Projects/Puzzels/tools/hernoem-map.sh` (dry run), then with `--echt`, in
+  the owner's own Terminal. It moves the folder and copies the Claude memory along; then
+  start a new main session in the new folder. The GitHub repo `het-vierde-spoor` is a
+  separate, optional rename.
 - **Tester feedback, 2026-11-16** (an adult tester, phone, easy puzzles; positive about the
   look of the board and the puzzles). (1) On a phone you scroll back and forth between
   the clues, the board and the special items, and forget a clue's name on the way.
@@ -55,6 +69,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   Point 4 is built with `specs/solved-ending.md` (amended 2026-11-16): "Volgende zaak"
   moves up a level when a level is done, and a permanent "Volgende puzzel" button sits
   next to Controleer and Printen.
+  Point 1 is built with `specs/clues-on-phone.md` (2026-11-16, pull request pending):
+  on a phone the names and a box with the chosen name's clues stick over the board, and
+  clue numbers are gone. Not yet checked: a print PDF (page count; the list is longer now
+  that a clue stands under both its names) and a real phone with Safari's bars.
 1. **Show her the cheerful restyle and write down what she says.** The daughter's verdict
    was: dull colours, dull drawings, no artistic life. The owner answered the opening
    question of `specs/visual-liveliness.md` with "both", and directions 1 and 5 of that
