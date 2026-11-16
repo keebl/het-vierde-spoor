@@ -74,7 +74,8 @@ standing guidance rather than state moved to `CLAUDE.md`.
   fixed and live the same day in pull request #11 (`37c8fca`), so she probably played
   before that; ask her to check again on a fresh case.
   (a) changes the generator and the difficulty curve and needs a spec first; (b) and (c)
-  are player changes in `src/ui/player.js` (there is no undo history today).
+  were built on 2026-11-16 per `specs/undo-and-sketch.md` (branch
+  `claude/nifty-jang-6079a0`); pending her verdict once merged.
 1. **Show her the cheerful restyle and write down what she says.** The daughter's verdict
    was: dull colours, dull drawings, no artistic life. The owner answered the opening
    question of `specs/visual-liveliness.md` with "both", and directions 1 and 5 of that

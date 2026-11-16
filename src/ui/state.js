@@ -15,8 +15,10 @@ function readAll() {
 function writeAll(all) {
   try {
     localStorage.setItem(KEY, JSON.stringify(all));
+    return true;
   } catch {
     /* opslag niet beschikbaar: dan speelt het gewoon zonder onthouden */
+    return false;
   }
 }
 
@@ -30,6 +32,13 @@ export function saveProgress(id, data) {
   // Niet onbeperkt laten groeien.
   const ids = Object.keys(all);
   if (ids.length > 120) delete all[ids[0]];
+  if (writeAll(all)) return;
+  // Vol? Dan eerst de Terug-geschiedenis van de andere puzzels eruit (zie
+  // TERUG_MAX in player.js), en dan die van deze ook: een stap terug
+  // kwijtraken is beter dan de hele voortgang.
+  for (const k of Object.keys(all)) if (k !== id) delete all[k]?.geschiedenis;
+  if (writeAll(all)) return;
+  delete all[id].geschiedenis;
   writeAll(all);
 }
 

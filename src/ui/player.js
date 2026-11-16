@@ -39,6 +39,11 @@ function bewaardeStand(puzzle) {
   return { solved: saved.solved, onthuld: saved.onthuld };
 }
 
+// Hoeveel stappen Terug onthoudt. De voortgang van tot 120 puzzels staat
+// samen in één localStorage-sleutel, en een schrijfactie die niet past
+// verliest alles; een opgeloste puzzel bewaart daarom geen geschiedenis.
+const TERUG_MAX = 30;
+
 export function renderPlayer(puzzle, mount) {
   const saved = bewaardeStand(puzzle);
   const state = {
@@ -87,6 +92,12 @@ export function renderPlayer(puzzle, mount) {
     // Wie de oplossing opvraagt heeft hem niet zelf gevonden. Dat houden we
     // apart bij, zodat de lijst niet doet alsof je hem hebt opgelost.
     onthuld: !!saved.onthuld,
+    // Terug: foto's van het bord van voor elke bordactie, de nieuwste
+    // achteraan. Alleen bordacties - een naam of stand kiezen, een
+    // aanwijzing wegstrepen of een hint vragen gaan er niet in.
+    geschiedenis: Array.isArray(saved.geschiedenis)
+      ? saved.geschiedenis.filter(isBordFoto).slice(-TERUG_MAX)
+      : [],
   };
 
   const persist = () => {
@@ -99,6 +110,7 @@ export function renderPlayer(puzzle, mount) {
       extra: state.extra,
       solved: state.solved,
       onthuld: state.onthuld,
+      geschiedenis: state.solved ? [] : state.geschiedenis,
       titel: puzzle.title,
       bordversie: BORDVERSIE,
     });
@@ -228,9 +240,17 @@ export function renderPlayer(puzzle, mount) {
   }
 
   function onCell(...args) {
+    // Een klik op het bord (geen palet-klik, die heeft cel null) die het
+    // bord ook echt verandert, is een stap terug waard. Een figuur alleen
+    // aantikken om hem vast te pakken verandert niets.
+    const voor = puzzle.kind === 'kamer' && args[0] !== null ? bordFoto(state) : null;
+    const voorTekst = voor && JSON.stringify(voor);
     if (puzzle.kind === 'latin') cycleLatin(puzzle, state, ...args);
     else if (puzzle.kind === 'kamer') zetNeer(puzzle, state, ...args);
     else cycleMark(puzzle, state, ...args);
+    if (voor && voorTekst !== JSON.stringify(bordFoto(state))) {
+      state.geschiedenis = [...state.geschiedenis, voor].slice(-TERUG_MAX);
+    }
     state.wrong = new Set();
     state.fout = new Set();
     state.goed = new Set();
@@ -248,6 +268,20 @@ export function renderPlayer(puzzle, mount) {
   }
 
   const actions = {
+    terug() {
+      const foto = state.geschiedenis.at(-1);
+      if (foto == null) return;
+      state.geschiedenis = state.geschiedenis.slice(0, -1);
+      zetBordTerug(state, foto);
+      state.wrong = new Set();
+      state.fout = new Set();
+      state.goed = new Set();
+      state.note = null;
+      // Opgelost blijft opgelost: wie na de ontknoping een figuur terugzet,
+      // krijgt het blad niet opnieuw en verliest zijn zaak niet.
+      persist();
+      draw();
+    },
     check() {
       const was = state.solved;
       const { wrong, goed, filled, total } = inspect(puzzle, state);
@@ -300,6 +334,7 @@ export function renderPlayer(puzzle, mount) {
       const bezig = Object.keys(state.plaats).length || Object.keys(state.marks).length;
       if (bezig && !window.confirm('De hele oplossing invullen? Daarmee is de puzzel voorbij.')) return;
       fillSolution(puzzle, state);
+      state.geschiedenis = [];
       state.onthuld = true;
       state.wrong = new Set();
       state.fout = new Set();
@@ -318,6 +353,7 @@ export function renderPlayer(puzzle, mount) {
       state.plaats = {};
       state.kruis = new Set();
       state.schets = {};
+      state.geschiedenis = [];
       state.struck = new Set();
       state.wrong = new Set();
       state.fout = new Set();
@@ -375,6 +411,24 @@ export function renderPlayer(puzzle, mount) {
       draw();
     },
   };
+
+  // Ctrl+Z (Cmd+Z op een Mac) doet hetzelfde als Terug. Niet in een
+  // tekstveld, waar het van de browser is; zonder Shift, want dat is
+  // opnieuw doen, en dat is er niet.
+  if (puzzle.kind === 'kamer') {
+    // Ingedrukt houden herhaalt niet: dat veegde in een tel dertig stappen
+    // weg. En niet terwijl het blad van de ontknoping openstaat, want dan
+    // verandert het bord erachter zonder dat je het ziet.
+    const opToets = (e) => {
+      if (!play.isConnected) { document.removeEventListener('keydown', opToets); return; }
+      if ((e.key ?? '').toLowerCase() !== 'z' || e.shiftKey || e.altKey || !(e.ctrlKey || e.metaKey)) return;
+      if (e.target.closest?.('input, textarea, select, [contenteditable="true"]')) return;
+      if (e.repeat || document.querySelector('dialog[open]')) { e.preventDefault(); return; }
+      e.preventDefault();
+      actions.terug();
+    };
+    document.addEventListener('keydown', opToets);
+  }
 
   draw();
   // Een opgeloste zaak opnieuw geopend: het blad staat er weer, zonder
@@ -723,7 +777,7 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions, knopVoorAanwijzi
   if (puzzle.kind === 'kamer') {
     const vanzelf = kruisjesVanzelf();
     return [
-      personenPalet(puzzle, state, onCell, knopVoorAanwijzing),
+      personenPalet(puzzle, state, onCell, knopVoorAanwijzing, actions.terug),
       el('div', { class: 'board-wrap' }, renderKamerbord(
         puzzle, state, { klikCel: onCell, klikMeubel: toonMeubel },
         { rand: randAan(), kruisjesVanzelf: vanzelf },
@@ -736,7 +790,7 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions, knopVoorAanwijzi
       klepje('uitleg', 'Hoe je dit bord bedient', false, [
         el('p', {
           class: 'legend',
-          text: `Onder de namen kies je wat een klik op het bord doet; de gekozen stand is gevuld. Met Neerzetten kies je een figuur en klik je een leeg vakje om hem neer te zetten. Klik je op een figuur die al op het bord staat, dan pak je die op; klik je er nog een keer op, dan gaat hij eraf. Met Schetsen zet je in plaats daarvan zijn beginletter in het vakje, als notitie van wie daar zou kunnen staan. Met Uitsluiten zet je je eigen kruisjes; tik je daarna een naam aan, dan sta je weer op Neerzetten. Er staat precies één verdachte per rij en per kolom, en niemand staat op een meubelstuk.${vanzelf ? ' Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan; dat kun je uitzetten met de knop Kruisjes vanzelf.' : ' Het bord zet zelf geen kruisjes - dat staat uit.'}`,
+          text: `Onder de namen kies je wat een klik op het bord doet; de gekozen stand is gevuld. Met Neerzetten kies je een figuur en klik je een leeg vakje om hem neer te zetten. Klik je op een figuur die al op het bord staat, dan pak je die op; klik je er nog een keer op, dan gaat hij eraf. Met Schetsen zet je in plaats daarvan zijn beginletter in het vakje, als notitie van wie daar zou kunnen staan. Met Uitsluiten zet je je eigen kruisjes; tik je daarna een naam aan, dan sta je weer op Neerzetten. Met Terug (of Ctrl+Z) maak je je laatste zet op het bord ongedaan. Er staat precies één verdachte per rij en per kolom, en niemand staat op een meubelstuk.${vanzelf ? ' Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan, en verbergt het de schetsletters die daardoor niet meer kunnen; pak je hem weer op, dan komen ze terug. Dat kun je uitzetten met de knop Kruisjes vanzelf.' : ' Het bord zet zelf geen kruisjes en laat al je schetsletters staan - dat staat uit.'}`,
         }),
       ]),
     ];
@@ -803,13 +857,32 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions, knopVoorAanwijzi
 // stand ze zat: twee lichte knoppen die allebei uit staan zeggen niets. Nu
 // is het één keuze uit drie, en de gekozen stand is gevuld en vet, zodat je
 // altijd ziet wat je volgende klik doet.
-function personenPalet(puzzle, state, onCell, knopVoorAanwijzing) {
+function personenPalet(puzzle, state, onCell, knopVoorAanwijzing, terug) {
   const balk = el('div', { class: 'palet' });
   const namen = el('div', { class: 'palet-namen' });
   const standen = el('div', { class: 'palet-standen', role: 'group', 'aria-label': 'Wat een klik op het bord doet' });
   const indeling = aanwijzingenPerPersoon(puzzle, state.extra ?? []);
   const kastje = aanwijzingenKastje(puzzle, state, indeling, knopVoorAanwijzing);
-  balk.append(el('div', { class: 'palet-plak' }, [namen, kastje]), standen);
+  // Terug staat naast de standen en niet erin: het is geen stand, het doet
+  // meteen iets. Daarom omlijnd en niet gevuld, en grijs als er niets is
+  // om terug te zetten.
+  const terugKnop = el('button', {
+    class: 'palet-terug',
+    type: 'button',
+    title: 'Laatste zet ongedaan maken (Ctrl+Z)',
+    'aria-label': 'Terug',
+    'aria-keyshortcuts': 'Control+Z Meta+Z',
+    'data-focus': 'terug',
+    disabled: state.geschiedenis.length ? null : '',
+  }, [el('span', { class: 'palet-terug-pijl', 'aria-hidden': 'true' }), el('span', { class: 'palet-terug-woord', text: 'Terug' })]);
+  // Een getekende pijl: het teken ↶ kwam in het lettertype van de knoppen
+  // uit als een dun haakje dat je op een telefoon niet als pijl herkende.
+  terugKnop.firstChild.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>';
+  terugKnop.addEventListener('click', terug);
+  balk.append(
+    el('div', { class: 'palet-plak' }, [namen, kastje]),
+    el('div', { class: 'palet-bediening' }, [standen, terugKnop]),
+  );
   puzzle.personen.forEach((naam, i) => {
     const geplaatst = state.plaats[i] != null;
     const isLijk = i === puzzle.slachtofferIdx;
@@ -1059,7 +1132,43 @@ function zetNeer(puzzle, state, cel, keuze) {
   if (state.gekozen < 0) return;
   state.plaats[state.gekozen] = cel;
   state.kruis.delete(cel);
-  delete state.schets[cel];
+  // De schetsletters van dit vakje blijven bewaard: het bord laat ze niet
+  // zien zolang hier iemand staat (zie board-rooms.js). Ze werden eerst
+  // gewist, en wie een figuur alleen even uitprobeerde, was zijn notities
+  // kwijt.
+}
+
+// ----------------------------------------------------------- terug
+// Wat Terug terugzet: alleen het bord zelf. De automatische kruisjes en de
+// verborgen schetsletters zitten er niet in, want het bord leidt die bij
+// elke tekening af uit plaats - ze gaan dus vanzelf mee terug.
+//
+// Een foto is een gewoon object, geen JSON-tekst: tekst in de bewaarde
+// voortgang wordt nog een keer gecodeerd, met een schuine streep voor elk
+// aanhalingsteken, en die opslag is gedeeld door 120 puzzels.
+function bordFoto(state) {
+  return {
+    plaats: { ...state.plaats },
+    kruis: [...state.kruis].sort((a, b) => a - b),
+    schets: Object.fromEntries(Object.entries(state.schets).map(([cel, l]) => [cel, [...l]])),
+  };
+}
+
+// Wat uit localStorage komt, kan van alles zijn. Een foto die niet klopt
+// wordt bij het laden overgeslagen, niet bij Terug pas ontdekt.
+function isBordFoto(f) {
+  return f != null && typeof f === 'object'
+    && f.plaats != null && typeof f.plaats === 'object' && !Array.isArray(f.plaats)
+    && Array.isArray(f.kruis) && f.kruis.every(Number.isInteger)
+    && f.schets != null && typeof f.schets === 'object' && !Array.isArray(f.schets)
+    && Object.values(f.schets).every((l) => Array.isArray(l) && l.every(Number.isInteger))
+    && Object.values(f.plaats).every(Number.isInteger);
+}
+
+function zetBordTerug(state, foto) {
+  state.plaats = { ...foto.plaats };
+  state.kruis = new Set(foto.kruis);
+  state.schets = Object.fromEntries(Object.entries(foto.schets).map(([cel, l]) => [cel, [...l]]));
 }
 
 function fillSolution(puzzle, state) {
