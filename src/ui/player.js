@@ -21,6 +21,8 @@ import { telwoord, hoofdletter } from '../content/woorden.js';
 import { extraAanwijzing, bekendAlsAanwijzingen } from '../engine/generate-rooms.js';
 import { zinVoor } from '../content/rooms-text.js';
 import { makeRng } from '../engine/rng.js';
+import { openOntknoping, sluitOntknoping } from './ontknoping.js';
+import { volgendeZaak } from './volgende.js';
 
 export function renderPlayer(puzzle, mount) {
   const saved = loadProgress(puzzle.id) ?? {};
@@ -117,6 +119,29 @@ export function renderPlayer(puzzle, mount) {
   window.addEventListener('beforeprint', voorPrint);
   window.addEventListener('afterprint', naPrint);
 
+  // Waar "Volgende zaak" en "Volgende puzzel" heen gaan. Eén keer
+  // uitgerekend per puzzel, anders kreeg de knop bij elke klik op het bord
+  // een andere willekeurige puzzel achter zich - en dan wezen de knop op
+  // het blad en die onder het bord ook niet meer naar dezelfde. Of deze
+  // zaak zelf is opgelost doet er niet toe: hij telt nooit mee.
+  let volgendeId = null;
+  const naarVolgende = () => (volgendeId ??= volgendeZaak(puzzle));
+
+  // De ontknoping: alleen bij de Reconstructie, het enige speltype dat je
+  // te zien krijgt. De andere houden hun regel onder het bord.
+  const metOntknoping = puzzle.kind === 'kamer';
+  const toonOntknoping = (opties = {}) => {
+    if (!metOntknoping) return;
+    openOntknoping(puzzle, {
+      onthuld: state.onthuld,
+      volgende: naarVolgende(),
+      terug: () => notes.querySelector('[data-ontknoping]'),
+      ...opties,
+    });
+  };
+  // Net opgelost, door wat dan ook: een figuur, Controleer of een hint.
+  const netOpgelost = () => toonOntknoping({ feest: true });
+
   const draw = () => {
     const aantal = puzzle.clues.length + (state.extra?.length ?? 0);
     // Een aanwijzing wegklikken tekent de lijst opnieuw. In een kolom of
@@ -128,7 +153,7 @@ export function renderPlayer(puzzle, mount) {
     clueCol.scrollTop = scroll;
     blad.knop.textContent = `Aanwijzingen (${aantal})`;
     boards.replaceChildren(...boardNodes(puzzle, state, onCell, toonMeubel, actions));
-    notes.replaceChildren(toolbar(puzzle, state, actions), noteNode(state));
+    notes.replaceChildren(toolbar(puzzle, state, actions, metOntknoping ? naarVolgende() : null), noteNode(state));
   };
 
   // Tikken op een meubelstuk: de naam eronder. Aanwijzen met de muis geeft
@@ -147,16 +172,21 @@ export function renderPlayer(puzzle, mount) {
     state.fout = new Set();
     state.goed = new Set();
     state.note = null;
+    // Alleen bij de overgang: wie na het oplossen nog een figuur verschuift
+    // en terugzet, krijgt het blad niet bij elke klik opnieuw.
+    const was = state.solved;
     if (isSolved(puzzle, state)) {
       state.solved = true;
       state.note = { kind: 'good', text: `Opgelost. Het antwoord: ${puzzle.question.answer}.` };
     }
     persist();
     draw();
+    if (state.solved && !was) netOpgelost();
   }
 
   const actions = {
     check() {
+      const was = state.solved;
       const { wrong, goed, filled, total } = inspect(puzzle, state);
       state.wrong = wrong;
       state.fout = wrong;
@@ -184,6 +214,7 @@ export function renderPlayer(puzzle, mount) {
       }
       persist();
       draw();
+      if (state.solved && !was) netOpgelost();
     },
     hint() {
       state.wrong = new Set();
@@ -193,9 +224,11 @@ export function renderPlayer(puzzle, mount) {
       state.note = hint
         ? { kind: 'ok', text: hint.text }
         : { kind: 'ok', text: 'Er valt niets meer bij te zeggen: alles wat waar is, staat er al.' };
+      const was = state.solved;
       if (isSolved(puzzle, state)) state.solved = true;
       persist();
       draw();
+      if (state.solved && !was) netOpgelost();
     },
     reveal() {
       // Eén misklik mag een puzzel niet verpesten.
@@ -210,6 +243,7 @@ export function renderPlayer(puzzle, mount) {
       state.note = { kind: 'ok', text: `De oplossing staat op het bord. Het antwoord: ${puzzle.question.answer}.` };
       persist();
       draw();
+      toonOntknoping();
     },
     reset() {
       const bezig = Object.keys(state.plaats).length || Object.keys(state.marks).length || state.kruis.size;
@@ -226,7 +260,11 @@ export function renderPlayer(puzzle, mount) {
       state.solved = false;
       state.note = null;
       clearProgress(puzzle.id);
+      sluitOntknoping();
       draw();
+    },
+    ontknoping() {
+      toonOntknoping();
     },
     kruisjes() {
       // De kruisjes die het bord zelf zet zodra iemand staat. Ze volgen
@@ -274,6 +312,9 @@ export function renderPlayer(puzzle, mount) {
   };
 
   draw();
+  // Een opgeloste zaak opnieuw geopend: het blad staat er weer, zonder
+  // confetti, in de vorm waarin hij is opgelost (zelf of met Oplossing).
+  if (state.solved) toonOntknoping({ opnieuw: true });
 }
 
 // ----------------------------------------------------------------- kop
@@ -763,18 +804,29 @@ function bordschakelaars(acties) {
   ]);
 }
 
-function toolbar(puzzle, state, actions) {
+function toolbar(puzzle, state, actions, volgende = null) {
   const bar = el('div', { class: 'toolbar' });
   const add = (label, fn, primary) => {
     const b = el('button', { class: primary ? 'btn btn-primary' : 'btn', type: 'button', text: label });
     b.addEventListener('click', fn);
     bar.append(b);
+    return b;
   };
   add('Controleer', actions.check, true);
+  // Het blad weer openen nadat je het hebt dichtgedaan.
+  if (volgende && state.solved) {
+    add('Ontknoping', actions.ontknoping).dataset.ontknoping = '1';
+  }
   add('Hint', actions.hint);
   add('Oplossing', actions.reveal);
   add('Begin opnieuw', actions.reset);
   add('Printen', actions.print);
+  // Altijd een weg naar de volgende zaak, ook zonder deze eerst op te
+  // lossen: een tester op een telefoon zocht hem naast Controleer en
+  // Printen en vond hem niet. Zelfde doel als de knop op het blad.
+  if (volgende) {
+    bar.append(el('a', { class: 'btn btn-volgende', href: `#/puzzel/${volgende}`, text: 'Volgende puzzel' }));
+  }
   add('Bewaar deze puzzel', actions.share);
   return bar;
 }
