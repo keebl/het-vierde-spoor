@@ -45,8 +45,9 @@ standing guidance rather than state moved to `CLAUDE.md`.
   (3) There is "Uitsluiten" and "Schetsen" but no visible "place" mode; add a third button
   and always show the active mode in bold. (4) No "next puzzle" button next to Controleer
   and Print; wants a logical order: puzzle 1, then the next, then the next level.
-  Point 4 is mostly covered by `specs/solved-ending.md` (next unsolved case of the same
-  level); moving up a level and a permanent button are not.
+  Point 4 is built with `specs/solved-ending.md` (amended 2026-11-16): "Volgende zaak"
+  moves up a level when a level is done, and a permanent "Volgende puzzel" button sits
+  next to Controleer and Printen.
 1. **Show her the cheerful restyle and write down what she says.** The daughter's verdict
    was: dull colours, dull drawings, no artistic life. The owner answered the opening
    question of `specs/visual-liveliness.md` with "both", and directions 1 and 5 of that
@@ -61,9 +62,9 @@ standing guidance rather than state moved to `CLAUDE.md`.
    and 4 of the brief are still open**. Nothing is proven until she has seen it; that is
    the next step, and it is a measurement, not a formality. The same goes for the four
    present-day worlds of 2026-11-10: write down which one she likes best, and why.
-2. **An ending when you solve it.** Today the screen only says "Opgelost". The culprit
-   should appear, with a closing line and a button to the next case. Biggest gap for the
-   intended player.
+2. **An ending when you solve it.** Built 2026-11-16 (`specs/solved-ending.md`): a sheet
+   with the answer's portrait, a closing line per case and "Volgende zaak". Pending her
+   verdict; the closing lines are a draft and can be tuned after she has seen them.
 4. **Keyboard and screen reader.** Board cells are `rect` elements without focus, so the
    game cannot be played without a mouse.
 5. **Modernise the base furniture set.** Done for the present-day worlds (see Recent
