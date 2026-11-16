@@ -2615,14 +2615,189 @@ select, input[type="text"] { border-radius: 999px; border-width: 2px; }
   opacity: 0.8;
 }
 
+/* ------------------------------------------------------- de ontknoping
+   Het blad dat over het bord schuift als de zaak rond is (ontknoping.js).
+   Alleen tokens: in een zaak heeft de body de kleuren van de wereld, en het
+   blad neemt die mee - de schijf achter het portret in de wereldkleur
+   (--wkleur), de rest in surface en text. De enige roze knop is "Volgende
+   zaak"; in een wereld is --accent die wereldkleur, net als Controleer. */
+.ontknoping {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--text);
+  width: min(26rem, calc(100vw - 2 * var(--s4)));
+  max-height: calc(100dvh - 2 * var(--s4));
+  overflow: visible;
+}
+.ontknoping::backdrop {
+  background: color-mix(in srgb, var(--text) 45%, transparent);
+  backdrop-filter: blur(2px);
+}
+.ontknoping-blad {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--s2);
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--schaduw-pop);
+  padding: var(--s6) var(--s5) var(--s5);
+  max-height: calc(100dvh - 2 * var(--s4));
+  overflow-y: auto;
+  animation: ontknoping-in 320ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+/* Een regenboogrand bovenaan, zoals onder de kop van de site. */
+.ontknoping-blad::before {
+  content: "";
+  position: absolute;
+  left: var(--s5); right: var(--s5); top: 0;
+  height: 5px;
+  border-radius: 0 0 99px 99px;
+  background: var(--regenboog);
+}
+.ontknoping-stil .ontknoping-blad::before { opacity: 0.35; }
+.ontknoping-kop { margin: 0; }
+.ontknoping-schijf {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 184px; height: 184px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, color-mix(in srgb, #ffffff 55%, transparent), transparent 60%),
+    color-mix(in srgb, var(--wkleur, var(--pop-1)) 70%, var(--surface));
+  border: 4px solid var(--surface);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--wkleur, var(--pop-1)) 55%, var(--line)), var(--schaduw-pop);
+  margin: var(--s2) 0;
+}
+.ontknoping-feest .ontknoping-schijf { animation: ontknoping-pop 520ms 120ms cubic-bezier(0.3, 1.6, 0.5, 1) both; }
+.ontknoping-stil .ontknoping-schijf { filter: saturate(0.55); }
+.ontknoping-portret {
+  width: 160px; height: 160px;
+  /* Het portretje is getekend voor een vierkant penningetje; op de ronde
+     schijf staken de hoeken van de lijst eruit. */
+  clip-path: circle(47%);
+}
+.ontknoping-naam {
+  font-family: var(--display);
+  font-size: var(--t-xl);
+  line-height: 1.1;
+  margin: 0;
+}
+.ontknoping-rol {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: var(--t-md);
+  color: var(--text-2);
+}
+.ontknoping-merk { flex: none; }
+.ontknoping-slot {
+  font-family: var(--serif);
+  font-size: var(--t-md);
+  line-height: 1.45;
+  color: var(--text);
+  margin: var(--s2) 0 var(--s3);
+  max-width: 30ch;
+}
+.ontknoping-stil .ontknoping-slot { color: var(--text-2); }
+.ontknoping-knoppen {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s3);
+  width: 100%;
+}
+.ontknoping-verder { flex: 1 1 12rem; justify-content: center; text-decoration: none; }
+.ontknoping-bekijk { flex: 1 1 8rem; justify-content: center; }
+.ontknoping-sluit {
+  position: absolute;
+  top: var(--s3); right: var(--s3);
+  width: 2.25rem; height: 2.25rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.ontknoping-sluit:hover { background: var(--surface-3); color: var(--text); }
+
+/* De snippers. Ze vliegen vanuit het portret naar buiten en vallen weg; het
+   blad zelf blijft er dwars doorheen te bedienen. */
+.ontknoping-confetti {
+  position: absolute;
+  left: 50%; top: 9.5rem;
+  width: 22rem; height: 22rem;
+  translate: -50% -50%;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 1;
+}
+.snipper {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: ontknoping-snipper 900ms var(--wacht, 0ms) cubic-bezier(0.15, 0.7, 0.3, 1) both;
+}
+.snipper.pop-1 { fill: var(--pop-1); }
+.snipper.pop-2 { fill: var(--pop-2); }
+.snipper.pop-3 { fill: var(--pop-3); }
+.snipper.pop-4 { fill: var(--pop-4); }
+.snipper.pop-5 { fill: var(--pop-5); }
+.snipper.pop-6 { fill: var(--pop-6); }
+
+@keyframes ontknoping-in {
+  from { transform: translateY(40px) scale(0.96); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes ontknoping-pop {
+  0% { transform: scale(0.4); }
+  70% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@keyframes ontknoping-snipper {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0) scale(0.4); }
+  15% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx), calc(var(--dy) + 28px)) rotate(var(--draai)) scale(1); }
+}
+
+/* De knop naar de volgende zaak onder het bord: een link die eruitziet als
+   de knoppen ernaast. */
+.btn-volgende { justify-content: center; text-decoration: none; }
+
+@media (max-width: 640px) {
+  .ontknoping-blad { padding: var(--s5) var(--s4) var(--s4); gap: var(--s1); }
+  .ontknoping-schijf { width: 136px; height: 136px; }
+  .ontknoping-portret { width: 120px; height: 120px; }
+  .ontknoping-confetti { top: 7.5rem; width: 18rem; height: 18rem; }
+  .ontknoping-naam { font-size: var(--t-lg); }
+  .ontknoping-slot { font-size: var(--t-base); margin-bottom: var(--s2); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn, .opt, .kaart, .palet-knop, .nav a { transition: none; }
+  /* Geen schuiven, geen ploppen, geen snippers: het blad staat er gewoon. */
+  .ontknoping-blad, .ontknoping-feest .ontknoping-schijf { animation: none; }
+  .ontknoping-confetti { display: none; }
 }
 
 @media print {
   body, body[data-wereld] { background: #fff; }
   .top::after, .foot::before, .question::before, .hero-bord::before, .intro::before { display: none; }
   .intro, .question, .step, .paneel { box-shadow: none; }
+  /* De ontknoping hoort niet op papier: het blad, de snippers, de knop die
+     hem terughaalt en de knop naar de volgende zaak niet. */
+  .ontknoping, .ontknoping::backdrop, [data-ontknoping], .btn-volgende { display: none !important; }
 }
 
 /* Op een telefoon plakt de kop niet (zie hoger); de regenboogstreep moet dan
