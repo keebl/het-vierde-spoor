@@ -1,7 +1,8 @@
 # Spec: harder, more varied clues on the room board
 
-Status: draft
-Date: 2026-11-16 (interview by Guus the same day, via the main session)
+Status: approved
+Date: 2026-11-16 (interview and approval by Guus the same day, via the main session:
+"ja, spec goedgekeurd met de stopregel")
 
 ## Goal
 The player of a Reconstructie (room board) gets clues that make her combine: no pair of
