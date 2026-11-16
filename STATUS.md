@@ -8,8 +8,12 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Open sessions (2026-11-16): none working. "Spec: ontknoping na het oplossen" finished:
-  `specs/solved-ending.md` approved and merged (pull request #6, `b2c10bc`); not built yet.
+- Open sessions (2026-11-16), all started by the main session, each in its own worktree:
+  "Bouw: ontknoping en volgende zaak" (builds `specs/solved-ending.md`, asks Guus about
+  level progression and a permanent next-puzzle button) · working; "Palet: invulstand
+  zichtbaar, verdachten in twee rijen" · working; "Spec: aanwijzingen lezen op de
+  telefoon" (writes `specs/clues-on-phone.md`) · working. The spec session for the ending
+  is archived (pull request #6 merged).
   Earlier, 2026-11-14: The five finished sessions were archived with Guus's
   approval and their worktrees removed. Leftovers (the three `rng.js` Sonar findings
   were already marked false positive on 2026-11-12): check the hidden game types and the furniture per world. `.env.example`
