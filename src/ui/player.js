@@ -161,6 +161,24 @@ export function renderPlayer(puzzle, mount) {
   // strepen ze dezelfde state.struck weg, dus ze zijn het altijd eens.
   const knopVoorAanwijzing = (clue, waar) => aanwijzingKnop(clue, state, () => { persist(); draw(); }, waar);
 
+  // Op een breed scherm staat er geen kastje: de hele lijst staat al naast
+  // het bord. Kies je een naam, dan schuift de kolom naar zijn groep - de
+  // kolom zelf, niet de pagina, want het bord moet blijven staan.
+  let gelezen = state.leesNaam;
+  const toonGroep = () => {
+    if (gelezen === state.leesNaam) return;
+    gelezen = state.leesNaam;
+    if (!window.matchMedia('(min-width: 1100px)').matches) return;
+    const groep = clueCol.querySelector(`.clue-groep[data-persoon="${state.leesNaam}"]`);
+    if (!groep) return;
+    const kolom = clueCol.getBoundingClientRect();
+    const g = groep.getBoundingClientRect();
+    // De kolom plakt pas als je ver genoeg gescrold bent; tot dan valt zijn
+    // onderkant buiten het scherm, en wat daar staat is niet in beeld.
+    if (g.top >= kolom.top && g.bottom <= Math.min(kolom.bottom, window.innerHeight)) return;
+    clueCol.scrollTop += g.top - kolom.top - 8;
+  };
+
   const draw = () => {
     const aantal = puzzle.clues.length + (state.extra?.length ?? 0);
     // Een aanwijzing wegklikken tekent de lijst opnieuw. In een kolom of
@@ -182,6 +200,7 @@ export function renderPlayer(puzzle, mount) {
     const nieuwKastje = boards.querySelector('.palet-kastje');
     if (nieuwKastje) nieuwKastje.scrollTop = kastScroll;
     if (focus) boards.querySelector(`[data-focus="${focus}"]`)?.focus();
+    toonGroep();
     notes.replaceChildren(toolbar(puzzle, state, actions, metOntknoping ? naarVolgende() : null), noteNode(state));
   };
 
