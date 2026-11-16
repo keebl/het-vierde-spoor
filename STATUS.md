@@ -8,8 +8,9 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Open sessions (2026-11-15): "Spec: ontknoping na het oplossen" (writes
-  `specs/solved-ending.md` with Guus, docs PR to follow) · working. Earlier, 2026-11-14: The five finished sessions were archived with Guus's
+- Open sessions (2026-11-16): none working. "Spec: ontknoping na het oplossen" finished:
+  `specs/solved-ending.md` approved and merged (pull request #6, `b2c10bc`); not built yet.
+  Earlier, 2026-11-14: The five finished sessions were archived with Guus's
   approval and their worktrees removed. Leftovers (the three `rng.js` Sonar findings
   were already marked false positive on 2026-11-12): check the hidden game types and the furniture per world. `.env.example`
   committed on 2026-11-15 after Guus confirmed it holds only placeholders. Dependabot pull requests
@@ -33,6 +34,15 @@ standing guidance rather than state moved to `CLAUDE.md`.
   giveaways 71s, library 33s, the other three a tenth of a second each.
 
 ## Next
+- **Tester feedback, 2026-11-16** (an adult tester, phone, easy puzzles; positive about the
+  look of the board and the puzzles). (1) On a phone you scroll back and forth between
+  the clues, the board and the special items, and forget a clue's name on the way.
+  (2) The suspects in one horizontal scrolling row were hard to find; two rows suggested.
+  (3) There is "Uitsluiten" and "Schetsen" but no visible "place" mode; add a third button
+  and always show the active mode in bold. (4) No "next puzzle" button next to Controleer
+  and Print; wants a logical order: puzzle 1, then the next, then the next level.
+  Point 4 is mostly covered by `specs/solved-ending.md` (next unsolved case of the same
+  level); moving up a level and a permanent button are not.
 1. **Show her the cheerful restyle and write down what she says.** The daughter's verdict
    was: dull colours, dull drawings, no artistic life. The owner answered the opening
    question of `specs/visual-liveliness.md` with "both", and directions 1 and 5 of that
