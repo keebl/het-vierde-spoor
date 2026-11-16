@@ -45,6 +45,11 @@ export function renderPlayer(puzzle, mount) {
     // Uitsluiten gooit hem niet meer weg, zodat je na een paar kruisjes
     // terugkomt bij wie je vasthad.
     gekozen: 0,
+    // Wiens aanwijzingen in het kastje onder de namen staan: een verdachte,
+    // of 'iedereen'. Meestal dezelfde als gekozen, maar niet altijd: met
+    // Iedereen heb je niemand vast om neer te zetten (gekozen is dan -1), en
+    // het kastje moet dan toch iets laten zien.
+    leesNaam: 0,
     plaatsVanCel(cel) {
       for (const [p, c] of Object.entries(this.plaats)) if (c === cel) return Number(p);
       return null;
@@ -152,17 +157,31 @@ export function renderPlayer(puzzle, mount) {
   // Net opgelost, door wat dan ook: een figuur, Controleer of een hint.
   const netOpgelost = () => toonOntknoping({ feest: true });
 
+  // Eén knop per aanwijzing, voor de lijst en voor het kastje: allebei
+  // strepen ze dezelfde state.struck weg, dus ze zijn het altijd eens.
+  const knopVoorAanwijzing = (clue, waar) => aanwijzingKnop(clue, state, () => { persist(); draw(); }, waar);
+
   const draw = () => {
     const aantal = puzzle.clues.length + (state.extra?.length ?? 0);
     // Een aanwijzing wegklikken tekent de lijst opnieuw. In een kolom of
     // blad dat zelf scrolt sprong je dan terug naar de eerste zin.
     const scroll = clueCol.scrollTop;
     clueCol.replaceChildren(blad.sluiter(), vraagBlok(puzzle, 'aanwijzingen-vraag'), klepje(
-      'aanwijzingen', `Aanwijzingen (${aantal})`, true, [cluePanel(puzzle, state, draw, persist)],
+      'aanwijzingen', `Aanwijzingen (${aantal})`, true, [cluePanel(puzzle, state, knopVoorAanwijzing)],
     ));
     clueCol.scrollTop = scroll;
     blad.knop.textContent = `Aanwijzingen (${aantal})`;
-    boards.replaceChildren(...boardNodes(puzzle, state, onCell, toonMeubel, actions));
+    // Hetzelfde voor het kastje onder de namen: wegstrepen tekent het
+    // opnieuw, en dan sprong je terug naar de eerste zin. Alleen zolang het
+    // over dezelfde naam gaat; een andere naam begint bovenaan. De focus
+    // gaat mee terug, anders sprong je met Tab na elke tik naar het begin.
+    const kastje = boards.querySelector('.palet-kastje');
+    const kastScroll = kastje && kastje.dataset.van === String(state.leesNaam) ? kastje.scrollTop : 0;
+    const focus = document.activeElement?.closest?.('[data-focus]')?.dataset.focus;
+    boards.replaceChildren(...boardNodes(puzzle, state, onCell, toonMeubel, actions, knopVoorAanwijzing));
+    const nieuwKastje = boards.querySelector('.palet-kastje');
+    if (nieuwKastje) nieuwKastje.scrollTop = kastScroll;
+    if (focus) boards.querySelector(`[data-focus="${focus}"]`)?.focus();
     notes.replaceChildren(toolbar(puzzle, state, actions, metOntknoping ? naarVolgende() : null), noteNode(state));
   };
 
@@ -449,7 +468,7 @@ function spelregelBlok(puzzle) {
   return blok;
 }
 
-function cluePanel(puzzle, state, draw, persist) {
+function cluePanel(puzzle, state, knopVoorAanwijzing) {
   if (puzzle.kind === 'latin' && !puzzle.clues.length) {
     return el('div', {}, [
       el('p', { class: 'label', text: 'Hoe dit werkt' }),
@@ -469,30 +488,9 @@ function cluePanel(puzzle, state, draw, persist) {
   // Zonder nummers, net als de aanwijzingen: V1, V2 en 1 tot en met 21
   // zeiden de speler niets, want de volgorde betekent niets
   // (specs/clues-on-phone.md).
-  const feitenBlok = (puzzle.feiten ?? []).length
-    ? el('div', { class: 'feiten' }, [
-      el('p', { class: 'label', text: 'Wat vaststaat' }),
-      el('div', { class: 'clues' }, puzzle.feiten.map((tekst) => el('div', { class: 'clue clue-feit' }, [
-        el('span', { class: 'clue-text', text: tekst }),
-      ]))),
-    ])
-    : null;
+  const feitenBlok = feitenVan(puzzle.feiten);
 
-  const knopVoor = (clue) => {
-    const done = state.struck.has(clue.n);
-    const btn = el('button', {
-      class: 'clue',
-      type: 'button',
-      'aria-pressed': String(done),
-    }, [el('span', { class: 'clue-text', text: clue.text })]);
-    btn.addEventListener('click', () => {
-      if (done) state.struck.delete(clue.n);
-      else state.struck.add(clue.n);
-      persist();
-      draw();
-    });
-    return btn;
-  };
+  const knopVoor = (clue) => knopVoorAanwijzing(clue, 'lijst');
 
   // De hints die de speler heeft opgevraagd, als gewone aanwijzingen achter
   // de andere, want ze zijn niet minder waar dan de rest - je hebt ze alleen
@@ -528,6 +526,38 @@ function cluePanel(puzzle, state, draw, persist) {
   blokken.push(el('p', { class: 'legend', text: 'Klik een aanwijzing weg als je hem hebt gebruikt.' }));
   return el('div', {}, blokken);
 }
+
+// Wat vaststaat, als blok. Ook in het kastje onder Iedereen.
+function feitenVan(feiten = []) {
+  if (!feiten.length) return null;
+  return el('div', { class: 'feiten' }, [
+    el('p', { class: 'label', text: 'Wat vaststaat' }),
+    el('div', { class: 'clues' }, feiten.map((tekst) => el('div', { class: 'clue clue-feit' }, [
+      el('span', { class: 'clue-text', text: tekst }),
+    ]))),
+  ]);
+}
+
+// Een aanwijzing om weg te strepen. `n` is alleen de sleutel in
+// state.struck; de speler ziet geen nummer. `waar` ('lijst' of 'kastje')
+// houdt de focussleutel uniek, want dezelfde zin staat op meer plekken.
+function aanwijzingKnop(clue, state, opnieuw, waar) {
+  const done = state.struck.has(clue.n);
+  const btn = el('button', {
+    class: 'clue',
+    type: 'button',
+    'aria-pressed': String(done),
+    'data-focus': waar === 'kastje' ? `kastje-${clue.n}` : null,
+  }, [el('span', { class: 'clue-text', text: clue.text })]);
+  btn.addEventListener('click', () => {
+    if (done) state.struck.delete(clue.n);
+    else state.struck.add(clue.n);
+    opnieuw();
+  });
+  return btn;
+}
+
+const NIETS_OVER = 'Hierover staat niets. Deze plek volgt uit de rest: als alle anderen staan, is er nog één vakje over.';
 
 // De aanwijzingen op een hoop was bij zestien bij zestien een lijst van
 // vierenvijftig zinnen waarin je niet terugvond wat er over Hendrik gezegd
@@ -571,12 +601,12 @@ function perNaam(puzzle, extra, knopVoor) {
     ]);
     const lijst = el('div', { class: 'clues' });
     for (const clue of mijn) lijst.append(knopVoor(clue));
-    uit.push(el('div', { class: leeg ? 'clue-groep clue-groep-leeg' : 'clue-groep' }, [
+    uit.push(el('div', { class: leeg ? 'clue-groep clue-groep-leeg' : 'clue-groep', 'data-persoon': String(p) }, [
       kop,
       leeg
         ? el('p', {
           class: 'clue-leeg',
-          text: 'Hierover staat niets. Deze plek volgt uit de rest: als alle anderen staan, is er nog één vakje over.',
+          text: NIETS_OVER,
         })
         : lijst,
     ]));
@@ -585,7 +615,7 @@ function perNaam(puzzle, extra, knopVoor) {
   if (algemeen.length) {
     const lijst = el('div', { class: 'clues' });
     for (const clue of algemeen) lijst.append(knopVoor(clue));
-    uit.push(el('div', { class: 'clue-groep' }, [
+    uit.push(el('div', { class: 'clue-groep', 'data-persoon': 'iedereen' }, [
       el('p', { class: 'clue-kop' }, [el('span', { class: 'clue-kop-naam', text: 'Over iedereen' })]),
       lijst,
     ]));
@@ -647,11 +677,11 @@ function aanwijzingenKnop(kolom) {
   return { knop, sluiter };
 }
 
-function boardNodes(puzzle, state, onCell, toonMeubel, actions) {
+function boardNodes(puzzle, state, onCell, toonMeubel, actions, knopVoorAanwijzing) {
   if (puzzle.kind === 'kamer') {
     const vanzelf = kruisjesVanzelf();
     return [
-      personenPalet(puzzle, state, onCell),
+      personenPalet(puzzle, state, onCell, knopVoorAanwijzing),
       el('div', { class: 'board-wrap' }, renderKamerbord(
         puzzle, state, { klikCel: onCell, klikMeubel: toonMeubel },
         { rand: randAan(), kruisjesVanzelf: vanzelf },
@@ -705,6 +735,19 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions) {
 
 // De verdachten als penningen om op te pakken. De gekozen penning licht op.
 //
+// Onder de namen een kastje met de aanwijzingen over wie je net koos. Een
+// tester op een telefoon (2026-11-16) scrolde heen en weer tussen de
+// aanwijzingen onder het bord en het bord zelf, en wist onderweg niet meer
+// over wie de zin ging. Nu staat de zin onder de naam die je aantikt, en op
+// een smal scherm plakken namen en kastje samen bovenaan terwijl je langs
+// het bord scrolt (zie .palet-plak in app.css). Op een breed scherm staat
+// het kastje er niet: daar staat de hele lijst al naast het bord.
+//
+// Alleen de namen en het kastje plakken, de standen niet. In 2026-11-10
+// plakte de hele balk, standen erbij, en dan lag hij te dik over het bord;
+// daarna plakte hij helemaal niet meer, wat dit commentaar lang bleef
+// beweren.
+//
 // Twee rijen, niet één. Uitsluiten en Schetsen stonden achter de laatste
 // verdachte aan, en op een bord met zestien namen betekende dat: eerst
 // zestien penningen voorbij schuiven voordat je bij je potlood bent. Nu
@@ -718,11 +761,13 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions) {
 // stand ze zat: twee lichte knoppen die allebei uit staan zeggen niets. Nu
 // is het één keuze uit drie, en de gekozen stand is gevuld en vet, zodat je
 // altijd ziet wat je volgende klik doet.
-function personenPalet(puzzle, state, onCell) {
+function personenPalet(puzzle, state, onCell, knopVoorAanwijzing) {
   const balk = el('div', { class: 'palet' });
   const namen = el('div', { class: 'palet-namen' });
   const standen = el('div', { class: 'palet-standen', role: 'group', 'aria-label': 'Wat een klik op het bord doet' });
-  balk.append(namen, standen);
+  const indeling = aanwijzingenPerPersoon(puzzle, state.extra ?? []);
+  const kastje = aanwijzingenKastje(puzzle, state, indeling, knopVoorAanwijzing);
+  balk.append(el('div', { class: 'palet-plak' }, [namen, kastje]), standen);
   puzzle.personen.forEach((naam, i) => {
     const geplaatst = state.plaats[i] != null;
     const isLijk = i === puzzle.slachtofferIdx;
@@ -731,6 +776,7 @@ function personenPalet(puzzle, state, onCell) {
       type: 'button',
       'aria-pressed': String(state.gekozen === i),
       'data-geplaatst': geplaatst ? '1' : null,
+      'data-focus': `naam-${i}`,
     }, [
       el('span', { class: 'palet-portret' }, isLijk
         ? slachtofferElement(i, naam.charAt(0).toUpperCase(), 26, geslachtVan(naam), puzzle.zaak?.merk)
@@ -740,6 +786,20 @@ function personenPalet(puzzle, state, onCell) {
     knop.addEventListener('click', () => onCell(null, i));
     namen.append(knop);
   });
+
+  // Iedereen: de tellingen die over niemand in het bijzonder gaan, en wat
+  // vaststaat. Geen figuur om neer te zetten, dus geen portret. Zonder
+  // zulke zinnen is er niets te laten zien, en dan staat de knop er niet.
+  if (indeling.algemeen.length || indeling.feiten.length) {
+    const iedereen = el('button', {
+      class: 'palet-knop palet-iedereen',
+      type: 'button',
+      'aria-pressed': String(state.leesNaam === 'iedereen'),
+      'data-focus': 'iedereen',
+    }, [el('span', { text: 'Iedereen' })]);
+    iedereen.addEventListener('click', () => onCell(null, 'iedereen'));
+    namen.append(iedereen);
+  }
 
   // Neerzetten draagt de beginletter van wie je vasthebt: dat is wat er op
   // het bord komt te staan. Schetsen zet in plaats daarvan alleen die letter
@@ -760,6 +820,34 @@ function personenPalet(puzzle, state, onCell) {
   }
 
   return balk;
+}
+
+// Het kastje onder de namen: wat er gezegd wordt over wie je net koos.
+// Dezelfde knoppen als in de lijst, dus wegstrepen hier is wegstrepen daar.
+function aanwijzingenKastje(puzzle, state, indeling, knopVoorAanwijzing) {
+  const wie = state.leesNaam;
+  const iedereen = wie === 'iedereen';
+  const naam = iedereen ? 'iedereen' : puzzle.personen[wie];
+  const kastje = el('div', {
+    class: 'palet-kastje',
+    role: 'region',
+    'aria-label': `Aanwijzingen over ${naam ?? 'niemand'}`,
+    'aria-live': 'polite',
+    'data-van': String(wie),
+  });
+  if (iedereen) {
+    const feiten = feitenVan(indeling.feiten);
+    if (feiten) kastje.append(feiten);
+    if (indeling.algemeen.length) {
+      kastje.append(el('div', { class: 'clues' }, indeling.algemeen.map((c) => knopVoorAanwijzing(c, 'kastje'))));
+    }
+    return kastje;
+  }
+  const mijn = indeling.perPersoon[wie] ?? [];
+  kastje.append(mijn.length
+    ? el('div', { class: 'clues' }, mijn.map((c) => knopVoorAanwijzing(c, 'kastje')))
+    : el('p', { class: 'clue-leeg', text: NIETS_OVER }));
+  return kastje;
 }
 
 // De twee schakelaars die bij het bord horen, maar niet in de plakkende balk.
@@ -872,11 +960,19 @@ function cycleLatin(puzzle, state, r, c) {
 // Klik op een vakje zet die verdachte neer, haalt hem weg, of wisselt.
 function zetNeer(puzzle, state, cel, keuze) {
   if (cel === null) {
+    // Iedereen laat de algemene aanwijzingen zien en zet niemand klaar: er
+    // is geen figuur die "iedereen" heet.
+    if (keuze === 'iedereen') {
+      state.leesNaam = 'iedereen';
+      state.gekozen = -1;
+      return;
+    }
     if (typeof keuze === 'string') {
       state.stand = keuze;
       return;
     }
     state.gekozen = keuze;
+    state.leesNaam = keuze;
     // Wie in Uitsluiten een naam aantikt, wil met die figuur iets doen, en
     // met kruisjes kan dat niet. Schetsen blijft wel staan: daar wissel je
     // juist van naam om meerdere letters in hetzelfde vakje te zetten.
@@ -885,6 +981,7 @@ function zetNeer(puzzle, state, cel, keuze) {
   }
   // Schetsen: de letter van de gekozen figuur erbij of eraf.
   if (state.stand === 'schets') {
+    if (state.gekozen < 0) return;
     const lijst = state.schets[cel] ?? [];
     state.schets[cel] = lijst.includes(state.gekozen)
       ? lijst.filter((f) => f !== state.gekozen)
@@ -912,7 +1009,7 @@ function zetNeer(puzzle, state, cel, keuze) {
   const hier = state.plaatsVanCel(cel);
   if (hier != null) {
     if (hier === state.gekozen) delete state.plaats[hier];
-    else state.gekozen = hier;
+    else state.gekozen = state.leesNaam = hier;
     return;
   }
   if (state.gekozen < 0) return;

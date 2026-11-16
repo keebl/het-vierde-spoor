@@ -1620,6 +1620,34 @@ table.latin td.cell { width: 78px; height: 46px; }
 .palet-kruis .palet-fiche { background: var(--surface-3); color: var(--text-2); }
 .palet-lijk .palet-fiche { background: #3a2e22; color: #f6efe2; }
 
+/* Iedereen: een naam zonder portret, voor de zinnen over niemand in het
+   bijzonder. Gelijk gekleurd met de andere, zodat hij leest als een keuze
+   in dezelfde rij en niet als een knop die iets anders doet. */
+.palet-namen .palet-iedereen { padding-left: var(--s3); font-style: italic; }
+
+/* Het kastje met de aanwijzingen over de gekozen naam, onder de namen.
+   Rustig: een vlak met een zachte lijn, de compacte regelafstand van de
+   kolom op een breed scherm. Hooguit een regel of vier hoog; wat meer is
+   scrolt in het kastje zelf, niet de pagina. Hoe hoog het mag zijn hangt
+   af van het bord eronder: zie de meting bij .palet-plak. */
+.palet-kastje {
+  max-height: calc(4 * 1.4 * var(--t-sm) + 2 * var(--s1));
+  margin-top: var(--s2);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+}
+.palet-kastje .clues { border-top: 0; }
+.palet-kastje .clue { padding: 2px var(--s2); line-height: 1.4; border-bottom-color: var(--line-soft); }
+.palet-kastje .clue:last-child { border-bottom: 0; }
+.palet-kastje .clue-leeg { margin: var(--s1) var(--s2); border-left: 0; padding-left: 0; line-height: 1.4; }
+.palet-kastje .feiten { margin-bottom: 0; }
+.palet-kastje .feiten .label { margin: var(--s1) var(--s2) 0; }
+.palet-kastje .clue-feit { padding: 2px var(--s2); line-height: 1.4; font-size: var(--t-sm); }
+
 /* ============================================================== afdrukken */
 
 /* Een puzzel hoort ook op papier te kunnen. Wat op het scherm hoort maar niet
