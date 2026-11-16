@@ -10,6 +10,9 @@ day the changelog was introduced; everything before that is in git history only.
 ## [Unreleased]
 
 ### Changed
+- The bar above the board has three modes, Neerzetten, Schetsen and Uitsluiten, of which
+  exactly one is on and shown filled and bold. Placing a suspect used to be what you had
+  with the other two off, and had no button of its own.
 - The site is now called **Reconstructie** and lives at https://reconstructie.app/. The
   old address keebl.github.io/het-vierde-spoor redirects there; saved progress is kept.
 - New logo: an R drawn as the walls of a floor plan, with a figure in the room its bowl

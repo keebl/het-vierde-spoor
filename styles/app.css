@@ -1515,16 +1515,55 @@ table.latin td.cell { width: 78px; height: 46px; }
   border-bottom: 1px solid var(--line-soft);
 }
 .palet-namen { display: flex; gap: var(--s2); flex-wrap: wrap; }
+
+/* De drie standen als één schuifknop: één vak gevuld, de andere twee leeg.
+   Twee losse knoppen die allebei uit konden staan, zeiden niet in welke
+   stand je zat - en precies die stand, Neerzetten, had geen knop. */
 .palet-standen {
-  display: flex;
-  gap: var(--s2);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3px;
+  max-width: 26rem;
   margin-top: var(--s2);
-  padding-top: var(--s2);
-  border-top: 1px dashed var(--line-soft);
+  padding: 3px;
+  border: 2px solid var(--line);
+  border-radius: 99px;
+  background: var(--surface);
 }
+.palet-stand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 99px;
+  background: transparent;
+  color: var(--text-2);
+  font: 500 var(--t-sm) var(--display);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.palet-stand:hover { color: var(--text); background: var(--accent-soft); }
+.palet-stand:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.palet-stand[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 700;
+  box-shadow: 0 2px 0 color-mix(in oklab, var(--accent) 55%, #000);
+}
+.palet-stand .palet-fiche {
+  width: 20px;
+  height: 20px;
+  background: var(--surface-3);
+  color: var(--text-2);
+  font-weight: 700;
+}
+.palet-stand[aria-pressed="true"] .palet-fiche { background: rgba(255, 255, 255, 0.3); color: inherit; }
 
 /* Op een telefoon nemen zestien verdachten het halve scherm. Eén rij die je
-   opzij schuift laat het bord heel; de twee standen eronder schuiven niet
+   opzij schuift laat het bord heel; de standen eronder schuiven niet
    mee, want die moet je blind kunnen vinden. */
 @media (max-width: 680px) {
   .palet-namen {
@@ -1536,6 +1575,12 @@ table.latin td.cell { width: 78px; height: 46px; }
     -webkit-overflow-scrolling: touch;
   }
   .palet-namen .palet-knop { flex: none; scroll-snap-align: start; }
+}
+
+/* Op 320 breed passen drie woorden met elk een fiche er niet naast elkaar;
+   de balk duwde de hele pagina opzij. Het woord is wat telt, de fiche gaat. */
+@media (max-width: 360px) {
+  .palet-stand .palet-fiche { display: none; }
 }
 
 .palet-knop {
