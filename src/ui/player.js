@@ -33,7 +33,16 @@ export function renderPlayer(puzzle, mount) {
     plaats: saved.plaats ?? {},
     kruis: new Set(saved.kruis ?? []),
     schets: saved.schets ?? {},
-    schetsAan: false,
+    // Wat een klik op een vakje doet: 'zet' (de gekozen figuur neerzetten),
+    // 'schets' (zijn beginletter erin) of 'kruis' (uitsluiten). Precies één
+    // tegelijk. Dit waren eerst twee losse vlaggen - een kruis-keuze en een
+    // schetsschakelaar - en neerzetten was wat je overhield als beide uit
+    // stonden. Een tester zocht de knop daarvoor en vond hem niet: een stand
+    // zonder knop bestaat voor wie het bord voor het eerst ziet niet.
+    stand: 'zet',
+    // De figuur waar Neerzetten en Schetsen mee werken. Altijd een verdachte;
+    // Uitsluiten gooit hem niet meer weg, zodat je na een paar kruisjes
+    // terugkomt bij wie je vasthad.
     gekozen: 0,
     plaatsVanCel(cel) {
       for (const [p, c] of Object.entries(this.plaats)) if (c === cel) return Number(p);
@@ -676,7 +685,7 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions) {
       klepje('uitleg', 'Hoe je dit bord bedient', false, [
         el('p', {
           class: 'legend',
-          text: `Kies een figuur en klik een leeg vakje om hem neer te zetten. Klik je op een figuur die al op het bord staat, dan pak je die op; klik je er nog een keer op, dan gaat hij eraf. Met Schetsen zet je in plaats daarvan zijn beginletter in het vakje, als notitie van wie daar zou kunnen staan. Er staat precies één verdachte per rij en per kolom, en niemand staat op een meubelstuk. Met Uitsluiten zet je je eigen kruisjes.${vanzelf ? ' Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan; dat kun je uitzetten met de knop Kruisjes vanzelf.' : ' Het bord zet zelf geen kruisjes - dat staat uit.'}`,
+          text: `Onder de namen kies je wat een klik op het bord doet; de gekozen stand is gevuld. Met Neerzetten kies je een figuur en klik je een leeg vakje om hem neer te zetten. Klik je op een figuur die al op het bord staat, dan pak je die op; klik je er nog een keer op, dan gaat hij eraf. Met Schetsen zet je in plaats daarvan zijn beginletter in het vakje, als notitie van wie daar zou kunnen staan. Met Uitsluiten zet je je eigen kruisjes; tik je daarna een naam aan, dan sta je weer op Neerzetten. Er staat precies één verdachte per rij en per kolom, en niemand staat op een meubelstuk.${vanzelf ? ' Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan; dat kun je uitzetten met de knop Kruisjes vanzelf.' : ' Het bord zet zelf geen kruisjes - dat staat uit.'}`,
         }),
       ]),
     ];
@@ -720,17 +729,20 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions) {
 // Twee rijen, niet één. Uitsluiten en Schetsen stonden achter de laatste
 // verdachte aan, en op een bord met zestien namen betekende dat: eerst
 // zestien penningen voorbij schuiven voordat je bij je potlood bent. Nu
-// staan de namen boven en de twee standen eronder, altijd op dezelfde plek.
-// Verder dan die twee gaat deze balk niet: wat je maar één keer instelt
+// staan de namen boven en de standen eronder, altijd op dezelfde plek.
+// Verder dan die standen gaat deze balk niet: wat je maar één keer instelt
 // staat onder het bord, zie bordschakelaars.
 //
-// De hele balk plakt bovenaan vast zodra je naar beneden scrolt (zie .palet
-// in de opmaak). Daarmee staan de namen en het bord altijd samen op één
-// scherm, ook op een telefoon.
+// Drie standen, niet twee. Neerzetten was wat je kreeg als Uitsluiten en
+// Schetsen allebei uit stonden, en had dus geen knop. Een tester op een
+// telefoon (2026-11-16) zocht hem en vond hem niet, en zag ook niet in welke
+// stand ze zat: twee lichte knoppen die allebei uit staan zeggen niets. Nu
+// is het één keuze uit drie, en de gekozen stand is gevuld en vet, zodat je
+// altijd ziet wat je volgende klik doet.
 function personenPalet(puzzle, state, onCell) {
   const balk = el('div', { class: 'palet' });
   const namen = el('div', { class: 'palet-namen' });
-  const standen = el('div', { class: 'palet-standen' });
+  const standen = el('div', { class: 'palet-standen', role: 'group', 'aria-label': 'Wat een klik op het bord doet' });
   balk.append(namen, standen);
   puzzle.personen.forEach((naam, i) => {
     const geplaatst = state.plaats[i] != null;
@@ -750,23 +762,23 @@ function personenPalet(puzzle, state, onCell) {
     namen.append(knop);
   });
 
-  const kruis = el('button', {
-    class: 'palet-knop palet-kruis',
-    type: 'button',
-    'aria-pressed': String(state.gekozen === -1),
-  }, [el('span', { class: 'palet-fiche', text: '✕' }), el('span', { text: 'Uitsluiten' })]);
-  kruis.addEventListener('click', () => onCell(null, -1));
-  standen.append(kruis);
-
-  // Schetsstand: klikken zet dan de beginletter van de gekozen figuur in het
-  // vakje in plaats van de figuur zelf.
-  const schets = el('button', {
-    class: 'palet-knop palet-schets',
-    type: 'button',
-    'aria-pressed': String(state.schetsAan),
-  }, [el('span', { class: 'palet-fiche', text: '✎' }), el('span', { text: 'Schetsen' })]);
-  schets.addEventListener('click', () => onCell(null, -2));
-  standen.append(schets);
+  // Neerzetten draagt de beginletter van wie je vasthebt: dat is wat er op
+  // het bord komt te staan. Schetsen zet in plaats daarvan alleen die letter
+  // als notitie in het vakje; Uitsluiten zet je eigen kruisje.
+  const letter = (puzzle.personen[state.gekozen] ?? '?').charAt(0).toUpperCase();
+  for (const [stand, klasse, fiche, naam] of [
+    ['zet', 'palet-zet', letter, 'Neerzetten'],
+    ['schets', 'palet-schets', '✎', 'Schetsen'],
+    ['kruis', 'palet-kruis', '✕', 'Uitsluiten'],
+  ]) {
+    const knop = el('button', {
+      class: `palet-stand ${klasse}`,
+      type: 'button',
+      'aria-pressed': String(state.stand === stand),
+    }, [el('span', { class: 'palet-fiche', text: fiche, 'aria-hidden': 'true' }), el('span', { text: naam })]);
+    knop.addEventListener('click', () => onCell(null, stand));
+    standen.append(knop);
+  }
 
   return balk;
 }
@@ -774,6 +786,7 @@ function personenPalet(puzzle, state, onCell) {
 // De twee schakelaars die bij het bord horen, maar niet in de plakkende balk.
 //
 // Ze stonden er wel, naast Uitsluiten en Schetsen, en dat kostte te veel.
+// (Sinds 2026-11-16 staat daar ook Neerzetten; het argument geldt nog steeds.)
 // Op een telefoon braken hun teksten over twee en drie regels; de balk werd
 // daardoor 144 pixels hoog en dekte samen met de kop een kwart van het scherm
 // af - en die balk plakt, dus dat kwart zat permanent over de puzzel heen.
@@ -875,21 +888,24 @@ function cycleLatin(puzzle, state, r, c) {
   else state.marks[key] = next;
 }
 
-// Klik op het palet (cel === null) kiest een verdachte of het kruis.
+// Klik op het palet (cel === null) kiest een verdachte (een getal) of een
+// stand ('zet', 'schets', 'kruis').
 // Klik op een vakje zet die verdachte neer, haalt hem weg, of wisselt.
 function zetNeer(puzzle, state, cel, keuze) {
   if (cel === null) {
-    if (keuze === -2) {
-      state.schetsAan = !state.schetsAan;
-      if (state.schetsAan && state.gekozen === -1) state.gekozen = 0;
+    if (typeof keuze === 'string') {
+      state.stand = keuze;
       return;
     }
     state.gekozen = keuze;
-    if (keuze === -1) state.schetsAan = false;
+    // Wie in Uitsluiten een naam aantikt, wil met die figuur iets doen, en
+    // met kruisjes kan dat niet. Schetsen blijft wel staan: daar wissel je
+    // juist van naam om meerdere letters in hetzelfde vakje te zetten.
+    if (state.stand === 'kruis') state.stand = 'zet';
     return;
   }
   // Schetsen: de letter van de gekozen figuur erbij of eraf.
-  if (state.schetsAan && state.gekozen >= 0) {
+  if (state.stand === 'schets') {
     const lijst = state.schets[cel] ?? [];
     state.schets[cel] = lijst.includes(state.gekozen)
       ? lijst.filter((f) => f !== state.gekozen)
@@ -897,7 +913,7 @@ function zetNeer(puzzle, state, cel, keuze) {
     if (!state.schets[cel].length) delete state.schets[cel];
     return;
   }
-  if (state.gekozen === -1) {
+  if (state.stand === 'kruis') {
     if (state.kruis.has(cel)) state.kruis.delete(cel);
     else state.kruis.add(cel);
     return;
