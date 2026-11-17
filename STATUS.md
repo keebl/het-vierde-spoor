@@ -139,7 +139,11 @@ standing guidance rather than state moved to `CLAUDE.md`.
   (only one class may stand in its areas), a hidden role (one bandit, "was a man")
   that other clues measure from ("exactly three columns left of the bandit"), standing
   or sitting on an animal, and a printed solution as numbered deduction steps ("the
-  only chair not next to a table", "the last free corner").
+  only chair not next to a table", "the last free corner"). Hardest level: 12×12 to
+  12×14 boards, about twelve people, areas only one gender may enter, jobs found through
+  an object (fisher, toolmaker), people on vehicles or ships, and solutions of five
+  dense steps built on "the last free cell in this row, column or area" and "cross out
+  the intersections".
 
 ## Risks
 - **Technical — a direct push to `main` is a deploy with no gate.** Since 2026-11-14 CI
