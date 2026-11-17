@@ -8,6 +8,9 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-17, evening: #18 merged (`688399b`), docs only — `specs/props-and-either-clues.md`
+  approved (props to sit, lie, stand or ride on; "of" clues), built inside engine-extension
+  phase B. Next session: start engine-extension phase A, step 1.
 - Open sessions (2026-11-17, later): none; no open pull requests. Merged and live today:
   #15 harder clues (`c313d07`; no row/column clues, room clues, caps per name 3/3/3/4/5,
   none on level 6; checked live on `dader.landhuis.kamer.2.demo-7`; every board shifted)
