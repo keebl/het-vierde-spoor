@@ -1620,22 +1620,49 @@ table.latin td.cell { width: 78px; height: 46px; }
   /* De .boards-kolom zet al 32 tussen balk en bord; de eigen marge van de
      balk kwam daar nog bovenop. */
   .palet { margin-bottom: 0; }
+  /* Eén raster voor namen, kastje en standen (2026-11-17, op een
+     schermafdruk van de eigenaar: "de uitlijning en grootte van de velden
+     is niet gelijk"). Alles wat je aantikt is binnen 30 hoog; wat een
+     omlijning heeft (de standen, Terug) is 40. Overal een rand van 2, 4
+     tussen de namen, 8 tussen de blokken. De namen waren 28, de standen 36 in een
+     balk van 46, het kastje had een rand van 1 en een kleinere hoek.
+     Gemeten met zestien namen (niveau 6, vijf regels): de plak van 259
+     naar 276, met 348 bord en 32 ertussen 656 van de ~660 die Safari op
+     375×812 laat zien. Er is dus geen ruimte meer: wie iets hoger maakt,
+     haalt het elders weg. */
   .palet-namen { gap: 4px; }
   .palet-namen .palet-knop {
+    flex: 1 1 auto;
+    box-sizing: border-box;
+    height: 30px;
     gap: 5px;
-    padding: 1px 8px 1px 1px;
+    padding: 0 10px 0 2px;
     font-size: var(--t-xs);
   }
+  /* De namen rekken op tot de regel vol is, zodat de rij links én rechts
+     gelijk loopt met het kastje eronder. Alleen de laatste regel niet:
+     daar zou een enkele naam het hele scherm breed worden. Dit lege
+     stukje neemt daar de rest van de regel. */
+  .palet-namen::after { content: ''; flex: 999 1 0; }
   .palet-namen .palet-portret svg { width: 22px; height: 22px; }
-  .palet-standen { max-width: none; }
+  .palet-kastje {
+    margin-top: 8px;
+    border: 2px solid var(--line);
+    border-radius: var(--r);
+    box-shadow: 0 2px 0 var(--line);
+  }
+  .palet-kastje .clue,
+  .palet-kastje .clue-feit { padding: 2px 10px; }
+  .palet-kastje .clue-leeg { margin: var(--s1) 10px; }
+  .palet-standen { max-width: none; box-sizing: border-box; height: 40px; box-shadow: 0 2px 0 var(--line); }
   /* Op een telefoon alleen de pijl: met het woord erbij werd de schuifknop
      zo smal dat "Neerzetten" eruit liep. Het woord blijft voor de
      schermlezer (aria-label op de knop). */
-  .palet-terug { justify-content: center; width: 46px; padding: 0; }
+  .palet-terug { justify-content: center; box-sizing: border-box; width: 40px; height: 40px; min-height: 0; padding: 0; box-shadow: 0 2px 0 var(--line); }
   .palet-terug-woord { display: none; }
-  .palet-terug-pijl svg { width: 22px; height: 22px; }
+  .palet-terug-pijl svg { width: 20px; height: 20px; }
   /* De standen staan nu naast Terug: wat smaller gestoken. */
-  .palet-stand { padding: 4px 2px; gap: 4px; }
+  .palet-stand { min-height: 0; height: 30px; padding: 0 2px; gap: 4px; }
 }
 /* Op 320 breed passen drie woorden met elk een fiche er niet naast elkaar;
    de balk duwde de hele pagina opzij. Het woord is wat telt, de fiche gaat. */
@@ -1688,6 +1715,12 @@ table.latin td.cell { width: 78px; height: 46px; }
    bijzonder. Gelijk gekleurd met de andere, zodat hij leest als een keuze
    in dezelfde rij en niet als een knop die iets anders doet. */
 .palet-namen .palet-iedereen { padding-left: var(--s3); font-style: italic; }
+/* Op een telefoon even rechtop als de namen ernaast: schuin viel hij uit
+   de rij, en met zijn eigen inspringing was hij net te breed voor de
+   laatste regel. */
+@media (max-width: 680px) {
+  .palet-namen .palet-iedereen { padding: 0 10px; font-style: normal; justify-content: center; }
+}
 
 /* Het kastje met de aanwijzingen over de gekozen naam, onder de namen.
    Rustig: een vlak met een zachte lijn, de compacte regelafstand van de
