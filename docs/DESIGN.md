@@ -61,9 +61,14 @@ planned. (assumption)
   played with a keyboard or a screen reader (`STATUS.md` Next, item 4).
 
 ## Typography
-- Display (headings, cards): `--display` — Fredoka, falling back to Avenir Next and the
-  system sans. Story text: `--serif` (Iowan Old Style, Palatino, Georgia). Controls:
-  `--sans` (system UI). On the board: `--schrift` — Patrick Hand, a handwritten letter.
+- Display (headings, names, mode buttons): `--display` — Baloo 2 (since 2026-11-17, chosen
+  by the owner over Fredoka and Grandstander), falling back to Avenir Next and the system
+  sans. Story text: `--serif` (Iowan Old Style, Palatino, Georgia). Controls, clues and
+  other body text: `--sans` — Nunito, falling back to the system UI font. On the board:
+  `--schrift` — Patrick Hand, a handwritten letter.
+- All three web fonts are self-hosted in `styles/fonts/` (SIL OFL 1.1, licences next to
+  them; Latin subset only, about 165 KB together) and declared at the top of
+  `styles/app.css`. No request goes to a font service.
 - Fixed scale `--t-xs` … `--t-2xl` (0.75rem to 2.4rem); every font has a system fallback so
   the site works offline.
 
