@@ -83,8 +83,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   impossible there. (c) An undo button (arrow back). (d) The victim should get no clue:
   fixed and live the same day in pull request #11 (`37c8fca`), so she probably played
   before that; ask her to check again on a fresh case.
-  (a) has the approved spec `specs/harder-clues.md` (with a stop rule; level 5 may shift
-  freely) and is being built; (b) and (c) were built per `specs/undo-and-sketch.md`,
+  (a) is built on branch `claude/priceless-lalande-85fd62` (`specs/harder-clues.md`,
+  amended twice by Guus on 2026-11-16/17; pull request open, not merged, not live); the
+  daughter should play a fresh case once it is live. (b) and (c)
+  were built per `specs/undo-and-sketch.md`,
   merged as #14 and live (checked on the site 2026-11-17); pending her verdict. Also
   pending: Guus's phone remark (nicer font, unequal field sizes and alignment of the name
   pills and clue box) — a card is proposed.
@@ -147,6 +149,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   the paid plan (~$5/month) or a host with a higher limit. Deliberately postponed.
 
 ## Recent decisions
+- 2026-11-17 — Room-board clues (`specs/harder-clues.md`): no row/column clues, a room
+  clue instead; at most 3 clues per name on levels 1–3, 4 on level 4, 5 on level 5, none
+  yet on level 6 (one per name stays the aim). The spec's 2/3 caps proved out of reach;
+  Guus chose "haalbaar". Level 6 waits for building in a Web Worker with a progress bar.
 - 2026-11-16 — The project folder is now `~/Claude/Projects/reconstructie` (was
   `Puzzels`); the one-off rename script is gone again. The GitHub repo is still
   `het-vierde-spoor`; renaming it is optional (GitHub redirects the old name).
@@ -194,6 +200,12 @@ standing guidance rather than state moved to `CLAUDE.md`.
 - 2026-11-08 — Not every case is a murder: disappearances and thefts too (`zaken.js`).
 
 ## Known gaps not yet scheduled
+- Level 6 of the room board has no cap per name: 3.96 clues per name against 3.57 before,
+  busiest name up to 10, and building takes 7 s on average, up to 18 s, on the main
+  thread. Fix: build in a Web Worker with a progress bar, then cap level 6 at 5. Levels 3–5
+  also exceed the spec's build-time budget (0.8 s, 1.0 s, 5.4 s at worst). A smarter
+  builder that picks one strong clue per name (the way a hand-made puzzle does) would help
+  all levels.
 - The keuring never draws the board frames, so a fault in `bordrand.js` that only breaks at
   draw time is not caught.
 - The solution sits in the page; anyone who opens the console can read it.
