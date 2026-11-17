@@ -286,6 +286,9 @@ change the engine end with a full keuring in the background.
    (fingerprints unchanged).
 
 **Phase B — building on the solver, object clues (room levels)**
+Steps 6–9 also build `specs/props-and-either-clues.md` (draft, 2026-11-17): pieces to
+sit, lie, stand or ride on, rugs over several cells, and "of" clues; its steps A1–A4 and
+B1–B2 name the step here they belong to, so every board still shifts once.
 6. **Board model** (2 h) — `rooms.js`: rectangular boards, "at most one", object type and
    posture, standable objects, windows on edges. Old levels keep "exactly one" and square
    boards; fingerprints of old levels unchanged.
