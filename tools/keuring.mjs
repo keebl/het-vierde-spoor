@@ -17,6 +17,7 @@ const TOETSEN = [
   ['de motor', 'check.mjs', ['2']],
   ['de bibliotheek', 'check-catalog.mjs', []],
   ['de aanwijzingen', 'check-aanwijzingen.mjs', []],
+  ['de spreiding', 'check-spreiding.mjs', []],
   ['de veegronde', 'check-regels.mjs', ['2']],
   ['het AI-vangnet', 'check-ai-guard.mjs', []],
   ['de weggevers', 'check-weggevers.mjs', []],
@@ -24,14 +25,14 @@ const TOETSEN = [
   ['de kamers', 'check-kamers.mjs', []],
 ];
 
-// `--snel` slaat de vijf toetsen over die puzzels bouwen; die kosten samen
+// `--snel` slaat de zes toetsen over die puzzels bouwen; die kosten samen
 // minuten. Wat overblijft draait in een seconde en vangt verreweg de meeste
 // fouten in de inhoud - een vergeten icoon, een kamernaam die niet bij zijn
 // vloer past, een tekening die niet bestaat, een dubbele sleutel in een
 // tabel. Bedoeld om tussendoor te draaien; voor een oordeel draai je de hele
 // keuring.
 const SNEL = process.argv.includes('--snel');
-const ZWAAR = new Set(['de motor', 'de bibliotheek', 'de aanwijzingen', 'de veegronde', 'de weggevers']);
+const ZWAAR = new Set(['de motor', 'de bibliotheek', 'de aanwijzingen', 'de spreiding', 'de veegronde', 'de weggevers']);
 
 const uitslag = [];
 
