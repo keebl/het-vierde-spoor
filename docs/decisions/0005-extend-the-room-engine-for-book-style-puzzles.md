@@ -58,12 +58,13 @@ and add one new module: a human-style solver.
 |---|---|
 | Pick the solution first (`poging`, `tekenPlaatsing`) | **Stays.** Extended to draw objects, roles, attributes and special cells from their own rngs, *after* the placement, so the placement draw does not shift. |
 | Pool of true clues (`bouwVijver`) | **Stays as the source of candidates.** New clue kinds join `SOORTEN` with the same `eval` contract; each also gets a `propageer` and an `uitleg` (below). |
-| Grow until unique (`groeiTotVast`) | **Replaced for book-style levels by a template builder** (`bouwPerPersoon`): first exactly one *own* clue per non-victim person, drawn from the object vocabulary and chosen by how much the human solver gains from it; then the fewest relational / global clues that let the human solver finish. The random-order grower stays for the old levels (hide, do not delete). |
+| Grow until unique (`groeiTotVast`) | **Replaced on every level by a template builder** (`bouwPerPersoon`): first exactly one *own* clue per non-victim person, drawn from the object vocabulary and chosen by how much the human solver gains from it; then the fewest relational / global clues that let the human solver finish. The random-order grower stays in the code, unused (hide, do not delete). |
 | Prune (`snoei`, `naSnoei`) | **Stays**, with a new acceptance test: a clue may only go if the *human solver* still finishes within the level's technique set. A person's only own clue is never pruned (the template is the point). |
 | Uniqueness proof (`telPlaatsingen`) | **Stays as the proof of record** and as the keuring's cross-check. In the build loop it is mostly replaced: a sound human solver that places everyone has proven uniqueness, and is much cheaper than counting. The counter still runs once on the accepted puzzle. |
 | Difficulty (`difficulty.js`, `style`) | **Replaced by a target band** per level: allowed techniques, chain length (min–max), and how many "hard" steps. `shallow` / `deep` map to the top technique tier. |
-| Caps per name from #15 | **Become a consequence, not a filter.** The template gives each name one own clue; the cap that remains is "one own clue per name, at most two lines in the name's list", checked by the keuring. `maxPerNaam` and `soortDeel` stay for old levels. |
+| Caps per name from #15 | **Become a consequence, not a filter.** The template gives each name one own clue; the cap that remains is "one own clue per name, at most two lines in the name's list", checked by the keuring. `maxPerNaam` and `soortDeel` stay in the code, unused. |
 | Board (`bouwRooster`) | **Extended**: rows ≠ columns, people ≤ rows, a rule per board "exactly one" (today) or "at most one" (book) per row and column; objects get a *type* and a *posture* (see 3). |
+| Levels | **Seven instead of six** (Guus, 2026-11-17): level 6 becomes 12×14 with about 12 people, at most one per column (the book's hardest); today's 16×16 with 16 people becomes level 7. |
 
 ### 2. A human-style solver with named techniques
 
@@ -144,8 +145,13 @@ and per-world extras only where a world has animals or vehicles).
   builder counts **solver steps**, like `NASNOEI_STAPPEN`. A budget that runs out
   rejects the attempt, the same way on every device.
 - Progress reporting (below) reads the attempt counter; it never decides anything.
-- Book-style boards get a **generator version in the puzzle id**, so links and library
-  cases made before the switch keep their board (open question 1 in the spec).
+- **Every board shifts once** (Guus, 2026-11-17: "Alles verschuift"), as with #15: no
+  version key in the id. When the template builder lands, every room board and library
+  case shows a new board under the same id. The human solver (phase A) shifts nothing.
+- **The victim stays clue-less** (Guus, 2026-11-17: "Niets"): no clue or hint names the
+  victim, as since PR #11. The book's victim clue is not adopted.
+- A stored puzzle (below) is safe to reuse because the same id always builds the same
+  puzzle; the store is a cache of computation, never a source of truth.
 
 ### 5. Performance and resources
 
@@ -159,12 +165,16 @@ outlier. Building uses one CPU core at 100 % and a few tens of MB of heap.
   estimate per level. The page never freezes; a cancel button stops the worker.
 - **The next puzzle is built in the background** while the player solves the current
   one, so "Volgende puzzel" is usually instant.
-- **Library cases of the slow levels are pre-generated** into a JSON file in the repo,
-  produced by a tool from their seeds; the keuring rebuilds them and fails on any
-  difference, so the seed stays the source of truth.
+- **A slowly growing store of puzzles** (Guus's idea, 2026-11-17: everything built on
+  request and not used is kept). The site is static, so the store lives where no server
+  is needed. The spec compares three places: per browser (IndexedDB), a pool built
+  offline and committed to the repo, and a shared server store. Each has a hard maximum.
+  The seed decides the puzzle, so a stored puzzle is identical to a rebuilt one.
+- **Library cases of the slow levels are pre-generated** into the repo the same way,
+  and the keuring rebuilds a sample and fails on any difference.
 - Proposed maximum build time (worst case on a mid-range phone): levels 1–3 1 s, level 4
-  3 s, level 5 15 s, level 6 30 s. The keuring fails a level whose sample exceeds the
-  laptop equivalent.
+  3 s, level 5 15 s, level 6 30 s, level 7 60 s. The keuring fails a level whose sample
+  exceeds the laptop equivalent.
 
 ## Consequences
 
@@ -175,8 +185,8 @@ outlier. Building uses one CPU core at 100 % and a few tens of MB of heap.
 - Positive: build time should fall for book-style levels, because the exact counter
   leaves the inner loop. This is an expectation, not a measurement; step 1 of the spec
   measures it.
-- Negative: a second builder path lives next to the old one until the old levels are
-  retired, and a version segment in the id must be carried by the router and library.
+- Negative: every room board and library case changes once more (accepted by Guus);
+  half-played boards restart, and catalog titles that describe a board must be re-read.
 - Negative: real drawing work in every world (types, postures, windows, special-cell
   marker), and the token-on-object rendering in `board-rooms.js`.
 - Negative: every technique must be proven sound; a wrong technique produces a puzzle

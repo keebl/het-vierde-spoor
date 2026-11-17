@@ -1,4 +1,4 @@
-# Spec: extend the room engine for book-style puzzles
+# Spec: extend the room engine for room puzzles
 
 Status: draft
 Date: 2026-11-17
@@ -34,22 +34,25 @@ a build; RSS includes Node's own ~45 MB.
 **Mid-range phone: estimated, not measured.** Single-thread JavaScript on a mid-range
 Android phone is typically 3–5× slower than on an Apple-silicon laptop; a recent iPhone is
 close to the laptop. Estimate with factor 4: level 5 median ~9 s, worst ~18 s; level 6
-median ~24 s, worst ~60 s. Memory is not the constraint (a browser tab has hundreds of MB;
+median ~24 s, worst ~60 s (this board becomes level 7). Memory is not the constraint (a browser tab has hundreds of MB;
 the build needs tens). The cost is one core at 100 % for that time, so battery and heat on
 a phone, and a frozen page today because building runs on the main thread.
 
-## Decisions (proposed; open questions below may change them)
-1. **Extend, not replace** (ADR-0005): same pipeline, a new human-style solver, a template
-   builder for book-style levels, the old grower kept for the old levels.
+## Decisions
+1. **Extend, not replace** (ADR-0005): same pipeline, a new human-style solver, and a
+   template builder for every level. The old grower stays in the code, unused.
 2. **The human solver comes first** and changes no board: it grades and explains today's
    puzzles before any generator change.
 3. **One own clue per person** is built in, not filtered: the caps of #15 become a keuring
-   rule ("one own clue, at most two lines per name") on book-style levels.
-4. **Victim**: the victim gets no clue, as now. The case rule "the victim was alone with
-   the culprit" is shown in the victim's line as the rule of the case, not as a clue
-   (open question 3).
-5. **Generator version in the id** for book-style boards, so old links and library cases
-   keep their board (open question 1).
+   rule ("one own clue, at most two lines per name").
+4. **Every board shifts once** (Guus, 2026-11-17, "Alles verschuift"): no version key.
+   When the template builder lands (step 8), every room board and library case changes.
+5. **The victim: nothing** (Guus, 2026-11-17, "Niets"): no clue or hint names the victim,
+   as since PR #11. The book's victim clue is not adopted.
+6. **Seven levels** (Guus, 2026-11-17): level 6 becomes 12×14 with about 12 people (at
+   most one per column); today's 16×16 becomes level 7.
+7. **A slowly growing store of built puzzles** (Guus, 2026-11-17): what is built and not
+   played is kept for later, with a hard maximum. Where it lives: see Performance.
 
 ## Scope (in)
 - `src/engine/redeneer.js` (new): the human solver, its techniques, trace and grade.
@@ -71,8 +74,9 @@ a phone, and a frozen page today because building runs on the main thread.
 ## Non-goals (out)
 - Copying anything from the book: wording, names, art, puzzles or its title. Mechanics only.
 - The other mechanics (`grid`, `latin`).
-- Removing the old grower, the exact counter or the #15 caps for old levels (hide, do not
+- Removing the old grower, the exact counter or the #15 caps from the code (hide, do not
   delete).
+- A server or shared online store for puzzles (see Performance, option C).
 - The AI layer and paid printing (`specs/paid-printing.md`), except that print shows the
   numbered steps.
 - New worlds. Existing worlds get the drawings the new types need, nothing more.
@@ -97,18 +101,18 @@ Human solver and solution text
    board, clue or puzzle id changes.
 
 Grading
-7. Given a book-style level, when a puzzle is accepted, then its trace's chain length and
+7. Given a room level, when a puzzle is accepted, then its trace's chain length and
    top technique tier lie inside that level's band in `difficulty.js`.
-8. Given the keuring sample of a book-style level, then the median chain length rises
+8. Given the keuring sample of a room level, then the median chain length rises
    strictly from each level to the next.
 
 Clues
-9. Given a book-style puzzle, then every non-victim person is the subject of exactly one
+9. Given a room puzzle, then every non-victim person is the subject of exactly one
    own clue (a clue about that person alone).
-10. Given a book-style puzzle, then no name appears in more than two lines of the player's
+10. Given a room puzzle, then no name appears in more than two lines of the player's
     per-name list (`aanwijzingenPerPersoon`), and relational plus global clues together
     number at most `ceil(persons / 3)`.
-11. Given a book-style puzzle, then at least half of the own clues are object clues (on,
+11. Given a room puzzle, then at least half of the own clues are object clues (on,
     in, next to, in front of, not next to a type of object; the only person on a type).
 12. Given any clue, when it is evaluated in the solution, then it is true (as today).
 
@@ -134,28 +138,31 @@ Drawings
 Determinism
 19. Given a seed and a level, when the puzzle is built twice, in Node and in the browser
     worker, then board, clues and trace are identical.
-20. Given a book-style puzzle, then no part of its build depends on elapsed time: every
+20. Given a room puzzle, then no part of its build depends on elapsed time: every
     budget counts solver steps or technique applications.
-21. Given a puzzle id from before the switch, when it is opened after the switch, then it
-    shows the same board as before (if open question 1 is answered A).
+21. Given a stored puzzle and the same id rebuilt from its seed, then both are identical;
+    the keuring rebuilds a sample of every committed pool and fails on any difference.
 
 Performance
 22. Given any level, when a puzzle is built in the app, then the page stays responsive,
     an estimate is shown before building starts, and a progress bar moves at least once
     per second until it is ready; a cancel button stops the build.
-23. Given the keuring sample per book-style level on the CI runner, then the worst build
+23. Given the keuring sample per room level on the CI runner, then the worst build
     time stays under the laptop budget in the Performance section; the keuring fails
     otherwise.
 24. Given a player solving a puzzle, when she presses "Volgende puzzel", then the next
     puzzle of that level is already built in the background, unless she pressed within
     its build time.
+25. Given the per-browser store is full, when a new unplayed puzzle is added, then the
+    oldest unplayed puzzle of that level is dropped, and the store never exceeds its
+    maximum; when the browser refuses storage, the app builds as if there were no store.
 
 ## Edge cases and error states
 - **The template builder cannot finish a board.** As today: next attempt; after the
   last attempt the one with the smallest miss (`mis`) is returned and the keuring fails on
   that seed. Never an unsolvable or non-unique puzzle.
-- **The human solver stalls on an old-level puzzle** that the exact solver proves unique.
-  Allowed for old levels (grading only, criterion 6); the solution view then shows the
+- **The human solver stalls on one of today's puzzles** (phase A) that the exact solver proves unique.
+  Allowed in phase A (grading only, criterion 6); the solution view then shows the
   steps it found and the line "vanaf hier is een aanname nodig", followed by the remaining
   placements.
 - **Unsound technique** (a bug): the keuring's cross-check (criterion 2) fails with the
@@ -197,18 +204,34 @@ laptop until measured on a real phone); the keuring checks the laptop equivalent
 | 1–3 | 1 s | 0.25 s | nothing (instant) |
 | 4 | 3 s | 0.75 s | spinner |
 | 5 | 15 s | 4 s | estimate + progress bar |
-| 6 | 30 s | 8 s | estimate + progress bar |
+| 6 (12×14) | 30 s | 8 s | estimate + progress bar |
+| 7 (16×16) | 60 s | 15 s | estimate + progress bar |
 
 - **Web Worker**: the build runs in a module worker; the main thread only shows progress.
 - **Prefetch**: while a puzzle is played, the next one of that level is built in the
   worker at low priority (it yields between attempts).
-- **Pre-generated library cases**: levels 5 and 6 of the library (18 cases) are stored as
-  JSON built from their seeds. Measured size: about 2 KB per level-5 puzzle (0.4 KB
-  gzipped), so about 60 KB raw for all 18; the keuring rebuilds and compares them (about
-  2 minutes of keuring time at today's speed).
-- **Not now: a pre-generated pool for random puzzles** (e.g. 200 per level ≈ 0.8 MB raw,
-  ~150 KB gzipped, lazy-loaded). Only if prefetch is not enough after measuring on a phone.
 - Memory: under 100 MB of heap for a build, checked in the keuring sample.
+
+### The growing store (Guus's idea, 2026-11-17)
+A puzzle is fully decided by its id (seed, level, world), so a stored result is the same
+puzzle anyone would build; storing it only saves computation. Measured size of one built
+puzzle: about 2 KB (level 5, 0.4 KB gzipped); estimated 3 KB for level 6 and 4 KB for
+level 7. Levels 1–4 build in under a second and are not stored. Three places, because the
+site is static on GitHub Pages:
+
+| | A. per browser (IndexedDB) | B. pool in the repo | C. shared server store |
+|---|---|---|---|
+| What | every puzzle built in this browser and not played (prefetch, cancelled "next") | a tool on the laptop builds seeds in the background and commits one JSON per level; "Nieuwe puzzel" picks an unplayed seed from it | browsers upload what they built; everyone draws from it |
+| Grows | while she plays | each time the tool runs (e.g. weekly) | with every visitor |
+| Maximum | 100 per level, levels 5–7: 300 puzzles ≈ 0.9 MB | 300 per level, levels 5–7: 900 puzzles ≈ 2.7 MB raw, ~0.6 MB gzipped, one file per level (~0.6–1.2 MB raw), loaded only when that level is chosen | — |
+| Cost | none | none; building 300 level-7 puzzles ≈ 30 min of one laptop core (median 6 s); keuring rebuilds a sample of 10 per level (~2 min) | a Cloudflare Worker on the paid plan (~$5/month, the free 10 ms CPU cannot verify a puzzle) plus storage; every upload must be rebuilt and checked before others get it |
+| Shared between devices | no | yes | yes |
+| Risk | Safari may clear site storage after 7 days without a visit; then it simply builds again | repo grows ~3 MB per full refresh of the pool (git keeps history) | a server, an API key online, abuse handling — against `docs/PRODUCT.md` ("no server for gameplay") |
+
+**Recommended: A and B together.** B makes the first level-5–7 puzzle instant on any
+device; A keeps what this browser built on top of it. C is a non-goal.
+
+- **Library cases** of levels 5–7 are stored in B the same way (about 25 cases, ~75 KB).
 
 ## Test plan
 - Unit, valid input: per technique, a hand-made position where it applies and the exact
@@ -233,19 +256,12 @@ laptop until measured on a real phone); the keuring checks the laptop equivalent
 - Component / E2E and manual check: screenshots per UI step (solution view, token on a
   chair, window, special cell, progress bar on phone width); a print proof of the
   numbered solution with `tools/printproef.mjs` (owner's terminal); then the daughter
-  plays a book-style level 3 and level 6 board and her verdict goes into `STATUS.md`.
+  plays a room level 3 and level 6 board and her verdict goes into `STATUS.md`.
 
-## Open questions (for Guus, sent 2026-11-17)
-1. Old links when book-style boards arrive — A: version in the id, old boards stay
-   (recommended); B: every board shifts once more, like #15; C: book-style only on new
-   levels 7–9 next to the old six.
-2. Level 6 — A: becomes 12×14 with 12 people, at most one per column (as in the book),
-   16×16 is hidden (recommended); B: keep 16×16 as level 6 and add 12×14 as level 7.
-3. The victim — A: no clue, the case rule "was alleen met de dader" shown in the victim's
-   line (recommended); B: one object clue like every other person; C: unchanged.
-4. Waiting — A: worker + progress bar + prefetch, library levels 5–6 pre-generated
-   (recommended); B: also a pre-generated pool for random levels 5–6 (~150 KB per level,
-   instant); C: worker and progress bar only.
+## Open questions
+Answered by Guus on 2026-11-17 (decisions 4–7): every board shifts; level 6 is 12×14 and
+level 7 is 16×16; the victim gets nothing; a growing store with a maximum. Still open:
+where the store lives (A, B or both; recommended both) and its maxima.
 
 ## Plan (build order)
 Each step is 1–2 hours unless marked, ends green on `npm run check:snel`, and steps that
@@ -268,7 +284,7 @@ change the engine end with a full keuring in the background.
    lengths and tiers in this spec as the baseline for the bands; confirm criterion 6
    (fingerprints unchanged).
 
-**Phase B — building on the solver, object clues (book-style levels)**
+**Phase B — building on the solver, object clues (room levels)**
 6. **Board model** (2 h) — `rooms.js`: rectangular boards, "at most one", object type and
    posture, standable objects, windows on edges. Old levels keep "exactly one" and square
    boards; fingerprints of old levels unchanged.
@@ -286,9 +302,10 @@ change the engine end with a full keuring in the background.
 10. **Web Worker and progress** (2 h) — `src/engine/worker.js`, progress per attempt,
     estimate per level, cancel, prefetch of the next puzzle; main-thread fallback.
     Criteria 19, 22, 24, checked in the browser pane at phone width.
-11. **Pre-generated library cases and build-time budget** (1 h) — a tool that writes the
-    JSON for library levels 5–6, a keuring check that rebuilds and compares, and the
-    budget check of criterion 23.
+11. **The store and build-time budget** (2 h) — (A) an IndexedDB store per browser with
+    its maximum and eviction; (B) `tools/pool.mjs` that builds and writes one JSON per
+    level 5–7 plus the library cases; a keuring check that rebuilds a sample and
+    compares (criterion 21), and the budget check of criterion 23.
 
 **Phase C — roles, attributes, special cells**
 12. **Relational clues** — `alleenMet`, `rechtBoven`/`rechtOnder`, `preciesNRijen` /
@@ -300,8 +317,10 @@ change the engine end with a full keuring in the background.
 15. **Attributes and area rules** (2 h) — classes per world (content), gender-only and
     class-only rooms, class-wide rules; global hints ("geen lege kamer", "precies één
     persoon naast een kast").
-16. **The hardest level** — 12×14, about 12 people, about five dense steps; measure,
-    set the band, daughter test.
+16. **Levels 6 and 7** (2 h) — level 6 becomes 12×14 with about 12 people and about five
+    dense steps; 16×16 moves to a new level 7 (`difficulty.js`, level buttons, catalog,
+    `ZICHTBARE_LEVEL_IDS`); the band of 7 demands a longer chain than 6 (criterion 8);
+    measure both, daughter test.
 
 Risks:
 - **Unsound technique** → two solutions shipped as unique. Mitigation: the exact counter
