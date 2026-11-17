@@ -23,6 +23,13 @@ day the changelog was introduced; everything before that is in git history only.
   sketch letter or a cross. Up to 30 steps per puzzle, kept when you reload.
 
 ### Changed
+- Clues on the room board are harder and more varied. "Same row as" and "same column as"
+  are gone (together they pointed at one cell); "X stood in the library" takes their
+  place. Clues are spread over the names: at most 3 per name on levels 1–3, 4 on level 4,
+  5 on level 5, and on level 6 as few as the builder manages. No kind of clue makes up
+  more than a quarter of a puzzle (a third on level 6), and from level 3 no clue puts
+  someone on two cells or fewer by itself. Every room board and library case changes;
+  building a level-5 or level-6 puzzle takes a few seconds longer.
 - A sketch letter no longer shows where a placed figure makes it impossible: that
   figure's letter elsewhere, any letter under it, and other figures' letters in its row
   and column. Pick the figure up and the letters come back. With "Kruisjes vanzelf" off

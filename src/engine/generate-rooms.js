@@ -13,7 +13,7 @@
 // "X stond in dezelfde kamer als het slachtoffer" is daarom verboden - dat is
 // letterlijk de vraag.
 
-import { bouwRooster, tekenPlaatsing, telPlaatsingen, graad, domeinenVan, idx, rijVan, kolVan, kamerBuren, naastMeubel } from './rooms.js';
+import { bouwRooster, tekenPlaatsing, telPlaatsingen, graad, domeinenVan, evalAanwijzing, idx, rijVan, kolVan, kamerBuren, naastMeubel } from './rooms.js';
 import { makeRng } from './rng.js';
 
 // Een poging die de solver niet binnen zijn budget rond krijgt, gooien we weg.
@@ -21,11 +21,31 @@ class TeZwaar extends Error {}
 
 const sleutel = (c) => JSON.stringify([c.soort, c.p, c.q, c.kamerIdx, c.m, c.ja]);
 
-function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten) {
+// Hoeveel vrije vakjes een aanwijzing over één persoon, helemaal alleen op
+// een leeg bord, voor die persoon openlaat.
+export function vakjesOver(rooster, c) {
+  const plaats = new Array(rooster.n).fill(null);
+  const ctx = { rooster, plaats };
+  let uit = 0;
+  for (let cel = 0; cel < rooster.n * rooster.n; cel++) {
+    if (!rooster.vrij[cel]) continue;
+    plaats[c.p] = cel;
+    if (evalAanwijzing(c, ctx) === true) uit++;
+  }
+  return uit;
+}
+
+// minVrij: een aanwijzing over één persoon die in zijn eentje minder dan
+// zoveel vakjes openlaat, komt niet in de vijver. "Lies stond naast de
+// piano" met maar twee vakjes naast de piano wijst haar plek bijna aan,
+// en dat is wat de dochter "te makkelijk" noemde (2026-11-16). Zie
+// minVrij in KAMER_LEVELS.
+function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten, { minVrij = 0 } = {}) {
   const { n, kamerVan, meubelOp, meubelAantal, kamers } = rooster;
   const vijver = [];
   const zet = (soort, c) => {
     if (!gewichten[soort]) return;
+    if (minVrij && c.p != null && c.q == null && vakjesOver(rooster, { ...c, soort }) < minVrij) return;
     // Over het slachtoffer wordt niets gezegd, ook niet in de aanwijzing van
     // een ander ("Bram stond ten noorden van Max"). Elke puzzel gaf het
     // slachtoffer een eigen rijtje aanwijzingen, en dat leest alsof het een
@@ -123,9 +143,43 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten) {
     .map((e) => e.c);
 }
 
-function groeiTotVast(rooster, vijver, stijl, budget) {
+// Hoeveel aanwijzingen we vooruit kijken bij het kiezen van de volgende.
+// Zie groeiTotVast. Gemeten op meet-0..19: met twaalf bleef op niveau drie
+// nog een op de drie namen boven het plafond steken, met dertig niet meer;
+// daarboven won niets.
+const VENSTER = 30;
+
+// Hoe vaak één soort aanwijzing in een puzzel mag voorkomen: een kwart
+// (soortDeel in KAMER_LEVELS), en nooit minder dan twee - bij zes
+// aanwijzingen zou een kwart er één zijn, en dan mag "naast" niet eens twee
+// keer. "Ten noorden van" stond er op niveau zes negen keer in (de dochter,
+// 2026-11-16: "ze lijken te veel op elkaar").
+export const maxPerSoort = (aantal, deel = 0.25) => Math.max(2, Math.ceil(deel * aantal));
+
+// Over wie gaat deze aanwijzing, zoals de speler hem ziet? Een aanwijzing
+// over twee mensen staat bij allebei (src/aanwijzingen.js), dus telt hij
+// ook voor allebei. Een telling gaat over niemand in het bijzonder.
+const namenVan = (c) => (c.p == null ? [] : c.q == null || c.q === c.p ? [c.p] : [c.p, c.q]);
+
+// Voeg aanwijzingen toe tot de puzzel vastligt.
+//
+// Dit nam de vijver van voor naar achter, en dat gaf namen met een stapel
+// aanwijzingen: bij Het Rietveld College op Makkelijk hadden Imke, Pien en
+// Quincy er elk drie, en op niveau zes was het gemiddelde drieënhalf per
+// naam (de dochter, 2026-11-16: "te veel hints per persoon"). Een plafond
+// hier al afdwingen werkt niet - gemeten: groeien gaat ver voorbij wat het
+// snoeien overlaat, en met een plafond van zelfs drie boven het doel lukte
+// op niveau drie geen enkele puzzel. Dus spreidt de bouwer hier alleen, en
+// wordt het plafond pas na het snoeien gekeurd (genereerKamerpuzzel).
+//
+// Van de eerstvolgende VENSTER kandidaten in de vijver wint die over de naam
+// met de minste aanwijzingen tot nu toe; bij gelijkspel de eerste, zodat de
+// gewichten van het niveau blijven tellen. Geen nieuwe trekking: de keuze
+// volgt uit de volgorde van de vijver, en die uit de seed.
+function groeiTotVast(rooster, vijver, stijl, budget, slachtofferIdx) {
   const gekozen = [];
   const gezien = new Set();
+  const perNaam = new Array(rooster.n).fill(0);
 
   // Het uniek maken is de dure stap: bij twaalf bij twaalf kost een telling
   // veel meer dan het doorstrepen. Dus eerst goedkoop doorstrepen, en de
@@ -142,14 +196,42 @@ function groeiTotVast(rooster, vijver, stijl, budget) {
     return uit.count === 1;
   };
 
-  for (const c of vijver) {
-    if (klaar()) break;
-    const k = sleutel(c);
-    if (gezien.has(k)) continue;
-    gezien.add(k);
+  // Een telling gaat over niemand, maar mag niet altijd voorgaan: die doet
+  // mee alsof hij over de minst bedeelde naam gaat.
+  const minste = () => Math.min(...perNaam.filter((_, p) => p !== slachtofferIdx));
+  const druk = (c) => {
+    const namen = namenVan(c);
+    return namen.length ? Math.max(...namen.map((p) => perNaam[p])) : minste();
+  };
+
+  const rest = vijver.slice();
+  let begin = 0;
+  while (!klaar()) {
+    let beste = -1;
+    let besteDruk = Infinity;
+    let bekeken = 0;
+    for (let i = begin; i < rest.length && bekeken < VENSTER; i++) {
+      const c = rest[i];
+      if (c && gezien.has(sleutel(c))) rest[i] = null;
+      if (!rest[i]) {
+        if (i === begin) begin++;
+        continue;
+      }
+      bekeken++;
+      const d = druk(c);
+      if (d < besteDruk) {
+        besteDruk = d;
+        beste = i;
+      }
+    }
+    if (beste < 0) return null;
+    const c = rest[beste];
+    rest[beste] = null;
+    gezien.add(sleutel(c));
     gekozen.push(c);
+    for (const p of namenVan(c)) perNaam[p]++;
   }
-  return klaar() ? gekozen : null;
+  return gekozen;
 }
 
 function snoei(rooster, aanwijzingen, stijl, rng, budget) {
@@ -158,8 +240,20 @@ function snoei(rooster, aanwijzingen, stijl, rng, budget) {
   // eerlijke beurt in naSnoei, maar dan één keer en niet bij elke poging.
   const overgeslagen = [];
 
-  for (const i of rng.shuffle(houd.map((_, j) => j))) {
-    if (!houd[i]) continue;
+  // Wie het drukst bedeeld is, raakt als eerste iets kwijt. Eerst lukraak
+  // (de trekking blijft dezelfde), en dan steeds de aanwijzing over de naam
+  // die nu de meeste heeft - zo zakt de drukste naam het eerst naar zijn
+  // plafond, in plaats van dat het toeval beslist wie er drie houdt.
+  const perNaam = new Array(rooster.n).fill(0);
+  for (const c of houd) for (const p of namenVan(c)) perNaam[p]++;
+  const druk = (c) => Math.max(0, ...namenVan(c).map((p) => perNaam[p]));
+  const volgorde = rng.shuffle(houd.map((_, j) => j));
+  while (volgorde.length) {
+    let pos = 0;
+    for (let j = 1; j < volgorde.length; j++) {
+      if (druk(houd[volgorde[j]]) > druk(houd[volgorde[pos]])) pos = j;
+    }
+    const i = volgorde.splice(pos, 1)[0];
     const proef = houd.filter((c, j) => c && j !== i);
     let ok;
     if (stijl === 'shallow') {
@@ -175,7 +269,10 @@ function snoei(rooster, aanwijzingen, stijl, rng, budget) {
       if (uit.opgegeven) throw new TeZwaar();
       ok = uit.count === 1;
     }
-    if (ok) houd[i] = null;
+    if (ok) {
+      for (const p of namenVan(houd[i])) perNaam[p]--;
+      houd[i] = null;
+    }
   }
   return { aanwijzingen: houd.filter(Boolean), overgeslagen: overgeslagen.map((i) => houd[i]).filter(Boolean) };
 }
@@ -255,8 +352,8 @@ function poging(params, rng) {
   const slachtofferIdx = rng.pick(paar);
   const dader = paar.find((p) => p !== slachtofferIdx);
 
-  const vijver = bouwVijver(rooster, plaats, slachtofferIdx, rng, params.gewichten);
-  const gegroeid = groeiTotVast(rooster, vijver, params.style, budget);
+  const vijver = bouwVijver(rooster, plaats, slachtofferIdx, rng, params.gewichten, { minVrij: params.minVrij });
+  const gegroeid = groeiTotVast(rooster, vijver, params.style, budget, slachtofferIdx);
   if (!gegroeid) return null;
   const controle = telPlaatsingen(rooster, gegroeid, 2, budget);
   if (controle.opgegeven || controle.count !== 1) return null;
@@ -279,9 +376,31 @@ function afronden(kandidaat) {
   return { ...kandidaat, aanwijzingen, graad: graad(kandidaat.rooster, aanwijzingen) };
 }
 
+// Hoeveel de aanwijzingen boven de plafonds van het niveau uitkomen: per naam
+// wat er boven maxPerNaam zit, opgeteld. Nul is goed. Een poging met
+// overschot wordt niet meteen genomen; lukt geen enkele, dan wint die met
+// het kleinste (zie genereerKamerpuzzel), en dan valt de keuring erover.
+export function overschot(aanwijzingen, params) {
+  const perNaam = new Map();
+  for (const c of aanwijzingen) for (const p of namenVan(c)) perNaam.set(p, (perNaam.get(p) ?? 0) + 1);
+  let uit = 0;
+  const plafond = params.maxPerNaam ?? Infinity;
+  for (const aantal of perNaam.values()) uit += Math.max(0, aantal - plafond);
+  const perSoort = new Map();
+  for (const c of aanwijzingen) perSoort.set(c.soort, (perSoort.get(c.soort) ?? 0) + 1);
+  const maxSoort = maxPerSoort(aanwijzingen.length, params.soortDeel);
+  for (const aantal of perSoort.values()) uit += Math.max(0, aantal - maxSoort);
+  return uit;
+}
+
 export function genereerKamerpuzzel(seed, params, pogingen = null) {
   // Grote roosters mislukken vaker, dus die krijgen meer pogingen.
-  pogingen = pogingen ?? (params.n >= 9 ? 24 : 10);
+  //
+  // Tot en met niveau drie zijn het er honderd. Sinds de plafonds per naam en
+  // per soort (specs/harder-clues.md) valt daar een poging vaker af, maar een
+  // poging kost op zeven bij zeven een paar milliseconden: met tien haalde
+  // niveau drie zes van de twintig seeds, met honderd twintig van de twintig.
+  pogingen = pogingen ?? (params.n >= 9 ? 24 : 100);
   let beste = null;
   for (let t = 0; t < pogingen; t++) {
     const rng = makeRng(`${seed}#kamer${t}`);
@@ -293,14 +412,27 @@ export function genereerKamerpuzzel(seed, params, pogingen = null) {
       continue;
     }
     if (!kandidaat) continue;
-    const mis = params.style === 'deep'
+    const vorm = params.style === 'deep'
       ? (kandidaat.graad.opgelost ? 10 : 0)
       : (kandidaat.graad.opgelost ? Math.max(0, kandidaat.aanwijzingen.length - (params.maxClues ?? 99)) : 10);
-    if (mis === 0) return afronden({ ...kandidaat, poging: t });
+    // Op de grote borden laat de eerste snoeironde een flink deel staan dat
+    // de tweede er nog af haalt: gemeten 27 tot 39 aanwijzingen voor, rond
+    // de 22 na. Keuren op de plafonds vóór die tweede ronde gooide goede
+    // pogingen weg - dat kostte op niveau vijf tien seconden. Een poging die
+    // van vorm goed is, wordt daarom eerst afgerond en dan gekeurd. (Tot en
+    // met niveau drie slaat de eerste ronde niets over en is afronden gratis.)
+    if (vorm === 0) {
+      const af = afronden({ ...kandidaat, poging: t });
+      const mis = overschot(af.aanwijzingen, params);
+      if (mis === 0) return af;
+      if (!beste || mis < beste.mis) beste = { ...af, mis, klaar: true };
+      continue;
+    }
+    const mis = vorm + overschot(kandidaat.aanwijzingen, params);
     if (!beste || mis < beste.mis) beste = { ...kandidaat, mis, poging: t };
   }
   if (!beste) throw new Error('kon geen kamerpuzzel bouwen voor deze instellingen');
-  return afronden(beste);
+  return beste.klaar ? beste : afronden(beste);
 }
 
 
@@ -326,8 +458,12 @@ export function genereerKamerpuzzel(seed, params, pogingen = null) {
 // 'bekend' zijn de figuren die de speler al goed heeft neergezet. Die gaan
 // als gewone aanwijzingen mee in de meting, zodat de hint beoordeeld wordt
 // vanaf de stand van het bord en niet vanaf nul.
+//
+// Rij en kolom staan er niet meer in (specs/harder-clues.md): een rij- en
+// een kolomaanwijzing samen wezen iemand precies één vakje aan, in 29 van de
+// 29 gemeten gevallen. De beoordelingen in rooms.js blijven bestaan.
 const HINTGEWICHTEN = {
-  kamerNiet: 1, naast: 1, opRij: 1, opKolom: 1, zelfdeKamer: 1,
+  kamerNiet: 1, naast: 1, zelfdeKamer: 1,
   noord: 1, west: 1, buren: 1, rand: 1, hoek: 1,
   aantalKamer: 1, aantalNaast: 1,
 };
