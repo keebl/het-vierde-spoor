@@ -8,13 +8,14 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Open sessions (2026-11-17): "Build specs/harder-clues.md"
-  (`local_7586410d…`), branch `claude/priceless-lalande-85fd62`, no PR yet — idle, waiting
-  on its own background measurement of levels 5–6 (two variants: boundary 5/6 and 4/5);
-  a stop-rule question from it comes to the main session for Guus. Its node process
-  (pid 92745, ~98 % CPU since 2026-11-16 21:42) is still running in its worktree; Guus
-  chose not to have it killed. No open pull requests. Card "Phone: nicer names and clue
-  box" (font, equal field sizes and alignment on a phone) proposed, not started.
+- Open sessions (2026-11-17, later): none; no open pull requests. Merged and live today:
+  #15 harder clues (`c313d07`; no row/column clues, room clues, caps per name 3/3/3/4/5,
+  none on level 6; checked live on `dader.landhuis.kamer.2.demo-7`; every board shifted)
+  and #16 the engine-extension ADR and spec (`fd99908`, not built). CI now runs the full
+  keuring as six parallel jobs; the verdict job keeps the name "keuring (all 8 checks)"
+  because a ruleset requires it. Both side sessions archived. Still to do: the phone
+  layout remark (nicer font, equal field sizes and alignment of the name pills and clue
+  box) has no session yet; ask the daughter to replay a fresh case.
   Merged and live 2026-11-16/17: #13 steady desktop layout (`935246e`), #14 undo button
   and sketch letters that hide (`584ad4f`), #12 the harder-clues spec (`a1f26c1`).
   Project folder renamed to `~/Claude/Projects/reconstructie`.
