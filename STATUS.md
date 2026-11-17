@@ -13,9 +13,11 @@ standing guidance rather than state moved to `CLAUDE.md`.
   none on level 6; checked live on `dader.landhuis.kamer.2.demo-7`; every board shifted)
   and #16 the engine-extension ADR and spec (`fd99908`, not built). CI now runs the full
   keuring as six parallel jobs; the verdict job keeps the name "keuring (all 8 checks)"
-  because a ruleset requires it. Both side sessions archived. Still to do: the phone
-  layout remark (nicer font, equal field sizes and alignment of the name pills and clue
-  box) has no session yet; ask the daughter to replay a fresh case.
+  because a ruleset requires it. Both side sessions archived. Then #17 (`32ada0d`): phone
+  layout on one grid and self-hosted Baloo 2 + Nunito (no Google Fonts request any more),
+  checked live at 375 px; its session archived. Leftover: remote branch
+  `pr-assets/phone-layout` (PR screenshots) may be deleted. Ask the daughter to replay a
+  fresh case.
   Merged and live 2026-11-16/17: #13 steady desktop layout (`935246e`), #14 undo button
   and sketch letters that hide (`584ad4f`), #12 the harder-clues spec (`a1f26c1`).
   Project folder renamed to `~/Claude/Projects/reconstructie`.
