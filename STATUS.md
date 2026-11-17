@@ -128,6 +128,14 @@ standing guidance rather than state moved to `CLAUDE.md`.
    interval, alert contact = the UptimeRobot phone app. Then record "UptimeRobot, free,
    5 min, alerts to phone" under Uptime monitoring in `docs/RELEASE.md` Operations.
 
+## Ideas
+- 2026-11-17 — Learn from a published deduction-puzzle book Guus owns (photos shared in
+  chat, copyrighted: study the mechanics only, copy no text, names, art or puzzles, and
+  keep the photos out of the repo): one short clue per person, mostly about objects
+  (stands on a rug, in front of a window, the only one on a chair, not next to a tree),
+  roles found through an object, global hints like "no empty room", and a victim clue
+  that points to whoever was alone with them.
+
 ## Risks
 - **Technical — a direct push to `main` is a deploy with no gate.** Since 2026-11-14 CI
   runs the keuring on every pull request, but commits pushed straight to `main` (most
