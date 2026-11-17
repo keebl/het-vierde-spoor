@@ -1,7 +1,7 @@
 # Spec: extend the room engine for room puzzles
 
-Status: draft
-Date: 2026-11-17
+Status: approved
+Date: 2026-11-17 (approved by Guus the same day, via the main session: "Goedgekeurd")
 Decision record: `docs/decisions/0005-extend-the-room-engine-for-book-style-puzzles.md`
 
 ## Goal
@@ -52,7 +52,8 @@ a phone, and a frozen page today because building runs on the main thread.
 6. **Seven levels** (Guus, 2026-11-17): level 6 becomes 12×14 with about 12 people (at
    most one per column); today's 16×16 becomes level 7.
 7. **A slowly growing store of built puzzles** (Guus, 2026-11-17): what is built and not
-   played is kept for later, with a hard maximum. Where it lives: see Performance.
+   played is kept for later: per browser (IndexedDB, at most 100 per level 5–7) and in the
+   repo (a pool built offline, at most 300 per level 5–7). See Performance.
 
 ## Scope (in)
 - `src/engine/redeneer.js` (new): the human solver, its techniques, trace and grade.
@@ -228,7 +229,7 @@ site is static on GitHub Pages:
 | Shared between devices | no | yes | yes |
 | Risk | Safari may clear site storage after 7 days without a visit; then it simply builds again | repo grows ~3 MB per full refresh of the pool (git keeps history) | a server, an API key online, abuse handling — against `docs/PRODUCT.md` ("no server for gameplay") |
 
-**Recommended: A and B together.** B makes the first level-5–7 puzzle instant on any
+**Chosen: A and B together** (Guus, 2026-11-17: "Browser + repo"; maxima "100 browser, 300 repo"). B makes the first level-5–7 puzzle instant on any
 device; A keeps what this browser built on top of it. C is a non-goal.
 
 - **Library cases** of levels 5–7 are stored in B the same way (about 25 cases, ~75 KB).
@@ -261,7 +262,7 @@ device; A keeps what this browser built on top of it. C is a non-goal.
 ## Open questions
 Answered by Guus on 2026-11-17 (decisions 4–7): every board shifts; level 6 is 12×14 and
 level 7 is 16×16; the victim gets nothing; a growing store with a maximum. Still open:
-where the store lives (A, B or both; recommended both) and its maxima.
+(answered the same day) the store lives in the browser and the repo (A+B), with at most 100 puzzles per level per browser and 300 per level in the repo. None open.
 
 ## Plan (build order)
 Each step is 1–2 hours unless marked, ends green on `npm run check:snel`, and steps that

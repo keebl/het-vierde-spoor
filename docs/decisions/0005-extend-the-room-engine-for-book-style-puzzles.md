@@ -1,7 +1,7 @@
 # ADR-0005: Extend the room engine for book-style puzzles
 
 Date: 2026-11-17
-Status: proposed (accepted when Guus approves it together with `specs/engine-extension.md`)
+Status: accepted (Guus, 2026-11-17, together with `specs/engine-extension.md`)
 
 ## Context
 
@@ -168,7 +168,9 @@ outlier. Building uses one CPU core at 100 % and a few tens of MB of heap.
 - **A slowly growing store of puzzles** (Guus's idea, 2026-11-17: everything built on
   request and not used is kept). The site is static, so the store lives where no server
   is needed. The spec compares three places: per browser (IndexedDB), a pool built
-  offline and committed to the repo, and a shared server store. Each has a hard maximum.
+  offline and committed to the repo, and a shared server store. Chosen (Guus,
+  2026-11-17): per browser and in the repo, at most 100 and 300 puzzles per level 5–7;
+  no server store.
   The seed decides the puzzle, so a stored puzzle is identical to a rebuilt one.
 - **Library cases of the slow levels are pre-generated** into the repo the same way,
   and the keuring rebuilds a sample and fails on any difference.
