@@ -63,9 +63,9 @@ jobs:
           grep -q 'volledige keuring exit=0' keuring.txt
 
   volledig-oordeel:
-    # One check name that is green only when every heavy check is: the place to point
-    # branch protection at, should main ever get it.
-    name: keuring (all 9 checks)
+    # One check name that is green only when every heavy check is.
+    # The name says 8 although there are 9 checks now: a repository ruleset requires it.
+    name: keuring (all 8 checks)
     if: always() && github.event_name == 'pull_request'
     needs: [snel, volledig]
     runs-on: ubuntu-latest
