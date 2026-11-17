@@ -58,6 +58,13 @@ standing guidance rather than state moved to `CLAUDE.md`.
   giveaways 71s, library 33s, the other three a tenth of a second each.
 
 ## Next
+- **Engine extension, approved 2026-11-17** (`specs/engine-extension.md`, ADR 0005,
+  merged as #16): book-style puzzles from mechanics only (the source book is copyrighted).
+  Build order: (A) human-style solver with named techniques and numbered Dutch solution
+  steps, no boards change; (B) object clues, Web Worker with estimate and progress bar,
+  puzzle store (100 per level per browser, 300 per level in the repo, levels 5-7);
+  (C) roles, attributes, special cells; then level 6 = 12x14, level 7 = 16x16. Every board
+  shifts once; the victim keeps no clue. Not started.
 - **Tester feedback, 2026-11-16** (an adult tester, phone, easy puzzles; positive about the
   look of the board and the puzzles). (1) On a phone you scroll back and forth between
   the clues, the board and the special items, and forget a clue's name on the way.
@@ -129,21 +136,7 @@ standing guidance rather than state moved to `CLAUDE.md`.
    5 min, alerts to phone" under Uptime monitoring in `docs/RELEASE.md` Operations.
 
 ## Ideas
-- 2026-11-17 — Learn from a published deduction-puzzle book Guus owns (photos shared in
-  chat, copyrighted: study the mechanics only, copy no text, names, art or puzzles, and
-  keep the photos out of the repo): one short clue per person, mostly about objects
-  (stands on a rug, in front of a window, the only one on a chair, not next to a tree),
-  roles found through an object, global hints like "no empty room", and a victim clue
-  that points to whoever was alone with them. Second batch: special cells with a rule
-  ("whoever stands here must / must not be alone"), area classes and person classes
-  (only one class may stand in its areas), a hidden role (one bandit, "was a man")
-  that other clues measure from ("exactly three columns left of the bandit"), standing
-  or sitting on an animal, and a printed solution as numbered deduction steps ("the
-  only chair not next to a table", "the last free corner"). Hardest level: 12×12 to
-  12×14 boards, about twelve people, areas only one gender may enter, jobs found through
-  an object (fisher, toolmaker), people on vehicles or ships, and solutions of five
-  dense steps built on "the last free cell in this row, column or area" and "cross out
-  the intersections".
+- (none open; the puzzle-book idea became `specs/engine-extension.md`)
 
 ## Risks
 - **Technical — a direct push to `main` is a deploy with no gate.** Since 2026-11-14 CI
