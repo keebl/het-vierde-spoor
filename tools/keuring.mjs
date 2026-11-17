@@ -17,6 +17,7 @@ const TOETSEN = [
   ['de motor', 'check.mjs', ['2']],
   ['de bibliotheek', 'check-catalog.mjs', []],
   ['de aanwijzingen', 'check-aanwijzingen.mjs', []],
+  ['de spreiding', 'check-spreiding.mjs', []],
   ['de veegronde', 'check-regels.mjs', ['2']],
   ['het AI-vangnet', 'check-ai-guard.mjs', []],
   ['de weggevers', 'check-weggevers.mjs', []],
@@ -24,19 +25,32 @@ const TOETSEN = [
   ['de kamers', 'check-kamers.mjs', []],
 ];
 
-// `--snel` slaat de vijf toetsen over die puzzels bouwen; die kosten samen
+// `--snel` slaat de zes toetsen over die puzzels bouwen; die kosten samen
 // minuten. Wat overblijft draait in een seconde en vangt verreweg de meeste
 // fouten in de inhoud - een vergeten icoon, een kamernaam die niet bij zijn
 // vloer past, een tekening die niet bestaat, een dubbele sleutel in een
 // tabel. Bedoeld om tussendoor te draaien; voor een oordeel draai je de hele
 // keuring.
 const SNEL = process.argv.includes('--snel');
-const ZWAAR = new Set(['de motor', 'de bibliotheek', 'de aanwijzingen', 'de veegronde', 'de weggevers']);
+
+// `--alleen "<naam>"` draait één toets, met hetzelfde oordeel eronder. Zo
+// kan CI de zware toetsen naast elkaar draaien: achter elkaar duurden ze op
+// een GitHub-runner langer dan de drie kwartier die een job mag duren (pull
+// request #15, toen niveau vijf en zes trager werden). Lokaal blijft
+// `npm run check:all` alles in één keer doen.
+const ALLEEN = process.argv.includes('--alleen') ? process.argv[process.argv.indexOf('--alleen') + 1] : null;
+if (ALLEEN && !TOETSEN.some(([naam]) => naam === ALLEEN)) {
+  console.log(`onbekende toets: ${ALLEEN}`);
+  console.log('volledige keuring exit=1');
+  process.exit(1);
+}
+const ZWAAR = new Set(['de motor', 'de bibliotheek', 'de aanwijzingen', 'de spreiding', 'de veegronde', 'de weggevers']);
 
 const uitslag = [];
 
 for (const [naam, script, args] of TOETSEN) {
   if (SNEL && ZWAAR.has(naam)) continue;
+  if (ALLEEN && naam !== ALLEEN) continue;
   console.log(`\n${'='.repeat(64)}\n== ${naam}\n${'='.repeat(64)}`);
   const begin = Date.now();
   const r = spawnSync(process.execPath, [new URL(script, import.meta.url).pathname, ...args], {

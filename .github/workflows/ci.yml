@@ -32,12 +32,24 @@ jobs:
           grep -q 'volledige keuring exit=0' keuring.txt
 
   volledig:
-    name: keuring (all 8 checks)
-    # Twelve minutes on an idle laptop; a hosted runner is slower. Pull requests only, so a
-    # push to main is not held up by a second full run of what the pull request already ran.
+    name: keuring (${{ matrix.toets }})
+    # The heavy checks of `npm run check:all`, side by side. In one job they took ~22 minutes
+    # on a laptop and ran past the 45-minute limit on a hosted runner (PR #15, after levels
+    # 5 and 6 got slower to build). The three light checks run in `snel` above. Pull requests
+    # only, so a push to main is not held up by a second full run of what the PR already ran.
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        toets:
+          - de motor
+          - de bibliotheek
+          - de aanwijzingen
+          - de spreiding
+          - de veegronde
+          - de weggevers
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -45,10 +57,24 @@ jobs:
           node-version: lts/*
           cache: npm
       - run: npm ci --ignore-scripts
-      - name: Full keuring
+      - name: Keuring, one check
         run: |
-          npm run check:all 2>&1 | tee keuring.txt
+          node tools/keuring.mjs --alleen "${{ matrix.toets }}" 2>&1 | tee keuring.txt
           grep -q 'volledige keuring exit=0' keuring.txt
+
+  volledig-oordeel:
+    # One check name that is green only when every heavy check is.
+    # The name says 8 although there are 9 checks now: a repository ruleset requires it.
+    name: keuring (all 8 checks)
+    if: always() && github.event_name == 'pull_request'
+    needs: [snel, volledig]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verdict
+        run: |
+          echo "snel: ${{ needs.snel.result }}, volledig: ${{ needs.volledig.result }}"
+          test "${{ needs.snel.result }}" = success && test "${{ needs.volledig.result }}" = success
 
   secrets:
     runs-on: ubuntu-latest

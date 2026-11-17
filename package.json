@@ -9,6 +9,7 @@
     "check": "node tools/check.mjs",
     "check:catalog": "node tools/check-catalog.mjs",
     "check:aanwijzingen": "node tools/check-aanwijzingen.mjs",
+    "check:spreiding": "node tools/check-spreiding.mjs",
     "check:all": "node tools/keuring.mjs",
     "check:snel": "node tools/keuring.mjs --snel",
     "check:ai": "node tools/check-ai-guard.mjs",

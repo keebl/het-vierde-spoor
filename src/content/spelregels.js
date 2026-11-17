@@ -15,7 +15,6 @@ export const SPELREGELS = {
       'Er staat precies één figuur per rij en precies één per kolom.',
       'Op een vakje met een meubelstuk staat niemand.',
       '"Naast" betekent pal erboven, eronder, links of rechts én in dezelfde kamer. Door een muur heen sta je niet naast iets, en schuin telt nooit.',
-      '"Op dezelfde rij" en "in dezelfde kolom" gaan over het hele raster en lopen dus wél door muren heen.',
       'Het noorden ligt boven, zoals het kompas naast het bord aangeeft.',
       'Alle aanwijzingen zijn waar, en er is precies één plaatsing die ze allemaal waarmaakt.',
     ],

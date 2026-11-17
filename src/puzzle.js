@@ -242,7 +242,17 @@ function noemKamers(rooster, voorraad, rng) {
   // Een strook heet alleen naar een strook als er ook echt een strook ligt.
   // 1.8 is gemeten: daaronder leest een kamer als een vlak, daarboven als
   // een gang.
-  const stroken = open.filter((m) => m.lang >= 1.8).length;
+  //
+  // Zijn er te weinig andere namen, dan moeten er meer strooknamen op het
+  // bord dan er stroken liggen. Dat tekort werd eerst achteraf uitgedeeld,
+  // over de kamers die na de zalen en hoeken nog open lagen - en dan kon een
+  // korte kamer "de trappenhal" heten terwijl een langere als zaal of nis
+  // was weggegeven. Dat gebeurde toen alle borden verschoven
+  // (specs/harder-clues.md): Avondgebed en Twaalf kaarsen, niveau vijf.
+  // Daarom hier, vóór de rest, en dus altijd op de langste kamers die er
+  // zijn.
+  const anders = emmer.vrij.length + emmer.groot.length + emmer.klein.length;
+  const stroken = Math.max(open.filter((m) => m.lang >= 1.8).length, open.length - anders);
   deel('smal', (a, b) => b.lang - a.lang || a.k - b.k, stroken);
   const over = open.length;
   deel('groot', (a, b) => b.cellen - a.cellen || a.k - b.k, Math.ceil(over * 0.4));
@@ -251,10 +261,7 @@ function noemKamers(rooster, voorraad, rng) {
   // de overgebleven zaal- en hoeknamen alsnog aan de beurt - maar niet
   // lukraak: de grootste kamers die nog open liggen krijgen de zaalnamen en
   // de kleinste de hoeknamen, zodat een zaal nooit kleiner uitvalt dan een
-  // nis. Strooknamen die over zijn gaan naar de langste kamers die er nog
-  // zijn, en dus nooit naar een vlak terwijl er nog een gang ligt.
-  const tekort = open.length - (emmer.vrij.length + emmer.groot.length + emmer.klein.length);
-  if (tekort > 0) deel('smal', (a, b) => b.lang - a.lang || a.k - b.k, tekort);
+  // nis.
   open.sort((a, b) => b.cellen - a.cellen || a.k - b.k);
   const rest = [...emmer.groot, ...emmer.vrij, ...emmer.smal, ...emmer.klein];
   for (const m of open) namen[m.k] = rest.shift();

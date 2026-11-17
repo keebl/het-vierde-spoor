@@ -57,6 +57,62 @@ counts under both names.
    library's room cases show a different board after this change.
 6. **A two-person clue counts toward both names** (6A), as the player sees it.
 
+## Amendment after step 1 (2026-11-16)
+The stop rule fired. With the builder spreading on purpose (prefer the least-loaded name,
+prune the busiest name first, retry an attempt that breaks a cap), rows and columns out,
+the ≤ 2-cell rule from level 3 and the 25% kind share, the original caps were out of
+reach (seeds `meet-0..19`, level 5: 10):
+
+| level | within cap 2/2/2/3/3 | slowest build |
+|---|---|---|
+| 1 | 18/20 | 0.2 s |
+| 2 | 9/20 | 0.7 s |
+| 3 | 0/20 | 1.6 s |
+| 4 | 12/20 | 32 s |
+| 5 | 2/10 | 116 s |
+
+A hard cap applied during growth fails at every level (growth needs far more clues than
+survive pruning; even cap + 3 built nothing on level 3), and one clue per name is not
+reachable as a bound: a unique board needs more clues than there are names.
+
+**Decision (Guus, 2026-11-16, in the build session):** one clue per name stays the aim;
+the hard upper bound becomes **3 on levels 1–3 and 4 on levels 4–6**. Criteria 3 and 4
+are amended accordingly. The other decisions stand.
+
+Measured with that bound (builder spreads with a window of 30, retries up to 100 attempts
+on levels 1–3, judges the bound after the second pruning round): levels 1–4 build 20/20
+within the bound. Level 5 does too, but only after 14–20 attempts, 8–13 s a puzzle;
+level 6 builds nothing within 4 or 5 (25–39 s an attempt). Without a hard bound, level 5
+takes 0.4–1.6 s with the busiest name at 5–7.
+
+**Second decision (Guus, 2026-11-17):** "als dit nodig is om het haalbaar te houden hou
+het dan haalbaar". Without a hard bound, level 5 came out *worse* per name than before
+(3.35 against 2.92) and level 6 too (3.96 against 3.57): on the big boards `noord` and
+`west` fill the gap rows and columns leave, and they count for two names. Measured
+options, then chosen by Guus:
+
+| level | bound | clues per name (before) | busiest | build s avg / max |
+|---|---|---|---|---|
+| 5 | none | 3.35 (2.92) | 6.1 | 1.4 / 4.0 |
+| 5 | **5 — chosen** | **2.83 (2.92)** | 5.0 | 2.3 / 4.5 |
+| 5 | 4 | 2.57 (2.92) | 4.0 | 8.2 / 13.0 |
+| 6 | **none — chosen** | 3.96 (3.57) | 6.8 | 7.4 / 15.5 |
+| 6 | 5 | 3.33 (3.57) | 5.4 | 28.6 / 37.0, and 4 of 5 over the kind share |
+
+- **Level 5: hard bound 5.** **Level 6: no hard bound for now**; the builder still
+  spreads. A progress bar would make a 30 s wait acceptable (Guus), but the puzzle is built
+  on the main thread, so that first needs building in a Web Worker — a follow-up, after
+  which level 6 gets bound 5.
+- **Kind share on level 6 is one third**, not a quarter: `noord` and `west` are what
+  pruning keeps on 16×16; with a quarter the build ran to 36 s, with a third it is as fast
+  as without a bound.
+- Criterion 4 now reads "level 4 at most 4, level 5 at most 5"; criterion 7 uses a third on
+  level 6; criterion 9 holds on levels 1–5 and is a **known deviation on level 6**.
+- The performance budget is exceeded on levels 3–5 (0.8 s, 0.9 s, 4.5 s at worst against
+  0.3, 0.3, 1.5 s) and on level 6 (15.5 s against 11 s); accepted as part of "haalbaar".
+- Follow-up idea, not in this build: a builder that looks for one strong clue per name,
+  the way a hand-made puzzle does (Murdoku came up in the conversation).
+
 ## Scope (in)
 - Generator for the room board: `src/engine/generate-rooms.js` (`bouwVijver`,
   `groeiTotVast`, `snoei`, `naSnoei`, `extraAanwijzing`'s `HINTGEWICHTEN`) and its weights
@@ -83,15 +139,17 @@ counts under both names.
    `opRij`, `opKolom` or `kamer`.
 3. Given a room puzzle of level 1, 2 or 3, when its clues are grouped per name with the
    player's own grouping (`aanwijzingenPerPersoon` in `src/aanwijzingen.js`), then no
-   name has more than 2 clues.
-4. Given a room puzzle of level 4, 5 or 6, grouped the same way, then no name has more
-   than 3 clues.
+   name has more than 3 clues (amended from 2, see Amendment).
+4. Given a room puzzle of level 4 or 5, grouped the same way, then no name has more
+   than 4 (level 4) or 5 (level 5) clues; level 6 has no bound yet (amended, see
+   Amendment).
 5. Given a clue about two people, when it is counted for criteria 3 and 4, then it counts
    for both names.
 6. Given a clue about everyone (`aantalKamer`, `aantalNaast`), when it is counted for
    criteria 3 and 4, then it counts for no name.
 7. Given a room puzzle with k clues, then no single `soort` occurs more than
-   `max(2, ceil(0.25 × k))` times.
+   `max(2, ceil(0.25 × k))` times (on level 6 a third instead of a quarter, see
+   Amendment).
 8. Given a room puzzle of level 3 or higher, when any clue about one person is evaluated
    on its own against the empty board, then it leaves that person at least 3 free cells.
 9. Given the measuring sample of the "What we measured" section, when it is run again after

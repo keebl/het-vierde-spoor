@@ -134,11 +134,21 @@ blijkt te staan is de dader.
 **Naast betekent naast.** Pal erboven, eronder, links of rechts, én in
 dezelfde kamer: door een muur heen sta je niet naast iets, en schuin telt
 nooit. Dat geldt voor iemand naast een meubelstuk, voor twee mensen naast
-elkaar en voor het tellen van hoeveel mensen er naast iets stonden. Rij,
-kolom, noord, west, buitenmuur en hoek gaan juist over de plattegrond als
-geheel en lopen dus wél door muren heen. De regels staan voluit boven in
+elkaar en voor het tellen van hoeveel mensen er naast iets stonden. Noord,
+west, buitenmuur en hoek gaan juist over de plattegrond als geheel en lopen
+dus wél door muren heen. De regels staan voluit boven in
 `src/engine/rooms.js` en staan ook bij elke puzzel op het scherm
 (`src/content/spelregels.js`).
+
+**Geen rij of kolom meer, en niet te veel per naam.** "Op dezelfde rij als
+de piano" plus "in dezelfde kolom als de kast" wees iemand gewoon één vakje
+aan; die aanwijzingen komen sinds november 2026 niet meer voor, en de kamer
+("Bram stond in de keuken") neemt hun plaats in. De bouwer spreidt de
+aanwijzingen over de namen: tot en met niveau drie hoogstens drie per naam,
+op niveau vier hoogstens vier, en op vijf en zes zo weinig als het lukt.
+Geen soort aanwijzing neemt meer dan een kwart van de puzzel in, en vanaf
+niveau drie zet geen enkele aanwijzing iemand in zijn eentje op twee
+vakjes. Zie `specs/harder-clues.md`; `tools/check-spreiding.mjs` keurt het.
 
 De motor staat in `src/engine/rooms.js` (rooster, kamers, meubels, solver,
 propagator) en `src/engine/generate-rooms.js` (de puzzel zelf). Twee dingen
