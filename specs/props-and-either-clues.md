@@ -1,9 +1,11 @@
 # Spec: props to stand, sit or ride on, and "either" clues
 
-Status: draft
+Status: approved
 Date: 2026-11-17 (asked by Guus the same evening: "accessoires waar personages op kunnen
 staan of zitten, bv een stoel, paard, een kleed" and "aanwijzingen mogen creatiever, bv
-persoon y stond in ruimte a of b"; use the book photos he sent as input)
+persoon y stond in ruimte a of b"; use the book photos he sent as input; approved the
+same evening: "Akkoord, goedgekeurd", with decisions 6 and 7 and question 3 as
+recommended)
 Builds on: `specs/engine-extension.md` (approved, not started), ADR 0005
 
 ## Goal
@@ -44,7 +46,7 @@ Rows 8–13 are already approved in `specs/engine-extension.md`; this spec does 
 them. Rows 1–4 were a single line there (criterion 14, "posture"); this spec works them
 out, because they are what Guus asked for and they carry most of the drawing work.
 
-## Decisions (proposed; Guus decides the ones marked "open")
+## Decisions
 1. **Props are pieces with a posture.** Every entry of `MEUBELS_VAN` (base set, modern
    set and world layers) gets a posture: `blok` (default: nobody stands there, as today),
    `zit` (chair, bench, stool, throne, swing), `lig` (bed, hammock, lounger, sickbed),
@@ -68,7 +70,10 @@ out, because they are what Guus asked for and they carry most of the drawing wor
    inside engine-extension phase B (after its step 6, before its template builder in
    step 8), so every board shifts once, as decided earlier that day ("Alles verschuift").
    Building them now on today's engine was rejected: boards would shift twice.
-7. **Which levels get which shape** (open, recommendation in the table under Part B).
+7. **Which levels get which shape** (Guus, 2026-11-17): as in the "from level" column
+   of the table under Part B.
+8. **Rideable animals only where a room kind makes it honest** (Guus, 2026-11-17):
+   stable, courtyard, meadow, fairground; not indoors in the historical worlds.
 
 ## Part A — props on the board
 
@@ -255,7 +260,6 @@ Slots into `specs/engine-extension.md` phase B. Each step is 1–2 hours, ends g
 
 ## Open questions
 1. (Answered 2026-11-17: inside engine-extension phase B, one board shift.)
-2. Decision 7: the "from level" column in Part B as proposed?
-3. Horses and other rideable animals: also in the historical indoor worlds (a rocking
-   horse in the nursery, a horse in the stable), or only outside rooms? Recommendation:
-   only where a room kind makes it honest (stable, courtyard, meadow, fairground).
+2. (Answered 2026-11-17: the "from level" column as proposed, decision 7.)
+3. (Answered 2026-11-17: rideable animals only in stable, courtyard, meadow and
+   fairground, decision 8.) None open.
