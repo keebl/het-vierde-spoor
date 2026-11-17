@@ -134,7 +134,12 @@ standing guidance rather than state moved to `CLAUDE.md`.
   keep the photos out of the repo): one short clue per person, mostly about objects
   (stands on a rug, in front of a window, the only one on a chair, not next to a tree),
   roles found through an object, global hints like "no empty room", and a victim clue
-  that points to whoever was alone with them.
+  that points to whoever was alone with them. Second batch: special cells with a rule
+  ("whoever stands here must / must not be alone"), area classes and person classes
+  (only one class may stand in its areas), a hidden role (one bandit, "was a man")
+  that other clues measure from ("exactly three columns left of the bandit"), standing
+  or sitting on an animal, and a printed solution as numbered deduction steps ("the
+  only chair not next to a table", "the last free corner").
 
 ## Risks
 - **Technical — a direct push to `main` is a deploy with no gate.** Since 2026-11-14 CI
