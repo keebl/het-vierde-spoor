@@ -1,6 +1,6 @@
 # Status — Reconstructie
 
-Last updated: 2026-11-14
+Last updated: 2026-11-17
 Live: yes (since 2026-11-13)
 
 Translated and restructured from `HANDOFF.md`, which lived at the repository root until the
@@ -8,7 +8,17 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Open sessions (2026-11-16, later): "Build specs/clues-on-phone.md" (`local_0ebd3844…`),
+- Open sessions (2026-11-17): "Build specs/harder-clues.md"
+  (`local_7586410d…`), branch `claude/priceless-lalande-85fd62`, no PR yet — idle, waiting
+  on its own background measurement of levels 5–6 (two variants: boundary 5/6 and 4/5);
+  a stop-rule question from it comes to the main session for Guus. Its node process
+  (pid 92745, ~98 % CPU since 2026-11-16 21:42) is still running in its worktree; Guus
+  chose not to have it killed. No open pull requests. Card "Phone: nicer names and clue
+  box" (font, equal field sizes and alignment on a phone) proposed, not started.
+  Merged and live 2026-11-16/17: #13 steady desktop layout (`935246e`), #14 undo button
+  and sketch letters that hide (`584ad4f`), #12 the harder-clues spec (`a1f26c1`).
+  Project folder renamed to `~/Claude/Projects/reconstructie`.
+- Earlier (2026-11-16, later): "Build specs/clues-on-phone.md" (`local_0ebd3844…`),
   branch `claude/clues-on-phone-b8abcd`, PR #10 open, CI pending — merge when green
   (reviewer findings handled). "Fix: victim gets no linked clue" (`local_9c52134a…`), branch
   `claude/victim-no-clue-010ea9`, no PR yet — Guus chose option A (no clue names the
@@ -73,9 +83,11 @@ standing guidance rather than state moved to `CLAUDE.md`.
   impossible there. (c) An undo button (arrow back). (d) The victim should get no clue:
   fixed and live the same day in pull request #11 (`37c8fca`), so she probably played
   before that; ask her to check again on a fresh case.
-  (a) changes the generator and the difficulty curve and needs a spec first; (b) and (c)
-  were built on 2026-11-16 per `specs/undo-and-sketch.md` (branch
-  `claude/nifty-jang-6079a0`); pending her verdict once merged.
+  (a) has the approved spec `specs/harder-clues.md` (with a stop rule; level 5 may shift
+  freely) and is being built; (b) and (c) were built per `specs/undo-and-sketch.md`,
+  merged as #14 and live (checked on the site 2026-11-17); pending her verdict. Also
+  pending: Guus's phone remark (nicer font, unequal field sizes and alignment of the name
+  pills and clue box) — a card is proposed.
 1. **Show her the cheerful restyle and write down what she says.** The daughter's verdict
    was: dull colours, dull drawings, no artistic life. The owner answered the opening
    question of `specs/visual-liveliness.md` with "both", and directions 1 and 5 of that
