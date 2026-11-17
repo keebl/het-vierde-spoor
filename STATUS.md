@@ -65,8 +65,9 @@ standing guidance rather than state moved to `CLAUDE.md`.
   draft, waits on Guus): people sit on chairs, lie in beds, stand on rugs (several cells)
   and ride horses or bumper cars, drawn under their token; new clue kinds `op`, `enigeOp`,
   `kamerOf` ("in de keuken of in de serre"), `typeOf`, `en`, `ofwelPersoon`, `wieOp`.
-  Built from the book photos of 2026-11-17 (mechanics only; table in the spec). Proposed
-  to build inside engine-extension phase B so boards shift once. Three open questions.
+  Built from the book photos of 2026-11-17 (mechanics only; table in the spec). Guus
+  chose the same evening to build it inside engine-extension phase B, so boards shift
+  once. Two open questions left (levels per clue shape, where horses may stand).
 - **Engine extension, approved 2026-11-17** (`specs/engine-extension.md`, ADR 0005,
   merged as #16): book-style puzzles from mechanics only (the source book is copyrighted).
   Build order: (A) human-style solver with named techniques and numbered Dutch solution

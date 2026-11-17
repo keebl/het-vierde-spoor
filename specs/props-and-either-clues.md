@@ -64,11 +64,10 @@ out, because they are what Guus asked for and they carry most of the drawing wor
    clue that means something else than it seems to say is a bug.
 5. **Never "als … dan …"** (conditionals). They are the hardest shape to read and the
    book does not use them in clues either.
-6. **One board shift, not two** (open, recommendation): parts A and B land inside
-   engine-extension phase B (after its step 6, before its template builder in step 8),
-   so every board shifts once, as Guus decided on 2026-11-17 ("Alles verschuift").
-   Alternative: build parts A and B now on today's engine; boards shift now and again at
-   step 8.
+6. **One board shift, not two** (Guus, 2026-11-17: "Ja, in fase B"): parts A and B land
+   inside engine-extension phase B (after its step 6, before its template builder in
+   step 8), so every board shifts once, as decided earlier that day ("Alles verschuift").
+   Building them now on today's engine was rejected: boards would shift twice.
 7. **Which levels get which shape** (open, recommendation in the table under Part B).
 
 ## Part A — props on the board
@@ -255,8 +254,7 @@ Slots into `specs/engine-extension.md` phase B. Each step is 1–2 hours, ends g
   after on `meet-0..19`.
 
 ## Open questions
-1. Decision 6: one board shift inside engine-extension phase B (recommended), or build
-   now and shift twice?
+1. (Answered 2026-11-17: inside engine-extension phase B, one board shift.)
 2. Decision 7: the "from level" column in Part B as proposed?
 3. Horses and other rideable animals: also in the historical indoor worlds (a rocking
    horse in the nursery, a horse in the stable), or only outside rooms? Recommendation:
