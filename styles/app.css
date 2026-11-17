@@ -22,6 +22,85 @@
      naast elkaar en zou een kleur partij kiezen.
    - serif voor koppen en verhalende tekst, schreefloos voor bediening */
 
+/* De letters staan in de repo zelf (styles/fonts/, SIL Open Font License,
+   de licenties ernaast). Tot 2026-11-17 kwamen Fredoka en Patrick Hand van
+   Google Fonts: elke bezoeker vroeg ze daar op, en dat is een verzoek aan
+   een derde die niets met de puzzel te maken heeft. Alleen het Latijnse
+   deel (Nederlands heeft niet meer nodig), 165 KB voor alles samen.
+   Ontbreekt een bestand, dan valt alles terug op de systeemletters. */
+@font-face {
+  font-family: "Baloo 2";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/baloo-2-latin-500-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Baloo 2";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/baloo-2-latin-600-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Baloo 2";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/baloo-2-latin-700-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/nunito-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/nunito-latin-500-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/nunito-latin-600-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/nunito-latin-700-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Nunito";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/nunito-latin-400-italic.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Patrick Hand";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/patrick-hand-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
   color-scheme: light;
 
@@ -64,12 +143,17 @@
   --r-sm: 10px; --r: 16px; --r-lg: 22px;
 
   --serif: ui-serif, "Iowan Old Style", Palatino, Georgia, serif;
-  --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Nunito: rond zoals de koppen, maar rustig genoeg om zinnen in te lezen.
+     In het kastje met aanwijzingen stond de systeemletter naast de ronde
+     namen erboven, en dat botste (de eigenaar, 2026-11-17). */
+  --sans: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
   /* Een geschreven letter voor wat op het bord staat, en een ronde
      displayletter voor de koppen. Beide met een systeemletter erachter,
      zodat de site het zonder netwerk net zo goed doet. */
   --schrift: "Patrick Hand", "Bradley Hand", "Segoe Print", cursive;
-  --display: "Fredoka", "Avenir Next", var(--sans);
+  /* Baloo 2 sinds 2026-11-17, gekozen boven Fredoka en Grandstander: voller
+     en vrolijker dan Fredoka, en nog goed leesbaar op 12 in de namen. */
+  --display: "Baloo 2", "Avenir Next", system-ui, -apple-system, sans-serif;
 
   /* Hoe hoog de kop is. De namenbalk plakt hieronder vast. Stond op 53,
      maar de knoppen rechts maken hem 62 (gemeten op 812, 1440 en 1920

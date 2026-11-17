@@ -23,6 +23,11 @@ day the changelog was introduced; everything before that is in git history only.
   sketch letter or a cross. Up to 30 steps per puzzle, kept when you reload.
 
 ### Changed
+- On a phone, the name pills, the clue box under them and the mode buttons line up on one
+  grid: equal heights, the same border and the same edges left and right. "Iedereen" is no
+  longer italic.
+- New fonts: Baloo 2 for headings, names and buttons, Nunito for clues and other text.
+  All fonts now come from the site itself instead of Google Fonts.
 - Clues on the room board are harder and more varied. "Same row as" and "same column as"
   are gone (together they pointed at one cell); "X stood in the library" takes their
   place. Clues are spread over the names: at most 3 per name on levels 1–3, 4 on level 4,
