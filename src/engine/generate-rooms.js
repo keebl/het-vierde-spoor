@@ -412,27 +412,27 @@ export function genereerKamerpuzzel(seed, params, pogingen = null) {
       continue;
     }
     if (!kandidaat) continue;
-    const vorm = params.style === 'deep'
-      ? (kandidaat.graad.opgelost ? 10 : 0)
-      : (kandidaat.graad.opgelost ? Math.max(0, kandidaat.aanwijzingen.length - (params.maxClues ?? 99)) : 10);
     // Op de grote borden laat de eerste snoeironde een flink deel staan dat
     // de tweede er nog af haalt: gemeten 27 tot 39 aanwijzingen voor, rond
     // de 22 na. Keuren op de plafonds vóór die tweede ronde gooide goede
-    // pogingen weg - dat kostte op niveau vijf tien seconden. Een poging die
-    // van vorm goed is, wordt daarom eerst afgerond en dan gekeurd. (Tot en
-    // met niveau drie slaat de eerste ronde niets over en is afronden gratis.)
-    if (vorm === 0) {
-      const af = afronden({ ...kandidaat, poging: t });
-      const mis = overschot(af.aanwijzingen, params);
-      if (mis === 0) return af;
-      if (!beste || mis < beste.mis) beste = { ...af, mis, klaar: true };
-      continue;
-    }
-    const mis = vorm + overschot(kandidaat.aanwijzingen, params);
-    if (!beste || mis < beste.mis) beste = { ...kandidaat, mis, poging: t };
+    // pogingen weg - dat kostte op niveau vijf tien seconden. Dus wordt elke
+    // poging eerst afgerond en dan gekeurd, ook een die van vorm niet deugt.
+    // Eerst gebeurde dat alleen bij een goede vorm, en dan vergeleek de
+    // terugval hieronder een afgeronde poging met een niet-afgeronde: een
+    // latere poging met een lager getal vóór het snoeien kon dan winnen, en
+    // de puzzel kwam er met overbodige aanwijzingen uit (review op #15).
+    // (Tot en met niveau drie slaat de eerste ronde niets over en is
+    // afronden gratis.)
+    const af = afronden({ ...kandidaat, poging: t });
+    const vorm = params.style === 'deep'
+      ? (af.graad.opgelost ? 10 : 0)
+      : (af.graad.opgelost ? Math.max(0, af.aanwijzingen.length - (params.maxClues ?? 99)) : 10);
+    const mis = vorm + overschot(af.aanwijzingen, params);
+    if (mis === 0) return af;
+    if (!beste || mis < beste.mis) beste = { ...af, mis };
   }
   if (!beste) throw new Error('kon geen kamerpuzzel bouwen voor deze instellingen');
-  return beste.klaar ? beste : afronden(beste);
+  return beste;
 }
 
 

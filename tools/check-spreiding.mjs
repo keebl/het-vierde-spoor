@@ -16,7 +16,12 @@
 //      leeg bord, die persoon minder dan drie vakjes;
 //   6. geen aanwijzing of hint noemt het slachtoffer, en er is precies één
 //      oplossing;
-//   7. dezelfde seed geeft twee keer hetzelfde bord.
+//   7. dezelfde seed geeft twee keer hetzelfde bord;
+//   8. tot en met niveau drie is geen aanwijzing overbodig: haal er één weg
+//      en doorstrepen lost het bord niet meer op. (Daarboven rekent de
+//      tweede snoeironde met een werkbudget, dus daar is het geen belofte.)
+//      Een review op #15 vond een terugval die een niet-afgeronde poging kon
+//      kiezen; deze regel had dat gevangen.
 //
 // Over de kamerzaken van de bibliotheek en keur-0..9 op niveau 1-5 plus
 // keur-0..2 op niveau 6. Eerst de weigerkant: per regel een met de hand
@@ -27,7 +32,7 @@ import { CATALOG, catalogSettings } from '../src/content/catalog.js';
 import { buildPuzzle, wereldVoorSeed } from '../src/puzzle.js';
 import { aanwijzingenPerPersoon } from '../src/aanwijzingen.js';
 import { extraAanwijzing, maxPerSoort, vakjesOver } from '../src/engine/generate-rooms.js';
-import { telPlaatsingen } from '../src/engine/rooms.js';
+import { telPlaatsingen, graad } from '../src/engine/rooms.js';
 import { kamerParams } from '../src/engine/difficulty.js';
 import { makeRng } from '../src/engine/rng.js';
 import { zinVoor } from '../src/content/rooms-text.js';
@@ -71,6 +76,13 @@ export function keur(p, { hint = null, uniek = true } = {}) {
   if (uniek) {
     const uit = telPlaatsingen(p._rooster, ruw, 2, 30000 * p._rooster.n);
     if (uit.opgegeven || uit.count !== 1) fouten.push(`regel 6: ${uit.opgegeven ? 'niet uit te rekenen' : `${uit.count} oplossingen`}`);
+  }
+  if (params.style === 'shallow') {
+    ruw.forEach((c, i) => {
+      if (graad(p._rooster, ruw.filter((_, j) => j !== i)).opgelost) {
+        fouten.push(`regel 8: ${c.soort}${c.p != null ? ` over ${p.personen[c.p]}` : ''} is overbodig`);
+      }
+    });
   }
   return fouten;
 }
@@ -142,6 +154,14 @@ function tweeVakjes() {
       ...[0, 1, 2, 3].map((k) => ({ soort: 'aantalKamer', kamerIdx: k, aantal: 0 })),
     ], 'regel 4'],
     ['een aanwijzing die twee vakjes laat', ...tweeVakjes(), 'regel 5'],
+    // Een ware aanwijzing erbij op een bord dat al vastlag: die is overbodig.
+    ['een overbodige aanwijzing', p2, [...p2._ruwe, (() => {
+      const cel = p2.oplossing[v2];
+      const n = p2._rooster.n;
+      const r = Math.floor(cel / n);
+      const k = cel % n;
+      return { soort: 'rand', p: v2, ja: r === 0 || k === 0 || r === n - 1 || k === n - 1 };
+    })()], 'regel 8'],
     ['een aanwijzing over het slachtoffer', p2, [...p2._ruwe, { soort: 'rand', p: p2.slachtofferIdx, ja: true }], 'regel 6'],
   ];
   for (const [wat, p, ruw, regel] of proeven) {
