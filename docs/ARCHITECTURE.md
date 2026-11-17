@@ -35,6 +35,7 @@ worker/             a Cloudflare Worker for that same API; not deployed
 | No build step, no dependencies, no framework | A push is a deploy; nothing can go stale | `docs/decisions/0002-no-build-step.md` |
 | The keuring replaces a type system | No types, no linter: the checks are the safety net | `docs/decisions/0003-the-keuring-is-the-safety-net.md` |
 | Dutch is the language of the code | Written by and for a Dutch household; identifiers mirror domain words | `docs/decisions/0004-dutch-is-the-language-of-the-code.md` |
+| Extend the room engine with a human-style solver, object clues, roles and a puzzle store | Book-style puzzles: one clue per person, difficulty from the deduction chain, numbered solution | `docs/decisions/0005-extend-the-room-engine-for-book-style-puzzles.md` |
 
 ## Boundaries
 
