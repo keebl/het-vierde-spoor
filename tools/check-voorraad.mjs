@@ -17,8 +17,9 @@ import { VOORRAAD_NIVEAUS } from '../src/content/voorraad.js';
 
 // Seconden, slechtste geval op de laptop. Niveau 1-3, 5 en 6 uit de spec
 // (niveau 6 is hier nog zestien bij zestien, dus de begroting van het
-// latere niveau zeven). Niveau 4: voorgesteld 4 s (was 0,75 s), zie STATUS.
-export const BEGROTING = { 1: 0.25, 2: 0.25, 3: 0.25, 4: 4, 5: 4, 6: 15 };
+// latere niveau zeven). Niveau 4 en 5 bouwen in de worker met een balk, en
+// dan telt de doorlooptijd nauwelijks (Guus, 2026-11-18): 4 s en 30 s.
+export const BEGROTING = { 1: 0.25, 2: 0.25, 3: 0.25, 4: 4, 5: 30, 6: 15 };
 const SPEELRUIMTE = Number(process.env.BEGROTING_SPEELRUIMTE ?? 1.5);
 
 let fouten = 0;

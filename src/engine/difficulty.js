@@ -196,19 +196,20 @@ export const BOUW = {
        samen: SAMEN, eisOf: true, eisOp: true, band: { maxTier: 2, min: 2 } },
   4: { rondes: 3, minVrij: 2, pogingen: 150, greep: 40, greepRonde: 40, eigen: { kamerOf: 4, op: 2, enigeOp: 3, typeOf: 3, nietNiet: 3, nietOp: 2, naast: 3, naastType: 3, voorRaam: 2, hoekKamer: 1, en: 6, rijEnKamerAls: 1, kamerNiet: 2 },
        samen: { ...SAMEN, ofwelPersoon: 3 }, eisOf: true, eisOp: true, band: { maxTier: 4, min: 3 } },
-  5: { rondes: 3, eigen: { kamerOf: 4, op: 2, enigeOp: 3, typeOf: 3, nietNiet: 3, nietOp: 2, naast: 3, naastType: 3, voorRaam: 2, hoekKamer: 1, en: 6, rijEnKamerAls: 1, kamerNiet: 2 },
+  5: { rondes: 3, minVrij: 2, pogingen: 60, greep: 40, greepRonde: 40, extraDeel: 0.3, kamers: 12, opTelling: true, eigen: { kamerOf: 4, op: 2, enigeOp: 3, typeOf: 3, nietNiet: 3, nietOp: 2, naast: 3, naastType: 3, voorRaam: 2, hoekKamer: 1, en: 6, rijEnKamerAls: 1, kamerNiet: 2 },
        samen: { ...SAMEN, ofwelPersoon: 3, wieOp: 2 }, eisOf: true, eisOp: true, band: { maxTier: 4, min: 6 } },
-  6: { rondes: 3, eigen: { kamerOf: 4, op: 2, enigeOp: 3, typeOf: 3, nietNiet: 3, nietOp: 2, naast: 3, naastType: 3, voorRaam: 2, hoekKamer: 1, en: 6, rijEnKamerAls: 1, kamerNiet: 2 },
+  6: { rondes: 3, minVrij: 2, pogingen: 60, greep: 40, greepRonde: 40, extraDeel: 0.3, kamers: 12, opTelling: true, eigen: { kamerOf: 4, op: 2, enigeOp: 3, typeOf: 3, nietNiet: 3, nietOp: 2, naast: 3, naastType: 3, voorRaam: 2, hoekKamer: 1, en: 6, rijEnKamerAls: 1, kamerNiet: 2 },
        samen: { ...SAMEN, ofwelPersoon: 3, wieOp: 2 }, eisOf: true, eisOp: true, band: { maxTier: 4, min: 8 } },
 };
 
-// Niveau 5 en 6 halen het sjabloon niet: elf mensen hebben drie tot zeven
-// aanwijzingen erbij nodig waar er vier mogen, en een bord kost tien
-// seconden (gemeten op meet-0..5, 2026-11-18). De stopregel van de spec:
-// daar bouwt voorlopig de oude bouwer, met de nieuwe soorten in zijn vijver
-// (zie KAMER_LEVELS), tot fase C niveau zes opnieuw indeelt. Voorstel A aan
-// Guus; de sjablonen hierboven blijven staan.
-export const SJABLOON_NIVEAUS = [1, 2, 3, 4];
+// Niveau vijf haalt het sjabloon sinds de borden dichter zijn (extraDeel:
+// naamloze blokken, ongeveer veertig procent van de vakjes dicht), er twaalf
+// kamers zijn en de bouwer kiest op het aantal oplossingen dat overblijft
+// (opTelling): 8 van 8 seeds, 1 tot 23 seconden per bord (2026-11-18, Guus:
+// "a+b+c"). Niveau zes (zestien bij zestien) lukt ook, maar kost zeven en een
+// halve minuut per bord; dat blijft voorlopig de oude bouwer, tot fase C er
+// twaalf bij veertien van maakt (voorstel A aan Guus).
+export const SJABLOON_NIVEAUS = [1, 2, 3, 4, 5];
 
 export function kamerParams(level) {
   const l = Math.min(6, Math.max(1, Number(level) || 1));

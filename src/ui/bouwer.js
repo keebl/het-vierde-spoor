@@ -10,7 +10,9 @@ import { haal, bewaar, gespeeld, BEWAAR_VANAF } from './opslag.js';
 
 // Hoe lang het op een gemiddelde telefoon hooguit duurt, in seconden: de
 // prestatiebegroting van de spec (vier keer de laptop tot het gemeten is).
-export const SCHATTING = { 1: 1, 2: 1, 3: 1, 4: 3, 5: 15, 6: 30 };
+// Niveau vijf bouwt sinds het sjabloon tot ruim twintig seconden op een
+// laptop; meestal komt hij uit de voorraad in de repo.
+export const SCHATTING = { 1: 1, 2: 1, 3: 1, 4: 8, 5: 90, 6: 30 };
 
 const klaar = new Map();
 

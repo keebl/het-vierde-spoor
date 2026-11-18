@@ -173,7 +173,13 @@ function heeftPlaatsing(n, vrij) {
 // maxMeubels begrenst hoeveel verschillende meubels er in het rooster komen.
 // De wereld levert de namen, en er mogen er nooit meer gevraagd worden dan er
 // namen zijn - anders staat er "undefined" in een aanwijzing.
-export function bouwRooster(n, rng, { kamers, meubelDeel = 0.22, maxMeubels = Infinity }) {
+// extraDeel: daarbovenop nog zoveel naamloze blokken (een deel van de
+// vakjes). Die komen in geen enkele aanwijzing ("naast de kast" moet één kast
+// zijn), maar maken een groot bord dichter: op twaalf bij twaalf stonden er
+// hooguit twintig meubels, want zoveel namen heeft een wereld, en dan is
+// een bord te open om met één aanwijzing per persoon rond te krijgen
+// (diagnose fase B, 2026-11-18).
+export function bouwRooster(n, rng, { kamers, meubelDeel = 0.22, maxMeubels = Infinity, extraDeel = 0 }) {
   for (let poging = 0; poging < 40; poging++) {
     const kamerVan = verdeelKamers(n, kamers, rng);
     const meubelOp = new Array(n * n).fill(null);
@@ -212,15 +218,39 @@ export function bouwRooster(n, rng, { kamers, meubelDeel = 0.22, maxMeubels = In
       gezet++;
     }
     if (gezet < 2) continue;
+    const benoemd = gezet;
+    if (extraDeel > 0) {
+      // Zelfde regels: een kamer houdt minstens twee vrije vakjes, en er
+      // moet een plaatsing blijven bestaan.
+      const extra = Math.round(n * n * extraDeel);
+      const ruimte2 = grootte.map((g) => Math.max(1, Math.floor(g / (extraDeel > 0.32 ? 1.9 : 2.2))));
+      let bij = 0;
+      for (const cel of rng.shuffle([...Array(n * n).keys()])) {
+        if (bij >= extra) break;
+        if (!vrij[cel]) continue;
+        const kamer = kamerVan[cel];
+        if (inKamer[kamer] >= ruimte2[kamer]) continue;
+        const vrijInKamer = vrij.filter((v, i) => v && kamerVan[i] === kamer).length;
+        if (vrijInKamer <= 3) continue;
+        vrij[cel] = false;
+        if (!heeftPlaatsing(n, vrij)) { vrij[cel] = true; continue; }
+        meubelOp[cel] = gezet;
+        inKamer[kamer]++;
+        gezet++;
+        bij++;
+      }
+    }
     if (!heeftPlaatsing(n, vrij)) continue;
 
     // Per stuk wat je ermee kunt. Deze blokken staan in de weg; wat je
     // erop kunt, zet richIn erbij.
-    const stukken = Array.from({ length: gezet }, () => ({ houding: 'blok', type: null, cellen: [] }));
+    const stukken = Array.from({ length: gezet }, (_, m) => (m < benoemd
+      ? { houding: 'blok', type: null, cellen: [] }
+      : { houding: 'blok', type: null, cellen: [], naamloos: true }));
     for (let i = 0; i < n * n; i++) if (meubelOp[i] != null) stukken[meubelOp[i]].cellen.push(i);
     return {
       n, kamerVan, meubelOp, vrij, kamers, meubelAantal: gezet,
-      blokAantal: gezet, stukken, ramen: [],
+      blokAantal: gezet, benoemdAantal: benoemd, stukken, ramen: [],
     };
   }
   throw new Error('kon geen bruikbaar rooster bouwen');

@@ -313,8 +313,15 @@ function keurKamer(p, waar) {
   eis('alle kamers hebben een eigen naam', uniek(p.kamerNamen), waar);
   // Een kruk of een kleed mag vaker liggen (VAKER in kamersoorten.js); al
   // het andere heeft een eigen naam.
-  const meubels = p.meubelNamen.filter((x, m) => x && !VAKER.includes(p.meubelIconen[m]));
+  const naamloos = (m) => !!rooster.stukken?.[m]?.naamloos;
+  const meubels = p.meubelNamen.filter((x, m) => x && !VAKER.includes(p.meubelIconen[m]) && !naamloos(m));
   eis('alle meubelstukken hebben een eigen naam', uniek(meubels), waar, meubels.join(', '));
+  // Een naamloos blok (niveau vijf en zes) deelt nooit een naam met een blok
+  // dat in een aanwijzing staat, en geen aanwijzing gaat erover.
+  eis('een naamloos blok heet niet als een benoemd stuk',
+    p.meubelNamen.every((x, m) => !naamloos(m) || !meubels.includes(x)), waar);
+  eis('geen aanwijzing over een naamloos blok',
+    p._ruwe.every((c) => [c.m, c.a?.m, c.b?.m].every((m) => m == null || !naamloos(m))), waar);
   eis('elk meubelstuk op het bord heeft een naam en een tekening',
     p.meubelOp.every((m) => m == null || (p.meubelNamen[m] && p.meubelIconen[m])), waar);
 

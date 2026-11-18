@@ -324,7 +324,7 @@ export function bouwKamerGen(settings, voortgang = null) {
   };
   const gen = genereerKamerpuzzel(seed, {
     ...params,
-    kamers: Math.min(params.kamers, world.places.length + (world.plekkenXL?.length ?? 0)),
+    kamers: Math.min(params.bouw?.kamers ?? params.kamers, world.places.length + (world.plekkenXL?.length ?? 0)),
     maxMeubels: Math.min(20, krapste),
     inrichting,
     voortgang,
@@ -340,7 +340,7 @@ export function bouwKamerGen(settings, voortgang = null) {
 // aan de motor of de inrichting zou dezelfde link anders een ander bord
 // geven dan een nieuwe bezoeker ziet (review fase B). Ophogen bij elke
 // wijziging die borden verschuift; tools/pool.mjs schrijft hem mee.
-export const BORDVERSIE = 'b1';
+export const BORDVERSIE = 'b2';
 
 const GEN_VELDEN = ['plaats', 'slachtofferIdx', 'dader', 'kamerIdx', 'aanwijzingen', 'graad', 'mis', 'poging'];
 const ROOSTER_VELDEN = ['n', 'kamerVan', 'meubelOp', 'vrij', 'kamers', 'meubelAantal', 'blokAantal', 'stukken', 'ramen', 'kamerNamen'];
@@ -431,6 +431,7 @@ function buildKamerPuzzle({ world, settings, gen: klaar = null }) {
       meubelIconen[mi] = new Map(rekwisietenVoor(kamerNamen[gen.rooster.kamerVan[cel]], world.id)).get(stuk.sleutel);
       continue;
     }
+    if (stuk.naamloos) continue;
     const soort = soortVan(kamerNamen[gen.rooster.kamerVan[cel]]);
     if (!voorraad.has(soort)) {
       const [eigen, verwant] = blokMeubelsVoor(soort, world.id);
@@ -441,6 +442,19 @@ function buildKamerPuzzle({ world, settings, gen: klaar = null }) {
     const keuze = voorraad.get(soort).find(([naam]) => !gebruikt.has(naam));
     if (!keuze) throw new Error(`geen meubilair meer voor ${soort}`);
     gebruikt.add(keuze[0]);
+    meubelNamen[mi] = keuze[0];
+    meubelIconen[mi] = keuze[1];
+  }
+  // De naamloze blokken (extraDeel, niveau vijf en zes): een tekening uit de
+  // eigen soort ruimte, nooit de naam van een blok dat in een aanwijzing kan
+  // staan. Ze mogen elkaars naam delen; geen zin noemt ze.
+  for (let cel = 0; cel < gen.rooster.n * gen.rooster.n; cel++) {
+    const mi = gen.rooster.meubelOp[cel];
+    if (mi == null || meubelNamen[mi] || !gen.rooster.stukken[mi].naamloos) continue;
+    const soort = soortVan(kamerNamen[gen.rooster.kamerVan[cel]]);
+    const [eigen, verwant] = blokMeubelsVoor(soort, world.id);
+    const vrijeNamen = [...eigen, ...verwant].filter(([naam]) => !gebruikt.has(naam));
+    const keuze = vrijeNamen.length ? rng.pick(vrijeNamen) : rng.pick(eigen);
     meubelNamen[mi] = keuze[0];
     meubelIconen[mi] = keuze[1];
   }

@@ -50,7 +50,9 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten, { minVrij =
   const { n, kamerVan, meubelOp, kamers } = rooster;
   // De oude soorten (naast, opRij, opKolom, aantalNaast) gaan over de
   // blokken; over stukken waar je op zit gaan de soorten van stap 7.
-  const meubelAantal = rooster.blokAantal ?? rooster.meubelAantal;
+  // Alleen blokken met een eigen naam: de naamloze (extraDeel) komen in geen
+  // aanwijzing.
+  const meubelAantal = rooster.benoemdAantal ?? rooster.blokAantal ?? rooster.meubelAantal;
   const vijver = [];
   const zet = (soort, c) => {
     if (!gewichten[soort]) return;
@@ -148,7 +150,7 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten, { minVrij =
     }
     if (rooster.ramen?.length) zet('voorRaam', { p, ja: rooster.raamCel.has(cel) });
     zet('hoekKamer', { p, ja: inKamerhoek(rooster, cel) });
-    for (let m = 0; m < (rooster.blokAantal ?? 0); m++) {
+    for (let m = 0; m < (rooster.benoemdAantal ?? rooster.blokAantal ?? 0); m++) {
       const c = { soort: 'rijEnKamerAls', p, m };
       if (evalAanwijzing(c, { rooster, plaats }) === true) zet('rijEnKamerAls', { p, m });
     }
@@ -175,7 +177,7 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten, { minVrij =
       const halven = [];
       halven.push({ soort: 'kamer', kamerIdx: mijnKamer, ja: true });
       if (mijnType) halven.push({ soort: 'op', t: mijnType });
-      for (let m = 0; m < (rooster.blokAantal ?? 0); m++) if (naastMeubel(rooster, cel, m)) halven.push({ soort: 'naast', m, ja: true });
+      for (let m = 0; m < (rooster.benoemdAantal ?? rooster.blokAantal ?? 0); m++) if (naastMeubel(rooster, cel, m)) halven.push({ soort: 'naast', m, ja: true });
       for (const t of typen) if (naastType(rooster, cel, t)) halven.push({ soort: 'naastType', t, ja: true });
       if (rooster.raamCel?.has(cel)) halven.push({ soort: 'voorRaam', ja: true });
       for (let i = 0; i < halven.length; i++) {
@@ -516,12 +518,12 @@ const maat = (rooster, lijst) => {
 
 // Kies uit de kandidaten (in vijvervolgorde) de eerste `greep` en neem die
 // met de meeste winst; gelijk = de eerste, zodat de gewichten tellen.
-function besteOpWinst(rooster, basis, kandidaten, greep) {
-  const vanaf = maat(rooster, basis);
+function besteOpWinst(rooster, basis, kandidaten, greep, meet = (l) => maat(rooster, l)) {
+  const vanaf = meet(basis);
   let beste = null;
   let besteWinst = -1;
   for (const c of kandidaten.slice(0, greep)) {
-    const m = maat(rooster, [...basis, c]);
+    const m = meet([...basis, c]);
     if (m < 0) continue;
     const winst = vanaf - m;
     if (winst > besteWinst) { besteWinst = winst; beste = c; }
@@ -536,6 +538,20 @@ export function bouwPerPersoon(rooster, plaats, slachtofferIdx, rng, params, bud
   const { n } = rooster;
   const bouw = params.bouw;
   const vijver = bouwVijver(rooster, plaats, slachtofferIdx, rng, { ...bouw.eigen, ...bouw.samen }, { minVrij: bouw.minVrij ?? params.minVrij });
+  // Op de grote borden kiest de bouwer op het aantal oplossingen dat
+  // overblijft (tot TELPLAFOND), en pas daarna op wat het doorstrepen
+  // wegstreept (Guus, 2026-11-18, voorstel b). Doorstrepen alleen ziet niet
+  // dat twee aanwijzingen samen iets uitsluiten wat elk apart niet doen.
+  const TELPLAFOND = 200;
+  const meet = bouw.opTelling
+    ? (lijst) => {
+      const m = maat(rooster, lijst);
+      if (m < 0) return -1;
+      const uit = telPlaatsingen(rooster, lijst, TELPLAFOND, budget);
+      const aantal = uit.opgegeven ? TELPLAFOND : uit.count;
+      return aantal * 1e6 + m;
+    }
+    : (lijst) => maat(rooster, lijst);
   const eigenVan = new Map();
   const samen = [];
   for (const c of vijver) {
@@ -567,7 +583,7 @@ export function bouwPerPersoon(rooster, plaats, slachtofferIdx, rng, params, bud
     if (eis) kandidaten = kandidaten.filter(eis);
     const stukNodig = eigen.filter(overStuk).length * 2 < eigen.length + 1;
     if (!eis && stukNodig && kandidaten.some(overStuk)) kandidaten = kandidaten.filter(overStuk);
-    const c = besteOpWinst(rooster, eigen, kandidaten, bouw.greep ?? 10);
+    const c = besteOpWinst(rooster, eigen, kandidaten, bouw.greep ?? 10, meet);
     if (!c) return reden('eigen zonder winst');
     if (eis) eisen.splice(eisen.indexOf(eis), 1);
     eigen.push(c);
@@ -585,13 +601,13 @@ export function bouwPerPersoon(rooster, plaats, slachtofferIdx, rng, params, bud
     for (let i = 0; i < eigen.length; i++) {
       const p = eigen[i].p;
       const anderen = eigen.filter((_, j) => j !== i);
-      const nu = maat(rooster, eigen);
+      const nu = meet(eigen);
       const houdEis = isOf(eigen[i]) || opIets(eigen[i]);
       let kandidaten = eigenVan.get(p).filter((c) => c.soort === eigen[i].soort || anderen.filter((x) => x.soort === c.soort).length < perSoortMax);
       if (houdEis) kandidaten = kandidaten.filter((c) => (isOf(eigen[i]) ? isOf(c) : opIets(c)));
       if (overStuk(eigen[i]) && anderen.filter(overStuk).length * 2 < eigen.length) kandidaten = kandidaten.filter(overStuk);
-      const c = besteOpWinst(rooster, anderen, kandidaten, bouw.greepRonde ?? 40);
-      if (c && c !== eigen[i] && maat(rooster, [...anderen, c]) < nu) { eigen[i] = c; beter = true; }
+      const c = besteOpWinst(rooster, anderen, kandidaten, bouw.greepRonde ?? 40, meet);
+      if (c && c !== eigen[i] && meet([...anderen, c]) < nu) { eigen[i] = c; beter = true; }
     }
     if (!beter) break;
   }
@@ -613,7 +629,7 @@ export function bouwPerPersoon(rooster, plaats, slachtofferIdx, rng, params, bud
     if (erbij.length >= max) return reden('te veel erbij');
     // Niemand komt op meer dan twee regels (criterium 10).
     const mag = rest.filter((c) => namenVan(c).every((p) => perNaam[p] < 2));
-    const c = besteOpWinst(rooster, [...eigen, ...erbij], mag, bouw.greepSamen ?? 30);
+    const c = besteOpWinst(rooster, [...eigen, ...erbij], mag, bouw.greepSamen ?? 30, meet);
     if (!c) return reden('geen erbij');
     rest.splice(rest.indexOf(c), 1);
     erbij.push(c);
@@ -645,6 +661,7 @@ function pogingPerPersoon(params, rng, sleutelTekst) {
   const budget = 30000 * params.n;
   const rooster = bouwRooster(params.n, rng, {
     kamers: params.kamers, meubelDeel: params.meubelDeel, maxMeubels: params.maxMeubels,
+    extraDeel: params.bouw.extraDeel ?? 0,
   });
   if (params.inrichting) {
     const inrichting = params.inrichting(rooster, makeRng(`${sleutelTekst}:kamernamen`));
