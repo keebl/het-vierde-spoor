@@ -13,7 +13,7 @@
 // "X stond in dezelfde kamer als het slachtoffer" is daarom verboden - dat is
 // letterlijk de vraag.
 
-import { bouwRooster, tekenPlaatsing, telPlaatsingen, graad, domeinenVan, evalAanwijzing, idx, rijVan, kolVan, kamerBuren, naastMeubel } from './rooms.js';
+import { bouwRooster, richIn, tekenPlaatsing, telPlaatsingen, graad, domeinenVan, evalAanwijzing, idx, rijVan, kolVan, kamerBuren, naastMeubel } from './rooms.js';
 import { makeRng } from './rng.js';
 
 // Een poging die de solver niet binnen zijn budget rond krijgt, gooien we weg.
@@ -41,7 +41,10 @@ export function vakjesOver(rooster, c) {
 // en dat is wat de dochter "te makkelijk" noemde (2026-11-16). Zie
 // minVrij in KAMER_LEVELS.
 function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten, { minVrij = 0 } = {}) {
-  const { n, kamerVan, meubelOp, meubelAantal, kamers } = rooster;
+  const { n, kamerVan, meubelOp, kamers } = rooster;
+  // De oude soorten (naast, opRij, opKolom, aantalNaast) gaan over de
+  // blokken; over stukken waar je op zit gaan de soorten van stap 7.
+  const meubelAantal = rooster.blokAantal ?? rooster.meubelAantal;
   const vijver = [];
   const zet = (soort, c) => {
     if (!gewichten[soort]) return;
@@ -324,7 +327,7 @@ function naSnoei(rooster, aanwijzingen, overgeslagen, budget) {
   return houd.filter(Boolean);
 }
 
-function poging(params, rng) {
+function poging(params, rng, sleutel = 'x') {
   // Hoe groter het rooster, hoe meer stappen de solver mag doen voordat we
   // de poging weggooien. Zonder die ruimte lukt twaalf bij twaalf vaak niet.
   const budget = 30000 * params.n;
@@ -333,6 +336,16 @@ function poging(params, rng) {
     meubelDeel: params.meubelDeel,
     maxMeubels: params.maxMeubels,
   });
+  // De inrichting: de inhoud noemt de kamers en zegt wat er in elke kamer
+  // kan liggen; richIn zet het neer. Elk met een eigen rng, zodat rooster,
+  // plaatsing en aanwijzingen hieronder uit dezelfde trekking blijven komen.
+  if (params.inrichting) {
+    const inrichting = params.inrichting(rooster, makeRng(`${sleutel}:kamernamen`));
+    rooster.kamerNamen = inrichting.kamerNamen;
+    richIn(rooster, inrichting, makeRng(`${sleutel}:rekwisieten`), makeRng(`${sleutel}:ramen`), {
+      perKamer: params.rekwisieten,
+    });
+  }
   const plaats = tekenPlaatsing(rooster, rng);
   if (!plaats) return null;
 
@@ -406,7 +419,7 @@ export function genereerKamerpuzzel(seed, params, pogingen = null) {
     const rng = makeRng(`${seed}#kamer${t}`);
     let kandidaat;
     try {
-      kandidaat = poging(params, rng);
+      kandidaat = poging(params, rng, `${seed}#kamer${t}`);
     } catch (e) {
       // TeZwaar of een onbruikbaar rooster: volgende poging.
       continue;
