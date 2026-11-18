@@ -1,6 +1,6 @@
 # Status — Reconstructie
 
-Last updated: 2026-11-17
+Last updated: 2026-11-18
 Live: yes (since 2026-11-13)
 UX approved: 2026-11-18
 
@@ -9,6 +9,13 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-18: engine-extension **phase A built** on branch `claude/awesome-lovelace-8e3f0b`
+  (pull request open, not merged, not live): human solver `src/engine/redeneer.js`, Dutch
+  steps `src/content/redeneer-text.js`, the numbered solution under the board and on its
+  own printed page, baseline in the spec. No board changed (91 fingerprints in
+  `tools/vingerafdruk-kamers.txt`). Full keuring green, 10/10. Still open: a print PDF
+  with `tools/printproef.mjs` (owner's terminal); remote branch
+  `pr-assets/solution-steps` (PR screenshots) may be deleted after merge. Next: phase B.
 - 2026-11-17, evening: #18 merged (`688399b`), docs only — `specs/props-and-either-clues.md`
   approved (props to sit, lie, stand or ride on; "of" clues), built inside engine-extension
   phase B. Next session: start engine-extension phase A, step 1.
