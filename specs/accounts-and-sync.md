@@ -29,6 +29,7 @@ finds the site (Guus, round 2: "Iedereen"), but no one ever has to sign in.
 | Her account | "Eigen account, Family Link" | A parent approves the sign-in once (steps under Family Link). |
 | Menu when signed in (walkthrough) | "Rondje met letter" | A round badge with the first letter of the e-mail address. |
 | Privacy text (walkthrough) | "Uitleg + privacy.html" | A section on Uitleg and a standalone `privacy.html`. |
+| Where the data lives (mission control card, 2026-11-18) | "Schema in claudeDB" | Accounts and game state in the existing project `claudeDB` (ref `kteiwsvhynuktjarhksm`, eu-west-3), own schema `reconstructie` with RLS on every table, as `crossroads`. No Turso, no second project. |
 | Approval (walkthrough) | "Goedgekeurd, zo bouwen" | Spec, product change and the clearhead prerequisite approved, with the half-board simplification. |
 | Deletion and free plan (assumptions, no objection) | — | "Account verwijderen" wipes all Reconstructie data and deletes the login only if it has no data in another app; the free plan's seven-day pause is accepted. |
 
@@ -84,6 +85,12 @@ Proposed new text for `docs/PRODUCT.md`, applied in the build's first step:
    dashboard): add `reconstructie` to the Data API's exposed schemas; add
    `https://reconstructie.app/` and `http://localhost:4173/` to the Redirect URLs, exactly,
    without wildcards. The Site URL stays clearhead's.
+
+**Shared with crossroads and personal-assistant (clearhead).** In `claudeDB`, Auth is per
+project, so these are one set for all three apps: the Auth users, the e-mail templates, the
+Redirect URLs (Reconstructie only adds its own) and the auth mail rate limit. Reconstructie
+sends no auth mail (Google sign-in only), so it does not use up that limit, but a change to
+any of these settings for one app changes it for all three.
 
 ## Scope (in)
 - **Sign in with Google** through Supabase Auth, OAuth with PKCE, so the result comes back as
