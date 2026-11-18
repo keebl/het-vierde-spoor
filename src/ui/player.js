@@ -779,6 +779,28 @@ function klepje(sleutel, kop, standaard, inhoud) {
   return blok;
 }
 
+// De bediening van het bord. Dit was één alinea van tien zinnen, en Guus
+// (2026-11-18) vond het een lap tekst: nu een kopje per stand, met het
+// woord van de knop vet, zodat je meteen ziet waar je moet lezen.
+function bedieningUitleg(vanzelf) {
+  const blok = (kop, delen) => el('div', { class: 'bediening-blok' }, [
+    el('h4', { text: kop }),
+    el('p', {}, delen.map((d) => (typeof d === 'string' ? d : el('b', { text: d.b })))),
+  ]);
+  return [
+    el('div', { class: 'bediening' }, [
+      blok('De regel', ['Precies ', { b: 'één verdachte per rij en per kolom' }, ', en niemand staat op een meubelstuk.']),
+      blok('Neerzetten', ['Kies onder de namen een figuur en klik een leeg vakje. ', { b: 'Klik op een figuur' }, ' op het bord om hem op te pakken, ', { b: 'nog een keer' }, ' en hij gaat eraf.']),
+      blok('Schetsen', ['Zet de ', { b: 'beginletter' }, ' van een figuur in een vakje: een notitie van wie daar zou kunnen staan.']),
+      blok('Uitsluiten', ['Zet je ', { b: 'eigen kruisjes' }, '. Tik daarna een naam aan en je staat weer op Neerzetten.']),
+      blok('Terug', [{ b: 'Terug' }, ' of ', { b: 'Ctrl+Z' }, ' maakt je laatste zet ongedaan.']),
+      vanzelf
+        ? blok('Kruisjes vanzelf (aan)', ['Zet je iemand neer, dan ', { b: 'kruist het bord zelf af' }, ' waar niemand meer kan staan en verbergt het schetsletters die niet meer kunnen. Pak je hem op, dan komen ze terug. Uitzetten kan met de knop onder het bord.'])
+        : blok('Kruisjes vanzelf (uit)', ['Het bord zet ', { b: 'zelf geen kruisjes' }, ' en laat al je schetsletters staan.']),
+    ]),
+  ];
+}
+
 // De zwevende knop op een smal scherm. Hij legt dezelfde kolom met
 // aanwijzingen als blad over de onderste helft van het scherm, zodat je het
 // bord erboven houdt en er zelfs op kunt blijven zetten. Geen kopie van de
@@ -832,12 +854,7 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions, knopVoorAanwijzi
         kruisjesAan: vanzelf, randAan: randAan(),
       }),
       klepje('legenda', 'Wat er op het bord staat', false, [renderLegenda(puzzle)]),
-      klepje('uitleg', 'Hoe je dit bord bedient', false, [
-        el('p', {
-          class: 'legend',
-          text: `Onder de namen kies je wat een klik op het bord doet; de gekozen stand is gevuld. Met Neerzetten kies je een figuur en klik je een leeg vakje om hem neer te zetten. Klik je op een figuur die al op het bord staat, dan pak je die op; klik je er nog een keer op, dan gaat hij eraf. Met Schetsen zet je in plaats daarvan zijn beginletter in het vakje, als notitie van wie daar zou kunnen staan. Met Uitsluiten zet je je eigen kruisjes; tik je daarna een naam aan, dan sta je weer op Neerzetten. Met Terug (of Ctrl+Z) maak je je laatste zet op het bord ongedaan. Er staat precies één verdachte per rij en per kolom, en niemand staat op een meubelstuk.${vanzelf ? ' Zodra je iemand neerzet, kruist het bord zelf af waar niemand meer kan staan, en verbergt het de schetsletters die daardoor niet meer kunnen; pak je hem weer op, dan komen ze terug. Dat kun je uitzetten met de knop Kruisjes vanzelf.' : ' Het bord zet zelf geen kruisjes en laat al je schetsletters staan - dat staat uit.'}`,
-        }),
-      ]),
+      klepje('uitleg', 'Hoe je dit bord bedient', false, bedieningUitleg(vanzelf)),
     ];
   }
   if (puzzle.kind === 'latin') {

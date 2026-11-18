@@ -10,6 +10,11 @@ day the changelog was introduced; everything before that is in git history only.
 ## [Unreleased]
 
 ### Changed
+- Front page: click a level once to choose it and once more to start a puzzle. The "Begin
+  nieuwe puzzel" and "Of kies er een uit de lijst" buttons are gone (the list stays under
+  "Alle puzzels" in the menu).
+- "Hoe je dit bord bedient" is no longer one long paragraph: a short heading per mode with
+  the key words in bold.
 - Numbered solution: each clue and what follows from it starts its own line within a step,
   and open places read "op het schoolplein", "op het terras", "op de tribune" instead of
   "in" (also in the clues).
@@ -19,6 +24,7 @@ day the changelog was introduced; everything before that is in git history only.
   under both names.
 
 ### Added
+- After solving a case yourself, the closing sheet suggests trying one level harder.
 - A Reconstructie board now explains its solution: after Oplossing, or after you solve it
   yourself, "Zo los je hem op" lists numbered steps in Dutch, each ending with who stood
   where. On paper the steps follow on their own page headed "Oplossing". No board changed.
