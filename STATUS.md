@@ -10,10 +10,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
 - 2026-11-18, late: phase B rebased on main and finished in the main session; the phase-B
-  session (`local_e3f35404`) stopped before its pool run and PR. Pushed as branch
+  session (`local_e3f35404`) went idle before its PR (its 300-seed pool run finished later). Pushed as branch
   `claude/engine-phase-b-2` (the remote `claude/engine-phase-b` holds an older WIP commit
-  and is not force-pushed). Repo store `pool/` rebuilt on the current engine: 40 seeds per
-  level 5–6 plus the library cases (level 5 took 14 min, level 6 4.5 min), not 300. Level 5
+  and is not force-pushed). Repo store `pool/` built on the current engine: 300 seeds per
+  level 5–6 plus the library cases (`check:voorraad` green). Level 5
   on the new builder with a 120 s budget (follows Guus's "doorlooptijd boeit me niet"), level 6
   on the old builder until phase C ("A: later, via fase C"), victim never named in a clue.
   "reconstructie · build · accounts-and-sync" (`local_8735ef78`, PR #26 merged) is finished.
@@ -35,8 +35,8 @@ standing guidance rather than state moved to `CLAUDE.md`.
   so it keeps the old builder with the new clue kinds until phase C makes it 12×14
   (option A, card with Guus). No clue names the victim; the clue list leaves them out.
   Props (chairs, beds, rugs, horses …), windows, 14 new clue kinds, Web Worker with
-  progress bar and prefetch, IndexedDB store, repo store `pool/` (40 seeds per level
-  5–6; the spec allows 300). Also Guus's same-day UI asks: whole intro, rules under the board, legend once per
+  progress bar and prefetch, IndexedDB store, repo store `pool/` (300 seeds per level
+  5–6). Also Guus's same-day UI asks: whole intro, rules under the board, legend once per
   name, blue "Volgende puzzel" last. Open: rectangular boards deferred to step 16, print
   PDF of props in the owner's terminal, the daughter's verdict on a fresh level-3 and
   level-5 board.
