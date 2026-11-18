@@ -35,6 +35,9 @@ project). The RLS test removes test user A's seeded rows to exercise that branch
 means a stranger signing in through Reconstructie gets clearhead rows: one more reason for
 Prerequisite 1, which should also stop seeding for non-members.
 
+Resolved 2026-11-18 (keebl/personal-assistant#13): sign-up no longer seeds `areas`. Checked
+with a rolled-back test login: no clearhead rows, and account deletion removes the login.
+
 ## Dashboard settings (the connector cannot set these)
 - Integrations → Data API → **Exposed schemas**: add `reconstructie` (keep `public` and
   `crossroads`).

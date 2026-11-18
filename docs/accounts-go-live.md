@@ -4,17 +4,19 @@ How to switch on Google sign-in (`specs/accounts-and-sync.md`, plan step 7). Unt
 below is ticked, `AAN` in `src/sync/config.js` stays `false` and the site shows no sign-in.
 
 ## 0. Before anything (blocking)
-- [ ] **clearhead requires membership** (spec, Prerequisite 1): a task and pull request in
+- [x] **clearhead requires membership** (done 2026-11-18: keebl/personal-assistant#13 merged,
+  migration applied, `brain-dump` v6) (spec, Prerequisite 1): a task and pull request in
   `~/Claude/Projects/personal-assistant` adds a members table, required by every clearhead
   policy and checked in its `brain-dump` function. Merged, and checked with a stranger's
   login: that login reads and writes nothing in `public`.
-- [ ] **A stranger's login gets no clearhead rows.** Today a clearhead trigger fills
+- [x] **A stranger's login gets no clearhead rows.** (checked 2026-11-18 in claudeDB: a new
+  login gets no `areas` rows, and `verwijder_mijn_account()` then deletes the login too) Today a clearhead trigger fills
   `public.areas` for every new login (found 2026-11-18, see `supabase/README.md`). Then
   "Account verwijderen" keeps the login and its e-mail address, and the privacy text ("dan
   wordt alles gewist") would not be true. Prerequisite 1 must also stop that seeding for
   non-members; check it by signing in with a test account, deleting it, and confirming in
   Authentication → Users that the login is gone.
-- [ ] **The migration is applied** to `claudeDB` and `supabase/tests/reconstructie_rls.sql`
+- [x] **The migration is applied** (2026-11-18, RLS tests 30/30) to `claudeDB` and `supabase/tests/reconstructie_rls.sql`
   reports `N/N goed` (see `supabase/README.md`).
 
 - [ ] **privacy@reconstructie.app receives mail.** The privacy text names it. Cloudflare →
