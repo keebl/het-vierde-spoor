@@ -17,6 +17,7 @@
     "check:iconen": "node tools/check-iconen.mjs",
     "check:kamers": "node tools/check-kamers.mjs",
     "check:regels": "node tools/check-regels.mjs",
+    "check:redeneer": "node tools/check-redeneer.mjs",
     "ai:vooraf": "node tools/ai-vooraf.mjs",
     "ai:online": "node tools/ai-online.mjs"
   },

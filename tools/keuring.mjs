@@ -23,6 +23,7 @@ const TOETSEN = [
   ['de weggevers', 'check-weggevers.mjs', []],
   ['de iconen', 'check-iconen.mjs', []],
   ['de kamers', 'check-kamers.mjs', []],
+  ['de redenering', 'check-redeneer.mjs', []],
 ];
 
 // `--snel` slaat de zes toetsen over die puzzels bouwen; die kosten samen

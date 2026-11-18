@@ -387,7 +387,7 @@ export const SOORTEN = {
 export const evalAanwijzing = (c, ctx) => SOORTEN[c.soort].eval(c, ctx);
 
 // Welke personen raakt deze aanwijzing?
-function personenIn(c) {
+export function personenIn(c) {
   const uit = [];
   if (c.p != null) uit.push(c.p);
   if (c.q != null) uit.push(c.q);
@@ -490,7 +490,7 @@ export function telPlaatsingen(rooster, aanwijzingen, cap = 2, budget = 120000) 
 
 // Mogelijkhedenraster: per persoon de vakjes waar die nog kan staan. Alleen
 // wegstrepen wat aantoonbaar onmogelijk is, net als bij de andere puzzels.
-function beginDomeinen(rooster) {
+export function beginDomeinen(rooster) {
   const { n, vrij } = rooster;
   const dom = [];
   for (let p = 0; p < n; p++) {
