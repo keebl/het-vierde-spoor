@@ -20,6 +20,8 @@ import { portretElement, tekenMerk } from './personenkunst-geschilderd.js';
 import { geslachtVan } from '../content/namen.js';
 import { blad, bol, kussen } from './vormen.js';
 import { makeRng } from '../engine/rng.js';
+import { ZICHTBARE_LEVEL_IDS, LEVELS, KAMER_LEVELS } from '../engine/difficulty.js';
+import { nieuwePuzzel } from './volgende.js';
 
 const SVG = 'http://www.w3.org/2000/svg';
 const svgEl = (naam, attrs = {}) => {
@@ -91,6 +93,8 @@ export function openOntknoping(puzzle, { onthuld = false, feest = false, opnieuw
   const bekijk = el('button', { class: 'btn ontknoping-bekijk', type: 'button', text: 'Bekijk het bord' });
   bekijk.addEventListener('click', () => dialoog.close());
 
+  const zwaarder = onthuld ? null : zwaarderVoorstel(puzzle);
+
   const tekst = onthuld
     ? zaak.stil ?? `Dit was ${zaak.antwoordwoord ?? 'het antwoord'}.`
     : zaak.slot ?? '';
@@ -103,6 +107,7 @@ export function openOntknoping(puzzle, { onthuld = false, feest = false, opnieuw
     el('h2', { id: kopId, class: 'ontknoping-naam', text: naam }),
     el('p', { class: 'ontknoping-rol' }, [merk, el('span', { text: zaak.antwoordwoord ?? '' })]),
     el('p', { class: 'ontknoping-slot', text: tekst }),
+    zwaarder,
     el('div', { class: 'ontknoping-knoppen' }, [verder, bekijk]),
   ]));
 
@@ -156,4 +161,22 @@ function confetti(seed) {
     svg.append(pad);
   }
   return svg;
+}
+
+// Zelf opgelost? Dan een voorstel om een niveau zwaarder te proberen
+// (Guus, 2026-11-18). Niet na Oplossing: wie de oplossing liet invullen,
+// is niet klaar voor zwaarder. En niet op het zwaarste niveau. "Volgende
+// zaak" blijft de grote knop; dit is een uitnodiging, geen duw.
+function zwaarderVoorstel(puzzle) {
+  const niveau = Number(puzzle.niveau ?? puzzle.settings?.niveau);
+  const hoger = ZICHTBARE_LEVEL_IDS.find((l) => l > niveau);
+  if (!niveau || hoger == null) return null;
+  const k = KAMER_LEVELS[hoger];
+  return el('p', { class: 'ontknoping-zwaarder' }, [
+    el('span', { text: 'Ging dat goed? ' }),
+    el('a', {
+      href: `#/puzzel/${nieuwePuzzel(hoger)}`,
+      text: `Probeer niveau ${hoger} · ${LEVELS[hoger].label} (${k.n} bij ${k.n})`,
+    }),
+  ]);
 }
