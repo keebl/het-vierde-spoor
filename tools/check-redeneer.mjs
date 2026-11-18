@@ -5,6 +5,22 @@
 //      wat hij moet doen: welke vakjes vallen af, wie wordt neergezet. En
 //      een stand waarin hij niets mag doen.
 //   2. Dezelfde puzzel geeft twee keer hetzelfde spoor.
+//   3. Over de keuringsset (de kamerzaken van de bibliotheek en keur-0..9
+//      op niveau 1-5, keur-0..2 op niveau 6, dezelfde lijst als
+//      check-spreiding): de solver zet nooit iemand op een ander vakje dan
+//      in de oplossing en streept nooit het goede vakje weg (criterium 1);
+//      lost hij een puzzel helemaal op, dan vindt telPlaatsingen er precies
+//      één oplossing (criterium 2); elke stap noemt zijn techniek, geldige
+//      aanwijzingen en wat hij wegstreepte of neerzette (criterium 3).
+//   4. Geen bord verschuift (criterium 6): elke puzzel van de keuringsset
+//      heeft dezelfde vingerafdruk als in tools/vingerafdruk-kamers.txt,
+//      vastgelegd op 2026-11-18 vóór fase A. Fase B laat elk bord één keer
+//      verschuiven (beslissing 4 van de spec); dan schrijf je de lijst
+//      opnieuw met `node tools/check-redeneer.mjs --schrijf`, in dezelfde
+//      commit als de verschuiving, zodat de diff laat zien dat het bewust is.
+//
+// Onderaan staat per niveau de meting die in de spec staat: hoeveel puzzels
+// de solver oplost, de mediane ketenlengte en de zwaarste techniek.
 //
 // Een techniek die iets wegstreept wat niet weg mag, is erger dan een die
 // te weinig doet: dan laat de oplossing de speler een verkeerde redenering
@@ -12,7 +28,12 @@
 // heeft. Daarom eerst de kleine standen, waar je met de hand kunt nagaan
 // wat er hoort te gebeuren.
 
-import { redeneer, pasToe } from '../src/engine/redeneer.js';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { redeneer, pasToe, TECHNIEKEN } from '../src/engine/redeneer.js';
+import { telPlaatsingen } from '../src/engine/rooms.js';
+import { CATALOG, catalogSettings } from '../src/content/catalog.js';
+import { buildPuzzle, wereldVoorSeed } from '../src/puzzle.js';
 
 let fouten = 0;
 const fout = (titel, wat) => {
@@ -113,5 +134,113 @@ for (const [naam, techniek, r, aanwijzingen, dom, geplaatst, verwacht] of STANDE
   if (t1.opgelost || t1.vast?.tier !== 1) fout('kleine puzzel', `tier 1 alleen: ${JSON.stringify(t1.vast)}`);
 }
 
-console.log(`\n${STANDEN.length} standen gekeurd, ${fouten} fouten`);
+// ------------------------------------------------------- het spoor keuren
+
+// Wat er mis is aan een spoor, gegeven de oplossing. Leeg is goed.
+export function keurSpoor(uit, oplossing, aantalAanwijzingen) {
+  const mis = [];
+  for (const s of uit.stappen) {
+    if (!TECHNIEKEN[s.techniek]) mis.push(`stap ${s.nr}: onbekende techniek ${s.techniek}`);
+    if (!Array.isArray(s.aanwijzingen) || s.aanwijzingen.some((i) => !(i >= 0 && i < aantalAanwijzingen))) {
+      mis.push(`stap ${s.nr} (${s.techniek}): ongeldige aanwijzingen ${JSON.stringify(s.aanwijzingen)}`);
+    }
+    if (!s.geplaatst && !s.geschrapt?.length) mis.push(`stap ${s.nr} (${s.techniek}): streept niets weg en zet niemand neer`);
+    for (const g of s.geschrapt ?? []) {
+      if (g.cellen.includes(oplossing[g.p])) mis.push(`stap ${s.nr}: ${s.techniek} streept het goede vakje van persoon ${g.p} weg`);
+    }
+    if (s.geplaatst && s.geplaatst.cel !== oplossing[s.geplaatst.p]) mis.push(`stap ${s.nr}: ${s.techniek} zet persoon ${s.geplaatst.p} verkeerd neer`);
+  }
+  uit.plaats.forEach((cel, p) => {
+    if (cel != null && cel !== oplossing[p]) mis.push(`persoon ${p} staat op ${cel}, niet op ${oplossing[p]}`);
+  });
+  return mis;
+}
+
+// De weigerkant: een spoor met één verkeerde streep moet omvallen, met de
+// techniek erbij.
+{
+  const r = rooster();
+  const aanwijzingen = [{ soort: 'noord', p: 0, q: 1 }, { soort: 'noord', p: 1, q: 2 }, { soort: 'noord', p: 2, q: 3 },
+    { soort: 'west', p: 3, q: 2 }, { soort: 'west', p: 2, q: 0 }, { soort: 'west', p: 0, q: 1 }];
+  const uit = redeneer(r, aanwijzingen);
+  const oplossing = [2, 7, 9, 12];
+  if (keurSpoor(uit, oplossing, aanwijzingen.length).length) fout('weigerkant', 'een goed spoor viel om');
+  const verknoeid = structuredClone(uit);
+  const stap = verknoeid.stappen.find((s) => s.geschrapt.length);
+  stap.geschrapt[0].cellen.push(oplossing[stap.geschrapt[0].p]);
+  if (!keurSpoor(verknoeid, oplossing, aanwijzingen.length).some((m) => m.includes(stap.techniek) && m.includes('goede vakje'))) {
+    fout('weigerkant', 'een streep door het goede vakje viel niet om');
+  }
+  const zonderReden = structuredClone(uit);
+  zonderReden.stappen[0].aanwijzingen = [99];
+  if (!keurSpoor(zonderReden, oplossing, aanwijzingen.length).length) fout('weigerkant', 'een stap met een onbekende aanwijzing viel niet om');
+}
+
+// ----------------------------------------------------------- de keuringsset
+
+const vingerafdruk = (p) => createHash('sha256')
+  .update(JSON.stringify([p.id, p.oplossing, p._ruwe, p.slachtofferIdx, p.kamerVan, p.meubelOp, p.clues.map((c) => c.text)]))
+  .digest('hex').slice(0, 16);
+
+const SEEDS = { 1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 3 };
+const lijst = [];
+for (const e of CATALOG) if (e.mechaniek === 'kamer') lijst.push(catalogSettings(e));
+for (const [niveau, aantal] of Object.entries(SEEDS)) {
+  for (let s = 0; s < aantal; s++) {
+    const seed = `keur-${s}`;
+    lijst.push({ opdracht: 'dader', mechaniek: 'kamer', wereld: wereldVoorSeed(seed), niveau: Number(niveau), seed });
+  }
+}
+
+const AFDRUKKEN = new URL('vingerafdruk-kamers.txt', import.meta.url);
+const SCHRIJF = process.argv.includes('--schrijf');
+const vastgelegd = new Map(SCHRIJF ? [] : readFileSync(AFDRUKKEN, 'utf8').trim().split('\n').map((r) => r.split(' ')));
+const nieuw = [];
+const perNiveau = {};
+
+for (const settings of lijst) {
+  const p = buildPuzzle(settings);
+  const afdruk = vingerafdruk(p);
+  nieuw.push(`${p.id} ${afdruk}`);
+  if (!SCHRIJF) {
+    if (!vastgelegd.has(p.id)) fout(p.id, 'staat niet in tools/vingerafdruk-kamers.txt');
+    else if (vastgelegd.get(p.id) !== afdruk) fout(p.id, 'het bord is verschoven (andere vingerafdruk)');
+  }
+
+  const t0 = performance.now();
+  const uit = redeneer(p._rooster, p._ruwe);
+  const ms = performance.now() - t0;
+  for (const m of keurSpoor(uit, p.oplossing, p._ruwe.length)) fout(p.id, m);
+  if (uit.opgelost) {
+    const telling = telPlaatsingen(p._rooster, p._ruwe, 2, 1e7);
+    if (telling.opgegeven || telling.count !== 1) {
+      const zwaarste = Object.keys(uit.graad.perTechniek).sort((a, b) => TECHNIEKEN[b].tier - TECHNIEKEN[a].tier)[0];
+      fout(p.id, `de solver loste op, maar telPlaatsingen vond ${telling.opgegeven ? 'geen uitsluitsel' : `${telling.count} oplossingen`} (zwaarste techniek: ${zwaarste})`);
+    }
+  }
+  (perNiveau[p.niveau] ??= []).push({ ...uit.graad, opgelost: uit.opgelost, vast: uit.vast, ms });
+}
+
+if (SCHRIJF) {
+  writeFileSync(AFDRUKKEN, `${nieuw.join('\n')}\n`);
+  console.log(`${nieuw.length} vingerafdrukken geschreven naar tools/vingerafdruk-kamers.txt`);
+} else if (vastgelegd.size !== nieuw.length) {
+  fout('vingerafdrukken', `${vastgelegd.size} vastgelegd, ${nieuw.length} gebouwd`);
+}
+
+const mediaan = (xs) => {
+  const s = [...xs].sort((a, b) => a - b);
+  return s.length % 2 ? s[(s.length - 1) / 2] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2;
+};
+console.log('\n| level | puzzles | solved | chain median | chain min–max | top tier 1/2/3/4 | hard steps median | aanname median | solver worst |');
+console.log('|---|---|---|---|---|---|---|---|---|');
+for (const [n, rijen] of Object.entries(perNiveau)) {
+  const tiers = [1, 2, 3, 4].map((t) => rijen.filter((r) => r.topTier === t).length).join(' / ');
+  const lengtes = rijen.map((r) => r.lengte);
+  console.log(`| ${n} | ${rijen.length} | ${rijen.filter((r) => r.opgelost).length} | ${mediaan(lengtes)} | ${Math.min(...lengtes)}–${Math.max(...lengtes)} | ${tiers} | ${mediaan(rijen.map((r) => r.zwaar))} | ${mediaan(rijen.map((r) => r.perTechniek.aanname ?? 0))} | ${Math.max(...rijen.map((r) => r.ms)).toFixed(0)} ms |`);
+}
+const vast = Object.values(perNiveau).flat().filter((r) => !r.opgelost);
+if (vast.length) console.log(`\nniet helemaal opgelost: ${vast.length} (${vast.map((r) => JSON.stringify(r.vast)).join(', ')})`);
+
+console.log(`\n${STANDEN.length} standen en ${nieuw.length} puzzels gekeurd, ${fouten} fouten`);
 process.exit(fouten ? 1 : 0);
