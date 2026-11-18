@@ -9,9 +9,9 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- Waiting on Guus since 16:32: a chat message "start clearhead-sessie" to start the
-  personal-assistant session that gates clearhead's tables behind a members list (blocks
-  turning on sign-in for accounts-and-sync; the app refuses a start from a button or card).
+- 2026-11-18: personal-assistant session "clearhead-members" started (prerequisite for
+  sign-in: clearhead tables behind a members list); build session for accounts-and-sync
+  running (steps 1–6, sign-in off).
 - 2026-11-18, late: `specs/accounts-and-sync.md` approved with its UX sections and sketch
   (`design/prototype/accounts-and-sync/`), PR #25, docs only, not built. Optional Google
   sign-in via Supabase in the shared project `claudeDB` (schema `reconstructie`); syncs
