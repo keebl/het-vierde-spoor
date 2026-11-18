@@ -24,6 +24,8 @@ import { aanwijzingenPerPersoon, heeftIedereen } from '../aanwijzingen.js';
 import { makeRng } from '../engine/rng.js';
 import { openOntknoping, sluitOntknoping } from './ontknoping.js';
 import { volgendeZaak } from './volgende.js';
+import { redeneer } from '../engine/redeneer.js';
+import { oplossingInStappen } from '../content/redeneer-text.js';
 
 // Welke versie van de kamergenerator de bewaarde stand maakte. Verandert
 // de generator zo dat dezelfde seed een ander bord geeft, dan gaat dit
@@ -145,8 +147,14 @@ export function renderPlayer(puzzle, mount) {
   // de kolom, zie vraagBlok): op het eerste vel duwden ze het bord eraf.
   const regelsOpPapier = () => play.querySelector('.aanwijzingen-vraag .spelregels');
   let regelsStonden = null;
+  // De genummerde oplossing gaat altijd mee op papier, op een eigen vel
+  // achteraan (Guus, 2026-11-18): wie een geprint bord heeft opgegeven,
+  // kan omslaan. Op het scherm staat hij pas na Oplossing of na het zelf
+  // oplossen; zie oplossingBlok.
+  let printen = false;
   const voorPrint = () => {
     if (!play.isConnected) { window.removeEventListener('beforeprint', voorPrint); return; }
+    if (puzzle.kind === 'kamer') { printen = true; draw(); }
     const regels = regelsOpPapier();
     if (!regels) return;
     regelsStonden = regels.open;
@@ -157,6 +165,7 @@ export function renderPlayer(puzzle, mount) {
     const regels = regelsOpPapier();
     if (regels && regelsStonden !== null) regels.open = regelsStonden;
     regelsStonden = null;
+    if (printen) { printen = false; draw(); }
   };
   window.addEventListener('beforeprint', voorPrint);
   window.addEventListener('afterprint', naPrint);
@@ -168,6 +177,21 @@ export function renderPlayer(puzzle, mount) {
   // zaak zelf is opgelost doet er niet toe: hij telt nooit mee.
   let volgendeId = null;
   const naarVolgende = () => (volgendeId ??= volgendeZaak(puzzle));
+
+  // De menselijke solver redeneert de puzzel pas op als iemand de stappen
+  // wil zien: op niveau vier kost dat tot een halve seconde, en wie zelf
+  // speelt heeft er niets aan.
+  let stappen = null;
+  const oplossing = () => {
+    if (!stappen) {
+      const uit = redeneer(puzzle._rooster, puzzle._ruwe);
+      stappen = { uit, tekst: oplossingInStappen(uit, puzzle) };
+    }
+    return stappen;
+  };
+  // Of de speler het blok open of dicht heeft gezet; null is de standaard
+  // (open na Oplossing, dicht na zelf oplossen). Overleeft het hertekenen.
+  let stappenOpen = null;
 
   // De ontknoping: alleen bij de Reconstructie, het enige speltype dat je
   // te zien krijgt. De andere houden hun regel onder het bord.
@@ -228,7 +252,15 @@ export function renderPlayer(puzzle, mount) {
     if (nieuwKastje) nieuwKastje.scrollTop = kastScroll;
     if (focus) boards.querySelector(`[data-focus="${focus}"]`)?.focus();
     toonGroep();
-    notes.replaceChildren(toolbar(puzzle, state, actions, metOntknoping ? naarVolgende() : null), noteNode(state));
+    const metStappen = puzzle.kind === 'kamer' && puzzle._rooster && (state.solved || printen);
+    const blok = metStappen
+      ? oplossingBlok(puzzle, oplossing(), {
+        open: printen || (stappenOpen ?? state.onthuld),
+        zelf: !state.onthuld,
+        onToggle: (open) => { if (!printen) stappenOpen = open; },
+      })
+      : null;
+    notes.replaceChildren(toolbar(puzzle, state, actions, metOntknoping ? naarVolgende() : null), noteNode(state), ...(blok ? [blok] : []));
   };
 
   // Tikken op een meubelstuk: de naam eronder. Aanwijzen met de muis geeft
@@ -360,6 +392,7 @@ export function renderPlayer(puzzle, mount) {
       state.goed = new Set();
       state.solved = false;
       state.note = null;
+      stappenOpen = null;
       clearProgress(puzzle.id);
       sluitOntknoping();
       draw();
@@ -1026,6 +1059,40 @@ function toolbar(puzzle, state, actions, volgende = null) {
   }
   add('Bewaar deze puzzel', actions.share);
   return bar;
+}
+
+// De oplossing als genummerde stappen (specs/engine-extension.md, fase A
+// stap 4; schets in design/prototype/engine-extension/, goedgekeurd door
+// Guus op 2026-11-18). Elke stap is één alinea: eerst de redenering, dan
+// vet wie waar stond. Na Oplossing staat het blok open; wie zelf oploste
+// krijgt het dicht, om te vergelijken. Op papier staat het op een eigen vel
+// met de kop "Oplossing" en het antwoord eronder.
+function oplossingBlok(puzzle, { uit, tekst }, { open, zelf, onToggle }) {
+  const n = tekst.stappen.length;
+  const sub = tekst.aanname
+    ? `In ${n} stappen; vanaf een punt is een aanname nodig.`
+    : uit.graad.perTechniek.aanname
+      ? `In ${n} stappen; op een paar plekken moet je iets aannemen en kijken of het vastloopt.`
+      : `In ${n} stappen, zonder te gokken.`;
+  const lijst = el('ol', { class: 'stappenlijst' });
+  for (const stap of tekst.stappen) {
+    const li = el('li');
+    const zinnen = stap.zinnen.slice();
+    const laatste = stap.geplaatst ? zinnen.pop() : null;
+    if (zinnen.length) li.append(`${zinnen.join(' ')} `);
+    if (laatste) li.append(el('b', { text: laatste }));
+    lijst.append(li);
+  }
+  const blok = el('details', { class: 'spelregels oplossing-stappen' }, [
+    el('summary', { text: zelf ? `Zo kon je hem oplossen (${n} stappen)` : 'Zo los je hem op' }),
+    el('h2', { class: 'alleen-papier', text: 'Oplossing' }),
+    el('p', { class: 'stappen-sub', text: sub }),
+    lijst,
+    el('p', { class: 'alleen-papier', text: `Het antwoord: ${puzzle.question.answer}.` }),
+  ]);
+  blok.open = open;
+  blok.addEventListener('toggle', () => onToggle(blok.open));
+  return blok;
 }
 
 function noteNode(state) {
