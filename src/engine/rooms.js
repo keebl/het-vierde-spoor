@@ -323,7 +323,9 @@ export function richIn(rooster, inrichting, rngStukken, rngRamen, { perKamer = [
       keuzes.push(o);
     }
     const vaker = opties.filter((o) => o.vaker);
-    for (let j = 0; keuzes.length < doel && vaker.length && j < doel; j++) keuzes.push(vaker[j % vaker.length]);
+    // Herhalen alleen tot het minimum: drie krukken in een keuken is een
+    // keuken, zes is een rommelhok (gezien in de dierentuin, 2026-11-18).
+    for (let j = 0; keuzes.length < Math.min(doel, lo) && vaker.length && j < doel; j++) keuzes.push(vaker[j % vaker.length]);
     keuzes.sort((a, b) => Number(!!b.kleed) - Number(!!a.kleed));
     for (const o of keuzes) {
       let cellen;

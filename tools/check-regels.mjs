@@ -28,7 +28,9 @@ import {
 import { levelParams, kamerParams, KAMER_LEVELS, LEVEL_IDS } from '../src/engine/difficulty.js';
 import { keepsNames } from '../src/ai/opdracht.js';
 import { readFileSync } from 'node:fs';
-import { soortVan, meubelsVoor, vormVan } from '../src/content/kamersoorten.js';
+import {
+  soortVan, meubelsVoor, vormVan, rekwisietenVoor, houdingVanTekening, VAKER,
+} from '../src/content/kamersoorten.js';
 import { redeneer } from '../src/engine/redeneer.js';
 import { oplossingInStappen } from '../src/content/redeneer-text.js';
 
@@ -124,9 +126,37 @@ function keurKamer(p, waar) {
       cellen.length > 0 && bereikt.size === cellen.length, waar, p.kamerNamen[k]);
   }
 
-  // Regel 2: op een meubelstuk staat niemand.
-  eis('niemand staat op een meubelstuk',
-    oplossing.every((cel) => vrij[cel] && meubelOp[cel] == null), waar);
+  // Regel 2: op een blok staat niemand; op een stuk waar je op kunt zitten,
+  // liggen, staan of rijden wel, maar dan één (specs/props-and-either-clues.md
+  // criteria 1-3).
+  const stukken = rooster.stukken ?? [];
+  eis('niemand staat op een blok',
+    oplossing.every((cel) => vrij[cel] && (meubelOp[cel] == null || stukken[meubelOp[cel]]?.houding !== 'blok')), waar);
+  eis('een blok is geen vrij vakje',
+    meubelOp.every((m, cel) => m == null || (stukken[m]?.houding === 'blok') !== vrij[cel]), waar);
+  eis('op een stuk staat hooguit één persoon (op een kleed één per vakje)',
+    stukken.every((st) => oplossing.filter((cel) => st.cellen.includes(cel)).length <= st.cellen.length), waar);
+  for (const st of stukken) {
+    eis('elk stuk heeft een houding', ['blok', 'zit', 'lig', 'sta', 'rijd'].includes(st.houding), waar);
+    const icoon = p.meubelIconen[meubelOp[st.cellen[0]]];
+    eis('de houding van een stuk volgt uit zijn tekening', houdingVanTekening(icoon) === st.houding, waar, `${p.meubelNamen[meubelOp[st.cellen[0]]]}: ${st.houding}`);
+    if (st.cellen.length > 1) {
+      const rs = st.cellen.map((c) => rijVan(n, c));
+      const ks = st.cellen.map((c) => kolVan(n, c));
+      const h = Math.max(...rs) - Math.min(...rs) + 1;
+      const b = Math.max(...ks) - Math.min(...ks) + 1;
+      eis('een kleed is een rechthoek van twee tot zes vakjes in één kamer',
+        st.type === 'kleed' && h * b === st.cellen.length && st.cellen.length <= 6
+        && st.cellen.every((c) => kamerVan[c] === kamerVan[st.cellen[0]]), waar, p.meubelNamen[meubelOp[st.cellen[0]]]);
+    }
+  }
+  {
+    const perKamer = new Array(p.kamerNamen.length).fill(0);
+    for (const st of stukken) if (st.houding !== 'blok') perKamer[kamerVan[st.cellen[0]]]++;
+    const drempel = p.niveau <= 3 ? 1 : 2;
+    eis('in minstens de helft van de kamers staat iets om op te zitten',
+      perKamer.filter((x) => x >= drempel).length * 2 >= perKamer.length, waar, perKamer.join(''));
+  }
 
   // Regel 3: precies een figuur per rij en per kolom.
   const rijen = new Set(oplossing.map((cel) => rijVan(n, cel)));
@@ -281,7 +311,9 @@ function keurKamer(p, waar) {
   eis('alle figuren hebben een eigen beginletter',
     uniek(p.personen.map((x) => x.charAt(0).toUpperCase())), waar, p.personen.join(', '));
   eis('alle kamers hebben een eigen naam', uniek(p.kamerNamen), waar);
-  const meubels = p.meubelNamen.filter(Boolean);
+  // Een kruk of een kleed mag vaker liggen (VAKER in kamersoorten.js); al
+  // het andere heeft een eigen naam.
+  const meubels = p.meubelNamen.filter((x, m) => x && !VAKER.includes(p.meubelIconen[m]));
   eis('alle meubelstukken hebben een eigen naam', uniek(meubels), waar, meubels.join(', '));
   eis('elk meubelstuk op het bord heeft een naam en een tekening',
     p.meubelOp.every((m) => m == null || (p.meubelNamen[m] && p.meubelIconen[m])), waar);
@@ -293,7 +325,9 @@ function keurKamer(p, waar) {
     const m = p.meubelOp[cel];
     if (m == null) continue;
     const soort = soortVan(p.kamerNamen[kamerVan[cel]]);
-    const mag = meubelsVoor(soort, p.world?.id).flat().map(([naam]) => naam);
+    const mag = rooster.stukken?.[m]?.houding && rooster.stukken[m].houding !== 'blok'
+      ? rekwisietenVoor(p.kamerNamen[kamerVan[cel]], p.world?.id).map(([naam]) => naam)
+      : meubelsVoor(soort, p.world?.id).flat().map(([naam]) => naam);
     eis('het meubilair past bij de soort ruimte',
       mag.includes(p.meubelNamen[m]), waar,
       `${p.meubelNamen[m]} in ${p.kamerNamen[kamerVan[cel]]} (${soort})`);

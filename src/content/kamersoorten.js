@@ -1702,7 +1702,7 @@ export const REKWISIETEN_VAN = {
 // krukken heeft drie krukken; een aanwijzing zegt dan "op een kruk", nooit
 // "op de kruk" (zie zinVoor in rooms-text.js). Een stuk met een eigen naam
 // ("de leren fauteuil") komt maar één keer voor.
-export const VAKER = ['kruk', 'kleedperzisch', 'kleedstreep', 'kleedruit', 'deurmat', 'mosmat', 'bidbank', 'zitblok'];
+export const VAKER = ['kruk', 'kleedperzisch', 'kleedstreep', 'kleedruit', 'deurmat', 'mosmat', 'bidbank', 'zitblok', 'botsauto'];
 
 // Rijdieren alleen waar een plek het eerlijk maakt (Guus, 2026-11-17): een
 // stal, een binnenplaats, een weide, de kermis. Niet binnen in een landhuis.
@@ -1712,7 +1712,7 @@ export const RIJDIEREN_VAN_PLEK = {
   'de kinderboerderij': [['de pony', 'pony'], ['de ezel', 'ezel']],
   'de picknickweide': [['de pony', 'pony']],
   'de draaimolen': [['het draaimolenpaard', 'draaimolenpaard']],
-  'de botsautobaan': [['de botsauto', 'botsauto']],
+  'de botsautobaan': [['het botsautootje', 'botsauto']],
 };
 
 // Een wereld die maar een paar typen eerlijk kan tekenen. Een ruimteschip

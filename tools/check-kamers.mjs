@@ -12,6 +12,7 @@ import {
   SOORT_VAN, VLOER_VAN, VLOER_VAN_PLEK, MEUBELS_VAN, VERWANTE_SOORTEN,
   WERELDMEUBELS, WERELDVERWANT, WERELDVLOER, meubelsVoor, soortVan,
   OUDERWETS, MODERNE_WERELDEN, voorzetselVan,
+  rekwisietenVoor, TYPE_VAN_TEKENING, REKWISIETTYPEN, RIJDIEREN_VAN_PLEK,
 } from '../src/content/kamersoorten.js';
 import { GESLACHT_VAN } from '../src/content/namen.js';
 import { readFileSync } from 'node:fs';
@@ -166,6 +167,38 @@ for (const id of MODERNE_WERELDEN) {
 }
 for (const sleutel of OUDERWETS) {
   if (!GESCHILDERD[sleutel]) meld('OUDERWETS BESTAAT NIET', sleutel);
+}
+
+// ------------------------------------------- waar je op kunt zitten
+//
+// specs/props-and-either-clues.md, criterium 14: een wereld zet alleen een
+// stuk neer waar hij een eerlijke tekening voor heeft, en een wereld van nu
+// geen tekening van vroeger. Ook hier: een naam één tekening, een tekening
+// één naam, per wereld. En een stuk dat het bord niet als iets om op te
+// zitten herkent, kan er niet in.
+for (const w of WORLDS) {
+  const perNaam = new Map();
+  const perSleutel = new Map();
+  for (const plek of [...w.places, ...(w.plekkenXL ?? [])]) {
+    for (const [naam, sleutel] of rekwisietenVoor(plek, w.id)) {
+      gebruikteSleutels.add(sleutel);
+      if (!GESCHILDERD[sleutel]) meld('REKWISIET ZONDER TEKENING', `${w.id}/${naam} -> ${sleutel}`);
+      if (!TYPE_VAN_TEKENING[sleutel]) meld('REKWISIET ZONDER TYPE', `${w.id}/${naam} -> ${sleutel}`);
+      if (MODERNE_WERELDEN.includes(w.id) && OUDERWETS.includes(sleutel)) meld('OUDERWETS REKWISIET IN MODERNE WERELD', `${w.id}/${plek}: ${naam}`);
+      if (perNaam.has(naam) && perNaam.get(naam) !== sleutel) meld('REKWISIET: NAAM TWEE KEER', `${w.id}: ${naam}`);
+      perNaam.set(naam, sleutel);
+      if (perSleutel.has(sleutel) && perSleutel.get(sleutel) !== naam) meld('REKWISIET: TEKENING GELEEND', `${w.id}/${sleutel}: ${perSleutel.get(sleutel)} en ${naam}`);
+      perSleutel.set(sleutel, naam);
+      const type = REKWISIETTYPEN[TYPE_VAN_TEKENING[sleutel]];
+      if (type?.houding === 'rijd' && /paard|pony|ezel/.test(TYPE_VAN_TEKENING[sleutel]) && !RIJDIEREN_VAN_PLEK[plek]) {
+        meld('RIJDIER BUITEN DE STAL', `${w.id}/${plek}: ${naam}`);
+      }
+    }
+  }
+}
+for (const [sleutel, type] of Object.entries(TYPE_VAN_TEKENING)) {
+  if (!GESCHILDERD[sleutel]) meld('TYPE ZONDER TEKENING', sleutel);
+  if (!REKWISIETTYPEN[type]) meld('ONBEKEND REKWISIETTYPE', `${sleutel} -> ${type}`);
 }
 
 for (const sleutel of Object.keys(GESCHILDERD)) {
