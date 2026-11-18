@@ -29,8 +29,13 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # "de voorraad" (the slowest PR check) only proves that pool/ matches the engine, so it
+    # runs when the pull request touches pool/, the CI set-up, or a file the store check or
+    # the store builder imports (tools/afhankelijk.mjs reads the imports, so a new engine
+    # file is never missed).
     outputs:
       zwaar: ${{ steps.kijk.outputs.zwaar }}
+      voorraad: ${{ steps.kijk.outputs.voorraad }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -41,6 +46,9 @@ jobs:
           cat gewijzigd.txt
           # Not `grep -vq`: on macOS it said "docs only" for a list with src/x.js in it.
           if [ -n "$(grep -vE '^(docs/|specs/|design/)|\.md$' gewijzigd.txt)" ]; then echo zwaar=true; else echo zwaar=false; fi >> "$GITHUB_OUTPUT"
+          node tools/afhankelijk.mjs tools/check-voorraad.mjs tools/pool.mjs > raakt.txt
+          printf '%s\n' tools/keuring.mjs tools/afhankelijk.mjs package.json package-lock.json >> raakt.txt
+          if [ -n "$(grep -xFf raakt.txt gewijzigd.txt; grep -E '^(pool/|\.github/workflows/)' gewijzigd.txt)" ]; then echo voorraad=true; else echo voorraad=false; fi >> "$GITHUB_OUTPUT"
 
   snel:
     name: keuring (fast, 3 checks)
@@ -69,8 +77,8 @@ jobs:
     runs-on: ubuntu-latest
     # The motor and the sweep take the level 5-6 room boards from pool/ (`--voorraad`);
     # building them took half an hour and over an hour here (PR #28). The full runs are
-    # nightly (nachtrun.yml), and "de voorraad" below proves the store still matches the
-    # engine.
+    # nightly (nachtrun.yml), and "de voorraad" (its own job below) proves the store still
+    # matches the engine.
     timeout-minutes: 40
     strategy:
       fail-fast: false
@@ -83,7 +91,6 @@ jobs:
           - de veegronde
           - de weggevers
           - de redenering
-          - de voorraad
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -96,26 +103,42 @@ jobs:
           node tools/keuring.mjs --alleen "${{ matrix.toets }}" 2>&1 | tee keuring.txt
           grep -q 'volledige keuring exit=0' keuring.txt
 
+  voorraad:
+    name: keuring (de voorraad)
+    needs: wijzigingen
+    if: github.event_name == 'pull_request' && needs.wijzigingen.outputs.voorraad == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Keuring, the store
+        run: |
+          node tools/keuring.mjs --alleen "de voorraad" 2>&1 | tee keuring.txt
+          grep -q 'volledige keuring exit=0' keuring.txt
+
   volledig-oordeel:
-    # One check name that is green only when every heavy check is, or when the pull request
-    # touches only text no check reads (then the matrix is skipped on purpose).
+    # One check name that is green only when every heavy check is, or when a check was
+    # skipped on purpose (text only; nothing the store depends on).
     # The name says 8 although there are more checks now: a repository ruleset requires it.
     name: keuring (all 8 checks)
     if: always() && github.event_name == 'pull_request'
-    needs: [wijzigingen, snel, volledig]
+    needs: [wijzigingen, snel, volledig, voorraad]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Verdict
         run: |
-          echo "wijzigingen: ${{ needs.wijzigingen.result }} (zwaar=${{ needs.wijzigingen.outputs.zwaar }}), snel: ${{ needs.snel.result }}, volledig: ${{ needs.volledig.result }}"
+          echo "wijzigingen: ${{ needs.wijzigingen.result }} (zwaar=${{ needs.wijzigingen.outputs.zwaar }}, voorraad=${{ needs.wijzigingen.outputs.voorraad }}), snel: ${{ needs.snel.result }}, volledig: ${{ needs.volledig.result }}, voorraad: ${{ needs.voorraad.result }}"
           test "${{ needs.wijzigingen.result }}" = success
           test "${{ needs.snel.result }}" = success
-          if [ "${{ needs.wijzigingen.outputs.zwaar }}" = false ]; then
-            test "${{ needs.volledig.result }}" = skipped
-          else
-            test "${{ needs.volledig.result }}" = success
-          fi
+          verwacht() { if [ "$1" = true ]; then test "$2" = success; else test "$2" = skipped; fi; }
+          verwacht "${{ needs.wijzigingen.outputs.zwaar }}" "${{ needs.volledig.result }}"
+          verwacht "${{ needs.wijzigingen.outputs.voorraad }}" "${{ needs.voorraad.result }}"
 
   secrets:
     runs-on: ubuntu-latest
