@@ -320,9 +320,7 @@ export function renderPlayer(puzzle, mount) {
       const hint = puzzle.kind === 'kamer' ? kamerHint(puzzle, state) : nextHint(puzzle, state);
       state.note = hint
         ? { kind: 'ok', text: hint.text }
-        : { kind: 'ok', text: puzzle.kind === 'kamer'
-          ? 'Er valt niets meer bij te zeggen: alles wat waar is, staat er al.'
-          : 'Er valt niets meer bij te zeggen: alles wat waar is, staat er al.' };
+        : { kind: 'ok', text: 'Er valt niets meer bij te zeggen: alles wat waar is, staat er al.' };
       const was = state.solved;
       if (isSolved(puzzle, state)) state.solved = true;
       persist();
