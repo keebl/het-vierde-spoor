@@ -13,7 +13,8 @@ export const SPELREGELS = {
     kop: 'De regels van de Reconstructie',
     regels: [
       'Er staat precies één figuur per rij en precies één per kolom.',
-      'Op een vakje met een meubelstuk staat niemand.',
+      'Op een vakje met een meubelstuk staat niemand, behalve als je erop kunt zitten, liggen, staan of rijden: een stoel, een bed, een kleed, een paard. Op zo\'n stuk past één persoon, op een kleed één per vakje. Wie op een stuk zit, staat er niet naast.',
+      'Een "of" betekent: een van de twee. "Joep stond in de keuken of in de serre" zegt dat hij in een van die twee stond; "Ofwel Joep, ofwel Imke" zegt dat het precies één van hen was.',
       '"Naast" betekent pal erboven, eronder, links of rechts én in dezelfde kamer. Door een muur heen sta je niet naast iets, en schuin telt nooit.',
       'Het noorden ligt boven, zoals het kompas naast het bord aangeeft.',
       'Alle aanwijzingen zijn waar, en er is precies één plaatsing die ze allemaal waarmaakt.',

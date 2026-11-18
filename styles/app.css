@@ -866,27 +866,7 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
   border-left: 2px solid var(--accent);
 }
 
-/* Een lang verhaal staat ingeklapt op drie regels, met Lees verder eronder.
-   Op een telefoon was het tien regels proza voordat je de vraag zag. De
-   knop staat er alleen als er echt iets is weggevallen (zie head()). */
-.intro-dicht {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  overflow: hidden;
-}
-.intro-verder {
-  display: block;
-  margin: calc(var(--s4) * -1) 0 var(--s5);
-  padding: var(--s1) 0 var(--s1) var(--s4);
-  border: 0;
-  background: none;
-  color: var(--accent);
-  font: 600 var(--t-sm)/1.4 var(--sans);
-  cursor: pointer;
-}
-.intro-verder[hidden] { display: none; }
+.regels-onder { margin-top: var(--s4); }
 
 .puzzel-ondertitel {
   margin: calc(var(--s2) * -1) 0 var(--s4);
@@ -989,8 +969,6 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
   .aanwijzingen-kolom > .aanwijzingen-vraag { display: block; }
   .aanwijzingen-kolom > .aanwijzingen-vraag .question { display: none; }
   .aanwijzingen-kolom > .aanwijzingen-vraag .spelregels { margin: 0 0 var(--s3); }
-  /* Op een breed scherm is het verhaal drie of vier regels: niet inklappen. */
-  .play .intro-dicht { display: inline; -webkit-line-clamp: none; line-clamp: none; overflow: visible; }
   .play > .aanwijzingen-kolom {
     grid-column: 2;
     grid-row: 2 / -1;
@@ -1943,8 +1921,6 @@ table.latin td.cell { width: 78px; height: 46px; }
   .aanwijzingen-kolom .legend, .aanwijzingen-kolom .feiten { column-span: all; }
   .aanwijzingen-kolom .clue-groep { margin-bottom: 2mm; }
   .aanwijzingen-kolom .clue-kop { margin: 0; }
-  .intro-dicht { display: block; -webkit-line-clamp: none; line-clamp: none; overflow: visible; }
-  .intro-verder { display: none !important; }
   .aanwijzingen-knop, .aanwijzingen-sluit, .palet-kastje { display: none !important; }
   /* Vel 1: zaak, vraag en bord. Vel 2: de regels en de aanwijzingen. */
   .puzzle-head .spelregels,
@@ -1956,6 +1932,8 @@ table.latin td.cell { width: 78px; height: 46px; }
   .puzzle-head { max-width: none; }
   .puzzle-head h1 { font-size: 16pt; margin-bottom: 4mm; }
   .intro { font-size: 10pt; border-left: 2px solid #000; padding: 2mm 4mm; margin-bottom: 3mm; }
+  /* De regels staan op papier al bij de vraag; de kopie onder het bord niet. */
+  .regels-onder { display: none; }
   /* De kop zo kort als het kan: alles wat hij hoger is, gaat van het bord
      af, en bord en kop moeten samen op het eerste vel. */
   .puzzel-ondertitel { margin: -2mm 0 2mm; }
