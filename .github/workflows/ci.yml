@@ -14,7 +14,34 @@ on:
 permissions:
   contents: read
 
+# A newer push to a pull request cancels the run it replaces; runs on main always finish.
+# Before this, two superseded runs on PR #28 each burned 40 minutes x 7 jobs.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
+  wijzigingen:
+    # Does this pull request touch anything the keuring judges? Only text that no check reads
+    # (docs, specs, design, markdown) skips the heavy matrix. Anything else, a workflow file
+    # included, runs it: a list of what may skip fails safe, a list of what must run does not.
+    name: what changed
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      zwaar: ${{ steps.kijk.outputs.zwaar }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - id: kijk
+        run: |
+          git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" > gewijzigd.txt
+          cat gewijzigd.txt
+          # Not `grep -vq`: on macOS it said "docs only" for a list with src/x.js in it.
+          if [ -n "$(grep -vE '^(docs/|specs/|design/)|\.md$' gewijzigd.txt)" ]; then echo zwaar=true; else echo zwaar=false; fi >> "$GITHUB_OUTPUT"
+
   snel:
     name: keuring (fast, 3 checks)
     runs-on: ubuntu-latest
@@ -37,11 +64,14 @@ jobs:
     # on a laptop and ran past the 45-minute limit on a hosted runner (PR #15, after levels
     # 5 and 6 got slower to build). The three light checks run in `snel` above. Pull requests
     # only, so a push to main is not held up by a second full run of what the PR already ran.
-    if: github.event_name == 'pull_request'
+    needs: wijzigingen
+    if: github.event_name == 'pull_request' && needs.wijzigingen.outputs.zwaar == 'true'
     runs-on: ubuntu-latest
-    # The sweep alone builds every level-5 board on the template builder (120 s budget each):
-    # 29 minutes on a laptop, past 40 on a hosted runner (PR #28). The others stay at 40.
-    timeout-minutes: ${{ matrix.toets == 'de veegronde' && 90 || 40 }}
+    # The motor and the sweep take the level 5-6 room boards from pool/ (`--voorraad`);
+    # building them took half an hour and over an hour here (PR #28). The full runs are
+    # nightly (nachtrun.yml), and "de voorraad" below proves the store still matches the
+    # engine.
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
@@ -53,6 +83,7 @@ jobs:
           - de veegronde
           - de weggevers
           - de redenering
+          - de voorraad
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -66,18 +97,25 @@ jobs:
           grep -q 'volledige keuring exit=0' keuring.txt
 
   volledig-oordeel:
-    # One check name that is green only when every heavy check is.
-    # The name says 8 although there are 9 checks now: a repository ruleset requires it.
+    # One check name that is green only when every heavy check is, or when the pull request
+    # touches only text no check reads (then the matrix is skipped on purpose).
+    # The name says 8 although there are more checks now: a repository ruleset requires it.
     name: keuring (all 8 checks)
     if: always() && github.event_name == 'pull_request'
-    needs: [snel, volledig]
+    needs: [wijzigingen, snel, volledig]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Verdict
         run: |
-          echo "snel: ${{ needs.snel.result }}, volledig: ${{ needs.volledig.result }}"
-          test "${{ needs.snel.result }}" = success && test "${{ needs.volledig.result }}" = success
+          echo "wijzigingen: ${{ needs.wijzigingen.result }} (zwaar=${{ needs.wijzigingen.outputs.zwaar }}), snel: ${{ needs.snel.result }}, volledig: ${{ needs.volledig.result }}"
+          test "${{ needs.wijzigingen.result }}" = success
+          test "${{ needs.snel.result }}" = success
+          if [ "${{ needs.wijzigingen.outputs.zwaar }}" = false ]; then
+            test "${{ needs.volledig.result }}" = skipped
+          else
+            test "${{ needs.volledig.result }}" = success
+          fi
 
   secrets:
     runs-on: ubuntu-latest

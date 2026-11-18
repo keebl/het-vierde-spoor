@@ -1,0 +1,39 @@
+# The full motor and sweep, once a night on main. Pull requests judge the level 5-6 room
+# boards in pool/ (`check.mjs` and `check-regels.mjs` with `--voorraad`), because building
+# them took over an hour on a hosted runner (PR #28). This run builds them all again, so a
+# rule that only breaks on a freshly built board still turns up within a day. A red run shows on the
+# Actions tab and in GitHub's failed-workflow mail.
+name: Nachtrun
+
+on:
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nachtrun
+  cancel-in-progress: true
+
+jobs:
+  vol:
+    name: keuring (${{ matrix.toets.naam }}, every board built)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        toets:
+          - { naam: de motor, script: check.mjs }
+          - { naam: de veegronde, script: check-regels.mjs }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: One check, no pool
+        run: node tools/${{ matrix.toets.script }} 2

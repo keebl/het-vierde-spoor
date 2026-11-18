@@ -6,13 +6,21 @@
 // of elke zin waar is in de oplossing, of "naast" niet door een muur heen
 // gaat, of het antwoord volgt uit de regels in plaats van uit een toeval.
 //
-// Gebruik: node tools/check-regels.mjs [seeds per combinatie]
+// Gebruik: node tools/check-regels.mjs [seeds per combinatie] [--voorraad]
 //
 // Hij keurt twee verzamelingen:
 //   1. de vaste bibliotheek (dat is wat mensen zien)
 //   2. een veegronde over elke combinatie van opdracht, wereld, speltype en
 //      moeilijkheidsgraad, met een paar seeds per combinatie - dus ook de
 //      puzzels die nog niet bestaan maar straks gegenereerd worden.
+//
+// Met --voorraad (de keuring en elke pull request) bouwt hij de borden van
+// de Reconstructie op niveau vijf en zes niet zelf, maar neemt ze uit
+// pool/: dan keurt hij precies wat "Nieuwe puzzel" daar uitdeelt. Zelf
+// bouwen kostte sinds fase B (120 s per bord op niveau vijf) een uur op een
+// hosted runner (PR #28). Dat de voorraad echt uit de motor komt, bewaakt
+// check-voorraad.mjs; de volle ronde zonder --voorraad draait elke nacht
+// (.github/workflows/nachtrun.yml).
 
 import { CATALOG, catalogSettings } from '../src/content/catalog.js';
 import { WORLDS } from '../src/content/worlds.js';
@@ -33,8 +41,21 @@ import {
 } from '../src/content/kamersoorten.js';
 import { redeneer } from '../src/engine/redeneer.js';
 import { oplossingInStappen } from '../src/content/redeneer-text.js';
+import { VOORRAAD_NIVEAUS } from '../src/content/voorraad.js';
 
-const seedsPerCombinatie = Number(process.argv[2] ?? 2);
+const VOORRAAD = process.argv.includes('--voorraad');
+const seedsPerCombinatie = Number(process.argv.slice(2).find((a) => !a.startsWith('--')) ?? 2);
+
+// De voorraad per niveau: { id: bord als data }. Alleen met --voorraad.
+const voorraad = new Map();
+if (VOORRAAD) {
+  for (const n of VOORRAAD_NIVEAUS) {
+    const bestand = JSON.parse(readFileSync(new URL(`../pool/niveau-${n}.json`, import.meta.url), 'utf8'));
+    for (const [id, data] of Object.entries(bestand.borden)) voorraad.set(id, data);
+  }
+}
+// Een bord van de Reconstructie dat met --voorraad uit pool/ moet komen.
+const uitVoorraad = (s) => VOORRAAD && s.mechaniek === 'kamer' && VOORRAAD_NIVEAUS.includes(Number(s.niveau));
 
 const fouten = [];
 let gekeurd = 0;
@@ -599,8 +620,13 @@ function keurBelofte(p, entry, waar) {
 
 function keur(settings, waar, entry = null) {
   let p;
+  let gen = null;
+  if (uitVoorraad(settings)) {
+    gen = voorraad.get(puzzleId(settings));
+    if (!eis('een bord van niveau vijf of zes staat in de voorraad', !!gen, waar, puzzleId(settings))) return;
+  }
   try {
-    p = buildPuzzle(settings);
+    p = buildPuzzle(settings, { gen });
   } catch (e) {
     fouten.push(`${waar}\n      regel: een puzzel moet te bouwen zijn\n      ${e.message}`);
     return;
@@ -614,7 +640,7 @@ function keur(settings, waar, entry = null) {
 
   // Dezelfde instellingen moeten dezelfde puzzel geven, anders is een link
   // naar een puzzel niets waard.
-  const nogmaals = buildPuzzle(settings);
+  const nogmaals = buildPuzzle(settings, { gen });
   eis('dezelfde instellingen geven dezelfde puzzel',
     JSON.stringify(nogmaals.clues) === JSON.stringify(p.clues)
     && nogmaals.question.answer === p.question.answer, waar);
@@ -784,6 +810,8 @@ for (const a of ASSIGNMENTS) {
     if (!a.mechanics.includes(m.id)) continue;
     for (const w of WORLDS) {
       for (const niveau of [1, 2, 3, 4, 5]) {
+        // Met --voorraad komen deze borden hieronder uit pool/.
+        if (uitVoorraad({ mechaniek: m.id, niveau })) continue;
         combinaties++;
         for (let s = 0; s < seedsPerCombinatie; s++) {
           keur({ opdracht: a.id, wereld: w.id, mechaniek: m.id, niveau, seed: `regel-${s}` },
@@ -806,15 +834,25 @@ for (const a of ASSIGNMENTS) {
     }
   }
 }
-for (const w of WORLDS) {
-  const a = ASSIGNMENTS.find((x) => x.mechanics.includes('kamer'));
-  combinaties++;
-  keur({ opdracht: a.id, wereld: w.id, mechaniek: 'kamer', niveau: 6, seed: 'regel-xl' },
-    `  ${a.id}/${w.id}/kamer/n6/seed regel-xl`);
+if (VOORRAAD) {
+  // Elk bord dat "Nieuwe puzzel" op niveau vijf en zes kan uitdelen.
+  for (const id of voorraad.keys()) {
+    combinaties++;
+    keur(parsePuzzleId(id), `  voorraad ${id}`);
+  }
+  console.log(`  ${combinaties} combinaties, ${seedsPerCombinatie} seeds elk;`);
+  console.log(`  de Reconstructie op niveau vijf en zes: de ${voorraad.size} borden uit pool/`);
+} else {
+  for (const w of WORLDS) {
+    const a = ASSIGNMENTS.find((x) => x.mechanics.includes('kamer'));
+    combinaties++;
+    keur({ opdracht: a.id, wereld: w.id, mechaniek: 'kamer', niveau: 6, seed: 'regel-xl' },
+      `  ${a.id}/${w.id}/kamer/n6/seed regel-xl`);
+  }
+  console.log(`  ${combinaties} combinaties, ${seedsPerCombinatie} seeds elk`);
+  console.log('  (niveau zes bij de Reconstructie: een seed per wereld, want');
+  console.log('   zestien bij zestien kost zeven tot elf seconden per stuk)');
 }
-console.log(`  ${combinaties} combinaties, ${seedsPerCombinatie} seeds elk`);
-console.log('  (niveau zes bij de Reconstructie: een seed per wereld, want');
-console.log('   zestien bij zestien kost zeven tot elf seconden per stuk)');
 
 console.log(`\n${regelsGeraakt.size} regels nagerekend over ${gekeurd} puzzels:`);
 for (const [naam, aantal] of [...regelsGeraakt].sort()) {

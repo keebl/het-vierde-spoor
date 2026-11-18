@@ -4,10 +4,20 @@
 //   - het antwoord op de vraag volgt uit die oplossing
 //   - elke aanwijzing levert een leesbare Nederlandse zin op
 //   - de redeneerdiepte past bij het gekozen niveau
+//
+// Gebruik: node tools/check.mjs [seeds] [--voorraad]
+// Met --voorraad (de keuring en elke pull request) bouwt hij de borden van
+// de Reconstructie op niveau vijf en zes niet zelf, maar keurt hij de borden
+// uit pool/ - wat "Nieuwe puzzel" daar uitdeelt. Zelf bouwen kostte op een
+// hosted runner een half uur (PR #28); de volle ronde draait elke nacht
+// (.github/workflows/nachtrun.yml) en check-voorraad.mjs bewaakt dat de
+// voorraad uit de motor komt.
 
 import { WORLDS } from '../src/content/worlds.js';
 import { ASSIGNMENTS } from '../src/content/assignments.js';
-import { buildPuzzle } from '../src/puzzle.js';
+import { readFileSync } from 'node:fs';
+import { buildPuzzle, parsePuzzleId } from '../src/puzzle.js';
+import { VOORRAAD_NIVEAUS } from '../src/content/voorraad.js';
 import { countSolutions } from '../src/engine/assign.js';
 import { countLatinSolutions } from '../src/engine/latin.js';
 import { telPlaatsingen } from '../src/engine/rooms.js';
@@ -15,28 +25,49 @@ import { extraAanwijzing } from '../src/engine/generate-rooms.js';
 import { makeRng } from '../src/engine/rng.js';
 import { LEVEL_IDS, levelParams } from '../src/engine/difficulty.js';
 
-const combos = [];
+const VOORRAAD = process.argv.includes('--voorraad');
+const seeds = Number(process.argv.slice(2).find((a) => !a.startsWith('--')) ?? 2);
+const uitVoorraad = (m, l) => VOORRAAD && m === 'kamer' && VOORRAAD_NIVEAUS.includes(Number(l));
+
+// Wat er gekeurd wordt: instellingen, een label en (uit pool/) het bord.
+const taken = [];
 for (const a of ASSIGNMENTS) {
   for (const m of a.mechanics ?? []) {
-    for (const w of WORLDS) for (const l of LEVEL_IDS) combos.push({ a: a.id, m, w: w.id, l });
+    for (const w of WORLDS) {
+      for (const l of LEVEL_IDS) {
+        if (uitVoorraad(m, l)) continue;
+        for (let s = 0; s < seeds; s++) {
+          taken.push({
+            settings: { opdracht: a.id, wereld: w.id, mechaniek: m, niveau: l, seed: `keur-${s}` },
+            label: `${a.id}/${m}/${w.id}/n${l}/s${s}`,
+          });
+        }
+      }
+    }
+  }
+}
+if (VOORRAAD) {
+  for (const n of VOORRAAD_NIVEAUS) {
+    const bestand = JSON.parse(readFileSync(new URL(`../pool/niveau-${n}.json`, import.meta.url), 'utf8'));
+    for (const [id, gen] of Object.entries(bestand.borden)) {
+      taken.push({ settings: parsePuzzleId(id), label: `voorraad ${id}`, gen });
+    }
   }
 }
 
-const seeds = Number(process.argv[2] ?? 2);
 let built = 0, fails = 0, depthMiss = 0, slowest = 0, slowCase = '';
 const perLevel = {};
 const clueCounts = [];
 const depthTally = {};
 const t0 = Date.now();
 
-for (const { a, m, w, l } of combos) {
-  for (let s = 0; s < seeds; s++) {
-    const settings = { opdracht: a, wereld: w, mechaniek: m, niveau: l, seed: `keur-${s}` };
-    const label = `${a}/${m}/${w}/n${l}/s${s}`;
+for (const { settings, label, gen = null } of taken) {
+  const l = settings.niveau;
+  {
     const t1 = Date.now();
     let p;
     try {
-      p = buildPuzzle(settings);
+      p = buildPuzzle(settings, { gen });
     } catch (e) {
       console.log(`FOUT  ${label}: ${e.message}`);
       fails++;

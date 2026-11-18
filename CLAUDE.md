@@ -10,8 +10,10 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - Run with secrets (AI texts on; Guus's own Terminal only, Claude never runs it):
   `~/.claude/bin/secrets-run -- npm start` — values come from Bitwarden via the `bws:`
   references in `.env.example`
-- Test (all): `npm run check:all` — the keuring, 11 checks, about twelve minutes on an
-  idle laptop (the sweep alone is six), longer on a busy one
+- Test (all): `npm run check:all` — the keuring, 12 checks. The motor and the sweep judge
+  the level 5–6 room boards from `pool/` (`--voorraad`, about three and four minutes);
+  `npm run check` and `npm run check:regels` without the flag build every board (about 13
+  and 29 minutes) and run nightly in `.github/workflows/nachtrun.yml`
 - Test (one file): `npm run check:kamers` (also `check:regels`, `check:iconen`,
   `check:catalog`, `check:aanwijzingen`, `check:spreiding`, `check:weggevers`,
   `check:ai`, `check:redeneer`, `check:sync`, `check`). `check:sync` checks the optional
