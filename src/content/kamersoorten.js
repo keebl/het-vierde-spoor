@@ -406,6 +406,7 @@ export const VOORZETSEL_VAN = {
   // lijst plekken is toen nagelopen op hetzelfde soort woord.
   'het schoolplein': 'op',
   'de regenachtige binnenplaats': 'op',
+  'de kinderboerderij': 'op',
   'de dienstbodentrap': 'op',
   'het besneeuwde terras': 'op',
   'het dakterras': 'op',

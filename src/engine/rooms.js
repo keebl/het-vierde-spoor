@@ -277,6 +277,11 @@ const KLEEDMATEN = [[2, 3], [3, 2], [2, 2], [1, 3], [3, 1], [1, 2], [2, 1]];
 function zoekKleed(rooster, k, bezet, rng) {
   const { n, kamerVan, vrij } = rooster;
   const kan = (i) => kamerVan[i] === k && vrij[i] && !bezet[i];
+  // Een kleed laat minstens twee vrije vakjes in de kamer over: anders past
+  // de kamernaam nergens meer (een kamer van 2x2 die helemaal kleed was,
+  // stond zonder naam op het bord, 2026-11-18).
+  let los = 0;
+  for (let i = 0; i < n * n; i++) if (kan(i)) los++;
   for (const [h, b] of rng.shuffle(KLEEDMATEN.slice(0, 3)).concat(rng.shuffle(KLEEDMATEN.slice(3)))) {
     const starts = [];
     for (let r = 0; r + h <= n; r++) {
@@ -286,7 +291,7 @@ function zoekKleed(rooster, k, bezet, rng) {
         if (ok) starts.push([r, c]);
       }
     }
-    if (!starts.length) continue;
+    if (!starts.length || los - h * b < 2) continue;
     const [r, c] = rng.pick(starts);
     const cellen = [];
     for (let dr = 0; dr < h; dr++) for (let dc = 0; dc < b; dc++) cellen.push(idx(n, r + dr, c + dc));
