@@ -9,6 +9,12 @@ day the changelog was introduced; everything before that is in git history only.
 
 ## [Unreleased]
 
+### Changed
+- Room-board clue list: a clue about two people now appears once, under the name the
+  sentence starts with; a name with no line of its own says where it is mentioned. The
+  victim shows only its name, without the explanation. The phone box still lists the clue
+  under both names.
+
 ### Added
 - A Reconstructie board now explains its solution: after Oplossing, or after you solve it
   yourself, "Zo los je hem op" lists numbered steps in Dutch, each ending with who stood
