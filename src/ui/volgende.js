@@ -18,6 +18,7 @@ import { ZICHTBARE_LEVEL_IDS } from '../engine/difficulty.js';
 import { puzzleId, wereldVoorSeed } from '../puzzle.js';
 import { randomSeed } from '../engine/rng.js';
 import { solvedIds } from './state.js';
+import { VOORRAAD } from '../content/voorraad.js';
 
 // Alleen de Reconstructies. Zie ZICHTBARE_MECHANICS in assignments.js.
 export const TEZIEN = CATALOG.filter((p) => mechaniekZichtbaar(p.mechaniek) && ZICHTBARE_LEVEL_IDS.includes(p.niveau));
@@ -29,7 +30,20 @@ const VOLGORDE = [...TEZIEN].sort((a, b) => a.niveau - b.niveau || a.titel.local
 // Elke druk op de knop een ander decor. Welke dat wordt volgt uit de seed
 // en niet uit een tweede loting - zo geeft dezelfde link altijd dezelfde
 // puzzel terug. Zie wereldVoorSeed in puzzle.js.
-export function nieuwePuzzel(niveau) {
+export function nieuwePuzzel(niveau, opgelost = null) {
+  // Op de trage niveaus eerst uit de voorraad in de repo (tools/pool.mjs):
+  // die borden liggen klaar. Een die je al hebt opgelost niet nog eens.
+  const voorraad = VOORRAAD[niveau] ?? 0;
+  if (voorraad) {
+    const gedaan = opgelost ?? solvedIds();
+    const open = [];
+    for (let i = 0; i < voorraad; i++) {
+      const s = `voorraad-${i}`;
+      const id = puzzleId({ opdracht: 'dader', wereld: wereldVoorSeed(s), mechaniek: 'kamer', niveau, seed: s });
+      if (!gedaan.has(id)) open.push(id);
+    }
+    if (open.length) return open[Math.floor(Math.random() * open.length)];
+  }
   const seed = randomSeed();
   return puzzleId({
     opdracht: 'dader',
@@ -46,7 +60,7 @@ export function volgendeZaak(puzzle, opgelost = solvedIds()) {
   const niveau = Number(puzzle.niveau ?? puzzle.settings?.niveau) || ZICHTBARE_LEVEL_IDS[0];
   const ids = VOLGORDE.map((e) => puzzleId(catalogSettings(e)));
   const hier = ids.indexOf(puzzle.id);
-  if (hier < 0) return nieuwePuzzel(niveau);
+  if (hier < 0) return nieuwePuzzel(niveau, opgelost);
 
   const open = (i) => i !== hier && !opgelost.has(ids[i]);
   // Eerst wat na deze komt binnen hetzelfde niveau, dan wat ervoor lag:
@@ -62,5 +76,5 @@ export function volgendeZaak(puzzle, opgelost = solvedIds()) {
   const hoger = VOLGORDE.findIndex((e, i) => e.niveau > niveau && open(i));
   if (hoger >= 0) return ids[hoger];
 
-  return nieuwePuzzel(niveau);
+  return nieuwePuzzel(niveau, opgelost);
 }

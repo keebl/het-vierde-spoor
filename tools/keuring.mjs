@@ -25,6 +25,7 @@ const TOETSEN = [
   ['de kamers', 'check-kamers.mjs', []],
   ['de redenering', 'check-redeneer.mjs', []],
   ['de sync', 'check-sync.mjs', []],
+  ['de voorraad', 'check-voorraad.mjs', []],
 ];
 
 // `--snel` slaat de zeven toetsen over die puzzels bouwen; die kosten samen
@@ -46,7 +47,7 @@ if (ALLEEN && !TOETSEN.some(([naam]) => naam === ALLEEN)) {
   console.log('volledige keuring exit=1');
   process.exit(1);
 }
-const ZWAAR = new Set(['de motor', 'de bibliotheek', 'de aanwijzingen', 'de spreiding', 'de veegronde', 'de weggevers', 'de redenering']);
+const ZWAAR = new Set(['de motor', 'de bibliotheek', 'de aanwijzingen', 'de spreiding', 'de veegronde', 'de weggevers', 'de redenering', 'de voorraad']);
 
 const uitslag = [];
 

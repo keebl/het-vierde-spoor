@@ -19,6 +19,8 @@
     "check:regels": "node tools/check-regels.mjs",
     "check:redeneer": "node tools/check-redeneer.mjs",
     "check:sync": "node tools/check-sync.mjs",
+    "check:voorraad": "node tools/check-voorraad.mjs",
+    "pool": "node tools/pool.mjs",
     "ai:vooraf": "node tools/ai-vooraf.mjs",
     "ai:online": "node tools/ai-online.mjs"
   },
