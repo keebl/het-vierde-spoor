@@ -473,6 +473,7 @@ function buildKamerPuzzle({ world, settings }) {
     // het bord
     n: gen.rooster.n,
     kamerVan: gen.rooster.kamerVan,
+    ramen: gen.rooster.ramen ?? [],
     kamerNamen,
     meubelOp: gen.rooster.meubelOp,
     meubelNamen,

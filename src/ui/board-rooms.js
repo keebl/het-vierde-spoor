@@ -495,6 +495,27 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
     buiten.append(el('path', { d, class: 'buitenmuur-voet' }));
     buiten.append(el('path', { d, class: 'buitenmuur-top' }));
   }
+  // Ramen in de buitenmuur (engine-extension stap 6): een licht vlak met
+  // een kozijn en een middenstijl, in de muur zelf, zodat "voor een raam"
+  // op het bord te zien is.
+  for (const { cel, kant } of puzzle.ramen ?? []) {
+    const r = rij(cel);
+    const c = kol(cel);
+    const lang = CEL * 0.56;
+    const dik = 9;
+    const hor = kant === 'n' || kant === 'z';
+    const mx = kant === 'w' ? x(0) : kant === 'o' ? x(n) : x(c) + CEL / 2;
+    const my = kant === 'n' ? y(0) : kant === 'z' ? y(n) : y(r) + CEL / 2;
+    const b = hor ? lang : dik;
+    const h = hor ? dik : lang;
+    const g = el('g', { class: 'raam' });
+    g.append(el('rect', { x: mx - b / 2, y: my - h / 2, width: b, height: h, rx: 1.5, class: 'raamglas' }));
+    g.append(el('path', {
+      d: hor ? `M ${mx} ${my - h / 2} V ${my + h / 2}` : `M ${mx - b / 2} ${my} H ${mx + b / 2}`,
+      class: 'raamstijl',
+    }));
+    buiten.append(g);
+  }
   svg.append(buiten);
 
   // Rij- en kolomaanduiding, plus een kompas: de aanwijzingen spreken over

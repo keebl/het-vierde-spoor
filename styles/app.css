@@ -3283,3 +3283,7 @@ a.accountknop-letter[aria-current="page"] { outline: 2px solid var(--accent); ou
 @media print {
   .accountknop, .bevestig { display: none !important; }
 }
+
+/* Een raam in de buitenmuur (engine-extension stap 6). */
+.raamglas { fill: #cfeaf7; stroke: #6b4a2b; stroke-width: 2; }
+.raamstijl { stroke: #6b4a2b; stroke-width: 1.6; }
