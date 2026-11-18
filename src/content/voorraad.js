@@ -1,5 +1,5 @@
 // Geschreven door tools/pool.mjs: welke voorraad-seeds er per niveau in
-// pool/niveau-N.json liggen. Zie ook VOORRAAD_NIVEAUS.
+// pool/niveau-N.json liggen (alleen die hun sjabloon halen).
 
 export const VOORRAAD_NIVEAUS = [5,6];
-export const VOORRAAD = {"5":40,"6":40};
+export const VOORRAAD = {"5":["voorraad-0","voorraad-1","voorraad-2","voorraad-3","voorraad-4","voorraad-5","voorraad-6","voorraad-7","voorraad-8","voorraad-9","voorraad-10","voorraad-11","voorraad-12","voorraad-14","voorraad-15","voorraad-16","voorraad-17","voorraad-18","voorraad-19","voorraad-20","voorraad-21","voorraad-22","voorraad-23","voorraad-24","voorraad-25","voorraad-26","voorraad-27","voorraad-28","voorraad-29","voorraad-30","voorraad-31","voorraad-32","voorraad-34","voorraad-35","voorraad-36","voorraad-37","voorraad-38","voorraad-40","voorraad-41","voorraad-42"],"6":["voorraad-0","voorraad-1","voorraad-2","voorraad-3","voorraad-4","voorraad-5","voorraad-6","voorraad-7","voorraad-8","voorraad-9","voorraad-10","voorraad-11","voorraad-12","voorraad-13","voorraad-14","voorraad-15","voorraad-16","voorraad-17","voorraad-18","voorraad-19","voorraad-20","voorraad-21","voorraad-22","voorraad-23","voorraad-24","voorraad-25","voorraad-26","voorraad-27","voorraad-28","voorraad-29","voorraad-30","voorraad-31","voorraad-32","voorraad-33","voorraad-34","voorraad-35","voorraad-36","voorraad-37","voorraad-38","voorraad-39"]};
