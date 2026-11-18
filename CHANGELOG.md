@@ -15,25 +15,6 @@ day the changelog was introduced; everything before that is in git history only.
   exactly as before.
 - `privacy.html`: what the site stores when you sign in. Sign-in itself (Google, optional,
   progress on all your devices) is built but switched off until go-live.
-
-### Changed
-- Front page: click a level once to choose it and once more to start a puzzle. The "Begin
-  nieuwe puzzel" and "Of kies er een uit de lijst" buttons are gone (the list stays under
-  "Alle puzzels" in the menu).
-- "Hoe je dit bord bedient" is no longer one long paragraph: a short heading per mode with
-  the key words in bold.
-
-- Every Reconstructie board is new (engine-extension phase B, one shift): rooms are named
-  while the board is built, and levels 1–5 give each suspect exactly one clue of their
-  own, mostly about something on the board, plus at most a third as many clues about two
-  people or everyone; level 5 boards are denser (about 40 % of the squares closed).
-  The victim's name is in no clue and not in the clue list. Half-played boards restart.
-- The opening story is shown in full, without "Lees verder"; the rules also stand under
-  the board; "Volgende puzzel" is the last button and blue.
-- From level 4 a board is built in the background with an estimate, a progress bar and a
-  cancel button, and the next puzzle is built ahead while you play.
-
-### Added
 - People can sit on chairs, benches and stools, lie in beds and hammocks, stand on rugs
   and mats, and ride horses, ponies, donkeys, carousel horses, bicycles and bumper cars.
   The piece is drawn under the token; a rug covers two to six squares. Rideable animals
@@ -70,6 +51,21 @@ day the changelog was introduced; everything before that is in git history only.
   sketch letter or a cross. Up to 30 steps per puzzle, kept when you reload.
 
 ### Changed
+- Front page: click a level once to choose it and once more to start a puzzle. The "Begin
+  nieuwe puzzel" and "Of kies er een uit de lijst" buttons are gone (the list stays under
+  "Alle puzzels" in the menu).
+- "Hoe je dit bord bedient" is no longer one long paragraph: a short heading per mode with
+  the key words in bold.
+
+- Every Reconstructie board is new (engine-extension phase B, one shift): rooms are named
+  while the board is built, and levels 1–5 give each suspect exactly one clue of their
+  own, mostly about something on the board, plus at most a third as many clues about two
+  people or everyone; level 5 boards are denser (about 40 % of the squares closed).
+  The victim's name is in no clue and not in the clue list. Half-played boards restart.
+- The opening story is shown in full, without "Lees verder"; the rules also stand under
+  the board; "Volgende puzzel" is the last button and blue.
+- From level 4 a board is built in the background with an estimate, a progress bar and a
+  cancel button, and the next puzzle is built ahead while you play.
 - On a phone, the name pills, the clue box under them and the mode buttons line up on one
   grid: equal heights, the same border and the same edges left and right. "Iedereen" is no
   longer italic.
