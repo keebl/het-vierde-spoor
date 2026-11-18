@@ -3,6 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Wat deze pagina mag laden en waarheen hij mag praten (ADR-0006). Scripts
+     alleen van de site zelf: de sessie van een ingelogde speler staat in
+     localStorage, en geen script van buiten mag daarbij. Verbindingen
+     alleen met de site en met de database van de accounts (src/sync/config.js).
+     Krijgt de AI-laag ooit een WORKER_URL (src/ai/endpoint.js), dan moet die
+     hier bij connect-src. style-src heeft 'unsafe-inline' voor de
+     style-attributen die de borden zetten (genreStijl, --bordmax). -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://kteiwsvhynuktjarhksm.supabase.co; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>Reconstructie</title>
 <meta name="description" content="Deductiepuzzels die je uitredeneert: zet de verdachten op de plattegrond, één per rij en één per kolom, tot er één antwoord overblijft. Elke keer een nieuwe zaak in een ander decor.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
