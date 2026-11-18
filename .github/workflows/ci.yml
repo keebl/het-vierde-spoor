@@ -39,7 +39,9 @@ jobs:
     # only, so a push to main is not held up by a second full run of what the PR already ran.
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    # The sweep alone builds every level-5 board on the template builder (120 s budget each):
+    # 29 minutes on a laptop, past 40 on a hosted runner (PR #28). The others stay at 40.
+    timeout-minutes: ${{ matrix.toets == 'de veegronde' && 90 || 40 }}
     strategy:
       fail-fast: false
       matrix:
