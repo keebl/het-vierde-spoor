@@ -642,7 +642,7 @@ function scenePalet() {
   if (defs) return defs;
 
   const houder = maak('svg', { class: 'sc-palet', 'aria-hidden': 'true', focusable: 'false' });
-  houder.setAttribute('style', 'position:absolute;width:0;height:0;overflow:hidden');
+  houder.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden'; // CSSOM: de CSP weigert een style-attribuut
   defs = maak('defs', { class: 'sc-defs' });
 
   for (const naam of VERLOPEN) {

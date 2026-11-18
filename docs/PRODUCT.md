@@ -15,8 +15,8 @@ elegant.
 ## Users
 - **The owner's daughter** — the primary user. Plays on a phone and on a laptop, at home,
   for fun. Knows the format from the book; needs no explanation of the genre.
-- **Anyone who finds the public link** — secondary. Gets the same site; no account, no
-  onboarding beyond the Uitleg page.
+- **Anyone who finds the public link** — secondary. Gets the same site; no account needed,
+  no onboarding beyond the Uitleg page.
 
 ## Why now
 She finished the book and asked for more, and there is no second volume to buy (assumption:
@@ -37,16 +37,20 @@ her an endless supply; the longer the wait, the more likely she moves on to some
 - A library of seventy-four fixed cases, reachable at `#/puzzels`.
 - Every puzzle has its own URL, so it can be bookmarked or shared.
 - Light and dark mode, following the device by default.
+- Optional sign-in with Google, so solved puzzles, path stars and three preferences follow
+  the player to her other devices.
 
 ## Non-goals (what it deliberately does not do)
-- **No accounts and no cross-device progress.** Progress lives in `localStorage`, per
-  browser. (assumption: this stays true; it is a deliberate simplification, not a backlog
-  item)
+- **No mandatory accounts.** Signing in with Google is optional and only carries your game
+  to your other devices. Without an account, progress lives in `localStorage`, per browser.
+  (changed 2026-11-18 with `specs/accounts-and-sync.md`; was "no accounts and no
+  cross-device progress")
 - **No choosing the setting.** You choose how hard; the decor you get. Removing that choice
   was a deliberate decision — it removed the feeling that you must configure something
   before you may start.
 - **No server for gameplay.** Everything is computed in the visitor's browser; that is why
-  no API key needs to exist online.
+  no API key needs to exist online. The one server is a small database (Supabase, EU) that
+  keeps a signed-in player's progress; when it is unreachable, playing is unaffected.
 - **No monetisation, no ads, no tracking.**
 - **The AI never supplies logic.** Claude may rewrite story text; every rewritten clue must
   keep its proper names, negation, numbers and either/or, or the original sentence stands.
@@ -65,10 +69,14 @@ Web only — any modern browser, phone and desktop. Static hosting on GitHub Pag
 UI: yes
 
 ## Data, privacy and money
-- Personal data: **none**. No accounts, no analytics, no server-side storage. Only
+- Personal data: none without an account. With an account: the Google e-mail address and
+  an internal id (Supabase Auth), and the player's progress (solved and revealed
+  puzzles, path stars, three preferences), to show it on all her devices. Deleted with
+  "Account verwijderen". No analytics, no tracking. Without an account only
   `localStorage` keys under `vierdespoor.*` for progress, preferences and theme — on the
   visitor's own device.
-- Accounts: no.
+- Accounts: optional, Google sign-in only (`docs/decisions/0006-optional-accounts-with-supabase.md`).
+  Hidden in production until the shared database closes its other apps to strangers.
 - Monetisation: none. Not a trader under the DSA.
 
 ## Open product questions

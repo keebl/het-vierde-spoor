@@ -9,9 +9,16 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-18, evening: `specs/accounts-and-sync.md` steps 1–6 built on branch
+  `claude/frosty-raman-a0da51` (PR open, not merged, not live; sign-in switched off with
+  `AAN = false` in `src/sync/config.js`). Schema `reconstructie` applied to `claudeDB`
+  (Guus: "Ja, toepassen"), RLS tests 30/30, advisors clean. Found: a clearhead trigger seeds
+  `public.areas` for every new login, so account deletion keeps the login; recorded as a
+  go-live blocker in `docs/accounts-go-live.md`. The level path must call
+  `meldWijziging('pad', k)` when it saves a stop (not built yet). Privacy contact
+  `privacy@reconstructie.app` (Cloudflare Email Routing still to set up).
 - 2026-11-18: personal-assistant session "clearhead-members" started (prerequisite for
-  sign-in: clearhead tables behind a members list); build session for accounts-and-sync
-  running (steps 1–6, sign-in off).
+  sign-in: clearhead tables behind a members list).
 - 2026-11-18, late: `specs/accounts-and-sync.md` approved with its UX sections and sketch
   (`design/prototype/accounts-and-sync/`), PR #25, docs only, not built. Optional Google
   sign-in via Supabase in the shared project `claudeDB` (schema `reconstructie`); syncs
@@ -102,9 +109,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   giveaways 71s, library 33s, the other three a tenth of a second each.
 
 ## Next
-- Build `specs/accounts-and-sync.md` (steps 1–6 with sign-in switched off); go-live (step 7)
-  waits for clearhead's members table in `~/Claude/Projects/personal-assistant` and for
-  Guus's Google OAuth client.
+- Accounts go-live (step 7 of `specs/accounts-and-sync.md`), checklist in
+  `docs/accounts-go-live.md`: waits for clearhead's members table (and no seeding for
+  non-members) in `~/Claude/Projects/personal-assistant`, Guus's Google OAuth client, the
+  Supabase dashboard settings and Email Routing for `privacy@reconstructie.app`.
 - **Props and "either" clues, approved 2026-11-17** (`specs/props-and-either-clues.md`): people sit on chairs, lie in beds, stand on rugs (several cells)
   and ride horses or bumper cars, drawn under their token; new clue kinds `op`, `enigeOp`,
   `kamerOf` ("in de keuken of in de serre"), `typeOf`, `en`, `ofwelPersoon`, `wieOp`.

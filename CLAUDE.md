@@ -10,18 +10,19 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - Run with secrets (AI texts on; Guus's own Terminal only, Claude never runs it):
   `~/.claude/bin/secrets-run -- npm start` — values come from Bitwarden via the `bws:`
   references in `.env.example`
-- Test (all): `npm run check:all` — the keuring, 10 checks, about twelve minutes on an
+- Test (all): `npm run check:all` — the keuring, 11 checks, about twelve minutes on an
   idle laptop (the sweep alone is six), longer on a busy one
 - Test (one file): `npm run check:kamers` (also `check:regels`, `check:iconen`,
   `check:catalog`, `check:aanwijzingen`, `check:spreiding`, `check:weggevers`,
-  `check:ai`, `check:redeneer`, `check`). `check:spreiding` checks the room-board clue rules of
+  `check:ai`, `check:redeneer`, `check:sync`, `check`). `check:sync` checks the optional
+  account sync (`specs/accounts-and-sync.md`) with a fake database, no network, ~0.1 s. `check:spreiding` checks the room-board clue rules of
   `specs/harder-clues.md` (no row/column clues, caps per name and per kind, no
   2-cell clue from level 3) over the library and a seed sample, about a minute. `check:redeneer` runs the human
   solver (`src/engine/redeneer.js`) over the same sample: no wrong strike, every full
   solve proven unique by `telPlaatsingen`, and board fingerprints equal to
   `tools/vingerafdruk-kamers.txt` (rewrite with `--schrijf` only when boards shift on
   purpose), about a minute and a half
-- Test (fast): `npm run check:snel` — the 3 checks that build no puzzles, ~1 second
+- Test (fast): `npm run check:snel` — the 4 checks that build no puzzles, ~1 second
 - Typecheck: none (plain ES modules, no TypeScript)
 - Lint / format: none configured
 - Static check in place of typecheck/lint: `npm run check:snel` — the content lint

@@ -16,6 +16,9 @@ const el = (tag, attrs = {}, kids = []) => {
   for (const [k, v] of Object.entries(attrs)) {
     if (k === 'class') node.className = v;
     else if (k === 'text') node.textContent = v;
+    // Via het stijlobject, niet als attribuut: de Content-Security-Policy
+    // (index.html) staat geen inline style-attributen toe, wel CSSOM.
+    else if (k === 'style') { if (v) node.style.cssText = v; }
     else if (v !== null && v !== undefined) node.setAttribute(k, v);
   }
   for (const kid of [].concat(kids)) if (kid) node.append(kid);

@@ -9,6 +9,10 @@ day the changelog was introduced; everything before that is in git history only.
 
 ## [Unreleased]
 
+### Added
+- `privacy.html`: what the site stores when you sign in. Sign-in itself (Google, optional,
+  progress on all your devices) is built but switched off until go-live.
+
 ### Changed
 - Front page: click a level once to choose it and once more to start a puzzle. The "Begin
   nieuwe puzzel" and "Of kies er een uit de lijst" buttons are gone (the list stays under

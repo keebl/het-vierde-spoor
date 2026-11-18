@@ -1,6 +1,12 @@
 // Voortgang per puzzel in de browser. Bewust klein: alleen wat de speler
 // heeft aangekruist en welke aanwijzingen hij heeft weggestreept.
 // Dit mag stilletjes mislukken (privemodus, geblokkeerde opslag).
+//
+// Wat mee mag naar andere apparaten (opgelost, onthuld, drie voorkeuren)
+// meldt zich bij meldWijziging. Meer weet dit bestand niet van accounts:
+// zonder login onthoudt die alleen wanneer een voorkeur gekozen is.
+
+import { meldWijziging } from '../sync/melding.js';
 
 const KEY = 'vierdespoor.v1';
 
@@ -27,6 +33,9 @@ export function loadProgress(id) {
 }
 
 export function saveProgress(id, data) {
+  // Een half bord blijft op dit apparaat; alleen een afgeronde puzzel is
+  // nieuws voor de andere (Guus: "Alleen afgerond mee").
+  if (data?.solved || data?.onthuld) meldWijziging('puzzel', id);
   const all = readAll();
   all[id] = data;
   // Niet onbeperkt laten groeien.
@@ -117,6 +126,7 @@ export function zetNiveau(n) {
   } catch {
     /* geen opslag: dan geldt de keuze alleen deze sessie */
   }
+  meldWijziging('voorkeur', 'niveau');
 }
 
 // Welke panelen open staan. De legenda en de aanwijzingen zitten achter een
@@ -135,6 +145,7 @@ export function zetPaneel(naam, open) {
   } catch {
     /* geen opslag: dan geldt de keuze alleen deze sessie */
   }
+  meldWijziging('voorkeur', 'panelen');
 }
 
 // Zet het bord de kruisjes zelf? Zodra iemand neergezet is, kan er in die
@@ -153,6 +164,7 @@ export function zetKruisjesVanzelf(aan) {
   } catch {
     /* geen opslag: dan geldt de keuze alleen deze sessie */
   }
+  meldWijziging('voorkeur', 'kruisjes');
 }
 
 // Alle puzzels waar in deze browser iets van bewaard is: aangeraakt,
