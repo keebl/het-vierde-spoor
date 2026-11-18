@@ -71,21 +71,30 @@ export async function synchroniseer(backend, opslag = globalThis.localStorage) {
   const meta = leesMeta(opslag);
   const alles = meta.alles === true;
   const open = meta.open ?? {};
-  // Wat we nu versturen. Wat er tijdens het wachten bij komt, blijft open
-  // staan voor de volgende ronde.
+  // Wat we nu versturen, met het volgnummer van dat moment. Wat er tijdens
+  // het wachten bij komt of opnieuw verandert, blijft open staan voor de
+  // volgende ronde.
+  const stand = (x) => (x && typeof x === 'object' && !Array.isArray(x) ? { ...x } : {});
   const verstuurd = {
-    puzzels: new Set(open.puzzels ?? []),
-    pad: new Set(open.pad ?? []),
-    voorkeuren: new Set(open.voorkeuren ?? []),
+    puzzels: stand(open.puzzels),
+    pad: stand(open.pad),
+    voorkeuren: stand(open.voorkeuren),
   };
 
   // ------------------------------------------------------------ versturen
-  const pRijen = puzzelRijen(lees(opslag, SLEUTELS.puzzels), alles ? null : verstuurd.puzzels);
-  for (let i = 0; i < pRijen.length; i += STUK) await backend.bewaarPuzzels(pRijen.slice(i, i + STUK));
-  const padR = padRijen(lees(opslag, SLEUTELS.pad), alles ? null : verstuurd.pad);
+  const pRijen = puzzelRijen(lees(opslag, SLEUTELS.puzzels), alles ? null : Object.keys(verstuurd.puzzels));
+  try {
+    for (let i = 0; i < pRijen.length; i += STUK) await backend.bewaarPuzzels(pRijen.slice(i, i + STUK));
+  } catch (fout) {
+    // Vol (2.000 puzzels, 23514): daar komt niets meer bij, hoe vaak we het
+    // ook proberen. Dan niet blijven hangen: wel ophalen, en deze puzzels
+    // niet meer als open bewaren. Elke andere fout gaat naar de aanroeper.
+    if (fout?.code !== '23514') throw fout;
+  }
+  const padR = padRijen(lees(opslag, SLEUTELS.pad), alles ? null : Object.keys(verstuurd.pad));
   if (padR.length) await backend.bewaarPad(padR);
   const tijden = leesMeta(opslag).tijden ?? {};
-  const vWaarden = voorkeurWaarden(lees(opslag, SLEUTELS.voorkeuren), tijden, alles ? VOORKEUREN : [...verstuurd.voorkeuren]);
+  const vWaarden = voorkeurWaarden(lees(opslag, SLEUTELS.voorkeuren), tijden, alles ? VOORKEUREN : Object.keys(verstuurd.voorkeuren));
   if (Object.keys(vWaarden).length) await backend.bewaarVoorkeuren(vWaarden);
 
   // -------------------------------------------------------------- ophalen
@@ -118,8 +127,8 @@ export async function synchroniseer(backend, opslag = globalThis.localStorage) {
 
   const nogOpen = {};
   for (const [lijst, gedaan] of Object.entries(verstuurd)) {
-    const rest = (m.open?.[lijst] ?? []).filter((x) => !gedaan.has(x));
-    if (rest.length) nogOpen[lijst] = rest;
+    const rest = Object.entries(stand(m.open?.[lijst])).filter(([k, n]) => gedaan[k] !== n);
+    if (rest.length) nogOpen[lijst] = Object.fromEntries(rest);
   }
   schrijfMeta({
     ...m,

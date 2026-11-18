@@ -20,6 +20,21 @@ from this repo.
   the merge rules), `verwijder_mijn_account()` (security definer, acts only on `auth.uid()`;
   deletes the login only when no table outside `auth` and `reconstructie` references it).
 
+## Applied
+- 2026-11-18: `20261118200000_reconstructie_sync.sql` applied to `claudeDB` (Guus: "Ja,
+  toepassen"); `tests/reconstructie_rls.sql` 30/30; security advisors: nothing for
+  `reconstructie` (one existing Auth warning, leaked-password protection, belongs to the
+  shared project).
+
+## Found while testing: clearhead seeds every new login
+A trigger in clearhead fills `public.areas` for every new row in `auth.users`. So every
+login, including one made by signing in to Reconstructie, has rows in clearhead from the
+start, and `verwijder_mijn_account()` therefore keeps the login and deletes only the
+Reconstructie rows (safe, but the "delete the login too" branch never fires in this
+project). The RLS test removes test user A's seeded rows to exercise that branch. It also
+means a stranger signing in through Reconstructie gets clearhead rows: one more reason for
+Prerequisite 1, which should also stop seeding for non-members.
+
 ## Dashboard settings (the connector cannot set these)
 - Integrations → Data API → **Exposed schemas**: add `reconstructie` (keep `public` and
   `crossroads`).

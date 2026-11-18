@@ -276,7 +276,7 @@ console.log('\n-- rondes met een nep-database');
   try { await synchroniseer(db, a); } catch { gegooid = true; }
   toets('criterium 10: een mislukte ronde meldt zich bij de aanroeper', gegooid);
   toets('criterium 10: de lokale voortgang is onveranderd', gelijk(a.lees('vierdespoor.v1'), v1));
-  toets('criterium 10: X staat nog open', (leesMeta(a).open?.puzzels ?? []).includes('X'));
+  toets('criterium 10: X staat nog open', 'X' in (leesMeta(a).open?.puzzels ?? {}));
   db.stuk = false;
   await synchroniseer(db, a);
   toets('criterium 10: de volgende ronde verstuurt X', db.puzzels.get('X')?.opgelost === true);
@@ -291,8 +291,31 @@ console.log('\n-- rondes met een nep-database');
   inloggen(a);
   let gegooid = false;
   try { await synchroniseer(db, a); } catch { gegooid = true; }
-  toets('criterium 16: meer dan 2.000 puzzels wordt geweigerd', gegooid && !db.puzzels.has('extra'));
-  toets('criterium 16: de lokale voortgang is onveranderd', gelijk(a.lees('vierdespoor.v1'), v1));
+  toets('criterium 16: meer dan 2.000 puzzels wordt geweigerd', !db.puzzels.has('extra'));
+  toets('criterium 16: de lokale voortgang blijft staan', a.lees('vierdespoor.v1').extra?.solved === true && gelijk(a.lees('vierdespoor.v1').extra.plaats, v1.extra.plaats));
+  toets('een vol account blokkeert het ophalen niet', !gegooid && a.lees('vierdespoor.v1').vol0?.solved === true);
+}
+
+// Verandert iets opnieuw terwijl een ronde onderweg is, dan blijft het open.
+{
+  const db = nieuweDatabase();
+  const a = nieuweOpslag({ 'vierdespoor.v1': {} });
+  inloggen(a);
+  await synchroniseer(db, a);
+  a.setItem('vierdespoor.v1', JSON.stringify({ P: bord({ solved: true, onthuld: true }) }));
+  meldWijziging('puzzel', 'P', a);
+  const tussendoor = {
+    ...db,
+    async bewaarPuzzels(rijen) {
+      await db.bewaarPuzzels(rijen);
+      // Tijdens het wachten: nu zelf opgelost.
+      meldWijziging('puzzel', 'P', a);
+    },
+  };
+  await synchroniseer(tussendoor, a);
+  toets('een wijziging tijdens een ronde blijft open voor de volgende', 'P' in (leesMeta(a).open?.puzzels ?? {}));
+  await synchroniseer(db, a);
+  toets('de ronde daarna sluit hem', !('P' in (leesMeta(a).open?.puzzels ?? {})));
 }
 
 // Zonder sessie onthoudt een melding alleen de tijd van een voorkeur.

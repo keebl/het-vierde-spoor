@@ -16,11 +16,29 @@ declare
   n int;
   x boolean;
   t timestamptz;
+  r record;
 
 begin
   insert into auth.users (instance_id, id, aud, role, email)
   values ('00000000-0000-0000-0000-000000000000', a, 'authenticated', 'authenticated', 'rls-proef-a@example.invalid'),
          ('00000000-0000-0000-0000-000000000000', b, 'authenticated', 'authenticated', 'rls-proef-b@example.invalid');
+
+  -- clearhead seeds rows for every new login (a trigger on auth.users fills public.areas,
+  -- found 2026-11-18). Remove test user A's seeded rows everywhere outside auth and
+  -- reconstructie, so A really has no data elsewhere; B keeps them and gets a scratch row.
+  -- In production this means the login is in practice never deleted (it always has
+  -- clearhead rows); only the Reconstructie rows are.
+  for r in
+    select con.conrelid::regclass as tabel, att.attname as kolom
+    from pg_catalog.pg_constraint con
+    join pg_catalog.pg_class c on c.oid = con.conrelid
+    join pg_catalog.pg_namespace ns on ns.oid = c.relnamespace
+    join pg_catalog.pg_attribute att on att.attrelid = con.conrelid and att.attnum = con.conkey[1]
+    where con.contype = 'f' and con.confrelid = 'auth.users'::regclass
+      and array_length(con.conkey, 1) = 1 and ns.nspname not in ('auth', 'reconstructie')
+  loop
+    execute format('delete from %s where %I = $1', r.tabel, r.kolom) using a;
+  end loop;
 
   -- A scratch table elsewhere in the project that references B's login (criterion 12).
   create schema reconstructie_proef;
@@ -82,6 +100,11 @@ begin
     perform reconstructie.bewaar_voorkeuren('{"panelen":{"waarde":{"legenda":"ja"},"tijd":"2026-11-19T10:00:00Z"}}');
     uitslag := uitslag || text 'FOUT criterium 16: paneel met tekst werd aangenomen'; fouten := fouten + 1;
   exception when others then uitslag := uitslag || text 'ok   criterium 16: paneel met tekst geweigerd'::text;
+  end;
+  begin
+    perform reconstructie.bewaar_voorkeuren('{"niveau":{"waarde":5}}');
+    uitslag := uitslag || text 'FOUT criterium 16: een voorkeur zonder tijd werd aangenomen'; fouten := fouten + 1;
+  exception when others then uitslag := uitslag || text 'ok   criterium 16: een voorkeur zonder tijd geweigerd';
   end;
   begin
     perform reconstructie.bewaar_puzzels(jsonb_build_array(jsonb_build_object('puzzel_id', repeat('x', 201), 'opgelost', true, 'onthuld', false)));

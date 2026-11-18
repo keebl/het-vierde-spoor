@@ -166,11 +166,17 @@ $$;
 -- server's own time, so one wrong clock cannot pin a preference forever.
 create function reconstructie.schone_tijd(tijd text)
 returns timestamptz
-language sql
+language plpgsql
 stable
 set search_path = ''
 as $$
-  select case when tijd::timestamptz > now() + interval '1 day' then now() else tijd::timestamptz end
+begin
+  -- Without a time a value could never lose again ("newest wins" would break).
+  if tijd is null then
+    raise exception 'reconstructie: every preference needs a time' using errcode = '22023';
+  end if;
+  return case when tijd::timestamptz > now() + interval '1 day' then now() else tijd::timestamptz end;
+end;
 $$;
 
 -- Merge: per preference the newest value wins. waarden is
@@ -212,6 +218,9 @@ begin
   end if;
 
   if waarden ? 'panelen' then
+    if jsonb_typeof(waarden -> 'panelen' -> 'waarde') is distinct from 'object' then
+      raise exception 'reconstructie: panelen must be an object' using errcode = '22023';
+    end if;
     t := reconstructie.schone_tijd(waarden -> 'panelen' ->> 'tijd');
     update reconstructie.voorkeuren
       set panelen = waarden -> 'panelen' -> 'waarde', panelen_tijd = t, bijgewerkt = now()
@@ -223,7 +232,8 @@ $$;
 -- "Account verwijderen": every Reconstructie row of the caller, then the login itself only
 -- when no other table in the project still references it. The other tables are found
 -- through pg_constraint, so a table clearhead or crossroads adds later is covered without
--- editing this function. security definer because a user cannot delete from auth.users;
+-- editing this function. Accepted limit: a table that stores a user id without a foreign
+-- key to auth.users is not seen (none exists in claudeDB on 2026-11-18). security definer because a user cannot delete from auth.users;
 -- it acts on auth.uid() only and takes no arguments. Returns true when the login was
 -- deleted too.
 create function reconstructie.verwijder_mijn_account()
@@ -241,6 +251,11 @@ begin
     raise exception 'reconstructie: not signed in' using errcode = '42501';
   end if;
 
+  -- Lock the login first. An insert elsewhere that references it takes a key-share lock on
+  -- this row, so between the check below and the delete no other app can add a row that
+  -- the cascade would then remove.
+  perform 1 from auth.users where id = uid for update;
+
   delete from reconstructie.puzzels where user_id = uid;
   delete from reconstructie.pad where user_id = uid;
   delete from reconstructie.voorkeuren where user_id = uid;
@@ -256,6 +271,11 @@ begin
       and array_length(con.conkey, 1) = 1
       and n.nspname not in ('auth', 'reconstructie')
   loop
+    -- The checks only see every row when the owner bypasses RLS. If it ever does not
+    -- (applied by another role), keep the login rather than guess.
+    if not (select rolbypassrls from pg_catalog.pg_roles where rolname = current_user) then
+      return false;
+    end if;
     execute format('select exists (select 1 from %s where %I = $1)', r.tabel, r.kolom)
       into gevonden using uid;
     if gevonden then

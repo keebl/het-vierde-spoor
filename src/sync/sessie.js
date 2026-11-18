@@ -83,10 +83,13 @@ function backendVan(sb) {
   };
   // PostgREST geeft hooguit 1.000 rijen per verzoek; een account heeft er
   // tot 2.000.
-  const alles = async (tabel, kolommen, sinds) => {
+  const alles = async (tabel, sleutel, kolommen, sinds) => {
     const rijen = [];
     for (let van = 0; ; van += 1000) {
-      let q = sb.from(tabel).select(kolommen).order('bijgewerkt').range(van, van + 999);
+      // Een hele partij krijgt dezelfde bijgewerkt (now() is de tijd van de
+      // transactie); zonder tweede sorteersleutel kan een pagina dan rijen
+      // overslaan of dubbel geven.
+      let q = sb.from(tabel).select(kolommen).order('bijgewerkt').order(sleutel).range(van, van + 999);
       if (sinds) q = q.gt('bijgewerkt', sinds);
       const { data, error } = await q;
       if (error) throw error;
@@ -98,8 +101,8 @@ function backendVan(sb) {
     bewaarPuzzels: (rijen) => rpc('bewaar_puzzels', { rijen }),
     bewaarPad: (rijen) => rpc('bewaar_pad', { rijen }),
     bewaarVoorkeuren: (waarden) => rpc('bewaar_voorkeuren', { waarden }),
-    haalPuzzels: (sinds) => alles('puzzels', 'puzzel_id,opgelost,onthuld,versie,bijgewerkt', sinds),
-    haalPad: (sinds) => alles('pad', 'stap,sterren,opgelost,versie,bijgewerkt', sinds),
+    haalPuzzels: (sinds) => alles('puzzels', 'puzzel_id', 'puzzel_id,opgelost,onthuld,versie,bijgewerkt', sinds),
+    haalPad: (sinds) => alles('pad', 'stap', 'stap,sterren,opgelost,versie,bijgewerkt', sinds),
     async haalVoorkeuren() {
       const { data, error } = await sb.from('voorkeuren')
         .select('niveau,niveau_tijd,kruisjes,kruisjes_tijd,panelen,panelen_tijd,versie').maybeSingle();
@@ -128,10 +131,15 @@ export async function synchroniseerNu() {
     zetStatus('bezig');
     try {
       const sb = await client();
-      const { data } = await sb.auth.getSession();
+      const { data, error } = await sb.auth.getSession();
       if (!data?.session) {
-        // De sessie was er wel, maar verversen lukte niet meer (ingetrokken
-        // in Family Link, op een ander apparaat verwijderd): uitgelogd.
+        // Offline met een verlopen toegangsbewijs geeft ook geen sessie,
+        // maar dan bestaat hij nog: wachten, en niets vergeten van wat er
+        // nog verstuurd moet worden.
+        if (error && !isSessieFout(error)) { zetStatus('mislukt'); return; }
+        // Verversen werd echt geweigerd (ingetrokken in Family Link, op een
+        // ander apparaat verwijderd): uitgelogd.
+        try { localStorage.removeItem(SESSIE); } catch { /* geen opslag */ }
         vergeetSync();
         zetStatus('verlopen');
         return;
@@ -224,7 +232,14 @@ export async function verwijderAccount() {
 export function komtVanInloggen() {
   if (!accountAan()) return false;
   const q = new URLSearchParams(location.search);
-  return q.has('code') || q.has('error');
+  if (!q.has('code') && !q.has('error')) return false;
+  // Alleen als dit apparaat zelf een inlog begon (supabase-js bewaart dan
+  // een PKCE-verifier). Een gedeelde link met ?code= erin laadt zo niets.
+  try {
+    return !!localStorage.getItem(`${SESSIE}-code-verifier`);
+  } catch {
+    return false;
+  }
 }
 
 function schoonAdres() {
@@ -241,8 +256,12 @@ export async function start() {
       zetStatus('inlogfout');
     } else {
       try {
-        const sb = await client();
-        const { error } = await sb.auth.exchangeCodeForSession(code);
+        // De pagina wacht hierop; hangt het netwerk, dan na acht seconden
+        // toch verder, met "Inloggen is niet gelukt".
+        const { error } = await Promise.race([
+          client().then((sb) => sb.auth.exchangeCodeForSession(code)),
+          new Promise((_, nee) => setTimeout(() => nee(Object.assign(new Error('time-out'), { name: 'TimeoutError' })), 8000)),
+        ]);
         if (error) throw error;
         // Eerste ronde op dit apparaat: alles versturen en alles ophalen,
         // zodat wat hier al stond en wat in het account stond samengaan

@@ -50,12 +50,15 @@ export function meldWijziging(soort, sleutel, opslag = globalThis.localStorage) 
       m.tijden = { ...(m.tijden ?? {}), [sleutel]: new Date().toISOString() };
     }
     if (heeftSessie(opslag)) {
+      // Per sleutel een volgnummer, geen vlag: verandert iets opnieuw terwijl
+      // een ronde onderweg is, dan ziet sync.js een ander nummer dan het
+      // verstuurde en laat het open voor de volgende ronde.
       const open = m.open ?? {};
       const lijst = { puzzel: 'puzzels', pad: 'pad', voorkeur: 'voorkeuren' }[soort];
       if (lijst) {
-        const set = new Set(open[lijst] ?? []);
-        set.add(String(sleutel));
-        open[lijst] = [...set];
+        m.teller = (Number.isInteger(m.teller) ? m.teller : 0) + 1;
+        const oud = open[lijst] && typeof open[lijst] === 'object' && !Array.isArray(open[lijst]) ? open[lijst] : {};
+        open[lijst] = { ...oud, [String(sleutel)]: m.teller };
         m.open = open;
       }
     }

@@ -4,9 +4,10 @@
 // toestemmingsscherm ernaar linkt. Verander je hier iets, verander het daar
 // ook.
 
-// Waar je met vragen terechtkunt. Leeg tot Guus een adres heeft gekozen;
-// dan zegt de tekst alleen dat je de maker kunt vragen.
-export const CONTACT = '';
+// Waar je met vragen terechtkunt (Guus, 2026-11-18). Het adres stuurt via
+// Cloudflare Email Routing door; dat moet ingesteld zijn voordat inloggen
+// aangaat (docs/accounts-go-live.md). Leeg = alleen "vraag het de maker".
+export const CONTACT = 'privacy@reconstructie.app';
 
 export const PRIVACY = [
   ['Zonder account:', 'niets. Je voortgang staat alleen in deze browser.'],
