@@ -1,0 +1,209 @@
+<!doctype html>
+<!--
+  Low-fidelity prototype — Reconstructie, level path (specs/level-path.md).
+  Plain HTML and CSS, no network requests. Example progress: at stop 14 with 31 stars.
+-->
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype — Reconstructie, het pad</title>
+<style>
+  :root { --ink: #222; --muted: #666; --line: #bbb; --fill: #e6e6e6; --bg: #fafafa; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.5 system-ui, -apple-system, sans-serif; color: var(--ink); background: var(--bg); }
+  .screen { display: none; max-width: 720px; margin: 0 auto; padding: 16px; min-height: 100vh; }
+  .screen:target, .screen.start:not(:has(~ .screen:target)) { display: block; }
+  .tag { font-size: 12px; color: var(--muted); border-bottom: 1px dashed var(--line); margin-bottom: 16px; padding-bottom: 4px; }
+  h1 { font-size: 22px; margin: 8px 0 12px; } h2 { font-size: 18px; margin: 16px 0 4px; }
+  p { margin: 0 0 12px; }
+  .img { background: var(--fill); border: 1px solid var(--line); display: grid; place-items: center; color: var(--muted); font-size: 14px; margin: 12px 0; text-align: center; padding: 8px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 14px; border: 2px solid var(--ink); color: var(--ink); text-decoration: none; min-height: 44px; background: #fff; }
+  .btn.primary { background: var(--ink); color: #fff; }
+  .btn.groot { font-size: 18px; padding: 14px 20px; width: 100%; }
+  .note { border: 1px solid var(--line); padding: 8px 12px; margin: 12px 0; background: #fff; }
+  .sub { color: var(--muted); font-size: 14px; }
+  nav.menu { display: flex; gap: 16px; font-size: 14px; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 12px; }
+  nav.menu a { color: var(--ink); }
+  .niveaus { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .niveaus a { border: 1px solid var(--line); background: #fff; min-height: 72px; display: grid; place-items: center; color: var(--ink); text-decoration: none; font-size: 14px; text-align: center; }
+  ol.pad { list-style: none; padding: 0; margin: 16px auto; max-width: 340px; }
+  ol.pad li { display: flex; flex-direction: column; align-items: center; width: 96px; margin: 2px 0; }
+  ol.pad li.l { margin-left: 0; } ol.pad li.m { margin-left: calc(50% - 48px); } ol.pad li.r { margin-left: calc(100% - 96px); }
+  ol.pad li a { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--ink); background: #fff; display: grid; place-items: center; color: var(--ink); text-decoration: none; position: relative; }
+  ol.pad li.gedaan a { background: var(--fill); }
+  ol.pad li.slot a { border-style: dashed; color: var(--muted); }
+  ol.pad li.hier a { width: 72px; height: 72px; background: var(--ink); color: #fff; font-size: 20px; }
+  ol.pad .lock { position: absolute; bottom: -6px; right: -6px; font-size: 14px; }
+  ol.pad small { font-size: 13px; color: var(--muted); letter-spacing: 1px; }
+  ol.pad li.bord-bord { width: 100%; margin: 12px 0; }
+  ol.pad li.bord-bord span { border: 1px solid var(--ink); padding: 2px 10px; font-size: 13px; background: #fff; }
+  .sterren { font-size: 40px; letter-spacing: 6px; text-align: center; margin: 4px 0; }
+  .blad { border: 2px solid var(--ink); background: #fff; padding: 16px; max-width: 420px; margin: 12px auto; text-align: center; }
+  ul.map { padding-left: 20px; } ul.map li { margin: 6px 0; }
+  :focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<section class="screen start" id="map" aria-labelledby="map-title">
+  <div class="tag">Map of flows</div>
+  <h1 id="map-title">Het pad — prototype</h1>
+  <p>Grey on purpose: this shows what is where and what it says, not the look. The real path gets the level colours and drawn stops.</p>
+  <ul class="map">
+    <li><a href="#voorpagina">1. Walk the path: front page → path → stop → solved</a></li>
+    <li><a href="#opgelost-oplossing">1b. Unhappy: the stop finished with Oplossing</a></li>
+    <li><a href="#slot">2. Open a locked stop (old or shared link)</a></li>
+    <li><a href="#eind">3. End of the path</a></li>
+    <li><a href="#pad-leeg">4. Path before any progress</a></li>
+  </ul>
+</section>
+
+<section class="screen" id="voorpagina" aria-labelledby="vp-title">
+  <div class="tag">Front page · <a href="#map">map</a></div>
+  <nav class="menu" aria-label="Menu"><a href="#pad">Het pad</a><a href="#map">Alle puzzels</a><a href="#map">Uitleg</a></nav>
+  <p class="sub">Deductiepuzzels</p>
+  <h1 id="vp-title">Puzzels die je uitredeneert</h1>
+  <p>Je krijgt een paar verdachten en een lijstje aanwijzingen. Streep weg wat niet kan, en er blijft één antwoord over.</p>
+  <a class="btn primary groot" href="#stap">Verder op het pad · stap 14</a>
+  <p class="sub">Elke stap een tikje zwaarder, van 5 bij 5 tot 16 bij 16. <a href="#pad">Bekijk het pad</a></p>
+  <h2>Of kies zelf hoe zwaar</h2>
+  <p class="sub">Kies een niveau en klik er nog eens op om te beginnen.</p>
+  <div class="niveaus">
+    <a href="#map">1 · Beginner</a><a href="#map">2 · Makkelijk</a><a href="#map">3 · Gemiddeld</a>
+    <a href="#map">4 · Lastig</a><a href="#map">5 · Meesterlijk</a><a href="#map">6 · Monsterlijk</a>
+  </div>
+</section>
+
+<section class="screen" id="pad" aria-labelledby="pad-title">
+  <div class="tag">Path · <a href="#map">map</a></div>
+  <nav class="menu" aria-label="Menu"><a href="#voorpagina">Voorpagina</a><a href="#pad">Het pad</a><a href="#map">Alle puzzels</a></nav>
+  <h1 id="pad-title">Het pad</h1>
+  <p>Stap 14 van 100 · 31 sterren</p>
+  <a class="btn primary" href="#stap">Speel stap 14</a>
+  <ol class="pad" aria-label="Stappen 1 tot 36">
+<li class="bord-bord"><span>Nu 5 bij 5</span></li>
+<li class="stop m gedaan"><a href="#stap" aria-label="Stap 1, 3 sterren, opnieuw spelen"><b>1</b></a><small aria-hidden="true">★★★</small></li>
+<li class="stop r gedaan"><a href="#stap" aria-label="Stap 2, 3 sterren, opnieuw spelen"><b>2</b></a><small aria-hidden="true">★★★</small></li>
+<li class="stop m gedaan"><a href="#stap" aria-label="Stap 3, 3 sterren, opnieuw spelen"><b>3</b></a><small aria-hidden="true">★★★</small></li>
+<li class="stop l gedaan"><a href="#stap" aria-label="Stap 4, 2 sterren, opnieuw spelen"><b>4</b></a><small aria-hidden="true">★★☆</small></li>
+<li class="stop m gedaan"><a href="#stap" aria-label="Stap 5, 1 sterren, opnieuw spelen"><b>5</b></a><small aria-hidden="true">★☆☆</small></li>
+<li class="stop r gedaan"><a href="#stap" aria-label="Stap 6, 3 sterren, opnieuw spelen"><b>6</b></a><small aria-hidden="true">★★★</small></li>
+<li class="stop m gedaan"><a href="#stap" aria-label="Stap 7, 3 sterren, opnieuw spelen"><b>7</b></a><small aria-hidden="true">★★★</small></li>
+<li class="stop l gedaan"><a href="#stap" aria-label="Stap 8, 2 sterren, opnieuw spelen"><b>8</b></a><small aria-hidden="true">★★☆</small></li>
+<li class="stop m gedaan"><a href="#stap" aria-label="Stap 9, 3 sterren, opnieuw spelen"><b>9</b></a><small aria-hidden="true">★★★</small></li>
+<li class="bord-bord"><span>Nu 6 bij 6</span></li>
+<li class="stop r gedaan"><a href="#stap" aria-label="Stap 10, 3 sterren, opnieuw spelen"><b>10</b></a><small aria-hidden="true">★★★</small></li>
+<li class="stop m gedaan"><a href="#stap" aria-label="Stap 11, 3 sterren, opnieuw spelen"><b>11</b></a><small aria-hidden="true">★★★</small></li>
+<li class="stop l gedaan"><a href="#stap" aria-label="Stap 12, 2 sterren, opnieuw spelen"><b>12</b></a><small aria-hidden="true">★★☆</small></li>
+<li class="stop m gedaan"><a href="#stap" aria-label="Stap 13, 3 sterren, opnieuw spelen"><b>13</b></a><small aria-hidden="true">★★★</small></li>
+<li class="stop r hier"><a href="#stap" aria-label="Stap 14, hier ben je"><b>14</b></a><small>Hier ben je</small></li>
+<li class="stop m slot"><a href="#slot" aria-label="Stap 15, op slot"><b>15</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop l slot"><a href="#slot" aria-label="Stap 16, op slot"><b>16</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop m slot"><a href="#slot" aria-label="Stap 17, op slot"><b>17</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop r slot"><a href="#slot" aria-label="Stap 18, op slot"><b>18</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="bord-bord"><span>Nu 7 bij 7</span></li>
+<li class="stop m slot"><a href="#slot" aria-label="Stap 19, op slot"><b>19</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop l slot"><a href="#slot" aria-label="Stap 20, op slot"><b>20</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop m slot"><a href="#slot" aria-label="Stap 21, op slot"><b>21</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop r slot"><a href="#slot" aria-label="Stap 22, op slot"><b>22</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop m slot"><a href="#slot" aria-label="Stap 23, op slot"><b>23</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop l slot"><a href="#slot" aria-label="Stap 24, op slot"><b>24</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop m slot"><a href="#slot" aria-label="Stap 25, op slot"><b>25</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop r slot"><a href="#slot" aria-label="Stap 26, op slot"><b>26</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop m slot"><a href="#slot" aria-label="Stap 27, op slot"><b>27</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="bord-bord"><span>Nu 8 bij 8</span></li>
+<li class="stop l slot"><a href="#slot" aria-label="Stap 28, op slot"><b>28</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop m slot"><a href="#slot" aria-label="Stap 29, op slot"><b>29</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop r slot"><a href="#slot" aria-label="Stap 30, op slot"><b>30</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop m slot"><a href="#slot" aria-label="Stap 31, op slot"><b>31</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop l slot"><a href="#slot" aria-label="Stap 32, op slot"><b>32</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop m slot"><a href="#slot" aria-label="Stap 33, op slot"><b>33</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop r slot"><a href="#slot" aria-label="Stap 34, op slot"><b>34</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop m slot"><a href="#slot" aria-label="Stap 35, op slot"><b>35</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+<li class="stop l slot"><a href="#slot" aria-label="Stap 36, op slot"><b>36</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+  </ol>
+  <p class="sub" style="text-align:center">… en verder tot stap 100, 16 bij 16.</p>
+  <div class="note" id="geen-opslag">Je voortgang wordt in deze browser niet bewaard. <span class="sub">(only when storage is blocked)</span></div>
+</section>
+
+<section class="screen" id="pad-leeg" aria-labelledby="leeg-title">
+  <div class="tag">Path, no progress yet · <a href="#map">map</a></div>
+  <h1 id="leeg-title">Het pad</h1>
+  <p>Honderd stappen, van 5 bij 5 tot 16 bij 16. Elke stap een tikje zwaarder. Los een stap op en de volgende gaat open.</p>
+  <a class="btn primary" href="#stap">Begin het pad</a>
+  <ol class="pad"><li class="bord-bord"><span>Nu 5 bij 5</span></li>
+    <li class="stop m hier"><a href="#stap" aria-label="Stap 1, hier begin je"><b>1</b></a><small>Hier begin je</small></li>
+    <li class="stop r slot"><a href="#slot" aria-label="Stap 2, op slot"><b>2</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+    <li class="stop m slot"><a href="#slot" aria-label="Stap 3, op slot"><b>3</b><span class="lock" aria-hidden="true">🔒</span></a></li>
+  </ol>
+</section>
+
+<section class="screen" id="stap" aria-labelledby="stap-title">
+  <div class="tag">Path stop (puzzle) · <a href="#map">map</a></div>
+  <p class="sub"><a href="#pad">Het pad</a> · stap 14 van 100 · 6 bij 6</p>
+  <h1 id="stap-title">Het Landhuis: Wie is de dader?</h1>
+  <div class="img" style="aspect-ratio:1;max-width:360px">Het bord, 6 bij 6, zoals nu</div>
+  <div class="bar"><a class="btn" href="#map">Controleer</a><a class="btn" href="#map">Hint</a><a class="btn" href="#opgelost-oplossing">Oplossing</a></div>
+  <p class="sub">Aanwijzingen per naam, zoals nu.</p>
+  <a class="btn primary" href="#opgelost">(sketch only) Zet de laatste figuur neer → opgelost</a>
+</section>
+
+<section class="screen" id="opgelost" aria-labelledby="ok-title">
+  <div class="tag">Path stop solved · <a href="#map">map</a></div>
+  <div class="blad">
+    <p class="sub">ZAAK GESLOTEN</p>
+    <div class="sterren" aria-label="2 van 3 sterren">★★☆</div>
+    <p><b>2 sterren</b> — met één hulpje.</p>
+    <div class="img" style="width:120px;height:120px;margin:12px auto;border-radius:50%">Portret van Aylin</div>
+    <h1 id="ok-title">Aylin</h1>
+    <p>Het klopt: Aylin was de enige bij Nadir. Aylin heeft het gedaan.</p>
+    <div class="bar" style="justify-content:center">
+      <a class="btn primary" href="#pad-na">Volgende stap</a>
+      <a class="btn" href="#stap">Bekijk het bord</a>
+      <a class="btn" href="#pad-na">Naar het pad</a>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="pad-na" aria-labelledby="na-title">
+  <div class="tag">Path, after solving stop 14 · <a href="#map">map</a></div>
+  <h1 id="na-title">Het pad</h1>
+  <p>Stap 15 van 100 · 33 sterren</p>
+  <p class="note">Stap 14: ★★☆. Stap 15 is open.</p>
+  <a class="btn primary" href="#stap">Speel stap 15</a>
+</section>
+
+<section class="screen" id="opgelost-oplossing" aria-labelledby="oo-title">
+  <div class="tag">Path stop finished with Oplossing · <a href="#map">map</a></div>
+  <div class="blad">
+    <p class="sub">OPLOSSING BEKEKEN</p>
+    <h1 id="oo-title">Aylin</h1>
+    <p>Deze stap telt nog niet: je liet de oplossing invullen. Probeer hem opnieuw om stap 15 te openen.</p>
+    <div class="bar" style="justify-content:center">
+      <a class="btn primary" href="#stap">Opnieuw proberen</a>
+      <a class="btn" href="#stap">Bekijk het bord</a>
+      <a class="btn" href="#pad">Naar het pad</a>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="slot" aria-labelledby="slot-title">
+  <div class="tag">Locked stop (link to stap 30) · <a href="#map">map</a></div>
+  <h1 id="slot-title">Stap 30 is nog op slot</h1>
+  <p>Je bent bij stap 14. Los de stappen ervoor op en hij gaat vanzelf open.</p>
+  <a class="btn primary" href="#stap">Naar stap 14</a>
+  <a class="btn" href="#pad">Bekijk het pad</a>
+</section>
+
+<section class="screen" id="eind" aria-labelledby="eind-title">
+  <div class="tag">End of the path · <a href="#map">map</a></div>
+  <h1 id="eind-title">Je bent aan het eind van het pad</h1>
+  <p>Honderd stappen, van 5 bij 5 tot 16 bij 16. 247 van de 300 sterren.</p>
+  <a class="btn primary" href="#map">Speel Monsterlijk</a>
+  <p class="sub">Of speel een stap opnieuw voor meer sterren: <a href="#pad">naar het pad</a>.</p>
+</section>
+
+</body>
+</html>

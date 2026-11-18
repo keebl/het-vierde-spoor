@@ -114,9 +114,8 @@ with stars below it. The section where the size changes gets a small drawn sign 
 No reference image yet: the sketch round will settle it.
 
 ## Flow and sketch (UI features)
-To do: `/functional-design --feature level-path`, a grey clickable sketch in
-`design/prototype/level-path/` with the path page, the front-page button and the closing
-sheet on a path stop. Guus walks it before approval.
+Flows and screens: `docs/UX.md` (parts marked "level path"). Sketch:
+`design/prototype/level-path/index.html`. Walkthrough: pending (2026-11-18).
 
 ## Performance budget (when it matters)
 - The path page draws in under 300 ms on a laptop, without building any puzzle.
