@@ -9,6 +9,15 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-18: merged and live — #20 (`af2131b`) clue list: a two-person clue once, under
+  the first name, a name without a line points to where it is mentioned, the victim shows
+  only its header (Guus's Rietveld report; his "two solutions" was one, checked by hand);
+  #21 (`f1625ad`) engine-extension phase A: human solver with trace, cross-check over the
+  keuring sample, Dutch numbered solution after "Oplossing" or a self-solve, on its own
+  page in print, baseline in the spec; no board changed. Still open: a print PDF with
+  `tools/printproef.mjs` in the owner's terminal. Proposed, not started: renaming the repo
+  to `reconstructie` and the worker to `reconstructie-ai` (card in the main session).
+  Next: engine-extension phase B with `specs/props-and-either-clues.md`.
 - 2026-11-18: engine-extension **phase A built** on branch `claude/awesome-lovelace-8e3f0b`
   (pull request open, not merged, not live): human solver `src/engine/redeneer.js`, Dutch
   steps `src/content/redeneer-text.js`, the numbered solution under the board and on its
@@ -256,6 +265,9 @@ standing guidance rather than state moved to `CLAUDE.md`.
   steps in Next, item 6 (until 2026-11-28)
 
 ## Workbench feedback
+- 2026-11-18 — Relayed side-session questions reached Guus as "type 'goedgekeurd' or a letter
+  per question"; he wants a card with buttons for every fixed-option ask. Sent to the
+  workbench main session (workbench #79 covers single choices; multi-question relay pending).
 - 2026-11-16 — Print proofs need a headless Chromium, and Chromium cannot start inside the
   Bash sandbox (Mach bootstrap and ProcessSingleton socket denied, also with
   `--no-sandbox`). Allow Brave in the sandbox, or give sessions a way to print to PDF from
