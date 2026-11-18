@@ -198,7 +198,8 @@ export function renderAccount(mount) {
   eenmalig = huidigeStatus() === 'inlogfout' ? 'inlogfout' : null;
   teken(mount);
   // Elke keer dat je de pagina opent even bijwerken: dan klopt de tijd.
-  synchroniseerNu();
+  // synchroniseerNu vangt zijn eigen fouten af en zet een status.
+  void synchroniseerNu();
 }
 
 // De status verandert terwijl de pagina openstaat (bezig → bijgewerkt).

@@ -137,7 +137,7 @@ function paletDefs() {
   let defs = document.querySelector('defs.gs-defs');
   if (defs) return defs;
   const houder = el('svg', { class: 'gs-palet', 'aria-hidden': 'true', focusable: 'false' });
-  houder.setAttribute('style', 'position:absolute;width:0;height:0;overflow:hidden');
+  houder.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden'; // CSSOM: de CSP weigert een style-attribuut
   defs = el('defs', { class: 'gs-defs' });
 
   const randOp = el('linearGradient', { id: 'gs-randverloop', x1: '0', y1: '0', x2: '0.75', y2: '1' });

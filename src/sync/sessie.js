@@ -171,7 +171,7 @@ let wachter = null;
 export function planSync(ms = 1500) {
   if (!accountAan() || !heeftSessie()) return;
   clearTimeout(wachter);
-  wachter = setTimeout(() => { synchroniseerNu(); }, ms);
+  wachter = setTimeout(() => { void synchroniseerNu(); }, ms);
 }
 
 // -------------------------------------------------------------- acties

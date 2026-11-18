@@ -135,7 +135,7 @@ if (accountAan()) {
   // staat als ?code= in de adresbalk en moet weg voordat de router kijkt.
   // In elk ander geval wacht de pagina nergens op.
   if (komtVanInloggen()) await startAccount();
-  else startAccount();
+  else startAccount().catch((fout) => console.warn('account start mislukt:', fout?.name || 'onbekend'));
   // Bracht een sync nieuws (een puzzel elders opgelost, een ander niveau),
   // dan de lijst of voorpagina opnieuw tekenen. Een open puzzel niet: daar
   // speelt iemand, en een bord dat onder je handen verspringt is erger dan

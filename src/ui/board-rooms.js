@@ -27,7 +27,12 @@ const tekenMeubel = (ouder, naam, opties) => tekenGeschilderd(ouder, GESCHILDERD
 const NS = 'http://www.w3.org/2000/svg';
 const el = (naam, attrs = {}) => {
   const n = document.createElementNS(NS, naam);
-  for (const [k, v] of Object.entries(attrs)) if (v != null) n.setAttribute(k, String(v));
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v == null) continue;
+    // Zie el() in boards.js: stijl via CSSOM, anders weigert de CSP hem.
+    if (k === 'style') n.style.cssText = String(v);
+    else n.setAttribute(k, String(v));
+  }
   return n;
 };
 
