@@ -401,6 +401,17 @@ export const VOORZETSEL_VAN = {
   'het podium': 'op',
   'de botsautobaan': 'op',
   'de foodtrucks': 'bij',
+  // Buiten op een open plek of een trap sta je óp, niet erin. Guus las
+  // "in het schoolplein" in de genummerde oplossing (2026-11-18); de hele
+  // lijst plekken is toen nagelopen op hetzelfde soort woord.
+  'het schoolplein': 'op',
+  'de regenachtige binnenplaats': 'op',
+  'de dienstbodentrap': 'op',
+  'het besneeuwde terras': 'op',
+  'het dakterras': 'op',
+  'het zonneterras': 'op',
+  'de glijbaan': 'op',
+  'de tribune': 'op',
 };
 
 // Een "of-aanwijzing" noemt twee plekken in één adem: "het hertenpad of de

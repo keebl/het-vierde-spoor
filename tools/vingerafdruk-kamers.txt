@@ -26,7 +26,7 @@ dader.landhuis.kamer.6.kamer-21 2c0a797dc66afc23
 dader.station.kamer.6.kamer-22 faa5c12d27e0558d
 dader.halloween.kamer.6.kamer-23 07d368d4d2cd31bb
 dader.academie.kamer.6.kamer-24 63afa6f85c837715
-dader.noir.kamer.6.kamer-25 704e9e380ce6c6f9
+dader.noir.kamer.6.kamer-25 4143d963312ad700
 dader.ruimteschip.kamer.2.zwaluw-1 9a6a20e61846520b
 dader.ruimteschip.kamer.4.zwaluw-2 9ea65a9c209ca8c1
 dader.stad.kamer.3.hoogstad-1 f844c4a8909bd7da
@@ -36,8 +36,8 @@ dader.escaperoom.kamer.4.klokslag-2 67520b6627f170c5
 dader.pretpark.kamer.2.zonnestraal-1 cec0e22d3e18058f
 dader.pretpark.kamer.6.zonnestraal-2 95ba69357122f162
 dader.noir.kamer.1.start-0 1b7d5865ab02a26b
-dader.kantoor.kamer.1.keur-0 0b1305aef4c80054
-dader.zwembad.kamer.1.keur-1 7f5cbabf371623c8
+dader.kantoor.kamer.1.keur-0 bb16a651b622035e
+dader.zwembad.kamer.1.keur-1 640947cfe75f5210
 dader.dierentuin.kamer.1.keur-2 210e03cdce671e5a
 dader.ruimteschip.kamer.1.keur-3 262f7a79881baa3f
 dader.stad.kamer.1.keur-4 a7669bcf2756765a
@@ -46,7 +46,7 @@ dader.pretpark.kamer.1.keur-6 27086458d3b677e4
 dader.noir.kamer.1.keur-7 ec8a142880d22dbb
 dader.landhuis.kamer.1.keur-8 dba3c00257a498d0
 dader.station.kamer.1.keur-9 e04d13d1818f9465
-dader.kantoor.kamer.2.keur-0 578c808757ff836c
+dader.kantoor.kamer.2.keur-0 7e856441b3a45841
 dader.zwembad.kamer.2.keur-1 00ca138afb02440b
 dader.dierentuin.kamer.2.keur-2 8a62d9c66fbcb967
 dader.ruimteschip.kamer.2.keur-3 3d57fedca16fce0b
@@ -57,7 +57,7 @@ dader.noir.kamer.2.keur-7 bd161d546c256d8f
 dader.landhuis.kamer.2.keur-8 494535a4e79f198f
 dader.station.kamer.2.keur-9 bc89ef5d6f63ad9f
 dader.kantoor.kamer.3.keur-0 60e64b3b44b46838
-dader.zwembad.kamer.3.keur-1 f22c108e99089b6e
+dader.zwembad.kamer.3.keur-1 1c45d7086c1751fd
 dader.dierentuin.kamer.3.keur-2 54f342c44b7f53be
 dader.ruimteschip.kamer.3.keur-3 b2e5ca808c090d16
 dader.stad.kamer.3.keur-4 7318d61c25611e05
@@ -66,7 +66,7 @@ dader.pretpark.kamer.3.keur-6 d90da516813e8d06
 dader.noir.kamer.3.keur-7 13a73bc33ee69535
 dader.landhuis.kamer.3.keur-8 a9836cf1af85f03d
 dader.station.kamer.3.keur-9 89cab3c0136528ff
-dader.kantoor.kamer.4.keur-0 fdd13651870f3f53
+dader.kantoor.kamer.4.keur-0 bfebb4d96ceb50b0
 dader.zwembad.kamer.4.keur-1 8cc3c1a2ad73dc06
 dader.dierentuin.kamer.4.keur-2 8a6237d259fa8c8a
 dader.ruimteschip.kamer.4.keur-3 9bb43fb8fe654c04
@@ -76,7 +76,7 @@ dader.pretpark.kamer.4.keur-6 9d611162dcd7c412
 dader.noir.kamer.4.keur-7 b2f13ef0ad4ce3c6
 dader.landhuis.kamer.4.keur-8 6e76bbced136fc56
 dader.station.kamer.4.keur-9 b8fdc37234d0ac5d
-dader.kantoor.kamer.5.keur-0 9e76f152108a76f3
+dader.kantoor.kamer.5.keur-0 7d156c4a28136262
 dader.zwembad.kamer.5.keur-1 560a88d489fc4c8d
 dader.dierentuin.kamer.5.keur-2 92807693721a4090
 dader.ruimteschip.kamer.5.keur-3 57f17f945f126315
@@ -87,5 +87,5 @@ dader.noir.kamer.5.keur-7 e25271c6d88e0adf
 dader.landhuis.kamer.5.keur-8 f1ece054d01e3a92
 dader.station.kamer.5.keur-9 236edb51eadba7f5
 dader.kantoor.kamer.6.keur-0 36a5e09c95269111
-dader.zwembad.kamer.6.keur-1 3d937bbe63d5493b
+dader.zwembad.kamer.6.keur-1 f561f31c9b4b5fdf
 dader.dierentuin.kamer.6.keur-2 bd3672664120a310

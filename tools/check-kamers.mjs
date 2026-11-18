@@ -11,7 +11,7 @@ import { WORLDS } from '../src/content/worlds.js';
 import {
   SOORT_VAN, VLOER_VAN, VLOER_VAN_PLEK, MEUBELS_VAN, VERWANTE_SOORTEN,
   WERELDMEUBELS, WERELDVERWANT, WERELDVLOER, meubelsVoor, soortVan,
-  OUDERWETS, MODERNE_WERELDEN,
+  OUDERWETS, MODERNE_WERELDEN, voorzetselVan,
 } from '../src/content/kamersoorten.js';
 import { GESLACHT_VAN } from '../src/content/namen.js';
 import { readFileSync } from 'node:fs';
@@ -601,6 +601,20 @@ for (const tabel of ['SOORT_VAN', 'VORM_VAN', 'VLOER_VAN_PLEK', 'VOORZETSEL_VAN'
   const sleutels = [...blok.matchAll(/^\s*'([^']+)':/gm)].map((m) => m[1]);
   const dubbel = [...new Set(sleutels.filter((x, i) => sleutels.indexOf(x) !== i))];
   for (const d of dubbel) meld('TWEE KEER DEZELFDE SLEUTEL', `${tabel}: ${d}`);
+}
+
+// ------------------------------------------------- op het plein, niet erin
+// "In het schoolplein" stond in de genummerde oplossing (Guus, 2026-11-18):
+// het voorzetsel valt terug op "in" voor elke plek die niet in
+// VOORZETSEL_VAN staat. Een plek die naar een open vlak, een trap of een
+// dek heet, moet er dus in staan met "op".
+const OP_WOORD = /(plein|binnenplaats|terras|trap$|glijbaan|tribune|dek$|podium|perron|kade$|steiger|balkon)/;
+for (const plek of Object.keys(SOORT_VAN)) {
+  // Alleen het hoofdwoord telt: "het hotel aan de kade" is een hotel.
+  const kern = plek.split(/ (?:aan|bij|met|onder|achter) /)[0];
+  if (OP_WOORD.test(kern) && voorzetselVan(plek) !== 'op') {
+    meld('VOORZETSEL', `${plek}: "${voorzetselVan(plek)} ${plek}", hoort "op"`);
+  }
 }
 
 console.log('');
