@@ -3177,6 +3177,8 @@ body .kamerbord .kamernaam {
    player.js). Elke stap een alinea; de laatste zin vet: wie waar stond. Op
    papier een eigen vel met de kop "Oplossing", altijd open. */
 .oplossing-stappen { margin: var(--s5) 0 0; }
+.oplossing-stappen .stap-regel { display: block; }
+.oplossing-stappen .stap-regel + .stap-regel { margin-top: var(--s1, 4px); }
 .oplossing-stappen .stappen-sub {
   margin: var(--s3) var(--s4) 0;
   font-size: var(--t-sm);

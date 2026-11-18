@@ -173,21 +173,34 @@ export function oplossingInStappen(uit, puzzle) {
   let zinnen = [];
   // "Stel dat Puck op A3 stond ... Stel dat Puck op B2 stond ..." met
   // dezelfde reden is één gedachte: Puck kan op geen van die vakjes staan.
-  const voegToe = (stuk) => {
+  const plakt = (stuk) => {
     const vorige = zinnen[zinnen.length - 1];
-    if (stuk.proef && vorige?.proef && vorige.p === stuk.p && vorige.reden === stuk.reden) {
-      vorige.cellen.push(...stuk.cellen);
-    } else {
-      zinnen.push(stuk);
-    }
+    return stuk.proef && vorige?.proef && vorige.p === stuk.p && vorige.reden === stuk.reden;
   };
+  const voegToe = (stuk) => {
+    if (plakt(stuk)) zinnen[zinnen.length - 1].cellen.push(...stuk.cellen);
+    else zinnen.push(stuk);
+  };
+  // Elke gedachte (een aanwijzing en wat eruit volgt) begint een eigen regel
+  // binnen de stap. Een eerste stap kon zes aanwijzingen nodig hebben voor
+  // iemand vaststond, en dat werd één alinea die Guus (2026-11-18) niet
+  // meer kon volgen. De stap blijft één nummer met de plaatsing vet aan het
+  // eind; alleen de regels staan los. BLOK markeert waar een regel begint.
+  const BLOK = { blok: true };
+  const nieuweRegel = () => { if (zinnen.length && zinnen[zinnen.length - 1] !== BLOK) zinnen.push(BLOK); };
   const proefZin = (z) => {
     const waar = opsomming(z.cellen.map(t.vak));
     return hoofdletter(`stel dat ${t.naam(z.p)} op ${waar} ${t.stond(z.p)}. Dan ${z.reden}. ${t.Naam(z.p)} ${t.stond(z.p)} dus niet op ${waar}.`);
   };
   const sluit = (geplaatst, laatste = []) => {
-    const tekst = [...zinnen.map((z) => (z.proef ? proefZin(z) : z)), ...laatste];
-    stappen.push({ nr: stappen.length + 1, zinnen: tekst, geplaatst });
+    const regels = [[]];
+    for (const z of zinnen) {
+      if (z === BLOK) regels.push([]);
+      else regels[regels.length - 1].push(z.proef ? proefZin(z) : z);
+    }
+    regels[regels.length - 1].push(...laatste);
+    const schoon = regels.filter((r) => r.length);
+    stappen.push({ nr: stappen.length + 1, zinnen: schoon.flat(), regels: schoon, geplaatst });
     zinnen = [];
   };
   for (const s of uit.stappen) {
@@ -204,12 +217,14 @@ export function oplossingInStappen(uit, puzzle) {
       // Zonder zinnen ervoor volgt de plek uit wie er al staat: rij en
       // kolom van de vorige zijn bezet. Zeg dat dan ook.
       const kamer = t.inKamer(t.kamerVan[cel]);
-      sluit({ p, cel }, [zinnen.length
+      sluit({ p, cel }, [zinnen.some((z) => z !== BLOK)
         ? `${t.Naam(p)} ${t.stond(p)} dus op ${t.vak(cel)}, ${kamer}.`
         : `Daarmee kan ${t.naam(p)} alleen nog op ${t.vak(cel)} staan, ${kamer}.`]);
       continue;
     }
-    for (const stuk of zinnenVoorStap(t, s, dom)) voegToe(stuk);
+    const stukken = zinnenVoorStap(t, s, dom);
+    if (stukken.length && !plakt(stukken[0])) nieuweRegel();
+    for (const stuk of stukken) voegToe(stuk);
   }
   let aanname = false;
   if (!uit.opgelost) {

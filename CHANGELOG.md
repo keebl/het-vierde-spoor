@@ -10,6 +10,9 @@ day the changelog was introduced; everything before that is in git history only.
 ## [Unreleased]
 
 ### Changed
+- Numbered solution: each clue and what follows from it starts its own line within a step,
+  and open places read "op het schoolplein", "op het terras", "op de tribune" instead of
+  "in" (also in the clues).
 - Room-board clue list: a clue about two people now appears once, under the name the
   sentence starts with; a name with no line of its own says where it is mentioned. The
   victim shows only its name, without the explanation. The phone box still lists the clue

@@ -1088,11 +1088,19 @@ function oplossingBlok(puzzle, { uit, tekst }, { open, zelf, onToggle }) {
       : `In ${n} stappen, zonder te gokken.`;
   const lijst = el('ol', { class: 'stappenlijst' });
   for (const stap of tekst.stappen) {
+    // Elke gedachte een eigen regel (zie sluit() in redeneer-text.js), de
+    // plaatsing vet aan het eind van de laatste.
     const li = el('li');
-    const zinnen = stap.zinnen.slice();
-    const laatste = stap.geplaatst ? zinnen.pop() : null;
-    if (zinnen.length) li.append(`${zinnen.join(' ')} `);
-    if (laatste) li.append(el('b', { text: laatste }));
+    const regels = (stap.regels ?? [stap.zinnen]).map((r) => r.slice());
+    const laatste = stap.geplaatst ? regels[regels.length - 1].pop() : null;
+    regels.forEach((r, i) => {
+      const eind = i === regels.length - 1;
+      if (!r.length && !(eind && laatste)) return;
+      const regel = el('span', { class: 'stap-regel' });
+      if (r.length) regel.append(`${r.join(' ')}${eind && laatste ? ' ' : ''}`);
+      if (eind && laatste) regel.append(el('b', { text: laatste }));
+      li.append(regel);
+    });
     lijst.append(li);
   }
   const blok = el('details', { class: 'spelregels oplossing-stappen' }, [
