@@ -22,6 +22,11 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
   little harder, so I keep improving without hitting a wall like 9×9 to 12×12.
 - The daughter (level path) — When I open the site, I want to see how far I got and what is
   next, so I can carry on in one click.
+- The daughter (accounts and sync) — When I switch from my phone to the laptop, I want the
+  puzzles I solved, the board I was halfway through and my stars to be there, so I can go
+  on where I stopped.
+- The owner (accounts and sync) — When my daughter signs in with her Family Link account, I
+  want to approve it once and know what is stored, so I can say yes without worry.
 
 ## Flows
 ### See how it is solved (after Oplossing)
@@ -60,6 +65,35 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
 - Trigger: the last stop is solved.
 - Steps: Path stop solved → Path (end)
 - End state: the end message and a button to Monsterlijk free play.
+
+### Sign in (accounts and sync)
+- Trigger: "Inloggen" in the menu.
+- Steps: Account (signed out) → Google sign-in (outside the site; a parent approves a Family
+  Link account) → Account (signed in, "Even bijwerken…") → Account (signed in)
+- End state: signed in; local and account progress merged; the menu shows her letter badge.
+- Unhappy path: cancelled or not approved → Account (signed out) with "Inloggen is niet
+  gelukt."
+
+### Go on on another device (accounts and sync)
+- Trigger: she opens a puzzle on the laptop that she was playing on the phone.
+- Steps: Library or Puzzle → Puzzle with the phone's board
+- End state: the newest board is on screen.
+- Unhappy path: the puzzle is already open here when a newer board arrives → Puzzle with
+  the bar "Op een ander apparaat ben je verder gekomen." (Laden / Hier verder).
+
+### Delete the account (accounts and sync)
+- Trigger: "Account verwijderen" on the account page.
+- Steps: Account (signed in) → Confirm delete → Account deleted
+- End state: account and its stored game gone, signed out, this device's progress kept.
+- Unhappy path: "Niet verwijderen" → back, nothing changed; network error → "Verwijderen is
+  niet gelukt. Probeer het zo nog eens." and nothing deleted.
+
+### Offline while signed in (accounts and sync)
+- Trigger: no connection (or the database is paused).
+- Steps: any screen, play as usual → Account shows "Nog niet bijgewerkt"
+- End state: everything saved on the device; the next sync sends it.
+- Unhappy path: the session expired → Account (signed out) with "Log opnieuw in om bij te
+  werken."
 
 ## Screens
 ### Puzzle (room board, unsolved)
@@ -133,6 +167,61 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
 - Copy: "Je bent aan het eind van het pad. Honderd stappen, van 5 bij 5 tot 16 bij 16."
   Primary action: "Speel Monsterlijk" · Secondary: replay any stop for more stars.
 
+### Menu (accounts and sync)
+- Purpose: one way in, never in the way.
+- Content: existing links; at the end, before the theme button: "Inloggen" (signed out) or
+  a round badge with her first letter (signed in, label "Account").
+- Copy: "Inloggen"; badge's accessible name "Account van m…@gmail.com".
+
+### Account, signed out (accounts and sync)
+- Purpose: say what an account does, then let her sign in.
+- Content, in priority order: title, two short lines, the Google button, a line for Family
+  Link, link to privacy.
+- Primary action: Inloggen met Google · Secondary: Privacy
+- Copy: title "Jouw account"; "Log in met Google, dan staat je spel op al je apparaten:
+  opgeloste puzzels, een half bord, je sterren op het pad." / "Je hoeft niet in te loggen om
+  te spelen. Geen reclame, geen mails, we delen niets." / button "Inloggen met Google" /
+  "Heb je een account van Family Link? Dan moet een ouder de eerste keer even meekijken." /
+  link "Wat we bewaren".
+- Errors: "Inloggen is niet gelukt." · "In deze browser kan inloggen niet bewaard worden." ·
+  "Log opnieuw in om bij te werken."
+
+### Account, signed in (accounts and sync)
+- Purpose: show that it works, and the two account actions.
+- Content, in priority order: e-mail address, sync status, sign out, delete, privacy.
+- Primary action: none needed (sync is automatic) · Secondary: Uitloggen, Account verwijderen
+- Copy: title "Jouw account"; "Ingelogd als m…@gmail.com"; status "Bijgewerkt om 14:32" or
+  "Even bijwerken…" or "Nog niet bijgewerkt — we proberen het later opnieuw."; buttons
+  "Uitloggen", "Account verwijderen"; line under Uitloggen "Je voortgang blijft op dit
+  apparaat staan."
+
+### Confirm delete (accounts and sync)
+- Purpose: one misclick must not delete her game.
+- Copy: title "Account verwijderen?"; "Je account en alles wat erbij bewaard is, worden
+  gewist. De voortgang op dit apparaat blijft."; buttons "Ja, verwijder alles" and
+  "Niet verwijderen" (default focus).
+
+### Account deleted (accounts and sync)
+- Copy: "Je account is verwijderd." / "Op dit apparaat kun je gewoon verder spelen." / button
+  "Naar de puzzels".
+
+### Newer board bar (accounts and sync)
+- Purpose: never change the board under her hands, but tell her.
+- Content: a bar above the board.
+- Copy: "Op een ander apparaat ben je verder gekomen." buttons "Laden" (primary) and "Hier
+  verder".
+
+### Privacy (accounts and sync)
+- Purpose: what is stored, for the player and for a parent. On Uitleg and as `privacy.html`.
+- Copy: heading "Wat we bewaren"; "Zonder account: niets. Je voortgang staat alleen in deze
+  browser." / "Met een account: je e-mailadres van Google en je spel (opgeloste puzzels, je
+  halve borden, je sterren, je niveau en twee instellingen). Alleen om dat op al je
+  apparaten te laten zien." / "Waar: bij Supabase, in Parijs." / "Hoe lang: tot je je account
+  verwijdert. Dat kan zelf, op de accountpagina." / "Kinderen met Family Link: een ouder geeft
+  de eerste keer toestemming, en kan die later weer intrekken in de Family Link-app." /
+  "Vragen? Mail de maker van Reconstructie." (the owner's name and contact address are
+  filled in by the build, from Guus).
+
 ## Principles
 - The solution teaches, not only tells, so we show reasoning before the placement in every step.
 - Nothing spoils an unsolved board, so we show the steps only after Oplossing or a solve,
@@ -143,6 +232,10 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
   only Oplossing does not count.
 - (level path) Progress is shown, never taken away, so stars only go up and a changed puzzle
   keeps its number's stars.
+- (accounts and sync) Playing never waits for the account, so everything is saved on the
+  device first and syncing happens behind it.
+- (accounts and sync) Nothing she did is ever lost by syncing, so solved, revealed and stars
+  only add up, and an open board never changes without her say.
 
 ## Review log
 - 2026-11-18 — "Goedgekeurd" (forwarded verbatim by the main session): 1A, 2A, 3A, 4A — no change
