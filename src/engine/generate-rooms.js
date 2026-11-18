@@ -744,8 +744,12 @@ export function genereerKamerpuzzel(seed, params, pogingen = null) {
       if (k.mis === 0) return k;
       if (!besteB || k.mis < besteB.mis) besteB = k;
     }
-    if (!besteB) throw new Error('kon geen kamerpuzzel bouwen voor deze instellingen');
-    return besteB;
+    if (besteB) return besteB;
+    // Geen enkele poging haalde het sjabloon: dan bouwt de oude bouwer, met
+    // een mis, zodat een link nooit op een fout uitloopt. De voorraad in de
+    // repo neemt zo'n bord niet op (tools/pool.mjs), de keuring valt erover.
+    const oud = genereerKamerpuzzel(seed, { ...params, bouw: undefined }, pogingen);
+    return { ...oud, mis: Math.max(oud.mis ?? 0, 10) };
   }
   let beste = null;
   for (let t = 0; t < pogingen; t++) {

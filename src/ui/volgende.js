@@ -33,12 +33,11 @@ const VOLGORDE = [...TEZIEN].sort((a, b) => a.niveau - b.niveau || a.titel.local
 export function nieuwePuzzel(niveau, opgelost = null) {
   // Op de trage niveaus eerst uit de voorraad in de repo (tools/pool.mjs):
   // die borden liggen klaar. Een die je al hebt opgelost niet nog eens.
-  const voorraad = VOORRAAD[niveau] ?? 0;
-  if (voorraad) {
+  const voorraad = VOORRAAD[niveau] ?? [];
+  if (voorraad.length) {
     const gedaan = opgelost ?? solvedIds();
     const open = [];
-    for (let i = 0; i < voorraad; i++) {
-      const s = `voorraad-${i}`;
+    for (const s of voorraad) {
       const id = puzzleId({ opdracht: 'dader', wereld: wereldVoorSeed(s), mechaniek: 'kamer', niveau, seed: s });
       if (!gedaan.has(id)) open.push(id);
     }

@@ -22,20 +22,31 @@ const aantal = Number(process.argv[2] ?? 40);
 mkdirSync(new URL('../pool/', import.meta.url), { recursive: true });
 const aantallen = {};
 for (const niveau of VOORRAAD_NIVEAUS) {
-  const lijst = CATALOG.filter((e) => e.mechaniek === 'kamer' && e.niveau === niveau).map(catalogSettings);
-  for (let i = 0; i < aantal; i++) {
-    const seed = `voorraad-${i}`;
-    lijst.push({ opdracht: 'dader', mechaniek: 'kamer', wereld: wereldVoorSeed(seed), niveau, seed });
-  }
+  // Eerst de vaste zaken van de bibliotheek, dan voorraad-seeds tot er
+  // `aantal` zijn die hun sjabloon halen (mis 0): offline bouwen en daarna
+  // kiezen, zoals een puzzelboek dat ook doet. Een seed die het niet haalt
+  // slaan we over; "Nieuwe puzzel" kiest alleen uit wat hier staat.
   const uit = {};
   const t0 = Date.now();
-  for (const s of lijst) uit[puzzleId(s)] = genNaarData(bouwKamerGen(s));
+  for (const s of CATALOG.filter((e) => e.mechaniek === 'kamer' && e.niveau === niveau).map(catalogSettings)) {
+    uit[puzzleId(s)] = genNaarData(bouwKamerGen(s));
+  }
+  const seeds = [];
+  for (let i = 0; seeds.length < aantal && i < aantal * 3; i++) {
+    const seed = `voorraad-${i}`;
+    const s = { opdracht: 'dader', mechaniek: 'kamer', wereld: wereldVoorSeed(seed), niveau, seed };
+    const gen = bouwKamerGen(s);
+    if (gen.mis) continue;
+    uit[puzzleId(s)] = genNaarData(gen);
+    seeds.push(seed);
+  }
+  aantallen[niveau] = seeds;
+  const lijst = Object.keys(uit);
   writeFileSync(new URL(`../pool/niveau-${niveau}.json`, import.meta.url), `${JSON.stringify({ versie: BORDVERSIE, borden: uit })}\n`);
-  aantallen[niveau] = aantal;
   console.log(`niveau ${niveau}: ${lijst.length} borden in ${((Date.now() - t0) / 1000).toFixed(0)} s`);
 }
-writeFileSync(new URL('../src/content/voorraad.js', import.meta.url), `// Geschreven door tools/pool.mjs: hoeveel voorraad-seeds er per niveau in
-// pool/niveau-N.json liggen. Zie ook VOORRAAD_NIVEAUS.
+writeFileSync(new URL('../src/content/voorraad.js', import.meta.url), `// Geschreven door tools/pool.mjs: welke voorraad-seeds er per niveau in
+// pool/niveau-N.json liggen (alleen die hun sjabloon halen).
 
 export const VOORRAAD_NIVEAUS = ${JSON.stringify(VOORRAAD_NIVEAUS)};
 export const VOORRAAD = ${JSON.stringify(aantallen)};

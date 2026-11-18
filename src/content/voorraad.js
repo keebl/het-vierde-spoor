@@ -1,4 +1,4 @@
-// Geschreven door tools/pool.mjs: hoeveel voorraad-seeds er per niveau in
+// Geschreven door tools/pool.mjs: welke voorraad-seeds er per niveau in
 // pool/niveau-N.json liggen. Zie ook VOORRAAD_NIVEAUS.
 
 export const VOORRAAD_NIVEAUS = [5,6];
