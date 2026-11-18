@@ -177,6 +177,8 @@ export function renderPlayer(puzzle, mount) {
   // zaak zelf is opgelost doet er niet toe: hij telt nooit mee.
   let volgendeId = null;
   const naarVolgende = () => (volgendeId ??= volgendeZaak(puzzle));
+  // Zodat main.js de volgende alvast kan laten bouwen (bouwVooruit).
+  mount.dataset.volgende = naarVolgende();
 
   // De menselijke solver redeneert de puzzel pas op als iemand de stappen
   // wil zien: op niveau vier kost dat tot een halve seconde, en wie zelf

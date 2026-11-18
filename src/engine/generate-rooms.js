@@ -732,6 +732,7 @@ export function genereerKamerpuzzel(seed, params, pogingen = null) {
   }
   let beste = null;
   for (let t = 0; t < pogingen; t++) {
+    params.voortgang?.(t, pogingen);
     const rng = makeRng(`${seed}#kamer${t}`);
     let kandidaat;
     try {

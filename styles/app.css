@@ -3291,3 +3291,14 @@ a.accountknop-letter[aria-current="page"] { outline: 2px solid var(--accent); ou
 /* Een raam in de buitenmuur (engine-extension stap 6). */
 .raamglas { fill: #cfeaf7; stroke: #6b4a2b; stroke-width: 2; }
 .raamstijl { stroke: #6b4a2b; stroke-width: 1.6; }
+
+/* Bouwen in de achtergrond (engine-extension stap 10): een schatting, een
+   balk in de kleur van het niveau, en een knop om te stoppen. */
+.bouwen { max-width: 32rem; margin: var(--s6) auto; display: grid; gap: var(--s3); justify-items: start; }
+.bouwen-kop { font-weight: 700; margin: 0; }
+.bouwen-schatting { color: var(--text-3); margin: 0; }
+.bouwbalk { display: block; width: 100%; height: 12px; border-radius: 6px; background: var(--surface-3); overflow: hidden; }
+.bouwbalk-vulling { display: block; height: 100%; width: 4%; background: var(--pop-5); transition: width 0.3s ease; }
+.bouwen[data-niveau="4"] .bouwbalk-vulling { background: var(--pop-2); }
+.bouwen[data-niveau="5"] .bouwbalk-vulling { background: var(--pop-1); }
+.bouwen[data-niveau="6"] .bouwbalk-vulling { background: var(--pop-6); }

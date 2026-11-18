@@ -7,6 +7,7 @@ import { renderGenerator } from './ui/generator.js';
 import { renderUitleg } from './ui/uitleg.js';
 import { renderPlayer } from './ui/player.js';
 import { buildPuzzle, parsePuzzleId } from './puzzle.js';
+import { bouw, bouwVooruit, SCHATTING } from './ui/bouwer.js';
 import { el } from './ui/boards.js';
 import { dressUp } from './ai/flavour.js';
 import { pasToe as pasThemaToe, hangThemaknopOp } from './ui/thema.js';
@@ -66,11 +67,55 @@ function route() {
   if (path.startsWith('puzzel/')) {
     markNav(null);
     const id = decodeURIComponent(path.slice('puzzel/'.length));
+    const settings = parsePuzzleId(id);
+    // Een Reconstructie bouwt in een Web Worker, met een schatting vooraf en
+    // een balk die na elke poging oploopt (specs/engine-extension.md stap
+    // 10). Tot en met niveau drie is dat zo snel dat er niets te zien is.
+    if (settings.mechaniek === 'kamer') {
+      const traag = settings.niveau >= 4;
+      const balk = el('span', { class: 'bouwbalk-vulling' });
+      const stop = el('button', { class: 'btn', type: 'button', text: 'Annuleer' });
+      app.replaceChildren(traag
+        ? el('div', { class: 'bouwen', 'data-niveau': String(settings.niveau) }, [
+          el('p', { class: 'bouwen-kop', text: 'De puzzel wordt gebouwd en nagerekend.' }),
+          el('p', { class: 'bouwen-schatting', text: `Op een telefoon duurt dat hooguit ongeveer ${SCHATTING[settings.niveau]} seconden, op een computer meestal korter.` }),
+          el('span', { class: 'bouwbalk', role: 'progressbar', 'aria-label': 'Voortgang van het bouwen' }, balk),
+          stop,
+        ])
+        : el('p', { class: 'spinner', text: 'De puzzel wordt gebouwd en nagerekend...' }));
+      const taak = bouw(settings, {
+        opVoortgang: (deel) => { balk.style.width = `${Math.round(Math.max(0.04, Math.min(1, deel)) * 100)}%`; },
+      });
+      stop.addEventListener('click', () => { taak.afbreken(); location.hash = '#/'; });
+      // Wie wegnavigeert terwijl er gebouwd wordt: de worker stopt.
+      const weg = () => { if (!location.hash.includes(id)) taak.afbreken(); removeEventListener('hashchange', weg); };
+      addEventListener('hashchange', weg);
+      taak.data.then((gen) => {
+        if (!location.hash.includes(id)) return;
+        const puzzle = buildPuzzle(settings, { gen });
+        zetWereldThema(puzzle.world?.id);
+        renderPlayer(puzzle, app);
+        // De volgende alvast, op de achtergrond (criterium 24).
+        const volgende = app.dataset.volgende;
+        if (volgende) bouwVooruit(parsePuzzleId(volgende));
+        dressUp(puzzle).then((dressed) => {
+          if (dressed.aiUsed && location.hash.includes(id)) {
+            zetWereldThema(dressed.world?.id);
+            renderPlayer(dressed, app);
+          }
+        }).catch((err) => console.error(err));
+      }).catch((err) => {
+        if (err?.message === 'afgebroken') return;
+        console.error(err);
+        showError('Deze link hoort niet bij een bestaande puzzel. Hij is misschien verouderd of verkeerd overgenomen.', true);
+      });
+      return;
+    }
     // Even laten tekenen voordat we gaan rekenen: bouwen kan een seconde duren.
     app.replaceChildren(el('p', { class: 'spinner', text: 'De puzzel wordt gebouwd en nagerekend...' }));
     setTimeout(() => {
       try {
-        const puzzle = buildPuzzle(parsePuzzleId(id));
+        const puzzle = buildPuzzle(settings);
         zetWereldThema(puzzle.world?.id);
         renderPlayer(puzzle, app);
         // De puzzel staat er al en is speelbaar. Daarna kijken we nog of er

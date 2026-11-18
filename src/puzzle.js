@@ -20,7 +20,9 @@ import { geslachtVan } from './content/namen.js';
 
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
-export function buildPuzzle(settings) {
+// `gen`: een bord dat al gebouwd is (door de worker of uit de opslag);
+// dan wordt alleen nog aangekleed.
+export function buildPuzzle(settings, { gen = null } = {}) {
   const { opdracht, wereld, mechaniek, niveau, seed } = settings;
   const world = WORLD_BY_ID.get(wereld);
   const assignment = ASSIGNMENT_BY_ID.get(opdracht);
@@ -29,7 +31,7 @@ export function buildPuzzle(settings) {
   if (!assignment.mechanics.includes(mechaniek)) {
     throw new Error(`${assignment.name} werkt niet met ${mechaniek}`);
   }
-  if (mechaniek === 'kamer') return buildKamerPuzzle({ world, settings });
+  if (mechaniek === 'kamer') return buildKamerPuzzle({ world, settings, gen: gen ? genUitData(gen) : null });
   const params = levelParams(niveau);
   return mechaniek === 'latin'
     ? buildLatinPuzzle({ world, params, settings })
@@ -272,7 +274,14 @@ function noemKamers(rooster, voorraad, rng) {
 
 
 
-function buildKamerPuzzle({ world, settings }) {
+// Het dure deel van een Reconstructie: het bord en de aanwijzingen. Los van
+// de rest, zodat een Web Worker het kan doen terwijl de pagina blijft
+// reageren (specs/engine-extension.md stap 10), en zodat een gebouwd bord
+// bewaard kan worden (stap 11). Wat eruit komt is gewone data (genNaarData).
+// `voortgang(t, pogingen)` loopt na elke poging.
+export function bouwKamerGen(settings, voortgang = null) {
+  const world = WORLD_BY_ID.get(settings.wereld);
+  if (!world) throw new Error(`onbekende wereld: ${settings.wereld}`);
   const { seed, niveau } = settings;
   const params = kamerParams(niveau);
   // De wereld bepaalt hoeveel verschillende meubels en kamers er benoembaar
@@ -300,12 +309,10 @@ function buildKamerPuzzle({ world, settings }) {
   // De kamers krijgen hun naam nu al tijdens het bouwen, want wat er in een
   // kamer kan staan hangt af van wat voor kamer het is: een paard in de
   // stal, een kleed in de bibliotheek. De motor vraagt het per poging.
-  const iconVanRekwisiet = new Map();
   const inrichting = (rooster, rng) => {
     const voorraad = rooster.kamers <= world.places.length ? world.places : [...world.places, ...(world.plekkenXL ?? [])];
     const kamerNamen = noemKamers(rooster, voorraad, rng);
     const aanbod = kamerNamen.map((plek) => rekwisietenVoor(plek, world.id).map(([naam, icoon]) => {
-      iconVanRekwisiet.set(naam, icoon);
       const type = TYPE_VAN_TEKENING[icoon];
       return {
         sleutel: naam, type, houding: REKWISIETTYPEN[type].houding,
@@ -320,7 +327,31 @@ function buildKamerPuzzle({ world, settings }) {
     kamers: Math.min(params.kamers, world.places.length + (world.plekkenXL?.length ?? 0)),
     maxMeubels: Math.min(20, krapste),
     inrichting,
+    voortgang,
   });
+  return gen;
+}
+
+// Een gebouwd bord als gewone data: wat de worker terugstuurt en wat de
+// opslag bewaart. Zonder de tussenstanden (_buren en dergelijke) en met de
+// Set van de ramen als lijst.
+const GEN_VELDEN = ['plaats', 'slachtofferIdx', 'dader', 'kamerIdx', 'aanwijzingen', 'graad', 'mis', 'poging'];
+const ROOSTER_VELDEN = ['n', 'kamerVan', 'meubelOp', 'vrij', 'kamers', 'meubelAantal', 'blokAantal', 'stukken', 'ramen', 'kamerNamen'];
+export function genNaarData(gen) {
+  const uit = { rooster: {} };
+  for (const k of GEN_VELDEN) if (gen[k] !== undefined) uit[k] = gen[k];
+  for (const k of ROOSTER_VELDEN) uit.rooster[k] = gen.rooster[k];
+  return JSON.parse(JSON.stringify(uit));
+}
+export function genUitData(data) {
+  const rooster = { ...data.rooster };
+  rooster.raamCel = new Set((rooster.ramen ?? []).map((r) => r.cel));
+  return { ...data, rooster };
+}
+
+function buildKamerPuzzle({ world, settings, gen: klaar = null }) {
+  const { seed, niveau } = settings;
+  const gen = klaar ?? bouwKamerGen(settings);
   const rng = makeRng(`${seed}:kamerwoorden`);
 
   // Elke figuur op het bord krijgt een naam. Een van hen is het slachtoffer:
@@ -390,7 +421,7 @@ function buildKamerPuzzle({ world, settings }) {
     const stuk = gen.rooster.stukken[mi];
     if (stuk.houding !== 'blok') {
       meubelNamen[mi] = stuk.sleutel;
-      meubelIconen[mi] = iconVanRekwisiet.get(stuk.sleutel);
+      meubelIconen[mi] = new Map(rekwisietenVoor(kamerNamen[gen.rooster.kamerVan[cel]], world.id)).get(stuk.sleutel);
       continue;
     }
     const soort = soortVan(kamerNamen[gen.rooster.kamerVan[cel]]);
