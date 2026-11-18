@@ -201,6 +201,8 @@ standing guidance rather than state moved to `CLAUDE.md`.
   the paid plan (~$5/month) or a host with a higher limit. Deliberately postponed.
 
 ## Recent decisions
+- 2026-11-18 — Level path spec and sketch approved: "Goedgekeurd" (`specs/level-path.md`);
+  build after engine-extension phase B; Google sign-in split off to `specs/accounts-and-sync.md`.
 - 2026-11-18 — Numbered solution view (engine-extension phase A, step 4) approved by Guus,
   forwarded verbatim by the main session: "Goedgekeurd" — steps shown only after Oplossing
   (open) or after a solve (closed), the whole list at once, on paper on a new page headed
