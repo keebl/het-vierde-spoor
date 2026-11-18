@@ -146,3 +146,6 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
 
 ## Review log
 - 2026-11-18 — "Goedgekeurd" (forwarded verbatim by the main session): 1A, 2A, 3A, 4A — no change
+- 2026-11-18 (level path) — "Goedgekeurd": path button above the levels, stars above the
+  portrait; "maak het wel een beetje creatief en speels gebruik de drawthings optie als je
+  leuke afbeeldingen nodig hebt" (goes to the visual half) — no change to the sketch

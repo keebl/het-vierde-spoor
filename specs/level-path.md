@@ -1,6 +1,6 @@
 # Spec: Level path
 
-Status: draft
+Status: approved (Guus, 2026-11-18)
 Date: 2026-11-18
 
 ## Goal
@@ -107,6 +107,11 @@ counts per path stop are kept in the existing per-puzzle state until the stop is
   stops (through `~/.claude/bin/heavy`), repeated only when the generator changes.
 
 ## Design direction (UI features)
+Playful and creative (Guus, 2026-11-18). He allows Draw Things images (`/image`) for the path.
+That conflicts with the product non-goal "No image files. Everything visible is drawn in
+code" in `docs/PRODUCT.md`. The build session puts this to Guus as a card before adding any
+image file: an exception for the path backdrop only, recorded in PRODUCT.md, or drawn in
+code.
 `docs/DESIGN.md` applies: the existing colourful, drawn style with the level colours of the
 picker (`--pop-1..6`). The path is drawn in SVG, with no image files, at the same level of
 detail as the board miniatures. Each stop is a round token in the colour of its board size,
@@ -115,7 +120,11 @@ No reference image yet: the sketch round will settle it.
 
 ## Flow and sketch (UI features)
 Flows and screens: `docs/UX.md` (parts marked "level path"). Sketch:
-`design/prototype/level-path/index.html`. Walkthrough: pending (2026-11-18).
+`design/prototype/level-path/index.html`. Walkthrough 2026-11-18, verdict "Goedgekeurd". Answers: path button above the
+levels; stars above the portrait on the closing sheet. On direction (top-down vs climbing)
+he did not choose, and asked instead: "maak het wel een beetje creatief en speels gebruik de
+drawthings optie als je leuke afbeeldingen nodig hebt". The build keeps top-down (the
+recommendation) and makes the path playful in the visual half.
 
 ## Performance budget (when it matters)
 - The path page draws in under 300 ms on a laptop, without building any puzzle.
