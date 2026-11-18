@@ -78,4 +78,4 @@ the numbered solution). Only the flows and screens that feature touches are here
 - Same words as the board, so steps name cells the way the board edge does (B3, rij B, kolom 3).
 
 ## Review log
-- (none yet)
+- 2026-11-18 — "Goedgekeurd" (forwarded verbatim by the main session): 1A, 2A, 3A, 4A — no change

@@ -227,6 +227,12 @@ Show it: due before the UI steps (steps 7 and 9 of the Plan) — `/functional-de
 token-on-object drawing. The engine steps (1–6) change no screen except the solution view
 in step 2, which is sketched first.
 
+Solution view (phase A, step 4): sketch `design/prototype/engine-extension/index.html`,
+copy in `docs/UX.md`, walked 2026-11-18 via the main session. Guus: "Goedgekeurd" — all
+four recommendations (shown after Oplossing or a solve; whole list; print on a new page
+"Oplossing"; one paragraph per step, placement in bold). The build progress screen and the
+token-on-object drawing are still to be sketched before steps 7 and 9.
+
 ## Performance budget
 Maximum build time per level, **worst case on a mid-range phone** (estimated as 4× the
 laptop until measured on a real phone); the keuring checks the laptop equivalent:

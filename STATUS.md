@@ -2,6 +2,7 @@
 
 Last updated: 2026-11-17
 Live: yes (since 2026-11-13)
+UX approved: 2026-11-18
 
 Translated and restructured from `HANDOFF.md`, which lived at the repository root until the
 project standard was adopted; the original is in git history. The parts of it that are
@@ -172,6 +173,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   the paid plan (~$5/month) or a host with a higher limit. Deliberately postponed.
 
 ## Recent decisions
+- 2026-11-18 — Numbered solution view (engine-extension phase A, step 4) approved by Guus,
+  forwarded verbatim by the main session: "Goedgekeurd" — steps shown only after Oplossing
+  (open) or after a solve (closed), the whole list at once, on paper on a new page headed
+  "Oplossing", one paragraph per step with the placement in bold.
 - 2026-11-17 — Room-board clues (`specs/harder-clues.md`): no row/column clues, a room
   clue instead; at most 3 clues per name on levels 1–3, 4 on level 4, 5 on level 5, none
   yet on level 6 (one per name stays the aim). The spec's 2/3 caps proved out of reach;
