@@ -3,14 +3,14 @@
 //
 // Er stond hier een muur met keuzes: acht genretegels, een instaplijst en
 // een link naar de bibliotheek. Dat is eraf. Je kiest nog maar één ding -
-// hoe zwaar - en drukt op de knop; het decor krijg je, je kiest het niet.
+// hoe zwaar - en klikt er nog eens op; het decor krijg je, je kiest het niet.
 // Dat scheelt niet alleen knoppen: het haalt ook het gevoel weg dat je
 // eerst iets moet uitzoeken voordat je mag beginnen.
 //
-// De bibliotheek staat er weer wel bij, maar als tweede keuze: eerst de
-// knop die je een nieuwe zaak geeft, daarnaast de lijst voor wie liever
-// zelf kiest. Daar staan de vaste zaken per moeilijkheidsgraad, met
-// daaronder de puzzels die je zelf begonnen bent.
+// De bibliotheek (vaste zaken per moeilijkheidsgraad, en de puzzels die je
+// zelf begonnen bent) staat in het menu bovenaan, onder "Alle puzzels". De
+// knoppen "Begin nieuwe puzzel" en "Of kies er een uit de lijst" zijn weg
+// (2026-11-18): twee knoppen onder zes niveaus waren drie keuzes te veel.
 
 import { el } from './boards.js';
 import { ZICHTBARE_LEVEL_IDS, LEVELS, KAMER_LEVELS } from '../engine/difficulty.js';
@@ -46,13 +46,6 @@ export function renderHome(mount) {
 
   mount.replaceChildren();
 
-  const start = el('a', { class: 'btn btn-primary btn-groot', href: `#/puzzel/${nieuwePuzzel(niveau)}` });
-  const vernieuw = () => {
-    start.setAttribute('href', `#/puzzel/${nieuwePuzzel(niveau)}`);
-    const k = KAMER_LEVELS[niveau];
-    start.textContent = `Begin nieuwe puzzel · ${k.n} bij ${k.n}`;
-  };
-
   const niveaus = el('div', { class: 'niveaukiezer' }, ZICHTBARE_LEVEL_IDS.map((l) => {
     const p = LEVELS[l];
     const k = KAMER_LEVELS[l];
@@ -67,19 +60,24 @@ export function renderHome(mount) {
       el('b', { text: String(l) }),
       el('span', { class: 'opt-name', text: p.label }),
       el('small', { text: `${k.n} bij ${k.n}, ${p.style === 'shallow' ? 'doorstrepen' : 'aanname nodig'}` }),
+      el('span', { class: 'level-start', text: 'Klik nog eens: beginnen' }),
     ]);
+    // Eerste klik kiest, tweede klik begint. Er stond een aparte knop
+    // "Begin nieuwe puzzel" onder: Guus (2026-11-18) wilde die weg - wie
+    // een niveau al gekozen heeft, klikt er vanzelf nog eens op.
     b.addEventListener('click', () => {
+      if (niveau === l && b.getAttribute('aria-pressed') === 'true') {
+        location.hash = `#/puzzel/${nieuwePuzzel(l)}`;
+        return;
+      }
       niveau = l;
       zetNiveau(l);
       for (const knop of niveaus.children) {
         knop.setAttribute('aria-pressed', String(knop === b));
       }
-      vernieuw();
     });
     return b;
   }));
-  vernieuw();
-
   // ---------------------------------------------------------------- hero
   // Een echte plattegrond naast de tekst, geen plaatje van een plattegrond:
   // het eerste wat je ziet is waar het spel over gaat. Hij wordt hier
@@ -95,12 +93,8 @@ export function renderHome(mount) {
           text: 'Je krijgt een paar verdachten en een lijstje aanwijzingen. Streep weg wat niet kan, en er blijft één antwoord over. Gokken hoeft nooit, ook niet bij de moeilijkste.',
         }),
       ]),
-      el('p', { class: 'label', text: 'Hoe zwaar wil je het hebben?' }),
+      el('p', { class: 'label', text: 'Hoe zwaar wil je het hebben? Kies een niveau en klik er nog eens op om te beginnen.' }),
       niveaus,
-      el('div', { class: 'hero-actions' }, [
-        start,
-        el('a', { class: 'btn', href: '#/puzzels', text: 'Of kies er een uit de lijst' }),
-      ]),
       el('p', {
         class: 'hero-note',
         text: 'Elke keer een nieuw decor en een nieuwe zaak. Geen account nodig; je voortgang blijft in deze browser bewaard.',
