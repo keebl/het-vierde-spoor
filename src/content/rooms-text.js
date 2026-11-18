@@ -53,7 +53,7 @@ export function gezegde(c, w) {
     case 'nietOp':
       return opZin(c.t, w, { ontkend: true });
     case 'typeOf':
-      return `${opZin(c.t, w)} of ${opZin(c.t2, w)}`;
+      return koppel(opZin(c.t, w), opZin(c.t2, w), 'of');
     case 'naastType':
       return c.ja ? `stond naast ${stukWoord(c.t, w)}` : `stond niet naast ${stukWoord(c.t, w)}`;
     case 'voorRaam':
@@ -70,6 +70,14 @@ export function gezegde(c, w) {
       return null;
   }
 }
+// Twee gezegden aan elkaar: hetzelfde werkwoord niet twee keer. "stond in
+// de dienstgang en naast de console", niet "... en stond naast de console".
+export function koppel(a, b, voeg) {
+  const wa = a.split(' ')[0];
+  const wb = b.split(' ')[0];
+  return wa === wb ? `${a} ${voeg} ${b.slice(wb.length + 1)}` : `${a} ${voeg} ${b}`;
+}
+
 // "in dezelfde kamer", of wat de wereld een ruimte noemt.
 const V0 = (c, w) => `${(w.zelfde ?? 'in dezelfde kamer')}`;
 
@@ -98,7 +106,7 @@ export function zinVoor(c, w) {
     case 'en': {
       const a = gezegde({ ...c.a, p: c.p }, w);
       const b = gezegde({ ...c.b, p: c.p }, w);
-      return hoofdletter(`${P} ${a} en ${b}.`);
+      return hoofdletter(`${P} ${koppel(a, b, 'en')}.`);
     }
     case 'enigeOp': {
       const T = REKWISIETTYPEN[c.t];

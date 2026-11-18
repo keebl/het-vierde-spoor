@@ -1067,10 +1067,13 @@ function toolbar(puzzle, state, actions, volgende = null) {
   // Altijd een weg naar de volgende zaak, ook zonder deze eerst op te
   // lossen: een tester op een telefoon zocht hem naast Controleer en
   // Printen en vond hem niet. Zelfde doel als de knop op het blad.
+  //
+  // Achteraan en in een eigen kleur (Guus, 2026-11-18): de laatste stap,
+  // niet een van de gereedschappen.
+  add('Bewaar deze puzzel', actions.share);
   if (volgende) {
     bar.append(el('a', { class: 'btn btn-volgende', href: `#/puzzel/${volgende}`, text: 'Volgende puzzel' }));
   }
-  add('Bewaar deze puzzel', actions.share);
   return bar;
 }
 

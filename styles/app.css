@@ -3087,9 +3087,13 @@ select, input[type="text"] { border-radius: 999px; border-width: 2px; }
   100% { opacity: 0; transform: translate(var(--dx), calc(var(--dy) + 28px)) rotate(var(--draai)) scale(1); }
 }
 
-/* De knop naar de volgende zaak onder het bord: een link die eruitziet als
-   de knoppen ernaast. */
-.btn-volgende { justify-content: center; text-decoration: none; }
+/* De knop naar de volgende zaak onder het bord: achteraan, in het blauw. */
+.btn-volgende {
+  justify-content: center; text-decoration: none;
+  /* Een eigen kleur: dit is waar je heen gaat, geen gereedschap. */
+  background: var(--pop-5); border-color: var(--pop-5); color: #fff;
+}
+.btn-volgende:hover { background: #2f74e6; border-color: #2f74e6; color: #fff; }
 
 @media (max-width: 640px) {
   .ontknoping-blad { padding: var(--s5) var(--s4) var(--s4); gap: var(--s1); }
