@@ -10,19 +10,23 @@ script (*the keuring*) that guards those tables.
 
 ## Overview
 
-No bundler, no framework, no runtime dependencies. `index.html` loads `src/main.js` as an
-ES module and the browser does the rest. Node exists only for the keuring (`tools/`) and a
-local server (`server/serve.mjs`). The one npm dependency, `@anthropic-ai/sdk`, is used by
-the tooling, never by the site.
+No bundler, no framework. `index.html` loads `src/main.js` as an ES module and the browser
+does the rest. Node exists only for the keuring (`tools/`) and a local server
+(`server/serve.mjs`). The one npm dependency, `@anthropic-ai/sdk`, is used by the tooling,
+never by the site. The one runtime library is `@supabase/supabase-js`, vendored as a single
+file in `src/vendor/` and loaded only for a signed-in player (ADR-0006).
 
 ```
 index.html          loads src/main.js
-src/main.js         router: #/ , #/maken , #/puzzels , #/uitleg , #/puzzel/<id>
+src/main.js         router: #/ , #/maken , #/puzzels , #/uitleg , #/puzzel/<id> , #/account
 src/puzzle.js       settings -> a playable puzzle (the only place where content,
                     engine and language meet)
 src/engine/         the engine: everything that computes, knows nothing of words
 src/content/        the content: everything that is words, computes nothing
 src/ui/             the screen: drawing and operating
+src/sync/           optional accounts: merge rules, session, sync (ADR-0006)
+src/vendor/         supabase-js, vendored; loaded only with a session
+supabase/           migrations and RLS tests for schema `reconstructie` in `claudeDB`
 tools/              the keuring
 server/serve.mjs    local server + /api/flavour for the AI layer
 worker/             a Cloudflare Worker for that same API; not deployed
@@ -36,6 +40,7 @@ worker/             a Cloudflare Worker for that same API; not deployed
 | The keuring replaces a type system | No types, no linter: the checks are the safety net | `docs/decisions/0003-the-keuring-is-the-safety-net.md` |
 | Dutch is the language of the code | Written by and for a Dutch household; identifiers mirror domain words | `docs/decisions/0004-dutch-is-the-language-of-the-code.md` |
 | Extend the room engine with a human-style solver, object clues, roles and a puzzle store | Book-style puzzles: one clue per person, difficulty from the deduction chain, numbered solution | `docs/decisions/0005-extend-the-room-engine-for-book-style-puzzles.md` |
+| Optional accounts: Supabase in the shared project `claudeDB`, schema `reconstructie`, Google via PKCE, vendored client | Progress on every device without a server of our own or a paid plan; signed-out play unchanged | `docs/decisions/0006-optional-accounts-with-supabase.md` |
 
 ## Boundaries
 
@@ -109,8 +114,15 @@ The generator works in four steps, and that order is the whole trick:
 
 ## Data and state
 
-- Persistence: `localStorage` only (`vierdespoor.*` keys) — progress, preferences, theme.
-  No accounts, no server-side state.
+- Persistence: `localStorage` (`vierdespoor.*` keys) — progress, preferences, theme. This
+  stays the store the game reads and writes, signed in or not.
+- Sync (optional, ADR-0006): when a player is signed in, `src/sync/sync.js` pushes finished
+  facts (solved, revealed, path stars, level, auto-crosses, open panels) to schema
+  `reconstructie` in Supabase and merges back what is newer. The game calls only
+  `meldWijziging()` from `src/sync/melding.js`; it never imports Supabase. The merge rules
+  (union, maximum, newest per value) live twice, in `src/sync/samenvoegen.js` (checked by
+  `check:sync`) and in the database functions, so neither side can lose progress.
+  Half-finished boards are never sent.
 - A puzzle is its settings plus a seed; nothing else is stored. The catalogue holds seeds,
   not puzzle data.
 - The solution object lives in the page while playing, which is how the Check button works.
@@ -159,6 +171,7 @@ commands.
 | `check-ai-guard.mjs` | that a rewritten text keeps names, negations and numbers intact. |
 | `check-weggevers.mjs` | that the intro gives nothing away that it should not. |
 | `check-iconen.mjs` | that every word in the content has its own pictogram. |
+| `check-sync.mjs` | the merge rules and row shapes of the optional sync, with a fake backend; and that `service_role` appears nowhere in the repository. No network. |
 | `check-kamers.mjs` | the tables above: every place a kind, every furniture piece its own drawing, no two names that look alike, every name a portrait, every room name that matches its floor, and no 1930s drawing (`OUDERWETS`) in a present-day world (`MODERNE_WERELDEN`). |
 
 Every rule in `check-regels.mjs` and `check-kamers.mjs` is there because something was once
@@ -204,6 +217,10 @@ in the repo as JSON.
 - **Anthropic API** — optional, local only, via `server/serve.mjs` → `/api/flavour`. The
   endpoint accepts a puzzle id and nothing else. Failure mode: the site falls back to its
   own template texts without an error.
+- **Supabase** (`claudeDB`, eu-west-3, shared with clearhead and crossroads) — optional
+  accounts and sync, schema `reconstructie` only. Sign-in with Google (PKCE). Failure mode:
+  sync waits and the account page says "Nog niet bijgewerkt"; playing is unaffected.
+  Switched off in production by the `aan` flag in `src/sync/config.js`.
 - **Cloudflare Workers** (`worker/`) — written but not deployed; the free plan's 10 ms CPU
   budget is too little to verify a puzzle. See `STATUS.md`.
 
