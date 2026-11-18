@@ -29,6 +29,8 @@ import { levelParams, kamerParams, KAMER_LEVELS, LEVEL_IDS } from '../src/engine
 import { keepsNames } from '../src/ai/opdracht.js';
 import { readFileSync } from 'node:fs';
 import { soortVan, meubelsVoor, vormVan } from '../src/content/kamersoorten.js';
+import { redeneer } from '../src/engine/redeneer.js';
+import { oplossingInStappen } from '../src/content/redeneer-text.js';
 
 const seedsPerCombinatie = Number(process.argv[2] ?? 2);
 
@@ -208,6 +210,16 @@ function keurKamer(p, waar) {
   eis('de dader is die ander', samen.length === 1 && samen[0].i === p.dader, waar);
   eis('het antwoord is de naam van de dader',
     p.personen[p.dader] === p.question.answer, waar);
+
+  // Regel 7b: de genummerde oplossing (src/content/redeneer-text.js) volgt
+  // dezelfde taalregels als een aanwijzing. Vakjes heten zoals langs de rand
+  // van het bord (B3, kolom 3): die cijfers horen bij het bord en tellen
+  // niet als een getal dat uitgeschreven moet.
+  for (const stap of oplossingInStappen(redeneer(rooster, p._ruwe), p).stappen) {
+    for (const z of stap.zinnen) {
+      keurZin(z.replace(/\b[A-Z]\d{1,2}\b/g, 'vakje').replace(/kolom \d{1,2}\b/g, 'kolom'), `${waar} oplossing stap ${stap.nr}`);
+    }
+  }
 
   // Regel 8: geen aanwijzing verklapt waar het lichaam ligt of wie erbij stond.
   for (let i = 0; i < p._ruwe.length; i++) {

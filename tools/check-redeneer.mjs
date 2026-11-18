@@ -19,6 +19,12 @@
 //      opnieuw met `node tools/check-redeneer.mjs --schrijf`, in dezelfde
 //      commit als de verschuiving, zodat de diff laat zien dat het bewust is.
 //
+//   5. De genummerde oplossing in woorden (criterium 4): elke stap heeft
+//      zinnen, geen gat ("undefined"), de naam van het slachtoffer komt er
+//      niet in voor (het heet "het slachtoffer" of wat de zaak het noemt),
+//      en elk vakje dat genoemd wordt bestaat op dit bord. De taalregels
+//      (hoofdletter, punt, uitgeschreven getallen) keurt check-regels.mjs.
+//
 // Onderaan staat per niveau de meting die in de spec staat: hoeveel puzzels
 // de solver oplost, de mediane ketenlengte en de zwaarste techniek.
 //
@@ -34,6 +40,7 @@ import { redeneer, pasToe, TECHNIEKEN } from '../src/engine/redeneer.js';
 import { telPlaatsingen } from '../src/engine/rooms.js';
 import { CATALOG, catalogSettings } from '../src/content/catalog.js';
 import { buildPuzzle, wereldVoorSeed } from '../src/puzzle.js';
+import { oplossingInStappen } from '../src/content/redeneer-text.js';
 
 let fouten = 0;
 const fout = (titel, wat) => {
@@ -176,6 +183,25 @@ export function keurSpoor(uit, oplossing, aantalAanwijzingen) {
   if (!keurSpoor(zonderReden, oplossing, aanwijzingen.length).length) fout('weigerkant', 'een stap met een onbekende aanwijzing viel niet om');
 }
 
+// Wat er mis is aan de genummerde oplossing in woorden (criterium 4).
+export function keurTekst(p, uit, tekst) {
+  const mis = [];
+  const slachtoffer = new RegExp(`\\b${p.slachtofferNaam}\\b`);
+  const verwacht = uit.plaats.filter((c) => c != null).length + (uit.opgelost ? 0 : 1);
+  if (tekst.stappen.length !== verwacht) mis.push(`${tekst.stappen.length} genummerde stappen, verwacht ${verwacht}`);
+  for (const st of tekst.stappen) {
+    if (!st.zinnen.length) mis.push(`stap ${st.nr} zonder zinnen`);
+    for (const z of st.zinnen) {
+      if (typeof z !== 'string' || /undefined|null|NaN|\[object/.test(z)) { mis.push(`stap ${st.nr}: gat in "${z}"`); continue; }
+      if (slachtoffer.test(z)) mis.push(`stap ${st.nr} noemt het slachtoffer bij naam: ${z}`);
+      for (const [, r, k] of z.matchAll(/\b([A-Z])(\d{1,2})\b/g)) {
+        if (r.charCodeAt(0) - 65 >= p.n || Number(k) < 1 || Number(k) > p.n) mis.push(`stap ${st.nr} noemt vakje ${r}${k}, dat niet op het bord staat`);
+      }
+    }
+  }
+  return mis;
+}
+
 // ----------------------------------------------------------- de keuringsset
 
 const vingerafdruk = (p) => createHash('sha256')
@@ -192,11 +218,27 @@ for (const [niveau, aantal] of Object.entries(SEEDS)) {
   }
 }
 
+// De weigerkant van de tekst: het slachtoffer bij naam, en een vakje dat
+// niet op het bord staat.
+{
+  const p = buildPuzzle(lijst[0]);
+  const uit = redeneer(p._rooster, p._ruwe);
+  const goed = oplossingInStappen(uit, p);
+  if (keurTekst(p, uit, goed).length) fout('weigerkant', `een goede oplossing viel om: ${keurTekst(p, uit, goed)[0]}`);
+  const metNaam = structuredClone(goed);
+  metNaam.stappen[0].zinnen.push(`${p.slachtofferNaam} lag op A1.`);
+  if (!keurTekst(p, uit, metNaam).some((m) => m.includes('bij naam'))) fout('weigerkant', 'het slachtoffer bij naam viel niet om');
+  const buiten = structuredClone(goed);
+  buiten.stappen[0].zinnen.push(`Bram stond op ${String.fromCharCode(65 + p.n)}1.`);
+  if (!keurTekst(p, uit, buiten).some((m) => m.includes('niet op het bord'))) fout('weigerkant', 'een vakje buiten het bord viel niet om');
+}
+
 const AFDRUKKEN = new URL('vingerafdruk-kamers.txt', import.meta.url);
 const SCHRIJF = process.argv.includes('--schrijf');
 const vastgelegd = new Map(SCHRIJF ? [] : readFileSync(AFDRUKKEN, 'utf8').trim().split('\n').map((r) => r.split(' ')));
 const nieuw = [];
 const perNiveau = {};
+const technieken = new Set();
 
 for (const settings of lijst) {
   const p = buildPuzzle(settings);
@@ -218,8 +260,14 @@ for (const settings of lijst) {
       fout(p.id, `de solver loste op, maar telPlaatsingen vond ${telling.opgegeven ? 'geen uitsluitsel' : `${telling.count} oplossingen`} (zwaarste techniek: ${zwaarste})`);
     }
   }
+  for (const m of keurTekst(p, uit, oplossingInStappen(uit, p))) fout(p.id, m);
+  for (const s of uit.stappen) technieken.add(s.techniek);
   (perNiveau[p.niveau] ??= []).push({ ...uit.graad, opgelost: uit.opgelost, vast: uit.vast, ms });
 }
+
+// Elke techniek moet in de keuringsset een keer voorkomen, anders keurt de
+// set hem niet echt.
+for (const t of Object.keys(TECHNIEKEN)) if (!technieken.has(t)) fout('keuringsset', `techniek ${t} komt nergens voor`);
 
 if (SCHRIJF) {
   writeFileSync(AFDRUKKEN, `${nieuw.join('\n')}\n`);
