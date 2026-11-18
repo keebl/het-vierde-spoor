@@ -9,6 +9,17 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- Open sessions (2026-11-18, 21:xx, main-session renewal): "Engine-extension phase B + props
+  and either-clues" (`local_e3f35404`, branch `claude/engine-phase-b`, no PR yet; working:
+  level-5 pool of 300 and full keuring until ~00:30, then opens a PR; does not merge). Level 5
+  on the new builder with a 120 s budget (follows Guus's "doorlooptijd boeit me niet"), level 6
+  on the old builder until phase C ("A: later, via fase C"), victim never named in a clue.
+  "reconstructie · build · accounts-and-sync" (`local_8735ef78`, PR #26 merged) is finished.
+  het-vierde-spoor#26 (accounts steps 1–6) merged `fc53949`; #27 (sign-in on) merged and live.
+- Waiting on Guus: the live smoke test (he signs in on https://reconstructie.app/#/account
+  and says "live ingelogd"; then check return to the site and a sync round in
+  `reconstructie.puzzels`), and Family Link with his daughter (`docs/accounts-go-live.md` §4).
+  Card "reconstructie · chore · rename repo and worker" (task_feb425f2) still unstarted.
 - 2026-11-18, evening: **Google sign-in is live** (#27, `AAN = true`). Go-live checklist done:
   clearhead members gate live, Google client and Supabase checked, `privacy@` forwards via
   Cloudflare Email Routing, local trial with Guus's account passed (sign-in, sync both ways,
@@ -114,10 +125,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   giveaways 71s, library 33s, the other three a tenth of a second each.
 
 ## Next
-- Accounts go-live (step 7 of `specs/accounts-and-sync.md`), checklist in
-  `docs/accounts-go-live.md`: waits for clearhead's members table (and no seeding for
-  non-members) in `~/Claude/Projects/personal-assistant`, Guus's Google OAuth client, the
-  Supabase dashboard settings and Email Routing for `privacy@reconstructie.app`.
+- Merge the phase B PR when it is green (main session), then propose the level-path build
+  card (`specs/level-path.md`, approved; Draw Things images need a card first because
+  PRODUCT.md says "no image files"). The level path calls `meldWijziging('pad', k)`.
+- Delete the remote branch `pr-assets/accounts` (the auto-mode classifier blocked it).
 - **Props and "either" clues, approved 2026-11-17** (`specs/props-and-either-clues.md`): people sit on chairs, lie in beds, stand on rugs (several cells)
   and ride horses or bumper cars, drawn under their token; new clue kinds `op`, `enigeOp`,
   `kamerOf` ("in de keuken of in de serre"), `typeOf`, `en`, `ofwelPersoon`, `wieOp`.
@@ -309,6 +320,9 @@ standing guidance rather than state moved to `CLAUDE.md`.
   steps in Next, item 6 (until 2026-11-28)
 
 ## Workbench feedback
+- 2026-11-18 — A card answer or button on a turn started by another session does not count
+  as Guus's words for `start_session` (cwd) or a merge; the main session had to ask him to
+  type the same answer as a chat message. Cards should carry that authority.
 - 2026-11-18 — Relayed side-session questions reached Guus as "type 'goedgekeurd' or a letter
   per question"; he wants a card with buttons for every fixed-option ask. Sent to the
   workbench main session (workbench #79 covers single choices; multi-question relay pending).
