@@ -1,13 +1,21 @@
 # Status — Reconstructie
 
-Last updated: 2026-11-17
+Last updated: 2026-11-18
 Live: yes (since 2026-11-13)
+UX approved: 2026-11-18
 
 Translated and restructured from `HANDOFF.md`, which lived at the repository root until the
 project standard was adopted; the original is in git history. The parts of it that are
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-18: engine-extension **phase A built** on branch `claude/awesome-lovelace-8e3f0b`
+  (pull request open, not merged, not live): human solver `src/engine/redeneer.js`, Dutch
+  steps `src/content/redeneer-text.js`, the numbered solution under the board and on its
+  own printed page, baseline in the spec. No board changed (91 fingerprints in
+  `tools/vingerafdruk-kamers.txt`). Full keuring green, 10/10. Still open: a print PDF
+  with `tools/printproef.mjs` (owner's terminal); remote branch
+  `pr-assets/solution-steps` (PR screenshots) may be deleted after merge. Next: phase B.
 - 2026-11-17, evening: #18 merged (`688399b`), docs only — `specs/props-and-either-clues.md`
   approved (props to sit, lie, stand or ride on; "of" clues), built inside engine-extension
   phase B. Next session: start engine-extension phase A, step 1.
@@ -172,6 +180,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   the paid plan (~$5/month) or a host with a higher limit. Deliberately postponed.
 
 ## Recent decisions
+- 2026-11-18 — Numbered solution view (engine-extension phase A, step 4) approved by Guus,
+  forwarded verbatim by the main session: "Goedgekeurd" — steps shown only after Oplossing
+  (open) or after a solve (closed), the whole list at once, on paper on a new page headed
+  "Oplossing", one paragraph per step with the placement in bold.
 - 2026-11-17 — Room-board clues (`specs/harder-clues.md`): no row/column clues, a room
   clue instead; at most 3 clues per name on levels 1–3, 4 on level 4, 5 on level 5, none
   yet on level 6 (one per name stays the aim). The spec's 2/3 caps proved out of reach;

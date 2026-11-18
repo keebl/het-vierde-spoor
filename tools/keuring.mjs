@@ -23,9 +23,10 @@ const TOETSEN = [
   ['de weggevers', 'check-weggevers.mjs', []],
   ['de iconen', 'check-iconen.mjs', []],
   ['de kamers', 'check-kamers.mjs', []],
+  ['de redenering', 'check-redeneer.mjs', []],
 ];
 
-// `--snel` slaat de zes toetsen over die puzzels bouwen; die kosten samen
+// `--snel` slaat de zeven toetsen over die puzzels bouwen; die kosten samen
 // minuten. Wat overblijft draait in een seconde en vangt verreweg de meeste
 // fouten in de inhoud - een vergeten icoon, een kamernaam die niet bij zijn
 // vloer past, een tekening die niet bestaat, een dubbele sleutel in een
@@ -44,7 +45,7 @@ if (ALLEEN && !TOETSEN.some(([naam]) => naam === ALLEEN)) {
   console.log('volledige keuring exit=1');
   process.exit(1);
 }
-const ZWAAR = new Set(['de motor', 'de bibliotheek', 'de aanwijzingen', 'de spreiding', 'de veegronde', 'de weggevers']);
+const ZWAAR = new Set(['de motor', 'de bibliotheek', 'de aanwijzingen', 'de spreiding', 'de veegronde', 'de weggevers', 'de redenering']);
 
 const uitslag = [];
 

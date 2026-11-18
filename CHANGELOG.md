@@ -16,6 +16,9 @@ day the changelog was introduced; everything before that is in git history only.
   under both names.
 
 ### Added
+- A Reconstructie board now explains its solution: after Oplossing, or after you solve it
+  yourself, "Zo los je hem op" lists numbered steps in Dutch, each ending with who stood
+  where. On paper the steps follow on their own page headed "Oplossing". No board changed.
 - Solving a Reconstructie now ends the case: a sheet slides over the board with the
   answer's portrait, name and role, one closing line that fits the case (murder,
   disappearance or theft), a little confetti and a "Volgende zaak" button. After

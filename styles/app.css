@@ -3170,3 +3170,36 @@ body .kamerbord .kamernaam {
   stroke-width: 4.5;
 }
 .vakjeslijn { stroke: rgba(42, 27, 61, 0.26); }
+
+
+/* ------------------------------------------------ de oplossing in stappen
+   Onder de knoppen, in het klepje van de spelregels (zie oplossingBlok in
+   player.js). Elke stap een alinea; de laatste zin vet: wie waar stond. Op
+   papier een eigen vel met de kop "Oplossing", altijd open. */
+.oplossing-stappen { margin: var(--s5) 0 0; }
+.oplossing-stappen .stappen-sub {
+  margin: var(--s3) var(--s4) 0;
+  font-size: var(--t-sm);
+  color: var(--text-3);
+}
+.stappenlijst {
+  margin: 0;
+  padding: var(--s3) var(--s4) var(--s4) calc(var(--s4) + 20px);
+  display: grid;
+  gap: var(--s3);
+  font-size: var(--t-sm);
+  color: var(--text-2);
+  line-height: 1.55;
+}
+.stappenlijst b { color: var(--text); font-weight: 700; }
+.alleen-papier { display: none; }
+
+@media print {
+  .oplossing-stappen { break-before: page; border: 0; margin: 0; }
+  .oplossing-stappen > summary { display: none; }
+  .oplossing-stappen .alleen-papier { display: block; margin: 0 0 var(--s3); }
+  .oplossing-stappen h2.alleen-papier { font-size: 18pt; }
+  .oplossing-stappen .stappen-sub { margin: 0 0 var(--s3); }
+  .stappenlijst { padding: 0 0 var(--s3) 20px; font-size: 10pt; color: #000; }
+  .stappenlijst li { break-inside: avoid; }
+}
