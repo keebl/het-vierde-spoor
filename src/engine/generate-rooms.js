@@ -135,7 +135,9 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten, { minVrij =
   // ---- fase B: stukken om op te zitten, ramen, hoeken, en "of"-zinnen
   // (specs/props-and-either-clues.md, specs/engine-extension.md stap 7).
   // Alleen wat het niveau een gewicht geeft komt in de vijver (zet).
-  const typen = [...typeTelling(rooster).keys()].sort();
+  // Op codepunt, net als sort() zonder functie: localeCompare zou per
+  // browser anders kunnen sorteren en dan verschuift hetzelfde bord.
+  const typen = [...typeTelling(rooster).keys()].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
   for (let p = 0; p < n; p++) {
     const cel = plaats[p];
     const mijnType = typeOp(rooster, cel);

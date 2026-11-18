@@ -69,7 +69,8 @@ export function bouw(settings, { opVoortgang = null, achtergrond = false } = {})
   const werk = (async () => {
     if (klaar.has(id)) return klaar.get(id);
     const bewaard = (await haal(id, BORDVERSIE)) ?? (await uitPool(settings));
-    if (bewaard) { if (!achtergrond) gespeeld(id); return bewaard; }
+    // gespeeld en bewaar vangen hun eigen fouten: bewust niet op wachten.
+    if (bewaard) { if (!achtergrond) void gespeeld(id); return bewaard; }
     if (gestopt) throw new Error('afgebroken');
     worker = maakWorker();
     // Vooruitbouwen zonder worker zou de pagina bevriezen terwijl iemand
@@ -103,7 +104,7 @@ export function bouw(settings, { opVoortgang = null, achtergrond = false } = {})
   data.then((d) => {
     if (achtergrond) {
       klaar.set(id, d);
-      if (settings.niveau >= BEWAAR_VANAF) bewaar(id, settings.niveau, d);
+      if (settings.niveau >= BEWAAR_VANAF) void bewaar(id, settings.niveau, d);
     }
   }).catch(() => {});
   return {
