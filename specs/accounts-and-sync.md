@@ -1,12 +1,11 @@
 # Spec: Accounts and sync
 
-Status: draft
+Status: approved (Guus, 2026-11-18: "Goedgekeurd, zo bouwen")
 Date: 2026-11-18
 
 ## Goal
 A player who signs in with Google sees the same game on every device: the puzzles she
-solved or revealed, a board she is halfway through, her stars on the level path and her
-main preferences follow her from phone to laptop and back. Playing without signing in stays
+solved or revealed, her stars on the level path and her main preferences follow her from phone to laptop and back. Playing without signing in stays
 exactly as it is today.
 
 ## Users and context
@@ -22,12 +21,15 @@ finds the site (Guus, round 2: "Iedereen"), but no one ever has to sign in.
 | Question | Guus's answer | What it means here |
 |---|---|---|
 | Backend | "Supabase, nieuw EU-project", then on costs: "hij zal bij de andere in de zelfde database moetne want ik mag maar 1 project" | Supabase, inside the existing free project `claudeDB` (Paris, eu-west-3), in its own schema `reconstructie`. No new project, no paid plan. |
-| What syncs | "Plus voorkeuren" | Solved and revealed puzzles, path stars, half-finished boards, and preferences. |
+| What syncs | "Plus voorkeuren", narrowed in the walkthrough to "Alleen afgerond mee" | Solved and revealed puzzles, path stars, and preferences. Half-finished boards stay on the device. |
 | First sign-in | "Samenvoegen" | Local and account progress are merged; nothing is lost. |
 | Who may sign in | "Iedereen" | Open Google sign-in. Prerequisite: the other app in `claudeDB` must first close its tables to strangers (see Prerequisites). |
-| Half-finished board on two devices | "Nieuwste wint" | Per puzzle, the newest board wins; an open board never changes under the player's hands. |
+| Half-finished board on two devices | Round 2 "Nieuwste wint"; walkthrough: "ik weet niet of we hier wat mee moeten, als mensen op twee aparateren tegelijk werken wordt alleen een afgeronde puzzel opgeslagen of kijk jij daar anders naar?", then "Alleen afgerond mee" | Half-finished boards (crosses, figures, sketch letters, struck clues, undo history) are not synced. No "newer board" bar, no "newest board wins". |
 | Preferences | "Niveau, kruisjes, panelen" | Level, auto-crosses and open panels sync; the board frame and light/dark stay per device. |
 | Her account | "Eigen account, Family Link" | A parent approves the sign-in once (steps under Family Link). |
+| Menu when signed in (walkthrough) | "Rondje met letter" | A round badge with the first letter of the e-mail address. |
+| Privacy text (walkthrough) | "Uitleg + privacy.html" | A section on Uitleg and a standalone `privacy.html`. |
+| Approval (walkthrough) | "Goedgekeurd, zo bouwen" | Spec, product change and the clearhead prerequisite approved, with the half-board simplification. |
 | Deletion and free plan (assumptions, no objection) | — | "Account verwijderen" wipes all Reconstructie data and deletes the login only if it has no data in another app; the free plan's seven-day pause is accepted. |
 
 ## Product change (needs Guus's approval with this spec)
@@ -40,7 +42,7 @@ This feature reverses two non-goals in `docs/PRODUCT.md` and changes its data se
   stores a signed-in player's progress. If it is down, paused or unreachable, playing does not
   change; only syncing waits.
 - "Personal data: none" becomes: none without an account; with an account, the Google
-  e-mail address and an internal id (Supabase Auth) and the player's game state, to show it
+  e-mail address and an internal id (Supabase Auth) and the player's progress, to show it
   on all her devices.
 
 Proposed new text for `docs/PRODUCT.md`, applied in the build's first step:
@@ -54,9 +56,8 @@ Proposed new text for `docs/PRODUCT.md`, applied in the build's first step:
 >
 > **Data, privacy and money**
 > - Personal data: none without an account. With an account: the Google e-mail address and
->   an internal id (Supabase Auth), and the player's game state (solved and revealed
->   puzzles, unfinished boards, path stars, three preferences), to show it on all her
->   devices. Deleted with "Account verwijderen". No analytics, no tracking.
+>   an internal id (Supabase Auth), and the player's progress (solved and revealed
+>   puzzles, path stars, three preferences), to show it on all her devices. Deleted with "Account verwijderen". No analytics, no tracking.
 > - Accounts: optional, Google sign-in only.
 
 ## Prerequisites (blocking)
@@ -96,28 +97,24 @@ Proposed new text for `docs/PRODUCT.md`, applied in the build's first step:
   "Inloggen met Google". Signed in: the e-mail address, "Bijgewerkt om 14:32" (the last
   successful sync), "Uitloggen" and "Account verwijderen".
 - **What syncs**
-  - per puzzle: solved, revealed, and the board state the game already saves (crosses,
-    placed figures, sketch letters, struck clues), not the undo history;
+  - per puzzle: solved and revealed (not the board itself);
   - the level path (`vierdespoor.pad`): stars and solved per stop;
   - preferences: level, auto-crosses, open panels. The board frame and light/dark stay per
     device.
 - **Local first.** `localStorage` stays the store the game reads and writes, exactly as now.
   A separate sync module, when signed in, pushes what changed and pulls what is newer. It
-  runs after sign-in, on page load, a few seconds after the board stops changing, after a
-  solve or reveal, after a path stop, and when the tab becomes visible again.
+  runs after sign-in, on page load, after a solve or reveal, after a path stop, and when the tab becomes visible again.
 - **Merge rules** (the database applies them, so two devices pushing at once cannot undo
   each other):
   - solved and revealed: a puzzle is solved if solved on either side; revealed likewise;
-  - board state: the newer board wins, per puzzle (each board carries the time it was last
-    changed); a solved puzzle's board is never replaced by an unsolved one;
   - path: highest stars per stop; solved if solved on either side;
   - preferences: the newest value wins, per preference.
   The first sign-in on a device that already has progress uses the same rules: nothing is
   lost.
-- **An open board never changes under the player's hands.** If a newer board for the puzzle
-  on screen arrives, a bar appears above the board: "Op een ander apparaat ben je verder
-  gekomen." with "Laden" and "Hier verder". "Laden" replaces the board; "Hier verder" keeps
-  this one, and its next change makes it the newest.
+- **A half-finished board stays on its device.** Crosses, placed figures, sketch letters,
+  struck clues and the undo history are never sent. A puzzle half-played on the phone opens
+  on the laptop with the laptop's own board (or empty); once it is solved anywhere, it shows
+  as solved everywhere.
 - **Account deletion in the app.** "Account verwijderen" asks once: "Je account en alles wat
   erbij bewaard is, worden gewist. De voortgang op dit apparaat blijft." On confirm, one
   database call deletes every Reconstructie row of the caller and, when that login has no
@@ -148,7 +145,8 @@ Proposed new text for `docs/PRODUCT.md`, applied in the build's first step:
 
 ## Non-goals (out)
 - Sign-in methods other than Google.
-- Syncing the undo history, the board frame or light/dark.
+- Syncing a half-finished board (crosses, figures, sketch letters, struck clues), the undo
+  history, the board frame or light/dark (Guus, walkthrough: "Alleen afgerond mee").
 - Live sync while two devices are open at the same time (a change shows on the other device
   when it syncs: on load, on becoming visible, or after its own change).
 - Leaderboards, sharing, profiles, avatars, anything social.
@@ -173,39 +171,32 @@ Proposed new text for `docs/PRODUCT.md`, applied in the build's first step:
    both show it as solved.
 7. Given path stop k has 2 stars on one side and 3 on the other, when they sync, then both
    show 3 stars.
-8. Given she left puzzle Q half-finished on device A, when she opens Q on device B after A
-   synced, then B shows A's board.
-9. Given Q was changed on both devices, when they sync, then both end with the board that was
-   changed last.
-10. Given Q is open on device B and a newer board for Q arrives, then B's board does not
-    change and the bar "Op een ander apparaat ben je verder gekomen." appears; "Laden"
-    replaces the board, "Hier verder" keeps it.
-11. Given Q is solved on one side and unsolved on the other, when they sync, then the solved
-    board is kept on both, whichever is newer.
-12. Given she changes the level, auto-crosses or a panel on device A, when B syncs, then B
+8. Given she left puzzle Q half-finished on device A, when she opens Q on device B, then B
+   shows B's own board for Q (or an empty one), and nothing of A's board was sent.
+9. Given she changes the level, auto-crosses or a panel on device A, when B syncs, then B
     has the same value; given she turns the board frame or the theme on A, then B is
     unchanged.
-13. Given she is signed in and Supabase is unreachable (offline, paused project, error), then
+10. Given she is signed in and Supabase is unreachable (offline, paused project, error), then
     playing is unchanged, progress is saved locally, the account page says "Nog niet
     bijgewerkt — we proberen het later opnieuw.", and the next successful sync pushes it.
-14. Given she confirms "Account verwijderen", then every row of hers in schema `reconstructie`
+11. Given she confirms "Account verwijderen", then every row of hers in schema `reconstructie`
     is gone, she is signed out, and local progress on this device is unchanged.
-15. Given that login has no rows in any other schema or table of the project, when she
+12. Given that login has no rows in any other schema or table of the project, when she
     confirms deletion, then the auth user is deleted too; given it has, then the auth user
     stays and only the Reconstructie rows are gone.
-16. Given she presses "Account verwijderen" and cancels, then nothing is deleted.
-17. Given user A is signed in, when a request with A's token reads, inserts, updates or
+13. Given she presses "Account verwijderen" and cancels, then nothing is deleted.
+14. Given user A is signed in, when a request with A's token reads, inserts, updates or
     deletes a row of user B in schema `reconstructie`, then it is refused or affects no rows.
-18. Given a request with only the anon key, when it touches any table or function in schema
+15. Given a request with only the anon key, when it touches any table or function in schema
     `reconstructie`, then it is refused.
-19. Given a pushed value of the wrong shape or over the size limit (board over 32 kB, more
-    than 2,000 puzzles per user), then the database rejects it and local progress is
+16. Given a pushed value of the wrong shape or over the size limit (more than 2,000 puzzles
+    per user, a preference outside its allowed values), then the database rejects it and local progress is
     unchanged.
-20. Given a pulled value with unknown keys, wrong types or a newer format version, then the
+17. Given a pulled value with unknown keys, wrong types or a newer format version, then the
     client ignores what it does not recognise and keeps local progress intact.
-21. Given she presses "Uitloggen", then the session is removed from this device only, syncing
+18. Given she presses "Uitloggen", then the session is removed from this device only, syncing
     stops, and local progress stays.
-22. Given `privacy.html` or the privacy section on Uitleg is opened, then it states what is
+19. Given `privacy.html` or the privacy section on Uitleg is opened, then it states what is
     stored, why, where, how long, how to delete it, and that a child's account needs a
     parent's approval.
 
@@ -218,18 +209,16 @@ Proposed new text for `docs/PRODUCT.md`, applied in the build's first step:
   (see below). A parent can later remove the site's access in Family Link; the next sync then
   fails as a signed-out session.
 - **Free project paused after a week without any request:** sync fails like offline
-  (criterion 13) until it is resumed. Unlikely, because clearhead and crossroads use the
+  (criterion 10) until it is resumed. Unlikely, because clearhead and crossroads use the
   same project.
-- **Clock skew between devices:** "newest wins" for boards and preferences uses the device's
-  clock. A device whose clock runs far ahead could win wrongly; the server refuses times
-  more than one day in the future and uses its own time then. Solved, revealed and stars
-  never depend on time.
+- **Clock skew between devices:** "newest wins" for preferences uses the device's clock. A
+  device whose clock runs far ahead could win wrongly; the server refuses times more than
+  one day in the future and uses its own time then. Solved, revealed and stars never depend
+  on time.
 - **Local list trimmed:** `vierdespoor.v1` keeps at most 120 puzzles. The account keeps more
   (up to 2,000); a pull adds solved/revealed flags for puzzles not in the local list as
-  minimal entries, and a board only for puzzles that are opened. The local trim stays as it is.
-- **Puzzle ids from older engine versions:** opaque strings to sync; a stored board whose
-  engine version differs from the current one is ignored when opened, as the game already
-  does locally.
+  minimal entries. The local trim stays as it is.
+- **Puzzle ids from older engine versions:** opaque strings to sync.
 - **Session expired or refresh token revoked:** treated as signed out on that device, with
   "Log opnieuw in om bij te werken." on the account page.
 - **Account deleted on A while B is still signed in:** B's next sync fails with an auth error
@@ -253,14 +242,14 @@ Proposed new text for `docs/PRODUCT.md`, applied in the build's first step:
   the internal user id, sign-in times. Only the `openid email` scopes are requested; name and
   photo are not used or shown.
 - **Kept by us, schema `reconstructie`:**
-  - `puzzels`: `user_id`, `puzzel_id` (text), `opgelost`, `onthuld` (bool), `bord` (jsonb,
-    the board state, ≤ 32 kB), `bord_tijd` (timestamptz), `bijgewerkt` (server time);
-    at most 2,000 rows per user;
+  - `puzzels`: `user_id`, `puzzel_id` (text, ≤ 200 characters), `opgelost`, `onthuld`
+    (bool), `bijgewerkt` (server time); at most 2,000 rows per user;
   - `pad`: `user_id`, `stap` (int), `sterren` (0–3), `opgelost`, `bijgewerkt`;
   - `voorkeuren`: `user_id`, `niveau`, `kruisjes`, `panelen` (jsonb, known keys only), with a
     time per value, `bijgewerkt`.
   Every table references `auth.users` with `on delete cascade`.
-- **Not stored:** undo history, timings, device information; we keep no IP addresses
+- **Not stored:** boards (crosses, figures, sketch letters, struck clues), undo history,
+  timings, device information; we keep no IP addresses
   (Supabase keeps standard API logs for a limited time on its side).
 - **Purpose:** showing the player's game on all her devices. Nothing else.
 - **Where:** Supabase, eu-west-3 (Paris), processor under its DPA. Google handles the
@@ -300,39 +289,40 @@ Proposed new text for `docs/PRODUCT.md`, applied in the build's first step:
 `docs/DESIGN.md` applies: the existing cheerful, drawn look. The account page is a plain
 content page like Uitleg, with the existing buttons. The Google button follows Google's
 branding rules (their "G" mark, "Inloggen met Google"), the one outside mark on the site.
-The "verder gekomen" bar uses the existing notice style above the board.
 
 ## Flow and sketch (UI features)
-To be done with `/functional-design --feature accounts-and-sync` before approval: flows sign
-in (including Family Link approval), first sync, newer board on screen, sign out, delete,
-offline; screens: menu entry, `#/account` signed out / signed in / not updated / error,
-delete confirmation, the "verder gekomen" bar, the privacy section.
+- Flows and screens: `docs/UX.md`, sections marked "(accounts and sync)": sign in (with
+  Family Link approval), go on on another device, delete the account, offline; screens
+  menu, account signed out / signed in, confirm delete, account deleted, privacy.
+- Sketch: `design/prototype/accounts-and-sync/index.html`.
+- Walkthrough: 2026-11-18, by Guus in the browser pane (relayed verbatim by the main
+  session): "Rondje met letter", "Uitleg + privacy.html", half boards "Alleen afgerond mee"
+  (the "newer board" bar removed), verdict "Goedgekeurd, zo bouwen".
 
 ## Performance budget (when it matters)
 - Signed out: no extra network request and no measurable change in first render;
   supabase-js (about 50 kB gzipped) loads only with a session or on `#/account`.
-- A sync round under 1 s on a normal connection, never blocking input; board pushes are
-  debounced (a few seconds after the last change).
+- A sync round under 1 s on a normal connection, never blocking input.
 
 ## Test plan
-- Unit, valid input: merge rules (union of solved/revealed, max stars, newest board and
-  preference, solved board kept), conversion between the local keys and the sync rows, in
-  `tools/check-sync.mjs` (`npm run check:sync`, part of `check:snel`).
-- Refusal or failure: malformed or oversized pulled values (criterion 20); push rejected
-  (criterion 19); network error and paused project (criterion 13); cancelled or unapproved
-  sign-in; delete cancelled (criterion 16); session expired.
+- Unit, valid input: merge rules (union of solved/revealed, max stars, newest preference,
+  no board ever in what is pushed), conversion between the local keys and the sync rows,
+  in `tools/check-sync.mjs` (`npm run check:sync`, part of `check:snel`).
+- Refusal or failure: malformed or oversized pulled values (criterion 17); push rejected
+  (criterion 16); network error and paused project (criterion 10); cancelled or unapproved
+  sign-in; delete cancelled (criterion 13); session expired.
 - Integration and contract: migrations in `supabase/migrations/` applied to `claudeDB`;
   Supabase's security advisors show no new warning; a script signs in as two test users
   and checks merge functions and shape checks end to end.
-- Security: RLS negative tests (criteria 17, 18) as SQL under two users' JWT claims and the
+- Security: RLS negative tests (criteria 14, 15) as SQL under two users' JWT claims and the
   anon role, in `supabase/tests/`; `verwijder_mijn_account()` touches only the caller and
-  keeps a login that has data elsewhere (criterion 15, with a test user that has a row in a
+  keeps a login that has data elsewhere (criterion 12, with a test user that has a row in a
   scratch table); the keuring greps that `service_role` appears nowhere in the repo; CSP
   blocks a script from another origin; no token or e-mail in console output.
 - Regression: n/a — new feature; the full keuring stays green and signed-out play makes no
   Supabase request (criterion 1), checked in the browser pane's network list.
 - Sanity and smoke: after deploy, with sign-in switched on: sign in with a test Google
-  account, solve and half-play a library puzzle, open a second browser profile, see both;
+  account, solve a library puzzle, open a second browser profile, see it solved;
   delete the account; confirm in the dashboard that the rows are gone.
 - Component / E2E and manual check: the account page in all states, light and dark, phone and
   desktop, screenshots in the PR; the real Google and Family Link sign-in by Guus once
@@ -342,4 +332,74 @@ delete confirmation, the "verder gekomen" bar, the privacy section.
 - None blocking the spec. Prerequisite 1 is its own task in personal-assistant.
 
 ## Plan (added before building)
-To be added after approval.
+Order matters: steps 1–6 can be built and merged with sign-in switched off (criterion 2), so
+nothing reaches players before Prerequisite 1. Each step is one pull request or one commit
+in the build branch; all code identifiers and UI text in Dutch, as the rest of `src/`.
+
+1. **Product docs and ADR** — `docs/PRODUCT.md` (the approved text above),
+   `docs/decisions/0006-optional-accounts-with-supabase.md` (shared project `claudeDB`,
+   schema `reconstructie`, PKCE redirect flow, session in `localStorage` with CSP and
+   self-hosted library as the web stand-in for secure storage, no `service_role`; follow
+   the shape of `0005-…`), `docs/ARCHITECTURE.md` (the sync module and the one server).
+   Tests first: none (docs). ~1 h.
+2. **Merge rules and conversion, no network** — `src/sync/samenvoegen.js`: pure functions
+   that turn `vierdespoor.v1` + `vierdespoor.pad` + `vierdespoor.voorkeuren` into rows
+   (solved/revealed per puzzle, stars per stop, three preferences with a time each) and
+   merge pulled rows back in (union, max, newest preference), refusing unknown keys and
+   wrong types. Tests first: `tools/check-sync.mjs` with criteria 5–9 and 17 as cases,
+   wired into `tools/keuring.mjs` as a fast check (pattern: the `check-ai-guard.mjs`
+   entry) and `npm run check:sync`; it also greps the repo for `service_role`. ~2 h.
+3. **Database** — `supabase/migrations/<ts>_reconstructie.sql`: schema, the three tables
+   with check constraints (id length, 0–3 stars, known preference keys, 2,000-row cap via
+   trigger), `on delete cascade` to `auth.users`, RLS with one policy per operation, grants
+   to `authenticated` only, merge functions `bewaar_puzzels(jsonb)`, `bewaar_pad(jsonb)`,
+   `bewaar_voorkeuren(jsonb)` (`security invoker`, refuse times more than a day ahead), and
+   `verwijder_mijn_account()` (`security definer`, `set search_path = ''`, deletes the
+   caller's rows, then the auth user only when no row references it in any other table:
+   it checks every foreign key to `auth.users` through `pg_constraint`, so a new table in
+   clearhead or crossroads is covered without editing this function). Pattern:
+   `~/Claude/Projects/crossroads` migrations and its `supabase/README.md` (shared-project
+   notes). Tests first: `supabase/tests/reconstructie_rls.sql` for criteria 11, 12, 14, 15,
+   16 under two users' JWT claims and the anon role. Applying to `claudeDB` (via the
+   Supabase connector, `apply_migration`) and exposing the schema are additive changes to
+   a shared project: the build asks Guus once before applying, then runs the tests and the
+   security advisors. ~2 h.
+4. **Client and session** — vendor `@supabase/supabase-js` (exact version, ESM build,
+   licence file) in `src/vendor/`; `src/sync/config.js` (URL, publishable key, `aan` flag:
+   false in production); `src/sync/sessie.js` (lazy import, PKCE, sign in with redirect to
+   the current origin, exchange `?code=` then strip it from the URL with
+   `history.replaceState` before the hash router runs, local sign-out); CSP `<meta>` in
+   `index.html` (`script-src 'self'`, `connect-src 'self'` plus the project URL and what
+   the AI layer already needs; check the AI flag still works). Tests first: criterion 1
+   and 2 in the browser pane's network list with the flag off and on. ~2 h.
+5. **Sync runs** — `src/sync/sync.js`: pull, merge, push at the moments in Scope; hooks in
+   `src/ui/state.js` (`saveProgress` on solve/reveal, `zetNiveau`, `zetKruisjesVanzelf`,
+   `zetPaneel`) and the level path's save, through one `meldWijziging()` call so the game
+   code does not know about Supabase; never blocks; errors set a status, never throw into
+   the game. Tests first: extend `check-sync.mjs` with a fake backend for criteria 4–10 and
+   17. ~2 h.
+6. **Account page and menu** — `src/ui/account.js` (route `#/account`, screens from
+   `docs/UX.md`), menu entry and badge in `index.html` / `src/main.js`, confirm dialog as
+   the existing Oplossing confirm, privacy section in `src/ui/uitleg.js`, `privacy.html`
+   (same text, standalone, no script). Screenshots light and dark, 375 px and desktop,
+   compared with the sketch. Tests first: criteria 13, 18, 19 by hand in the browser pane.
+   ~2 h.
+7. **Go live (after Prerequisite 1)** — Guus creates the Google OAuth client and enters it
+   in Supabase (steps in a short `docs/` how-to written in step 6), adds the redirect URLs;
+   the build flips `aan` to true, deploys, and runs the smoke test from the Test plan with a
+   test account; Guus does the Family Link sign-in once with his daughter. STATUS.md and
+   CHANGELOG.md updated. ~1 h plus Guus's time.
+
+Risks:
+- **Shared project.** A migration or setting for Reconstructie can affect clearhead and
+  crossroads; mitigated by its own schema, additive settings only, and the ask before
+  applying. A later move to its own project stays possible (rows keyed by user id).
+- **Deleting the auth user** cascades into clearhead's tables if the same person uses both;
+  the foreign-key check in `verwijder_mijn_account()` is the guard, and its test is
+  mandatory before go-live.
+- **Prerequisite 1 slips:** sign-in stays off in production; nothing else is blocked.
+- **CSP breaks something** (the AI layer, the Web Worker, self-hosted fonts): checked in
+  step 4 with the full site walked once; the CSP can start in report-only mode if needed.
+- **Family Link flow differs from Google's documentation:** found at go-live; the privacy
+  and Uitleg text get corrected then.
+- **Free-plan pause:** unlikely with three apps on the project; sync degrades to offline.
