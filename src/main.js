@@ -83,9 +83,21 @@ function route() {
           stop,
         ])
         : el('p', { class: 'spinner', text: 'De puzzel wordt gebouwd en nagerekend...' }));
+      // De balk volgt de pogingen, maar één poging op zestien bij zestien
+      // duurt seconden, en de eerste lukt meestal: dan stond hij stil tot
+      // het klaar was. Daarom loopt hij tussendoor mee op de schatting, tot
+      // hooguit negentig procent (criterium 22: hij beweegt elke seconde).
+      let gemeld = 0;
+      const begin = Date.now();
+      const teken = () => {
+        const geschat = Math.min(0.9, (Date.now() - begin) / 1000 / (SCHATTING[settings.niveau] ?? 10));
+        balk.style.width = `${Math.round(Math.max(0.04, gemeld, geschat) * 100)}%`;
+      };
+      const klok = traag ? setInterval(teken, 500) : null;
       const taak = bouw(settings, {
-        opVoortgang: (deel) => { balk.style.width = `${Math.round(Math.max(0.04, Math.min(1, deel)) * 100)}%`; },
+        opVoortgang: (deel) => { gemeld = Math.min(1, deel); teken(); },
       });
+      taak.data.finally(() => clearInterval(klok)).catch(() => {});
       stop.addEventListener('click', () => { taak.afbreken(); location.hash = '#/'; });
       // Wie wegnavigeert terwijl er gebouwd wordt: de worker stopt.
       const weg = () => { if (!location.hash.includes(id)) taak.afbreken(); removeEventListener('hashchange', weg); };
