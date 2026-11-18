@@ -702,11 +702,17 @@ function perNaam(puzzle, extra, knopVoor) {
 
   // Iedereen op het bord langs, in de volgorde van het palet, zodat de
   // lijst dezelfde volgorde heeft als de penningen erboven.
+  // "Wie op het kleed stond, ..." heeft geen p maar één genoemde (ref).
+  const eigenaar = (r) => r?.p ?? r?.ref;
   for (let p = 0; p < puzzle.personen.length; p++) {
-    const mijn = perPersoon[p].filter((clue) => clue.ruw?.p === p);
+    // De persoon om wie het draait (de dode, de vermiste, de bestolene)
+    // staat niet in de lijst: geen aanwijzing noemt hem, dus er is niets
+    // over hem te lezen (Guus, 2026-11-18: "die naam ... weg laten").
+    if (p === puzzle.slachtofferIdx) continue;
+    const mijn = perPersoon[p].filter((clue) => eigenaar(clue.ruw) === p);
     const elders = [...new Set(perPersoon[p]
-      .filter((clue) => clue.ruw && clue.ruw.p !== p)
-      .map((clue) => puzzle.personen[clue.ruw.p]))];
+      .filter((clue) => clue.ruw && eigenaar(clue.ruw) !== p)
+      .map((clue) => puzzle.personen[eigenaar(clue.ruw)]))];
     // Een naam waar niets over gezegd wordt, werd hier overgeslagen. Op een
     // bord van vijf stonden er dan vier namen in de lijst, en dat leest als
     // een fout: alsof die ene vergeten is.

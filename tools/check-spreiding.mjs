@@ -102,7 +102,10 @@ export function keur(p, { hint = null, uniek = true } = {}) {
   }
 
   for (const c of [...ruw, ...(hint ? [hint] : [])]) {
-    if (c.p === p.slachtofferIdx || c.q === p.slachtofferIdx) fouten.push(`regel 6: ${c.soort} noemt het slachtoffer`);
+    // Ook niet als de ander in een paar, een "ofwel" of een "wie op het
+    // kleed" (Guus, 2026-11-18): de naam komt in geen enkele aanwijzing voor.
+    if (c.p === p.slachtofferIdx || c.q === p.slachtofferIdx || c.ref === p.slachtofferIdx) fouten.push(`regel 6: ${c.soort} noemt het slachtoffer`);
+    if (zinVoor(c, p.woorden).includes(p.slachtofferNaam)) fouten.push(`regel 6: de zin noemt ${p.slachtofferNaam}`);
   }
   if (uniek) {
     const uit = telPlaatsingen(p._rooster, ruw, 2, 30000 * p._rooster.n);
@@ -198,6 +201,8 @@ function tweeVakjes() {
     })()], 'regel 8'],
     ['twee eigen aanwijzingen voor één naam', p2, [...p2._ruwe, { soort: 'rand', p: v2, ja: true }], 'regel 9'],
     ['een aanwijzing over het slachtoffer', p2, [...p2._ruwe, { soort: 'rand', p: p2.slachtofferIdx, ja: true }], 'regel 6'],
+    ['een "wie op" met het slachtoffer als ander', p2, [...p2._ruwe, { soort: 'wieOp', t: 'kruk', ref: p2.slachtofferIdx, rel: 'noord' }], 'regel 6'],
+    ['een "ofwel" met het slachtoffer', p2, [...p2._ruwe, { soort: 'ofwelPersoon', p: v2, q: p2.slachtofferIdx, a: { soort: 'kamer', kamerIdx: 0, ja: true } }], 'regel 6'],
   ];
   for (const [wat, p, ruw, regel] of proeven) {
     const uit = keur(metAanwijzingen(p, ruw), { uniek: false });
