@@ -9,6 +9,12 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-18, late: `specs/accounts-and-sync.md` approved with its UX sections and sketch
+  (`design/prototype/accounts-and-sync/`), PR #25, docs only, not built. Optional Google
+  sign-in via Supabase in the shared project `claudeDB` (schema `reconstructie`); syncs
+  solved/revealed puzzles, path stars and three preferences, not half-finished boards.
+  Blocking for go-live: clearhead (personal-assistant) closes its `public` tables to
+  strangers with a members table — its own task in that project.
 - 2026-11-18, later: #22 merged (`b46a683`) — "op het schoolplein" for eight open places
   (keuring rule `VOORZETSEL` in `check-kamers.mjs`) and one line per thought in the numbered
   solution; eight fingerprints changed for clue text only, boards identical.
@@ -93,6 +99,9 @@ standing guidance rather than state moved to `CLAUDE.md`.
   giveaways 71s, library 33s, the other three a tenth of a second each.
 
 ## Next
+- Build `specs/accounts-and-sync.md` (steps 1–6 with sign-in switched off); go-live (step 7)
+  waits for clearhead's members table in `~/Claude/Projects/personal-assistant` and for
+  Guus's Google OAuth client.
 - **Props and "either" clues, approved 2026-11-17** (`specs/props-and-either-clues.md`): people sit on chairs, lie in beds, stand on rugs (several cells)
   and ride horses or bumper cars, drawn under their token; new clue kinds `op`, `enigeOp`,
   `kamerOf` ("in de keuken of in de serre"), `typeOf`, `en`, `ofwelPersoon`, `wieOp`.
@@ -201,6 +210,11 @@ standing guidance rather than state moved to `CLAUDE.md`.
   the paid plan (~$5/month) or a host with a higher limit. Deliberately postponed.
 
 ## Recent decisions
+- 2026-11-18 — Accounts and sync approved: "Goedgekeurd, zo bouwen" (forwarded verbatim by
+  the main session; `specs/accounts-and-sync.md`). Product change: accounts optional, one
+  database for progress only. Choices: claudeDB not a new project ("ik mag maar 1 project"),
+  sign-in open to "Iedereen", "Alleen afgerond mee" (no half boards), level, auto-crosses
+  and panels sync, "Rondje met letter", "Uitleg + privacy.html", Family Link for her account.
 - 2026-11-18 — Level path spec and sketch approved: "Goedgekeurd" (`specs/level-path.md`);
   build after engine-extension phase B; Google sign-in split off to `specs/accounts-and-sync.md`.
 - 2026-11-18 — Numbered solution view (engine-extension phase A, step 4) approved by Guus,
