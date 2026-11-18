@@ -13,7 +13,7 @@ export const SUPABASE_KEY = 'sb_publishable_SkYp3H3UQBklDWafdvYjrg_lsaoDjUX'; //
 // De schakelaar. Uit tot clearhead, dat dezelfde database gebruikt, zijn
 // tabellen voor vreemden heeft dichtgezet (spec, Prerequisite 1): tot die
 // tijd zou een login hier ook daar binnenkomen.
-export const AAN = false;
+export const AAN = true;
 
 // Om het lokaal te proberen zonder de schakelaar om te zetten: op
 // localhost, met in de console

@@ -19,7 +19,8 @@ below is ticked, `AAN` in `src/sync/config.js` stays `false` and the site shows 
 - [x] **The migration is applied** (2026-11-18, RLS tests 30/30) to `claudeDB` and `supabase/tests/reconstructie_rls.sql`
   reports `N/N goed` (see `supabase/README.md`).
 
-- [ ] **privacy@reconstructie.app receives mail.** The privacy text names it. Cloudflare →
+- [x] **privacy@reconstructie.app receives mail.** (2026-11-18: Email Routing on, MX/SPF/DKIM
+  added, `privacy@` forwards to Guus's mailbox) The privacy text names it. Cloudflare →
   `reconstructie.app` → Email → Email Routing: enable, add a custom address `privacy` that
   forwards to Guus's own mailbox (Guus enters the destination; it never goes in this repo).
   Then send a test mail.
@@ -37,7 +38,8 @@ below is ticked, `AAN` in `src/sync/config.js` stays `false` and the site shows 
    - Publish the app (from "Testing" to "In production"); with only these scopes Google does
      not require a review.
 3. Clients → Create client → type **Web application**, name `Reconstructie (Supabase)`.
-   - Authorized JavaScript origins: `https://reconstructie.app` and `http://localhost:4173`.
+   - Authorized JavaScript origins: none needed. Supabase handles the redirect, so Google
+     never sees the site or localhost (Guus, 2026-11-18).
    - Authorized redirect URI: `https://kteiwsvhynuktjarhksm.supabase.co/auth/v1/callback`.
 4. Keep the client id and secret on screen for step 2. Do not paste them anywhere else.
 
@@ -46,7 +48,9 @@ Project `claudeDB` at https://supabase.com/dashboard/project/kteiwsvhynuktjarhks
 1. Authentication → Sign In / Providers → **Google**: enable, paste the client id and secret
    from step 1, save. Leave "Skip nonce check" off.
 2. Authentication → URL Configuration → **Redirect URLs**: add exactly
-   `https://reconstructie.app/` and `http://localhost:4173/`. Change nothing else on that page
+   `https://reconstructie.app/` and `http://localhost:4173/` (plus `http://localhost:4175/`
+   when a second local server is used for the trial; Supabase never calls these, it only
+   sends the visitor's own browser back there). Change nothing else on that page
    (the Site URL belongs to clearhead).
 3. Integrations → Data API → **Exposed schemas**: add `reconstructie` (keep the others).
 
@@ -76,3 +80,10 @@ Project `claudeDB` at https://supabase.com/dashboard/project/kteiwsvhynuktjarhks
 Set `AAN = false` and push: the menu entry and `#/account` disappear, local play is untouched,
 and the stored rows stay until deleted. Removing the schema altogether is
 `drop schema reconstructie cascade;` — ask first, it deletes every player's synced progress.
+
+## Go-live log
+- 2026-11-18: Google client and Supabase checked from outside (provider on, client accepted,
+  schema `reconstructie` exposed). Local trial on port 4175 with Guus's own Google account:
+  sign-in returned to localhost, a solved puzzle and the level reached the database, wiping
+  local progress pulled it back, "Account verwijderen" removed every Reconstructie row while
+  his login and clearhead data stayed. `AAN = true`.
