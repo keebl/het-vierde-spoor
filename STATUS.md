@@ -9,6 +9,9 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-18, later: #22 merged (`b46a683`) — "op het schoolplein" for eight open places
+  (keuring rule `VOORZETSEL` in `check-kamers.mjs`) and one line per thought in the numbered
+  solution; eight fingerprints changed for clue text only, boards identical.
 - 2026-11-18: merged and live — #20 (`af2131b`) clue list: a two-person clue once, under
   the first name, a name without a line points to where it is mentioned, the victim shows
   only its header (Guus's Rietveld report; his "two solutions" was one, checked by hand);
