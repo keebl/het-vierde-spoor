@@ -11,7 +11,9 @@ import { generateLatin, latinDepth } from './engine/latin.js';
 import { genereerKamerpuzzel } from './engine/generate-rooms.js';
 import { kamerParams } from './engine/difficulty.js';
 import { zinVoor, namenIn } from './content/rooms-text.js';
-import { soortVan, meubelsVoor, vormVan } from './content/kamersoorten.js';
+import {
+  soortVan, meubelsVoor, blokMeubelsVoor, vormVan, rekwisietenVoor, TYPE_VAN_TEKENING, REKWISIETTYPEN, BUITEN_SOORTEN, VAKER,
+} from './content/kamersoorten.js';
 import { makeRng } from './engine/rng.js';
 import { ZAKEN, stilSlot } from './content/zaken.js';
 import { geslachtVan } from './content/namen.js';
@@ -290,13 +292,34 @@ function buildKamerPuzzle({ world, settings }) {
   const soortenHier = new Set(
     [...world.places, ...(world.plekkenXL ?? [])].map(soortVan),
   );
+  // Alleen de blokken tellen: de zitstukken komen uit hun eigen voorraad
+  // (rekwisietenVoor).
   const krapste = Math.min(
-    ...[...soortenHier].map((s) => meubelsVoor(s, world.id).flat().length),
+    ...[...soortenHier].map((s) => blokMeubelsVoor(s, world.id).flat().length),
   );
+  // De kamers krijgen hun naam nu al tijdens het bouwen, want wat er in een
+  // kamer kan staan hangt af van wat voor kamer het is: een paard in de
+  // stal, een kleed in de bibliotheek. De motor vraagt het per poging.
+  const iconVanRekwisiet = new Map();
+  const inrichting = (rooster, rng) => {
+    const voorraad = rooster.kamers <= world.places.length ? world.places : [...world.places, ...(world.plekkenXL ?? [])];
+    const kamerNamen = noemKamers(rooster, voorraad, rng);
+    const aanbod = kamerNamen.map((plek) => rekwisietenVoor(plek, world.id).map(([naam, icoon]) => {
+      iconVanRekwisiet.set(naam, icoon);
+      const type = TYPE_VAN_TEKENING[icoon];
+      return {
+        sleutel: naam, type, houding: REKWISIETTYPEN[type].houding,
+        kleed: !!REKWISIETTYPEN[type].kleed, vaker: VAKER.includes(icoon),
+      };
+    }));
+    const binnen = kamerNamen.map((plek) => !BUITEN_SOORTEN.includes(soortVan(plek)));
+    return { kamerNamen, aanbod, binnen };
+  };
   const gen = genereerKamerpuzzel(seed, {
     ...params,
     kamers: Math.min(params.kamers, world.places.length + (world.plekkenXL?.length ?? 0)),
     maxMeubels: Math.min(20, krapste),
+    inrichting,
   });
   const rng = makeRng(`${seed}:kamerwoorden`);
 
@@ -352,11 +375,7 @@ function buildKamerPuzzle({ world, settings }) {
   const zaak = zRng.pick(ZAKEN);
   const zin = zRng.pick(zaak.opdracht);
 
-  const kamerNamen = noemKamers(
-    gen.rooster,
-    gen.rooster.kamers <= world.places.length ? world.places : [...world.places, ...(world.plekkenXL ?? [])],
-    rng,
-  );
+  const kamerNamen = gen.rooster.kamerNamen;
   // Een meubelstuk krijgt zijn naam van de kamer waarin het staat: in de
   // keuken een koelkast, in het grafvertrek een sarcofaag. Namen blijven
   // binnen een puzzel uniek, want de aanwijzingen verwijzen ernaar.
@@ -366,10 +385,17 @@ function buildKamerPuzzle({ world, settings }) {
   const voorraad = new Map();
   for (let cel = 0; cel < gen.rooster.n * gen.rooster.n; cel++) {
     const mi = gen.rooster.meubelOp[cel];
-    if (mi == null) continue;
+    if (mi == null || meubelNamen[mi]) continue;
+    // Een stuk waar je op kunt zitten heeft zijn naam al uit de inrichting.
+    const stuk = gen.rooster.stukken[mi];
+    if (stuk.houding !== 'blok') {
+      meubelNamen[mi] = stuk.sleutel;
+      meubelIconen[mi] = iconVanRekwisiet.get(stuk.sleutel);
+      continue;
+    }
     const soort = soortVan(kamerNamen[gen.rooster.kamerVan[cel]]);
     if (!voorraad.has(soort)) {
-      const [eigen, verwant] = meubelsVoor(soort, world.id);
+      const [eigen, verwant] = blokMeubelsVoor(soort, world.id);
       // Eerst alles wat in deze soort ruimte hoort, daarna pas wat in een
       // verwante ruimte past. Een keuken levert nooit meubilair voor een bos.
       voorraad.set(soort, [...rng.shuffle(eigen), ...rng.shuffle(verwant)]);

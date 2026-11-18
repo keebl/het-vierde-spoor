@@ -4,7 +4,10 @@
 // tools/check-regels.mjs rekent ze na over elke puzzel:
 //
 //   1. Een rooster van n bij n vakjes, verdeeld in aaneengesloten kamers.
-//   2. Op sommige vakjes staat een meubelstuk; daar kan niemand staan.
+//   2. Op sommige vakjes staat een meubelstuk; daar staat niemand, behalve
+//      als je erop kunt zitten, liggen, staan of rijden (een stoel, een bed,
+//      een kleed, een paard). Op zo'n stuk past één persoon, op een kleed
+//      één per vakje (specs/props-and-either-clues.md).
 //   3. Er staat precies een figuur per rij en precies een figuur per kolom.
 //   4. Het slachtoffer is zelf een van die figuren: waar het lichaam ligt moet
 //      je dus net zo goed uitpuzzelen. De dader is de enige verdachte die
@@ -13,7 +16,7 @@
 //      Een muur ertussen is geen "naast": je staat niet naast de werkbank als
 //      die aan de andere kant van de muur staat. Dat geldt voor mensen naast
 //      een meubelstuk en voor twee mensen naast elkaar. Diagonaal is nooit
-//      naast.
+//      naast. Wie op een stuk zit, staat er niet naast.
 //   6. RIJ, KOLOM, NOORD, WEST, BUITENMUUR en HOEK gaan over de plattegrond
 //      als geheel en lopen dus wel door muren heen. Noord is boven.
 //
@@ -75,7 +78,9 @@ function meubelBurenTabel(rooster) {
     const uit = [];
     for (const b of buren[i]) {
       const m = meubelOp[b];
-      if (m != null && !uit.includes(m)) uit.push(m);
+      // Wie op het kleed staat, staat er niet naast - ook al ligt het
+      // vakje naast hem ook onder het kleed.
+      if (m != null && m !== meubelOp[i] && !uit.includes(m)) uit.push(m);
     }
     tabel[i] = uit;
   }
@@ -209,7 +214,14 @@ export function bouwRooster(n, rng, { kamers, meubelDeel = 0.22, maxMeubels = In
     if (gezet < 2) continue;
     if (!heeftPlaatsing(n, vrij)) continue;
 
-    return { n, kamerVan, meubelOp, vrij, kamers, meubelAantal: gezet };
+    // Per stuk wat je ermee kunt. Deze blokken staan in de weg; wat je
+    // erop kunt, zet richIn erbij.
+    const stukken = Array.from({ length: gezet }, () => ({ houding: 'blok', type: null, cellen: [] }));
+    for (let i = 0; i < n * n; i++) if (meubelOp[i] != null) stukken[meubelOp[i]].cellen.push(i);
+    return {
+      n, kamerVan, meubelOp, vrij, kamers, meubelAantal: gezet,
+      blokAantal: gezet, stukken, ramen: [],
+    };
   }
   throw new Error('kon geen bruikbaar rooster bouwen');
 }
@@ -238,6 +250,138 @@ export function tekenPlaatsing(rooster, rng) {
   const plaats = new Array(n);
   personen.forEach((p, r) => { plaats[p] = idx(n, r, kolVoorRij[r]); });
   return plaats;
+}
+
+// --------------------------------------------------------- de inrichting
+//
+// Wat er naast de blokken nog in een kamer staat: stukken waar je op kunt
+// zitten, liggen, staan of rijden, en ramen in de buitenmuur
+// (specs/props-and-either-clues.md deel A, specs/engine-extension.md stap 6).
+//
+// De motor weet niet wat een stoel is. Hij krijgt per kamer een aanbod van
+// de inhoud (puzzle.js, uit kamersoorten.js): per stuk een sleutel (de naam,
+// voor hem een label), het type, de houding en of het een kleed is. Hij
+// kiest, zet neer en onthoudt; wat het heet is aan de inhoud.
+//
+// Alles hier trekt uit eigen rngs (rngStukken, rngRamen): het rooster en de
+// blokken van bouwRooster verschuiven er niet door (CLAUDE.md: everything
+// follows from the seed).
+//
+// Een stuk komt alleen op een vrij vakje, dus waar iemand kan staan
+// verandert niet: heeftPlaatsing blijft waar.
+export const HOUDINGEN = ['zit', 'lig', 'sta', 'rijd'];
+
+// Kleden: een rechthoek van twee tot zes vakjes, helemaal binnen één kamer.
+const KLEEDMATEN = [[2, 3], [3, 2], [2, 2], [1, 3], [3, 1], [1, 2], [2, 1]];
+
+function zoekKleed(rooster, k, bezet, rng) {
+  const { n, kamerVan, vrij } = rooster;
+  const kan = (i) => kamerVan[i] === k && vrij[i] && !bezet[i];
+  for (const [h, b] of rng.shuffle(KLEEDMATEN.slice(0, 3)).concat(rng.shuffle(KLEEDMATEN.slice(3)))) {
+    const starts = [];
+    for (let r = 0; r + h <= n; r++) {
+      for (let c = 0; c + b <= n; c++) {
+        let ok = true;
+        for (let dr = 0; dr < h && ok; dr++) for (let dc = 0; dc < b && ok; dc++) ok = kan(idx(n, r + dr, c + dc));
+        if (ok) starts.push([r, c]);
+      }
+    }
+    if (!starts.length) continue;
+    const [r, c] = rng.pick(starts);
+    const cellen = [];
+    for (let dr = 0; dr < h; dr++) for (let dc = 0; dc < b; dc++) cellen.push(idx(n, r + dr, c + dc));
+    return cellen;
+  }
+  return null;
+}
+
+// inrichting: { aanbod: per kamer een lijst { sleutel, type, houding, kleed },
+//               binnen: per kamer true als er muren (en dus ramen) zijn }
+// perKamer: [min, max] stukken per kamer (KAMER_LEVELS.rekwisieten).
+export function richIn(rooster, inrichting, rngStukken, rngRamen, { perKamer = [1, 3] } = {}) {
+  const { n, kamerVan, kamers, meubelOp, vrij } = rooster;
+  const bezet = meubelOp.map((m) => m != null);
+  const gebruikt = new Set();
+  const stukken = rooster.stukken;
+  for (let k = 0; k < kamers; k++) {
+    const aanbod = (inrichting.aanbod?.[k] ?? []);
+    if (!aanbod.length) continue;
+    const vrijHier = [];
+    for (let i = 0; i < n * n; i++) if (kamerVan[i] === k && vrij[i]) vrijHier.push(i);
+    const [lo, hi] = perKamer;
+    let doel = lo + rngStukken.int(hi - lo + 1);
+    doel = Math.min(doel, Math.max(1, Math.floor(vrijHier.length / 2)));
+    // Eerst de kleden: die hebben ruimte nodig, en een kruk past daarna
+    // nog wel ergens.
+    const keuzes = [];
+    const opties = rngStukken.shuffle(aanbod);
+    // Een stuk met een eigen naam één keer per bord; wat vaker mag (een
+    // kruk, een kleed) vult aan tot het doel.
+    for (const o of opties) {
+      if (keuzes.length >= doel) break;
+      if (gebruikt.has(o.sleutel) || keuzes.includes(o)) continue;
+      keuzes.push(o);
+    }
+    const vaker = opties.filter((o) => o.vaker);
+    for (let j = 0; keuzes.length < doel && vaker.length && j < doel; j++) keuzes.push(vaker[j % vaker.length]);
+    keuzes.sort((a, b) => Number(!!b.kleed) - Number(!!a.kleed));
+    for (const o of keuzes) {
+      let cellen;
+      if (o.kleed) {
+        cellen = zoekKleed(rooster, k, bezet, rngStukken);
+      } else {
+        const los = vrijHier.filter((i) => !bezet[i]);
+        cellen = los.length > 1 ? [rngStukken.pick(los)] : null;
+      }
+      if (!cellen) continue;
+      const m = stukken.length;
+      for (const i of cellen) { meubelOp[i] = m; bezet[i] = true; }
+      stukken.push({ houding: o.houding, type: o.type, sleutel: o.sleutel, cellen });
+      if (!o.vaker) gebruikt.add(o.sleutel);
+    }
+  }
+  rooster.meubelAantal = stukken.length;
+
+  // Ramen: in een kamer met muren die aan de buitenrand ligt, hooguit één,
+  // en alleen voor een vakje waar iemand kan staan (anders zegt "voor het
+  // raam" niets).
+  const ramen = [];
+  for (let k = 0; k < kamers; k++) {
+    if (!inrichting.binnen?.[k]) continue;
+    const kanten = [];
+    for (let i = 0; i < n * n; i++) {
+      if (kamerVan[i] !== k || !vrij[i]) continue;
+      const r = rijVan(n, i);
+      const c = kolVan(n, i);
+      if (r === 0) kanten.push({ cel: i, kant: 'n' });
+      if (r === n - 1) kanten.push({ cel: i, kant: 'z' });
+      if (c === 0) kanten.push({ cel: i, kant: 'w' });
+      if (c === n - 1) kanten.push({ cel: i, kant: 'o' });
+    }
+    if (!kanten.length || rngRamen() < 0.35) continue;
+    ramen.push(rngRamen.pick(kanten));
+  }
+  rooster.ramen = ramen;
+  rooster.raamCel = new Set(ramen.map((r) => r.cel));
+  delete rooster._meubelBuren;
+  delete rooster._meubelAssen;
+  delete rooster._typeTelling;
+  return rooster;
+}
+
+// Het stuk op dit vakje, of null. Een blok telt ook (houding 'blok').
+export const stukOp = (rooster, cel) => (rooster.meubelOp[cel] == null ? null : rooster.stukken?.[rooster.meubelOp[cel]] ?? null);
+export const typeOp = (rooster, cel) => stukOp(rooster, cel)?.type ?? null;
+
+// Hoeveel stukken van elk type er op het bord liggen. Een aanwijzing over
+// "het paard" kan alleen als er één paard is; bij drie krukken wordt het
+// "een kruk".
+export function typeTelling(rooster) {
+  if (rooster._typeTelling) return rooster._typeTelling;
+  const t = new Map();
+  for (const s of rooster.stukken ?? []) if (s.type) t.set(s.type, (t.get(s.type) ?? 0) + 1);
+  rooster._typeTelling = t;
+  return t;
 }
 
 // ------------------------------------------------------------ aanwijzingen

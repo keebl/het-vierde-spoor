@@ -140,19 +140,19 @@ export const KAMER_LEVELS = {
   // (2026-11-17): eerst moet het bouwen naar de achtergrond, met een
   // voortgangsbalk. Tot dan spreidt de bouwer daar wel, maar zonder grens.
   // soortDeel is het deel dat één soort aanwijzing mag innemen.
-  1: { n: 5, kamers: 4, meubelDeel: 0.18, style: 'shallow', maxClues: 7, maxPerNaam: 3,
+  1: { n: 5, kamers: 4, rekwisieten: [1, 3], meubelDeel: 0.18, style: 'shallow', maxClues: 7, maxPerNaam: 3,
        gewichten: { kamer: 6, kamerNiet: 6, naast: 4, zelfdeKamer: 3, aantalKamer: 3, buren: 2, noord: 1, west: 1, opRij: 0, opKolom: 0, rand: 2, hoek: 2, aantalNaast: 2 } },
-  2: { n: 6, kamers: 5, meubelDeel: 0.20, style: 'shallow', maxClues: 9, maxPerNaam: 3,
+  2: { n: 6, kamers: 5, rekwisieten: [1, 3], meubelDeel: 0.20, style: 'shallow', maxClues: 9, maxPerNaam: 3,
        gewichten: { kamer: 5, kamerNiet: 5, naast: 4, zelfdeKamer: 3, aantalKamer: 3, buren: 3, noord: 2, west: 2, opRij: 0, opKolom: 0, rand: 3, hoek: 3, aantalNaast: 3 } },
-  3: { n: 7, kamers: 6, meubelDeel: 0.22, style: 'shallow', maxClues: 15, maxPerNaam: 3, minVrij: 3,
+  3: { n: 7, kamers: 6, rekwisieten: [1, 3], meubelDeel: 0.22, style: 'shallow', maxClues: 15, maxPerNaam: 3, minVrij: 3,
        gewichten: { kamer: 4, kamerNiet: 6, naast: 4, zelfdeKamer: 5, aantalKamer: 5, buren: 4, noord: 3, west: 3, opRij: 0, opKolom: 0, rand: 2, hoek: 2, aantalNaast: 4 } },
-  4: { n: 9, kamers: 7, meubelDeel: 0.24, style: 'deep', maxClues: 26, maxPerNaam: 4, minVrij: 3,
+  4: { n: 9, kamers: 7, rekwisieten: [2, 5], meubelDeel: 0.24, style: 'deep', maxClues: 26, maxPerNaam: 4, minVrij: 3,
        gewichten: { kamer: 4, kamerNiet: 6, naast: 4, zelfdeKamer: 6, aantalKamer: 5, buren: 5, noord: 3, west: 3, opRij: 0, opKolom: 0, rand: 2, hoek: 2, aantalNaast: 5 } },
   // Twaalf bij twaalf, zoals in de dikke puzzelboeken. Dat kan sinds de
   // solver eerst doorstreept en daarna de meest beperkte figuur kiest, en een
   // werkbudget heeft zodat een pechgeval wordt weggegooid in plaats van
   // minuten door te rekenen.
-  5: { n: 12, kamers: 8, meubelDeel: 0.24, style: 'deep', maxClues: 34, maxPerNaam: 5, minVrij: 3,
+  5: { n: 12, kamers: 8, rekwisieten: [2, 5], meubelDeel: 0.24, style: 'deep', maxClues: 34, maxPerNaam: 5, minVrij: 3,
        gewichten: { kamer: 4, kamerNiet: 6, naast: 4, zelfdeKamer: 6, aantalKamer: 5, buren: 5, noord: 3, west: 3, opRij: 0, opKolom: 0, rand: 2, hoek: 2, aantalNaast: 5 } },
   // Zestien bij zestien: tweehonderdzesenvijftig vakjes, zestien figuren,
   // elf kamers. Hier was nieuwe inhoud voor nodig - een wereld had twaalf
@@ -169,7 +169,7 @@ export const KAMER_LEVELS = {
   //
   // Directe aanwijzingen op vier, zoals overal (zie boven); rij en kolom zijn
   // weg. Hier moet alles uit combineren komen.
-  6: { n: 16, kamers: 11, meubelDeel: 0.22, style: 'deep', maxClues: 56, minVrij: 3, soortDeel: SOORTDEEL6,
+  6: { n: 16, kamers: 11, rekwisieten: [2, 5], meubelDeel: 0.22, style: 'deep', maxClues: 56, minVrij: 3, soortDeel: SOORTDEEL6,
        gewichten: { kamer: 4, kamerNiet: 7, naast: 4, zelfdeKamer: 7, aantalKamer: 6, buren: 6, noord: 4, west: 4, opRij: 0, opKolom: 0, rand: 1, hoek: 1, aantalNaast: 6 } },
 };
 
