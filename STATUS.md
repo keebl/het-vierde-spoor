@@ -27,15 +27,17 @@ standing guidance rather than state moved to `CLAUDE.md`.
   site; Family Link approval with his daughter (`docs/accounts-go-live.md` §4).
 - 2026-11-18, evening: **engine-extension phase B built** with the props and either-clues
   spec, on branch `claude/engine-phase-b` (pull request open, not merged, not live). Every
-  board shifts once (fingerprints rewritten). Levels 1–4: one own clue per suspect from the
-  new template builder; levels 5–6 hit the spec's stop rule and keep the old builder with
-  the new clue kinds for now — Guus wants a better builder there (diagnosis and proposal
-  sent; next pull request). No clue names the victim; the clue list leaves them out. Props (chairs, beds,
-  rugs, horses …), windows, 14 new clue kinds, Web Worker with progress bar and prefetch,
-  IndexedDB store, repo store `pool/` (40 seeds per level 5–6, spec allows 300). Also
-  Guus's same-day UI asks: whole intro, rules under the board, legend once per name, blue
-  "Volgende puzzel" last. Open: rectangular boards deferred to step 16, print PDF of props in the owner's
-  terminal, the daughter's verdict on a fresh level-3 and level-5 board.
+  board shifts once (fingerprints rewritten). Levels 1–5: one own clue per suspect from the
+  new template builder (level 5 with denser boards, 12 rooms and clue choice by remaining
+  solutions — Guus's "a+b+c"); level 6 (16×16) works too but takes ~7.5 min per board,
+  so it keeps the old builder with the new clue kinds until phase C makes it 12×14
+  (option A, card with Guus). No clue names the victim; the clue list leaves them out.
+  Props (chairs, beds, rugs, horses …), windows, 14 new clue kinds, Web Worker with
+  progress bar and prefetch, IndexedDB store, repo store `pool/` (300 seeds per level
+  5–6). Also Guus's same-day UI asks: whole intro, rules under the board, legend once per
+  name, blue "Volgende puzzel" last. Open: rectangular boards deferred to step 16, print
+  PDF of props in the owner's terminal, the daughter's verdict on a fresh level-3 and
+  level-5 board.
 - 2026-11-18, evening: `specs/accounts-and-sync.md` steps 1–6 built on branch
   `claude/frosty-raman-a0da51` (PR open, not merged, not live; sign-in switched off with
   `AAN = false` in `src/sync/config.js`). Schema `reconstructie` applied to `claudeDB`

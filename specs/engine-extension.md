@@ -392,13 +392,12 @@ A1–A4 and B1–B2. Every board shifts once (decision 4); the fingerprints in
   only what a clue excludes (`false`), so a clue about "the only one" works.
 - **Step 8** — `bouwPerPersoon` (one own clue per suspect by gain, an improvement round,
   then at most `ceil(n/3)` shared clues, pruned), bands in `BOUW` in `difficulty.js`.
-  Keuring rules 9–12 in `check-spreiding.mjs`. **Stop rule hit on levels 5–6** (11 and 15
-  suspects need 3–7 shared clues against a cap of 4–6, about 10 s per board): they keep
-  the old builder with the new kinds in its pool (`SJABLOON_NIVEAUS`). Guus (2026-11-18)
-  wants a better builder for 5–6 rather than the old one; diagnosis sent (boards too open,
-  own clues too weak at `minVrij` 2–3, two lines per name, selection by struck cells not
-  by remaining solutions); proposal: denser boards, solution-count guided selection, an
-  offline pool of 300 per level. Not built in this pull request. Level 4 uses `minVrij` 2.
+  Keuring rules 9–12 in `check-spreiding.mjs`. **Stop rule hit on levels 5–6** at first
+  (boards too open, own clues too weak, selection by struck cells). Guus chose "a+b+c":
+  level 5 now gets unnamed blocks (`extraDeel` 0.3, about 40 % closed, never in a clue),
+  12 rooms and clue choice by remaining solutions (`opTelling`): 8 of 8 seeds, 1–23 s per
+  board. Level 6 (16×16) also works but takes ~7.5 min per board; it keeps the old builder
+  with the new kinds until step 16 (option A, with Guus). `minVrij` 2 on levels 4–5.
 - **Victim** (Guus, 2026-11-18): no clue mentions the victim, also not as the other person
   of a pair, an "ofwel" or a "wie op"; the clue list leaves the victim out. Keuring rule 6
   in `check-spreiding.mjs`.
@@ -410,8 +409,9 @@ A1–A4 and B1–B2. Every board shifts once (decision 4); the fingerprints in
   identical boards (browser pane, levels 1, 3, 4, 5).
 - **Step 11** — `src/ui/opslag.js` (IndexedDB, 100 per level from level 4, oldest out),
   `tools/pool.mjs` and `pool/niveau-5.json`, `pool/niveau-6.json` (library cases plus
-  40 `voorraad-*` seeds each, not yet 300), `tools/check-voorraad.mjs` (rebuild sample,
-  build-time budget; level 4 budget proposed at 4 s instead of 0.75 s).
+  300 `voorraad-*` seeds each, `BORDVERSIE` in each file), `tools/check-voorraad.mjs` (rebuild sample,
+  build-time budget: level 4 at 4 s and level 5 at 30 s, Guus: build time matters
+  little now that it runs in the worker).
 
 Measured on `meet-0..19` (laptop), median chain 2 / 3 / 5 / 6 / 30 / 45 for levels 1–6
 (criterion 8 holds); levels 1–4 build 20 of 20 seeds.
