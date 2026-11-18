@@ -318,8 +318,13 @@ function keurKamer(p, waar) {
   eis('alle meubelstukken hebben een eigen naam', uniek(meubels), waar, meubels.join(', '));
   // Een naamloos blok (niveau vijf en zes) deelt nooit een naam met een blok
   // dat in een aanwijzing staat, en geen aanwijzing gaat erover.
-  eis('een naamloos blok heet niet als een benoemd stuk',
-    p.meubelNamen.every((x, m) => !naamloos(m) || !meubels.includes(x)), waar);
+  // Een naam lenen van een benoemd blok dat geen zin noemt, mag: alleen een
+  // naam uit een aanwijzing wordt dan dubbelzinnig (puzzle.js).
+  const genoemd = new Set(p._ruwe.flatMap((c) => [c.m, c.a?.m, c.b?.m])
+    .filter((m) => m != null).map((m) => p.meubelNamen[m]));
+  eis('een naamloos blok heet niet als een stuk uit een aanwijzing',
+    p.meubelNamen.every((x, m) => !naamloos(m) || !genoemd.has(x)), waar,
+    p.meubelNamen.filter((x, m) => naamloos(m) && genoemd.has(x)).join(', '));
   eis('geen aanwijzing over een naamloos blok',
     p._ruwe.every((c) => [c.m, c.a?.m, c.b?.m].every((m) => m == null || !naamloos(m))), waar);
   eis('elk meubelstuk op het bord heeft een naam en een tekening',

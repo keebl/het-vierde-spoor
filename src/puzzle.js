@@ -266,8 +266,13 @@ function noemKamers(rooster, voorraad, rng) {
   // lukraak: de grootste kamers die nog open liggen krijgen de zaalnamen en
   // de kleinste de hoeknamen, zodat een zaal nooit kleiner uitvalt dan een
   // nis.
+  // Strooknamen komen als laatste: hierboven liggen de langste kamers al
+  // weggegeven, dus een strooknaam hier viel op een kamer die korter is dan
+  // een put of nis ("de smalle schacht" op een vlak van 4x5, catacomben,
+  // veegronde fase B). `stroken` telt al genoeg strooknamen voor wat de
+  // andere namen niet dekken, dus de strooknamen raken hier nooit aan de beurt.
   open.sort((a, b) => b.cellen - a.cellen || a.k - b.k);
-  const rest = [...emmer.groot, ...emmer.vrij, ...emmer.smal, ...emmer.klein];
+  const rest = [...emmer.groot, ...emmer.vrij, ...emmer.klein, ...emmer.smal];
   for (const m of open) namen[m.k] = rest.shift();
   return namen;
 }
@@ -446,15 +451,26 @@ function buildKamerPuzzle({ world, settings, gen: klaar = null }) {
     meubelIconen[mi] = keuze[1];
   }
   // De naamloze blokken (extraDeel, niveau vijf en zes): een tekening uit de
-  // eigen soort ruimte, nooit de naam van een blok dat in een aanwijzing kan
-  // staan. Ze mogen elkaars naam delen; geen zin noemt ze.
+  // eigen soort ruimte, nooit de naam van een blok dat in een aanwijzing
+  // staat. Ze mogen elkaars naam delen; geen zin noemt ze. Raakt de soort
+  // op (in het woud: negentien namen, negentien benoemde blokken), dan lenen
+  // ze de naam van een benoemd blok dat geen zin noemt: twee boomstronken
+  // zonder aanwijzing zijn niet dubbelzinnig, een tweede "de boomstronk"
+  // naast een aanwijzing over de boomstronk wel (veegronde fase B).
+  const genoemd = new Set();
+  for (const c of gen.aanwijzingen) {
+    for (const m of [c.m, c.a?.m, c.b?.m]) if (m != null) genoemd.add(meubelNamen[m]);
+  }
   for (let cel = 0; cel < gen.rooster.n * gen.rooster.n; cel++) {
     const mi = gen.rooster.meubelOp[cel];
     if (mi == null || meubelNamen[mi] || !gen.rooster.stukken[mi].naamloos) continue;
     const soort = soortVan(kamerNamen[gen.rooster.kamerVan[cel]]);
     const [eigen, verwant] = blokMeubelsVoor(soort, world.id);
-    const vrijeNamen = [...eigen, ...verwant].filter(([naam]) => !gebruikt.has(naam));
-    const keuze = vrijeNamen.length ? rng.pick(vrijeNamen) : rng.pick(eigen);
+    const alle = [...eigen, ...verwant];
+    const vrijeNamen = alle.filter(([naam]) => !gebruikt.has(naam));
+    const leenbaar = alle.filter(([naam]) => !genoemd.has(naam));
+    const keuze = vrijeNamen.length ? rng.pick(vrijeNamen)
+      : leenbaar.length ? rng.pick(leenbaar) : rng.pick(eigen);
     meubelNamen[mi] = keuze[0];
     meubelIconen[mi] = keuze[1];
   }

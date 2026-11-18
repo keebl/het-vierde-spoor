@@ -183,8 +183,14 @@ export function namenIn(c, w) {
   if (c.m != null) uit.push(w.meubelNamen[c.m]);
   // Een stuk dat maar één keer op het bord ligt, heet bij zijn naam ("op het
   // paard"): die naam moet een herschrijving ook houden.
+  // Ligt het er vaker, dan heet het naar zijn soort ("op een kruk"); ook dat
+  // woord draagt de aanwijzing. Zonder dit had "Niemand zat op een kruk."
+  // geen enkele naam, en mocht een herschrijving de kruk weglaten (veegronde
+  // fase B).
   for (const t of [c.t, c.t2, c.a?.t, c.b?.t]) {
-    if (t && (w.typeAantal?.[t] ?? 0) === 1 && w.typeNaam?.[t]) uit.push(w.typeNaam[t]);
+    if (!t) continue;
+    if ((w.typeAantal?.[t] ?? 0) === 1 && w.typeNaam?.[t]) uit.push(w.typeNaam[t]);
+    else if (REKWISIETTYPEN[t]) uit.push(REKWISIETTYPEN[t].een);
   }
   for (const h of [c.a, c.b]) {
     if (!h) continue;
