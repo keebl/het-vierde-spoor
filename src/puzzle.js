@@ -335,10 +335,17 @@ export function bouwKamerGen(settings, voortgang = null) {
 // Een gebouwd bord als gewone data: wat de worker terugstuurt en wat de
 // opslag bewaart. Zonder de tussenstanden (_buren en dergelijke) en met de
 // Set van de ramen als lijst.
+// De versie van motor en inhoud waarmee een bord gebouwd is. Een bewaard
+// bord (IndexedDB, pool/) van een andere versie telt niet: na een wijziging
+// aan de motor of de inrichting zou dezelfde link anders een ander bord
+// geven dan een nieuwe bezoeker ziet (review fase B). Ophogen bij elke
+// wijziging die borden verschuift; tools/pool.mjs schrijft hem mee.
+export const BORDVERSIE = 'b1';
+
 const GEN_VELDEN = ['plaats', 'slachtofferIdx', 'dader', 'kamerIdx', 'aanwijzingen', 'graad', 'mis', 'poging'];
 const ROOSTER_VELDEN = ['n', 'kamerVan', 'meubelOp', 'vrij', 'kamers', 'meubelAantal', 'blokAantal', 'stukken', 'ramen', 'kamerNamen'];
 export function genNaarData(gen) {
-  const uit = { rooster: {} };
+  const uit = { versie: BORDVERSIE, rooster: {} };
   for (const k of GEN_VELDEN) if (gen[k] !== undefined) uit[k] = gen[k];
   for (const k of ROOSTER_VELDEN) uit.rooster[k] = gen.rooster[k];
   return JSON.parse(JSON.stringify(uit));

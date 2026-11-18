@@ -58,7 +58,17 @@ export function zetWereldThema(wereldId) {
   else document.body.style.removeProperty('--wkleur');
 }
 
+// Elke route krijgt een volgnummer. Een bouw die klaar is terwijl je al
+// ergens anders bent, ziet dat aan dit nummer (niet aan de hash: een
+// substring en een niet-gedecodeerde hash gaven de verkeerde puzzel of
+// geen, review fase B).
+let routeNr = 0;
+let lopendeBouw = null;
+
 function route() {
+  const nr = ++routeNr;
+  lopendeBouw?.();
+  lopendeBouw = null;
   const hash = location.hash || '#/';
   const path = hash.slice(2);
   window.scrollTo(0, 0);
@@ -97,29 +107,43 @@ function route() {
       const taak = bouw(settings, {
         opVoortgang: (deel) => { gemeld = Math.min(1, deel); teken(); },
       });
+      const stopBouw = () => { clearInterval(klok); taak.afbreken(); };
       taak.data.finally(() => clearInterval(klok)).catch(() => {});
-      stop.addEventListener('click', () => { taak.afbreken(); location.hash = '#/'; });
-      // Wie wegnavigeert terwijl er gebouwd wordt: de worker stopt.
-      const weg = () => { if (!location.hash.includes(id)) taak.afbreken(); removeEventListener('hashchange', weg); };
-      addEventListener('hashchange', weg);
+      stop.addEventListener('click', () => { stopBouw(); location.hash = '#/'; });
+      // Wie wegnavigeert terwijl er gebouwd wordt: de worker stopt (route()
+      // roept lopendeBouw aan bij elke volgende route).
+      lopendeBouw = stopBouw;
       taak.data.then((gen) => {
-        if (!location.hash.includes(id)) return;
-        const puzzle = buildPuzzle(settings, { gen });
+        if (nr !== routeNr) return;
+        lopendeBouw = null;
+        let puzzle;
+        try {
+          puzzle = buildPuzzle(settings, { gen });
+        } catch (err) {
+          // Een bewaard bord dat niet meer past: dan toch zelf bouwen.
+          console.warn('bewaard bord paste niet, opnieuw gebouwd', err);
+          puzzle = buildPuzzle(settings);
+        }
+        if (puzzle._mis) console.warn(`bord buiten zijn sjabloon (mis ${puzzle._mis})`, id);
         zetWereldThema(puzzle.world?.id);
         renderPlayer(puzzle, app);
         // De volgende alvast, op de achtergrond (criterium 24).
         const volgende = app.dataset.volgende;
         if (volgende) bouwVooruit(parsePuzzleId(volgende));
         dressUp(puzzle).then((dressed) => {
-          if (dressed.aiUsed && location.hash.includes(id)) {
+          if (dressed.aiUsed && nr === routeNr) {
             zetWereldThema(dressed.world?.id);
             renderPlayer(dressed, app);
           }
         }).catch((err) => console.error(err));
       }).catch((err) => {
-        if (err?.message === 'afgebroken') return;
+        if (err?.message === 'afgebroken' || nr !== routeNr) return;
         console.error(err);
-        showError('Deze link hoort niet bij een bestaande puzzel. Hij is misschien verouderd of verkeerd overgenomen.', true);
+        // Een bekende wereld en opdracht die niet te bouwen was, is geen
+        // verkeerde link; zeg dat dan ook.
+        showError(/onbekende/.test(err?.message ?? '')
+          ? 'Deze link hoort niet bij een bestaande puzzel. Hij is misschien verouderd of verkeerd overgenomen.'
+          : 'Deze puzzel lukte niet om te bouwen. Probeer een andere.', true);
       });
       return;
     }

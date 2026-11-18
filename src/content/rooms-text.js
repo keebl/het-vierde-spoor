@@ -61,7 +61,7 @@ export function gezegde(c, w) {
     case 'hoekKamer':
       return c.ja ? 'stond in een hoek, met aan twee kanten een muur' : 'stond niet in een hoek';
     case 'rijEnKamerAls':
-      return `stond op dezelfde rij als ${M}, en ${V0(c, w)}`;
+      return `stond op dezelfde rij als ${M}, en ${V0(c, w)} als ${M}`;
     case 'opRij':
       return `stond op dezelfde rij als ${M}`;
     case 'opKolom':
@@ -181,6 +181,11 @@ export function namenIn(c, w) {
   if (c.kamerIdx != null) uit.push(w.kamerNamen[c.kamerIdx]);
   if (c.kamer2 != null) uit.push(w.kamerNamen[c.kamer2]);
   if (c.m != null) uit.push(w.meubelNamen[c.m]);
+  // Een stuk dat maar één keer op het bord ligt, heet bij zijn naam ("op het
+  // paard"): die naam moet een herschrijving ook houden.
+  for (const t of [c.t, c.t2, c.a?.t, c.b?.t]) {
+    if (t && (w.typeAantal?.[t] ?? 0) === 1 && w.typeNaam?.[t]) uit.push(w.typeNaam[t]);
+  }
   for (const h of [c.a, c.b]) {
     if (!h) continue;
     if (h.kamerIdx != null) uit.push(w.kamerNamen[h.kamerIdx]);

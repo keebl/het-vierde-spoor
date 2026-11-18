@@ -5,7 +5,7 @@
 // browser of de voorraad in de repo), anders de Web Worker, en zonder
 // worker (een heel oude browser) de hoofddraad met "even geduld".
 
-import { bouwKamerGen, genNaarData, puzzleId } from '../puzzle.js';
+import { bouwKamerGen, genNaarData, puzzleId, BORDVERSIE } from '../puzzle.js';
 import { haal, bewaar, gespeeld, BEWAAR_VANAF } from './opslag.js';
 
 // Hoe lang het op een gemiddelde telefoon hooguit duurt, in seconden: de
@@ -33,7 +33,8 @@ async function uitPool(settings) {
       .catch(() => ({})));
   }
   const pool = await pools.get(n);
-  return pool?.[puzzleId(settings)] ?? null;
+  if (pool?.versie !== BORDVERSIE) return null;
+  return pool.borden?.[puzzleId(settings)] ?? null;
 }
 
 // Bouw (of vind) het bord voor deze instellingen. opVoortgang(deel) krijgt
@@ -45,16 +46,25 @@ export function bouw(settings, { opVoortgang = null, achtergrond = false } = {})
   if (!achtergrond && vooruit?.id === id) {
     const lopend = vooruit;
     vooruit = null;
-    return lopend.taak;
+    // Mislukte het op de achtergrond, dan nog een keer, nu op de voorgrond.
+    const data = lopend.taak.data.catch(() => bouw(settings, { opVoortgang }).data);
+    data.then(() => gespeeld(id)).catch(() => {});
+    return { data, afbreken: lopend.taak.afbreken };
   }
   let worker = null;
   let gestopt = false;
-  const data = (async () => {
+  let weiger = null;
+  const afgebroken = new Promise((_, mis) => { weiger = mis; });
+  afgebroken.catch(() => {});
+  const werk = (async () => {
     if (klaar.has(id)) return klaar.get(id);
-    const bewaard = (await haal(id)) ?? (await uitPool(settings));
+    const bewaard = (await haal(id, BORDVERSIE)) ?? (await uitPool(settings));
     if (bewaard) { if (!achtergrond) gespeeld(id); return bewaard; }
     if (gestopt) throw new Error('afgebroken');
     worker = maakWorker();
+    // Vooruitbouwen zonder worker zou de pagina bevriezen terwijl iemand
+    // speelt: dan niet.
+    if (!worker && achtergrond) throw new Error('geen worker');
     if (!worker) {
       // Geen worker: op de hoofddraad, zoals vroeger.
       return genNaarData(bouwKamerGen(settings));
@@ -71,11 +81,15 @@ export function bouw(settings, { opVoortgang = null, achtergrond = false } = {})
         // Kan de module niet laden (oude browser): toch op de hoofddraad.
         e.preventDefault?.();
         worker.terminate();
+        if (achtergrond) { mis(new Error('geen worker')); return; }
         try { ok(genNaarData(bouwKamerGen(settings))); } catch (err) { mis(err); }
       };
       worker.postMessage({ id, settings });
     });
   })();
+  // Afbreken laat de belofte meteen falen, zodat wie erop wacht (de klok
+  // van de balk) ophoudt; anders bleef hij voor altijd hangen.
+  const data = Promise.race([werk, afgebroken]);
   data.then((d) => {
     if (achtergrond) {
       klaar.set(id, d);
@@ -84,7 +98,7 @@ export function bouw(settings, { opVoortgang = null, achtergrond = false } = {})
   }).catch(() => {});
   return {
     data,
-    afbreken: () => { gestopt = true; worker?.terminate(); },
+    afbreken: () => { gestopt = true; worker?.terminate(); weiger(new Error('afgebroken')); },
   };
 }
 

@@ -20,6 +20,8 @@ function db() {
   open = new Promise((ok, mis) => {
     try {
       const r = indexedDB.open(DB, 1);
+      // Een ander tabblad houdt een oude versie open: dan niet wachten.
+      r.onblocked = () => mis(new Error('geblokkeerd'));
       r.onupgradeneeded = () => {
         const s = r.result.createObjectStore(STORE, { keyPath: 'id' });
         s.createIndex('niveau', 'niveau');
@@ -33,19 +35,24 @@ function db() {
 
 const verzoek = (r) => new Promise((ok, mis) => { r.onsuccess = () => ok(r.result); r.onerror = () => mis(r.error); });
 
-export async function haal(id) {
+// Een halve seconde, dan bouwen we liever zelf: indexedDB.open kan in
+// sommige browsers blijven hangen zonder ja of nee te zeggen.
+const binnen = (belofte, ms) => Promise.race([belofte, new Promise((ok) => setTimeout(() => ok(null), ms))]);
+
+export async function haal(id, versie) {
   try {
-    const d = await db();
+    const d = await binnen(db(), 500);
     if (!d) return null;
-    const rij = await verzoek(d.transaction(STORE).objectStore(STORE).get(id));
-    return rij?.data ?? null;
+    const rij = await binnen(verzoek(d.transaction(STORE).objectStore(STORE).get(id)), 500);
+    // Van een andere versie van de motor: niet gebruiken.
+    return rij?.data?.versie === versie ? rij.data : null;
   } catch { return null; }
 }
 
 // Bewaar een gebouwd bord; houd het niveau onder MAX_PER_NIVEAU.
 export async function bewaar(id, niveau, data) {
   try {
-    const d = await db();
+    const d = await binnen(db(), 500);
     if (!d) return;
     const s = d.transaction(STORE, 'readwrite').objectStore(STORE);
     await verzoek(s.put({ id, niveau, data, gemaakt: Date.now() }));
@@ -61,7 +68,7 @@ export async function bewaar(id, niveau, data) {
 // Wie een bewaard bord gaat spelen, haalt het uit de voorraad.
 export async function gespeeld(id) {
   try {
-    const d = await db();
+    const d = await binnen(db(), 500);
     if (!d) return;
     await verzoek(d.transaction(STORE, 'readwrite').objectStore(STORE).delete(id));
   } catch { /* niets */ }
