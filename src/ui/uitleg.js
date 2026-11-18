@@ -9,6 +9,8 @@
 
 import { el } from './boards.js';
 import { LEVELS, ZICHTBARE_LEVEL_IDS, KAMER_LEVELS } from '../engine/difficulty.js';
+import { accountAan } from '../sync/config.js';
+import { privacyBlok } from './account.js';
 
 const tabel = (rijen) =>
   el('table', { class: 'deftable' }, [
@@ -136,7 +138,9 @@ export function renderUitleg(mount) {
         vraag('Moet ik ooit gokken?', 'Nee. Op de eerste drie moeilijkheidsgraden kom je er door stap voor stap uit te sluiten. Op de drie zwaarste moet je soms een mogelijkheid aannemen en laten zien dat die tot een tegenspraak leidt — dat is nog steeds redeneren.'),
         vraag('Hoe weet ik dat een puzzel klopt?', 'Voordat een puzzel bij jou komt, is geteld hoeveel oplossingen hij heeft, en zijn de aanwijzingen die je kunt missen weggesneden. Je krijgt er dus geen die je niet rond kunt krijgen, en geen aanwijzing die er voor de sier staat.'),
         vraag('Kan ik kiezen waar het speelt?', 'Nee. Je kiest hoe zwaar je het wilt hebben; het decor krijg je. Elke nieuwe puzzel speelt ergens anders, en is ook niet altijd een moord: het kan net zo goed een verdwijning of een diefstal zijn.'),
-        vraag('Blijft mijn voortgang bewaard?', 'In deze browser wel, zonder account. Op een ander apparaat of in een andere browser begin je opnieuw. Puzzels die je zelf begonnen bent staan onder "Alle puzzels", bij hun eigen moeilijkheidsgraad.'),
+        vraag('Blijft mijn voortgang bewaard?', accountAan()
+          ? 'In deze browser wel, ook zonder account. Log je in met Google, dan staan je opgeloste puzzels, je sterren en je niveau ook op je andere apparaten; een half bord blijft op het apparaat waar je speelt. Puzzels die je zelf begonnen bent staan onder "Alle puzzels", bij hun eigen moeilijkheidsgraad.'
+          : 'In deze browser wel, zonder account. Op een ander apparaat of in een andere browser begin je opnieuw. Puzzels die je zelf begonnen bent staan onder "Alle puzzels", bij hun eigen moeilijkheidsgraad.'),
         vraag('Wat is die code in de link?', 'De seed. Dezelfde seed levert altijd exact dezelfde puzzel op, dus wie jouw link opent krijgt jouw puzzel en niet een andere.'),
         vraag('Lijkt dit niet op Murdoku?',
           'Ja, en dat is geen toeval. Murdoku is het puzzelboek van Manuel Garand waarin je verdachten in een sudokuraster zet en degene die bij het slachtoffer overblijft de dader is. Mijn dochter is er dol op, en toen het boek uit was wilde ze meer. Daar is deze site voor gemaakt: om er zelf nieuwe te kunnen maken, zo veel als ze wil.'),
@@ -145,4 +149,13 @@ export function renderUitleg(mount) {
       ]),
     ])
   );
+
+  // Wat we bewaren. Alleen als er iets te bewaren valt: zonder accounts
+  // blijft alles in de browser en staat dat al hierboven.
+  if (accountAan()) {
+    mount.append(sectie('Wat we bewaren', [
+      privacyBlok(),
+      el('p', {}, [el('a', { href: '#/account', text: 'Naar je account' }), el('span', { text: ' · ' }), el('a', { href: 'privacy.html', text: 'Als losse pagina' })]),
+    ]));
+  }
 }

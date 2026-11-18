@@ -3235,3 +3235,73 @@ body .kamerbord .kamernaam {
 }
 .bediening-blok p { margin: 0; font-size: var(--t-sm); line-height: 1.5; }
 @media (min-width: 700px) { .bediening { grid-template-columns: 1fr 1fr; } }
+
+/* ------------------------------------------------------------ account
+   Optionele accounts (specs/accounts-and-sync.md, src/ui/account.js). In het
+   menu een gewone link "Inloggen", of ingelogd een rondje met de eerste
+   letter van het e-mailadres (Guus: "Rondje met letter"). De rest is een
+   gewone tekstpagina zoals Uitleg. */
+.top:has(.kop-extra) { justify-content: flex-start; }
+.top:has(.kop-extra) .nav { margin-left: auto; }
+.kop-extra { display: flex; align-items: center; gap: var(--s2); }
+.accountknop {
+  text-decoration: none;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: var(--t-base);
+  border-radius: 999px;
+  padding: 7px 14px;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.accountknop:hover { transform: translateY(-1px); background: var(--accent-soft); color: var(--accent); }
+.accountknop[aria-current="page"] { background: var(--accent); color: var(--accent-ink); }
+@media (max-width: 640px) {
+  .kop-extra { order: 1; margin-left: auto; }
+  .top:has(.kop-extra) .nav { order: 2; margin-left: 0; }
+}
+a.accountknop-letter {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--pop-1), var(--pop-2));
+  color: #fff;
+  font-size: var(--t-md);
+  line-height: 1;
+}
+a.accountknop-letter:hover { color: #fff; background: linear-gradient(135deg, var(--pop-1), var(--pop-2)); }
+a.accountknop-letter[aria-current="page"] { outline: 2px solid var(--accent); outline-offset: 2px; color: #fff; }
+.knoppen { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; margin: var(--s4) 0; }
+.googleknop { gap: var(--s2); background: var(--surface); }
+.googleknop svg { flex: none; }
+.accountstatus { color: var(--text-2); }
+.accountstatus-wacht { color: var(--bad); }
+.privacy b { color: var(--text); }
+
+.bevestig {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--text);
+  width: min(26rem, calc(100vw - 2 * var(--s4)));
+}
+.bevestig::backdrop {
+  background: color-mix(in srgb, var(--text) 45%, transparent);
+  backdrop-filter: blur(2px);
+}
+.bevestig-blad {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--schaduw-pop);
+  padding: var(--s5);
+}
+.bevestig-blad h2 { margin-top: 0; }
+.bevestig-blad .knoppen { margin-bottom: 0; }
+
+@media print {
+  .accountknop, .bevestig { display: none !important; }
+}

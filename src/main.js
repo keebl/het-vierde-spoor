@@ -11,11 +11,16 @@ import { el } from './ui/boards.js';
 import { dressUp } from './ai/flavour.js';
 import { pasToe as pasThemaToe, hangThemaknopOp } from './ui/thema.js';
 import { WORLD_BY_ID } from './content/worlds.js';
+// Optionele accounts (specs/accounts-and-sync.md). Zonder schakelaar doet
+// dit niets; supabase-js zelf wordt pas geladen als er een sessie is.
+import { accountAan } from './sync/config.js';
+import { start as startAccount, komtVanInloggen, GEBEURTENIS } from './sync/sessie.js';
+import { renderAccount, hangAccountknopOp } from './ui/account.js';
 
 const app = document.getElementById('app');
 
 function markNav(route) {
-  for (const a of document.querySelectorAll('.nav a')) {
+  for (const a of document.querySelectorAll('.nav a, .kop-extra a')) {
     if (a.dataset.route === route) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   }
@@ -93,6 +98,7 @@ function route() {
 
   if (path === 'maken') { markNav('maken'); renderGenerator(app); return; }
   if (path === 'uitleg') { markNav('uitleg'); renderUitleg(app); return; }
+  if (path === 'account' && accountAan()) { markNav('account'); renderAccount(app); return; }
   // De bibliotheek: de vierenzeventig vaste zaken per moeilijkheidsgraad,
   // met onder elk niveau de puzzels die deze browser zelf begonnen is.
   if (path.startsWith('puzzels')) {
@@ -121,6 +127,22 @@ try {
   new ResizeObserver(meetKop).observe(document.querySelector('header.top'));
 } catch {
   /* geen ResizeObserver: dan blijft de gemeten hoogte van het begin staan */
+}
+
+if (accountAan()) {
+  hangAccountknopOp(document.querySelector('.nav'), document.getElementById('themaknop'));
+  // Kwam je net terug van Google, dan eerst het antwoord verwerken: dat
+  // staat als ?code= in de adresbalk en moet weg voordat de router kijkt.
+  // In elk ander geval wacht de pagina nergens op.
+  if (komtVanInloggen()) await startAccount();
+  else startAccount();
+  // Bracht een sync nieuws (een puzzel elders opgelost, een ander niveau),
+  // dan de lijst of voorpagina opnieuw tekenen. Een open puzzel niet: daar
+  // speelt iemand, en een bord dat onder je handen verspringt is erger dan
+  // een vinkje dat pas bij de volgende keer verschijnt.
+  addEventListener(GEBEURTENIS, (e) => {
+    if (e.detail?.veranderd && !location.hash.startsWith('#/puzzel/') && location.hash !== '#/account') route();
+  });
 }
 
 addEventListener('hashchange', route);
