@@ -691,7 +691,7 @@ function perNaam(puzzle, extra, knopVoor) {
   for (let p = 0; p < puzzle.personen.length; p++) {
     const mijn = perPersoon[p].filter((clue) => clue.ruw?.p === p);
     const elders = [...new Set(perPersoon[p]
-      .filter((clue) => clue.ruw?.p !== p)
+      .filter((clue) => clue.ruw && clue.ruw.p !== p)
       .map((clue) => puzzle.personen[clue.ruw.p]))];
     // Een naam waar niets over gezegd wordt, werd hier overgeslagen. Op een
     // bord van vijf stonden er dan vier namen in de lijst, en dat leest als
