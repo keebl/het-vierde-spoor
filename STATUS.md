@@ -9,6 +9,11 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-18, evening: **Google sign-in is live** (#27, `AAN = true`). Go-live checklist done:
+  clearhead members gate live, Google client and Supabase checked, `privacy@` forwards via
+  Cloudflare Email Routing, local trial with Guus's account passed (sign-in, sync both ways,
+  account deletion keeps the shared login and clearhead data). Next: smoke test on the live
+  site; Family Link approval with his daughter (`docs/accounts-go-live.md` §4).
 - 2026-11-18, evening: `specs/accounts-and-sync.md` steps 1–6 built on branch
   `claude/frosty-raman-a0da51` (PR open, not merged, not live; sign-in switched off with
   `AAN = false` in `src/sync/config.js`). Schema `reconstructie` applied to `claudeDB`
