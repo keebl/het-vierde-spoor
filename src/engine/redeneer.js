@@ -47,7 +47,7 @@
 // Kees") valt buiten direct en combineer; die doet mee in de aanname, tot
 // hij een eigen techniek krijgt.
 
-import { evalAanwijzing, rijVan, kolVan, naastMeubel, beginDomeinen, personenIn } from './rooms.js';
+import { evalAanwijzing, rijVan, kolVan, naastMeubel, beginDomeinen, personenIn, SOORTEN, cellenVanType } from './rooms.js';
 
 export const TECHNIEKEN = {
   direct: { tier: 1 },
@@ -72,6 +72,7 @@ export const TELGEBIEDEN = {
     for (let i = 0; i < rooster.kamerVan.length; i++) if (rooster.kamerVan[i] === c.kamerIdx) uit.add(i);
     return uit;
   },
+  aantalOp: (c, rooster) => new Set(cellenVanType(rooster, c.t)),
   aantalNaast: (c, rooster) => {
     const uit = new Set();
     for (let i = 0; i < rooster.kamerVan.length; i++) if (naastMeubel(rooster, i, c.m)) uit.add(i);
@@ -171,11 +172,20 @@ function direct(st) {
       st.directGedaan[i] = true;
       const [p] = pers;
       const weg = [];
+      // Alleen wat de aanwijzing uitsluit (false). Een aanwijzing die ook
+      // over de anderen gaat ("de enige op een stoel") weet met één persoon
+      // nog niets zeker (null), en dat is geen reden om te strepen.
       for (const cel of st.dom[p]) {
         werk(st);
-        if (evalMet(st, c, [[p, cel]]) !== true) weg.push(cel);
+        if (evalMet(st, c, [[p, cel]]) === false) weg.push(cel);
       }
-      const geschrapt = streep(st, [[p, weg]]);
+      const wat = [[p, weg]];
+      const anderen = SOORTEN[c.soort].ookAnderen?.(c, st.rooster);
+      if (anderen) {
+        const set = new Set(anderen);
+        for (let q = 0; q < st.n; q++) if (q !== p) wat.push([q, [...st.dom[q]].filter((x) => set.has(x))]);
+      }
+      const geschrapt = streep(st, wat);
       if (geschrapt.length) return { techniek: 'direct', aanwijzingen: [i], geschrapt };
     } else if (pers.length === 0 && st.gebieden[i] && c.aantal === 0) {
       st.directGedaan[i] = true;

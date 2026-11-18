@@ -530,6 +530,205 @@ export const SOORTEN = {
   },
 };
 
+// ------------------------------------------- aanwijzingen over stukken
+//
+// Fase B (specs/engine-extension.md stap 7, specs/props-and-either-clues.md
+// A2 en B1). Een aanwijzing over één persoon heeft een `eval` die alleen
+// naar die persoon kijkt; staat hij nog niet, dan null. Een aanwijzing die
+// ook iets over de anderen zegt ("de enige op een stoel") geeft null zolang
+// dat nog niet vaststaat, en zegt met `ookAnderen` welke vakjes de anderen
+// daardoor kwijt zijn.
+
+const typeVan = (ctx, cel) => typeOp(ctx.rooster, cel);
+
+// Ligt dit vakje in een hoek van zijn kamer: aan twee kanten die haaks op
+// elkaar staan een muur of de buitenrand.
+export function inKamerhoek(rooster, cel) {
+  const { n, kamerVan } = rooster;
+  const r = rijVan(n, cel);
+  const k = kolVan(n, cel);
+  const muur = (dr, dc) => {
+    const nr = r + dr;
+    const nc = k + dc;
+    return nr < 0 || nc < 0 || nr >= n || nc >= n || kamerVan[idx(n, nr, nc)] !== kamerVan[cel];
+  };
+  return (muur(-1, 0) || muur(1, 0)) && (muur(0, -1) || muur(0, 1));
+}
+
+// Staat iemand op dit vakje naast een stuk van type t (dezelfde kamer, pal
+// ernaast, en niet op dat stuk zelf)?
+export function naastType(rooster, cel, t) {
+  const eigen = rooster.meubelOp[cel];
+  return kamerBuren(rooster, cel).some((b) => rooster.meubelOp[b] !== eigen && typeOp(rooster, b) === t);
+}
+
+// De helft van een `en`, `ofwelPersoon` of `typeOf`: een gewone aanwijzing
+// over één persoon, zonder p. Hier ingevuld voor die persoon.
+const half = (h, p) => ({ ...h, p });
+
+Object.assign(SOORTEN, {
+  op: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      return typeVan(ctx, cel) === c.t;
+    },
+  },
+  nietOp: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      return typeVan(ctx, cel) !== c.t;
+    },
+  },
+  enigeOp: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      if (typeVan(ctx, cel) !== c.t) return false;
+      let open = false;
+      for (let q = 0; q < ctx.plaats.length; q++) {
+        if (q === c.p) continue;
+        const x = ctx.plaats[q];
+        if (x == null) open = true;
+        else if (typeVan(ctx, x) === c.t) return false;
+      }
+      return open ? null : true;
+    },
+    // Niemand anders staat op een stuk van dit type.
+    ookAnderen: (c, rooster) => cellenVanType(rooster, c.t),
+  },
+  aantalOp: {
+    eval(c, ctx) {
+      let zeker = 0;
+      let onbekend = 0;
+      for (const cel of ctx.plaats) {
+        if (cel == null) { onbekend++; continue; }
+        if (typeVan(ctx, cel) === c.t) zeker++;
+      }
+      if (zeker > c.aantal || zeker + onbekend < c.aantal) return false;
+      return onbekend === 0 ? zeker === c.aantal : null;
+    },
+  },
+  naastType: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      return naastType(ctx.rooster, cel, c.t) === c.ja;
+    },
+  },
+  voorRaam: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      return (ctx.rooster.raamCel?.has(cel) ?? false) === c.ja;
+    },
+  },
+  hoekKamer: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      return inKamerhoek(ctx.rooster, cel) === c.ja;
+    },
+  },
+  rijEnKamerAls: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      const { n, kamerVan, meubelOp } = ctx.rooster;
+      const r = rijVan(n, cel);
+      for (let k = 0; k < n; k++) {
+        const x = idx(n, r, k);
+        if (meubelOp[x] === c.m && kamerVan[x] === kamerVan[cel] && x !== cel) return true;
+      }
+      return false;
+    },
+  },
+  kamerOf: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      const k = ctx.rooster.kamerVan[cel];
+      return k === c.kamerIdx || k === c.kamer2;
+    },
+  },
+  nietNiet: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      const k = ctx.rooster.kamerVan[cel];
+      return k !== c.kamerIdx && k !== c.kamer2;
+    },
+  },
+  typeOf: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      const t = typeVan(ctx, cel);
+      return t === c.t || t === c.t2;
+    },
+  },
+  en: {
+    eval(c, ctx) {
+      const a = evalAanwijzing(half(c.a, c.p), ctx);
+      const b = evalAanwijzing(half(c.b, c.p), ctx);
+      if (a === false || b === false) return false;
+      if (a == null || b == null) return null;
+      return true;
+    },
+  },
+  // Precies één van de twee: "Ofwel Joep, ofwel Imke reed op het paard."
+  ofwelPersoon: {
+    eval(c, ctx) {
+      const a = evalAanwijzing(half(c.a, c.p), ctx);
+      const b = evalAanwijzing(half(c.a, c.q), ctx);
+      if (a == null || b == null) {
+        if (a === true && b == null) return null;
+        return a === false && b === false ? false : null;
+      }
+      return a !== b;
+    },
+  },
+  // "Wie op het kleed stond, stond ten noorden van Pien." Over één onbekende
+  // (wie er op dat type staat, er is er precies één) en één genoemde (ref).
+  wieOp: {
+    eval(c, ctx) {
+      let wie = -1;
+      let open = false;
+      for (let q = 0; q < ctx.plaats.length; q++) {
+        const x = ctx.plaats[q];
+        if (x == null) { open = true; continue; }
+        if (typeVan(ctx, x) === c.t) {
+          if (wie >= 0) return false;
+          wie = q;
+        }
+      }
+      if (wie === c.ref) return false;
+      if (wie < 0) return open ? null : false;
+      const a = ctx.plaats[wie];
+      const b = ctx.plaats[c.ref];
+      if (b == null) return null;
+      const n = ctx.rooster.n;
+      let waar;
+      if (c.rel === 'noord') waar = rijVan(n, a) < rijVan(n, b);
+      else if (c.rel === 'west') waar = kolVan(n, a) < kolVan(n, b);
+      else waar = ctx.rooster.kamerVan[a] === ctx.rooster.kamerVan[b];
+      if (!waar) return false;
+      return open ? null : true;
+    },
+  },
+});
+
+export function cellenVanType(rooster, t) {
+  const uit = [];
+  for (let i = 0; i < rooster.meubelOp.length; i++) if (typeOp(rooster, i) === t) uit.push(i);
+  return uit;
+}
+
+// Soorten die over één persoon gaan en die de oude propagatie niet kent:
+// die strepen met eval, vakje voor vakje.
+const OVER_EEN = new Set(['op', 'nietOp', 'enigeOp', 'naastType', 'voorRaam', 'hoekKamer', 'rijEnKamerAls', 'kamerOf', 'nietNiet', 'typeOf', 'en']);
+
 export const evalAanwijzing = (c, ctx) => SOORTEN[c.soort].eval(c, ctx);
 
 // Welke personen raakt deze aanwijzing?
@@ -737,6 +936,11 @@ function propageerAanwijzing(rooster, dom, c) {
       veranderd = filter(dom[c.q], (cel) => kolVan(n, cel) > minP) || veranderd;
       break;
     }
+    case 'aantalOp':
+      if (c.aantal === 0) {
+        for (const d of dom) veranderd = filter(d, (cel) => typeOp(rooster, cel) !== c.t) || veranderd;
+      }
+      break;
     case 'buren': {
       if (c.ja) {
         veranderd = filter(dom[c.p], (cel) => kamerBuren(rooster, cel).some((b) => dom[c.q].has(b))) || veranderd;
@@ -744,6 +948,20 @@ function propageerAanwijzing(rooster, dom, c) {
       }
       break;
     }
+    default:
+      if (OVER_EEN.has(c.soort)) {
+        const plaats = new Array(n).fill(null);
+        const ctx = { rooster, plaats };
+        veranderd = filter(dom[c.p], (cel) => {
+          plaats[c.p] = cel;
+          return evalAanwijzing(c, ctx) !== false;
+        }) || veranderd;
+        const anderen = SOORTEN[c.soort].ookAnderen?.(c, rooster);
+        if (anderen) {
+          const weg = new Set(anderen);
+          for (let q = 0; q < n; q++) if (q !== c.p) veranderd = filter(dom[q], (cel) => !weg.has(cel)) || veranderd;
+        }
+      }
   }
   return veranderd;
 }

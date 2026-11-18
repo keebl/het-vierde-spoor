@@ -410,7 +410,18 @@ function buildKamerPuzzle({ world, settings }) {
   // kamer", "op dezelfde plek", "in hetzelfde gewelf".
   const zelfde = (world.sameRoom ?? 'in dezelfde kamer als').replace(/ als$/, '');
 
+  // Hoeveel stukken van elk type er liggen, en hoe het enige heet: "op het
+  // paard" als er één is, "op een kruk" als er drie zijn (rooms-text.js).
+  const typeAantal = {};
+  const typeNaam = {};
+  gen.rooster.stukken.forEach((st, m) => {
+    if (!st.type) return;
+    typeAantal[st.type] = (typeAantal[st.type] ?? 0) + 1;
+    typeNaam[st.type] = meubelNamen[m];
+  });
   const woorden = {
+    typeAantal,
+    typeNaam,
     personen: namen,
     kamerNamen,
     meubelNamen,
@@ -479,6 +490,8 @@ function buildKamerPuzzle({ world, settings }) {
     woorden,
     _rooster: gen.rooster,
     _ruwe: gen.aanwijzingen,
+    // Hoe ver de bouwer van zijn sjabloon zat (0 = goed); de keuring valt erover.
+    _mis: gen.mis ?? 0,
   };
 }
 

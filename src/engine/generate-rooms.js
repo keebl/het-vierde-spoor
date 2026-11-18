@@ -13,13 +13,17 @@
 // "X stond in dezelfde kamer als het slachtoffer" is daarom verboden - dat is
 // letterlijk de vraag.
 
-import { bouwRooster, richIn, tekenPlaatsing, telPlaatsingen, graad, domeinenVan, evalAanwijzing, idx, rijVan, kolVan, kamerBuren, naastMeubel } from './rooms.js';
+import {
+  bouwRooster, richIn, tekenPlaatsing, telPlaatsingen, graad, domeinenVan, evalAanwijzing, idx, rijVan, kolVan,
+  kamerBuren, naastMeubel, typeOp, typeTelling, naastType, inKamerhoek,
+} from './rooms.js';
 import { makeRng } from './rng.js';
+import { redeneer } from './redeneer.js';
 
 // Een poging die de solver niet binnen zijn budget rond krijgt, gooien we weg.
 class TeZwaar extends Error {}
 
-const sleutel = (c) => JSON.stringify([c.soort, c.p, c.q, c.kamerIdx, c.m, c.ja]);
+const sleutel = (c) => JSON.stringify([c.soort, c.p, c.q, c.kamerIdx, c.m, c.ja, c.t, c.t2, c.kamer2, c.ref, c.rel, c.a, c.b, c.aantal]);
 
 // Hoeveel vrije vakjes een aanwijzing over één persoon, helemaal alleen op
 // een leeg bord, voor die persoon openlaat.
@@ -30,7 +34,9 @@ export function vakjesOver(rooster, c) {
   for (let cel = 0; cel < rooster.n * rooster.n; cel++) {
     if (!rooster.vrij[cel]) continue;
     plaats[c.p] = cel;
-    if (evalAanwijzing(c, ctx) === true) uit++;
+    // !== false: "de enige op een stoel" weet met één persoon nog niets
+    // over de anderen (null), maar sluit dit vakje ook niet uit.
+    if (evalAanwijzing(c, ctx) !== false) uit++;
   }
   return uit;
 }
@@ -55,7 +61,7 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten, { minVrij =
     // verdachte is (de dochter, 2026-11-16). Waar het lichaam ligt volgt
     // nu uit de rest: het vakje dat over is als alle anderen staan, en de
     // tellingen, die over iedereen gaan en dus mogen blijven.
-    if (c.p === slachtofferIdx || c.q === slachtofferIdx) return;
+    if (c.p === slachtofferIdx || c.q === slachtofferIdx || c.ref === slachtofferIdx) return;
     vijver.push({ ...c, soort, gewicht: gewichten[soort] });
   };
 
@@ -124,6 +130,98 @@ function bouwVijver(rooster, plaats, slachtofferIdx, rng, gewichten, { minVrij =
     }
   }
 
+  // ---- fase B: stukken om op te zitten, ramen, hoeken, en "of"-zinnen
+  // (specs/props-and-either-clues.md, specs/engine-extension.md stap 7).
+  // Alleen wat het niveau een gewicht geeft komt in de vijver (zet).
+  const typen = [...typeTelling(rooster).keys()].sort();
+  for (let p = 0; p < n; p++) {
+    const cel = plaats[p];
+    const mijnType = typeOp(rooster, cel);
+    const mijnKamer = kamerVan[cel];
+    if (mijnType) zet('op', { p, t: mijnType });
+    for (const t of typen) {
+      if (t !== mijnType && gewichten.nietOp) zet('nietOp', { p, t });
+      if (gewichten.naastType) zet('naastType', { p, t, ja: naastType(rooster, cel, t) });
+    }
+    if (mijnType && gewichten.enigeOp && plaats.filter((x) => typeOp(rooster, x) === mijnType).length === 1) {
+      zet('enigeOp', { p, t: mijnType });
+    }
+    if (rooster.ramen?.length) zet('voorRaam', { p, ja: rooster.raamCel.has(cel) });
+    zet('hoekKamer', { p, ja: inKamerhoek(rooster, cel) });
+    for (let m = 0; m < (rooster.blokAantal ?? 0); m++) {
+      const c = { soort: 'rijEnKamerAls', p, m };
+      if (evalAanwijzing(c, { rooster, plaats }) === true) zet('rijEnKamerAls', { p, m });
+    }
+    // Een "of" tussen twee kamers of twee typen: de ware en één andere. De
+    // twee samen laten minstens minVrij vakjes open (criterium 7): anders
+    // is het een directe aanwijzing in vermomming.
+    for (let k = 0; k < kamers && gewichten.kamerOf; k++) {
+      if (k === mijnKamer) continue;
+      const [a, b] = mijnKamer < k ? [mijnKamer, k] : [k, mijnKamer];
+      zet('kamerOf', { p, kamerIdx: a, kamer2: b });
+    }
+    for (let k = 0; k < kamers && gewichten.nietNiet; k++) {
+      for (let k2 = k + 1; k2 < kamers; k2++) {
+        if (k === mijnKamer || k2 === mijnKamer) continue;
+        zet('nietNiet', { p, kamerIdx: k, kamer2: k2 });
+      }
+    }
+    if (mijnType && gewichten.typeOf) {
+      for (const t of typen) if (t !== mijnType) zet('typeOf', { p, ...(mijnType < t ? { t: mijnType, t2: t } : { t, t2: mijnType }) });
+    }
+    // "en": twee ware halven over dezelfde persoon. De kamer met een stuk,
+    // de kamer met een meubel ernaast, een stuk met een raam.
+    if (gewichten.en) {
+      const halven = [];
+      halven.push({ soort: 'kamer', kamerIdx: mijnKamer, ja: true });
+      if (mijnType) halven.push({ soort: 'op', t: mijnType });
+      for (let m = 0; m < (rooster.blokAantal ?? 0); m++) if (naastMeubel(rooster, cel, m)) halven.push({ soort: 'naast', m, ja: true });
+      for (const t of typen) if (naastType(rooster, cel, t)) halven.push({ soort: 'naastType', t, ja: true });
+      if (rooster.raamCel?.has(cel)) halven.push({ soort: 'voorRaam', ja: true });
+      for (let i = 0; i < halven.length; i++) {
+        for (let j = i + 1; j < halven.length; j++) {
+          const a = halven[i];
+          const b = halven[j];
+          // Twee halven over hetzelfde ding zeggen niets extra.
+          if (a.soort === b.soort) continue;
+          zet('en', { p, a, b });
+        }
+      }
+    }
+  }
+  // Twee mensen: precies één van beiden zat op het paard.
+  if (gewichten.ofwelPersoon) {
+    for (let p = 0; p < n; p++) {
+      for (let q = p + 1; q < n; q++) {
+        const tp = typeOp(rooster, plaats[p]);
+        const tq = typeOp(rooster, plaats[q]);
+        if (tp && tp !== tq) zet('ofwelPersoon', { p, q, a: { soort: 'op', t: tp } });
+        if (tq && tq !== tp) zet('ofwelPersoon', { p, q, a: { soort: 'op', t: tq } });
+        const kp = kamerVan[plaats[p]];
+        if (kp !== kamerVan[plaats[q]]) zet('ofwelPersoon', { p, q, a: { soort: 'kamer', kamerIdx: kp, ja: true } });
+      }
+    }
+  }
+  // Wie op het enige stuk van een type stond, ten opzichte van een ander.
+  if (gewichten.wieOp) {
+    for (const t of typen) {
+      const op = plaats.map((x, q) => (typeOp(rooster, x) === t ? q : -1)).filter((q) => q >= 0);
+      if (op.length !== 1 || op[0] === slachtofferIdx) continue;
+      const wie = op[0];
+      for (let r = 0; r < n; r++) {
+        if (r === wie || r === slachtofferIdx) continue;
+        const a = plaats[wie];
+        const b = plaats[r];
+        if (rijVan(n, a) < rijVan(n, b)) zet('wieOp', { t, ref: r, rel: 'noord' });
+        if (kolVan(n, a) < kolVan(n, b)) zet('wieOp', { t, ref: r, rel: 'west' });
+      }
+    }
+  }
+  for (const t of typen) {
+    if (!gewichten.aantalOp) break;
+    zet('aantalOp', { t, aantal: plaats.filter((x) => typeOp(rooster, x) === t).length });
+  }
+
   // Aanwijzingen over iedereen tegelijk: hoeveel mensen stonden er in deze
   // kamer, hoeveel naast dit meubelstuk. Die zeggen niets over een persoon en
   // dwingen je juist het geheel te overzien.
@@ -162,7 +260,7 @@ export const maxPerSoort = (aantal, deel = 0.25) => Math.max(2, Math.ceil(deel *
 // Over wie gaat deze aanwijzing, zoals de speler hem ziet? Een aanwijzing
 // over twee mensen staat bij allebei (src/aanwijzingen.js), dus telt hij
 // ook voor allebei. Een telling gaat over niemand in het bijzonder.
-const namenVan = (c) => (c.p == null ? [] : c.q == null || c.q === c.p ? [c.p] : [c.p, c.q]);
+const namenVan = (c) => (c.p == null ? (c.ref != null ? [c.ref] : []) : c.q == null || c.q === c.p ? [c.p] : [c.p, c.q]);
 
 // Voeg aanwijzingen toe tot de puzzel vastligt.
 //
@@ -380,6 +478,203 @@ function poging(params, rng, sleutel = 'x') {
   };
 }
 
+// ------------------------------------------------- de sjabloonbouwer
+//
+// specs/engine-extension.md stap 8 (met props-and-either-clues.md B2).
+// De oude bouwer (groeiTotVast + snoei) gooit aanwijzingen op een stapel tot
+// het vastligt en snoeit dan; zo krijgt de ene naam er vijf en de andere
+// geen. Een puzzel uit een boek werkt andersom: iedereen krijgt één eigen
+// aanwijzing, liefst over iets op het bord, en een paar zinnen over twee
+// mensen of over iedereen maken het rond.
+//
+//   1. Per persoon (niet het slachtoffer) één eigen aanwijzing, gekozen op
+//      winst: welke kandidaat, naast wat er al ligt, streept het meest weg.
+//      Een niveau kan eisen dat er een "of" en een stuk bij zit (B2).
+//   2. Dan relationele en algemene aanwijzingen op winst, tot het uniek is,
+//      hooguit ceil(personen / 3) (criterium 10).
+//   3. Wat daarvan weg kan, gaat weg.
+//   4. De menselijke solver moet hem oplossen, binnen de band van het niveau
+//      (criterium 7).
+//
+// De oude bouwer blijft staan, ongebruikt (hide, do not delete).
+
+const EIGEN = new Set(['kamer', 'kamerNiet', 'kamerOf', 'nietNiet', 'naast', 'rand', 'hoek', 'op', 'nietOp',
+  'enigeOp', 'typeOf', 'naastType', 'voorRaam', 'hoekKamer', 'rijEnKamerAls', 'en']);
+// Over iets op het bord (criterium 11).
+const OVER_STUK = new Set(['naast', 'op', 'nietOp', 'enigeOp', 'typeOf', 'naastType', 'voorRaam', 'rijEnKamerAls']);
+export const overStuk = (c) => OVER_STUK.has(c.soort)
+  || (c.soort === 'en' && (OVER_STUK.has(c.a.soort) || OVER_STUK.has(c.b.soort)));
+export const isOf = (c) => ['kamerOf', 'typeOf', 'ofwelPersoon'].includes(c.soort);
+export const opIets = (c) => ['op', 'enigeOp', 'typeOf'].includes(c.soort)
+  || (c.soort === 'en' && (c.a.soort === 'op' || c.b.soort === 'op'));
+export const isEigen = (c) => EIGEN.has(c.soort) && c.q == null;
+
+const maat = (rooster, lijst) => {
+  const { dom, kapot } = domeinenVan(rooster, lijst);
+  return kapot ? -1 : dom.reduce((s, d) => s + d.size, 0);
+};
+
+// Kies uit de kandidaten (in vijvervolgorde) de eerste `greep` en neem die
+// met de meeste winst; gelijk = de eerste, zodat de gewichten tellen.
+function besteOpWinst(rooster, basis, kandidaten, greep) {
+  const vanaf = maat(rooster, basis);
+  let beste = null;
+  let besteWinst = -1;
+  for (const c of kandidaten.slice(0, greep)) {
+    const m = maat(rooster, [...basis, c]);
+    if (m < 0) continue;
+    const winst = vanaf - m;
+    if (winst > besteWinst) { besteWinst = winst; beste = c; }
+  }
+  return beste;
+}
+
+export const BOUWREDEN = {};
+const reden = (r) => { BOUWREDEN[r] = (BOUWREDEN[r] ?? 0) + 1; return null; };
+
+export function bouwPerPersoon(rooster, plaats, slachtofferIdx, rng, params, budget) {
+  const { n } = rooster;
+  const bouw = params.bouw;
+  const vijver = bouwVijver(rooster, plaats, slachtofferIdx, rng, { ...bouw.eigen, ...bouw.samen }, { minVrij: bouw.minVrij ?? params.minVrij });
+  const eigenVan = new Map();
+  const samen = [];
+  for (const c of vijver) {
+    if (isEigen(c) && c.p != null) {
+      if (!eigenVan.has(c.p)) eigenVan.set(c.p, []);
+      eigenVan.get(c.p).push(c);
+    } else if (!isEigen(c)) {
+      samen.push(c);
+    }
+  }
+  const personen = rng.shuffle([...Array(n).keys()].filter((p) => p !== slachtofferIdx));
+  if (personen.some((p) => !eigenVan.get(p)?.length)) return reden('geen eigen kandidaat');
+
+  // Eisen van het niveau: een "of" en iets op een stuk (B2, criterium 11),
+  // en minstens de helft over iets op het bord.
+  const eigen = [];
+  const eisen = [];
+  if (bouw.eisOf) eisen.push(isOf);
+  if (bouw.eisOp) eisen.push(opIets);
+  // Niet te veel van één soort (regel 4 van check-spreiding): "ze lijken te
+  // veel op elkaar" (de dochter, 2026-11-16).
+  // Tegen het kleinste totaal dat er kan komen: één per verdachte.
+  const perSoortMax = maxPerSoort(n - 1, params.soortDeel);
+  const vol = (c) => eigen.filter((x) => x.soort === c.soort).length >= perSoortMax;
+  for (const p of personen) {
+    let kandidaten = eigenVan.get(p);
+    if (kandidaten.some((c) => !vol(c))) kandidaten = kandidaten.filter((c) => !vol(c));
+    const eis = eisen.find((e) => kandidaten.some(e));
+    if (eis) kandidaten = kandidaten.filter(eis);
+    const stukNodig = eigen.filter(overStuk).length * 2 < eigen.length + 1;
+    if (!eis && stukNodig && kandidaten.some(overStuk)) kandidaten = kandidaten.filter(overStuk);
+    const c = besteOpWinst(rooster, eigen, kandidaten, bouw.greep ?? 10);
+    if (!c) return reden('eigen zonder winst');
+    if (eis) eisen.splice(eisen.indexOf(eis), 1);
+    eigen.push(c);
+  }
+  // Een eis die niemand kon halen (niemand zit ergens op), dan is deze
+  // poging niets: een andere plaatsing wel.
+  if (eisen.length) return reden('eis niet gehaald');
+
+  // Verbeterronde: per persoon kijken of een andere eigen aanwijzing, naast
+  // alle andere, meer wegstreept. Op de grote borden is de eerste keuze vaak
+  // gulzig verkeerd: wat bij de derde persoon veel streepte, doet niets
+  // meer als de rest erbij ligt.
+  for (let ronde = 0; ronde < (bouw.rondes ?? 0); ronde++) {
+    let beter = false;
+    for (let i = 0; i < eigen.length; i++) {
+      const p = eigen[i].p;
+      const anderen = eigen.filter((_, j) => j !== i);
+      const nu = maat(rooster, eigen);
+      const houdEis = isOf(eigen[i]) || opIets(eigen[i]);
+      let kandidaten = eigenVan.get(p).filter((c) => c.soort === eigen[i].soort || anderen.filter((x) => x.soort === c.soort).length < perSoortMax);
+      if (houdEis) kandidaten = kandidaten.filter((c) => (isOf(eigen[i]) ? isOf(c) : opIets(c)));
+      if (overStuk(eigen[i]) && anderen.filter(overStuk).length * 2 < eigen.length) kandidaten = kandidaten.filter(overStuk);
+      const c = besteOpWinst(rooster, anderen, kandidaten, bouw.greepRonde ?? 40);
+      if (c && c !== eigen[i] && maat(rooster, [...anderen, c]) < nu) { eigen[i] = c; beter = true; }
+    }
+    if (!beter) break;
+  }
+
+  const uniek = (lijst) => {
+    if (graad(rooster, lijst).opgelost) return true;
+    if (params.style === 'shallow') return false;
+    const uit = telPlaatsingen(rooster, lijst, 2, budget);
+    if (uit.opgegeven) throw new TeZwaar();
+    return uit.count === 1;
+  };
+
+  const max = bouw.maxErbij ?? Math.ceil(n / 3);
+  const erbij = [];
+  const perNaam = new Array(n).fill(1);
+  perNaam[slachtofferIdx] = 0;
+  const rest = samen.slice();
+  while (!uniek([...eigen, ...erbij])) {
+    if (erbij.length >= max) return reden('te veel erbij');
+    // Niemand komt op meer dan twee regels (criterium 10).
+    const mag = rest.filter((c) => namenVan(c).every((p) => perNaam[p] < 2));
+    const c = besteOpWinst(rooster, [...eigen, ...erbij], mag, bouw.greepSamen ?? 30);
+    if (!c) return reden('geen erbij');
+    rest.splice(rest.indexOf(c), 1);
+    erbij.push(c);
+    for (const p of namenVan(c)) perNaam[p]++;
+  }
+  // Wat van het erbij weg kan, gaat weg.
+  for (let i = erbij.length - 1; i >= 0; i--) {
+    const zonder = erbij.filter((_, j) => j !== i);
+    if (uniek([...eigen, ...zonder])) erbij.splice(i, 1);
+  }
+  return [...eigen, ...erbij];
+}
+
+// Ligt het spoor van de menselijke solver binnen de band van het niveau?
+// Geeft hoeveel het ernaast zit (0 = goed).
+export function bandMis(spoor, band) {
+  if (!spoor.opgelost) return 10;
+  if (!band) return 0;
+  const g = spoor.graad;
+  let mis = 0;
+  if (g.topTier > band.maxTier) mis += g.topTier - band.maxTier;
+  if (band.minTier && g.topTier < band.minTier) mis += band.minTier - g.topTier;
+  if (g.lengte < band.min) mis += (band.min - g.lengte) / Math.max(1, band.min);
+  if (band.max && g.lengte > band.max) mis += (g.lengte - band.max) / band.max;
+  return mis;
+}
+
+function pogingPerPersoon(params, rng, sleutelTekst) {
+  const budget = 30000 * params.n;
+  const rooster = bouwRooster(params.n, rng, {
+    kamers: params.kamers, meubelDeel: params.meubelDeel, maxMeubels: params.maxMeubels,
+  });
+  if (params.inrichting) {
+    const inrichting = params.inrichting(rooster, makeRng(`${sleutelTekst}:kamernamen`));
+    rooster.kamerNamen = inrichting.kamerNamen;
+    richIn(rooster, inrichting, makeRng(`${sleutelTekst}:rekwisieten`), makeRng(`${sleutelTekst}:ramen`), {
+      perKamer: params.rekwisieten,
+    });
+  }
+  const plaats = tekenPlaatsing(rooster, rng);
+  if (!plaats) return null;
+  const perKamer = new Map();
+  plaats.forEach((cel, p) => {
+    const k = rooster.kamerVan[cel];
+    if (!perKamer.has(k)) perKamer.set(k, []);
+    perKamer.get(k).push(p);
+  });
+  const paren = [...perKamer.entries()].filter(([, lijst]) => lijst.length === 2);
+  if (!paren.length) return null;
+  const [kamerIdx, paar] = rng.pick(paren);
+  const slachtofferIdx = rng.pick(paar);
+  const dader = paar.find((p) => p !== slachtofferIdx);
+  const aanwijzingen = bouwPerPersoon(rooster, plaats, slachtofferIdx, makeRng(`${sleutelTekst}:sjabloon`), params, budget);
+  if (!aanwijzingen) return null;
+  const spoor = redeneer(rooster, aanwijzingen, { maxTier: params.bouw.band?.maxTier ?? 4, budget: 5_000_000 });
+  return {
+    rooster, plaats, slachtofferIdx, dader, kamerIdx, aanwijzingen,
+    graad: graad(rooster, aanwijzingen), spoor, mis: bandMis(spoor, params.bouw.band),
+  };
+}
+
 // Pas als vaststaat welke poging het wordt, gaat de dure tweede snoeironde
 // eroverheen. Daarvoor zou hij vierentwintig keer voor niets draaien.
 function afronden(kandidaat) {
@@ -414,6 +709,27 @@ export function genereerKamerpuzzel(seed, params, pogingen = null) {
   // poging kost op zeven bij zeven een paar milliseconden: met tien haalde
   // niveau drie zes van de twintig seeds, met honderd twintig van de twintig.
   pogingen = pogingen ?? (params.n >= 9 ? 24 : 100);
+  // Met een sjabloon (KAMER_LEVELS.bouw) bouwt de nieuwe bouwer. `voortgang`
+  // krijgt na elke poging (t, pogingen): daar loopt de balk in de app op.
+  if (params.bouw) {
+    let besteB = null;
+    const totaal = params.bouw.pogingen ?? pogingen;
+    for (let t = 0; t < totaal; t++) {
+      params.voortgang?.(t, totaal);
+      let k = null;
+      try {
+        k = pogingPerPersoon(params, makeRng(`${seed}#kamer${t}`), `${seed}#kamer${t}`);
+      } catch (e) {
+        if (!(e instanceof TeZwaar) && !/rooster/.test(e.message)) throw e;
+      }
+      if (!k) continue;
+      k.poging = t;
+      if (k.mis === 0) return k;
+      if (!besteB || k.mis < besteB.mis) besteB = k;
+    }
+    if (!besteB) throw new Error('kon geen kamerpuzzel bouwen voor deze instellingen');
+    return besteB;
+  }
   let beste = null;
   for (let t = 0; t < pogingen; t++) {
     const rng = makeRng(`${seed}#kamer${t}`);
