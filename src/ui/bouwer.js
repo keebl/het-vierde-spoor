@@ -10,9 +10,17 @@ import { haal, bewaar, gespeeld, BEWAAR_VANAF } from './opslag.js';
 
 // Hoe lang het op een gemiddelde telefoon hooguit duurt, in seconden: de
 // prestatiebegroting van de spec (vier keer de laptop tot het gemeten is).
-// Niveau vijf bouwt sinds het sjabloon tot ruim twintig seconden op een
-// laptop; meestal komt hij uit de voorraad in de repo.
-export const SCHATTING = { 1: 1, 2: 1, 3: 1, 4: 8, 5: 90, 6: 30 };
+// Niveau vijf bouwt sinds het sjabloon tot bijna twee minuten op een laptop
+// (keuring fase B: 67 s en 106 s gemeten; begroting 120 s, Guus: "de
+// doorlooptijd boeit me dan niet zo"); meestal komt hij uit de voorraad in
+// de repo. De keuring eist dat dit nooit onder de laptopbegroting zakt
+// (tools/check-voorraad.mjs), anders belooft het scherm te weinig.
+export const SCHATTING = { 1: 1, 2: 1, 3: 1, 4: 8, 5: 240, 6: 30 };
+
+// "ongeveer 8 seconden", "ongeveer 4 minuten".
+export function duurTekst(seconden) {
+  return seconden >= 120 ? `${Math.round(seconden / 60)} minuten` : `${seconden} seconden`;
+}
 
 const klaar = new Map();
 

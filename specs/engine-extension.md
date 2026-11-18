@@ -410,8 +410,10 @@ A1–A4 and B1–B2. Every board shifts once (decision 4); the fingerprints in
 - **Step 11** — `src/ui/opslag.js` (IndexedDB, 100 per level from level 4, oldest out),
   `tools/pool.mjs` and `pool/niveau-5.json`, `pool/niveau-6.json` (library cases plus
   300 `voorraad-*` seeds each, `BORDVERSIE` in each file), `tools/check-voorraad.mjs` (rebuild sample,
-  build-time budget: level 4 at 4 s and level 5 at 30 s, Guus: build time matters
-  little now that it runs in the worker).
+  build-time budget: level 4 at 4 s and level 5 at 120 s, Guus: build time matters
+  little now that it runs in the worker; the keuring measured 67 s and 106 s on level 5,
+  so 30 s became 120 s, and the build screen's phone estimate, now four minutes for
+  level 5, may never be below the budget).
 
 Measured on `meet-0..19` (laptop), median chain 2 / 3 / 5 / 6 / 30 / 45 for levels 1–6
 (criterion 8 holds); levels 1–4 build 20 of 20 seeds.

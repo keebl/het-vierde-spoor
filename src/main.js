@@ -7,7 +7,7 @@ import { renderGenerator } from './ui/generator.js';
 import { renderUitleg } from './ui/uitleg.js';
 import { renderPlayer } from './ui/player.js';
 import { buildPuzzle, parsePuzzleId } from './puzzle.js';
-import { bouw, bouwVooruit, SCHATTING } from './ui/bouwer.js';
+import { bouw, bouwVooruit, SCHATTING, duurTekst } from './ui/bouwer.js';
 import { el } from './ui/boards.js';
 import { dressUp } from './ai/flavour.js';
 import { pasToe as pasThemaToe, hangThemaknopOp } from './ui/thema.js';
@@ -88,7 +88,7 @@ function route() {
       app.replaceChildren(traag
         ? el('div', { class: 'bouwen', 'data-niveau': String(settings.niveau) }, [
           el('p', { class: 'bouwen-kop', text: 'De puzzel wordt gebouwd en nagerekend.' }),
-          el('p', { class: 'bouwen-schatting', text: `Op een telefoon duurt dat hooguit ongeveer ${SCHATTING[settings.niveau]} seconden, op een computer meestal korter.` }),
+          el('p', { class: 'bouwen-schatting', text: `Op een telefoon duurt dat hooguit ongeveer ${duurTekst(SCHATTING[settings.niveau])}, op een computer meestal korter.` }),
           el('span', { class: 'bouwbalk', role: 'progressbar', 'aria-label': 'Voortgang van het bouwen' }, balk),
           stop,
         ])

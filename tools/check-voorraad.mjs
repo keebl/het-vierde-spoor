@@ -14,12 +14,16 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { bouwKamerGen, genNaarData, wereldVoorSeed, BORDVERSIE } from '../src/puzzle.js';
 import { VOORRAAD_NIVEAUS } from '../src/content/voorraad.js';
+import { SCHATTING } from '../src/ui/bouwer.js';
 
 // Seconden, slechtste geval op de laptop. Niveau 1-3, 5 en 6 uit de spec
 // (niveau 6 is hier nog zestien bij zestien, dus de begroting van het
 // latere niveau zeven). Niveau 4 en 5 bouwen in de worker met een balk, en
-// dan telt de doorlooptijd nauwelijks (Guus, 2026-11-18): 4 s en 30 s.
-export const BEGROTING = { 1: 0.25, 2: 0.25, 3: 0.25, 4: 4, 5: 30, 6: 15 };
+// dan telt de doorlooptijd nauwelijks (Guus, 2026-11-18): 4 s, en voor
+// niveau vijf 120 s (keuring fase B mat 67 s in de voorraad en 106 s in de
+// spreiding; "volgens mij gingen wij asynchroom bouwen, de doorlooptijd
+// boeit me dan niet zo").
+export const BEGROTING = { 1: 0.25, 2: 0.25, 3: 0.25, 4: 4, 5: 120, 6: 15 };
 const SPEELRUIMTE = Number(process.env.BEGROTING_SPEELRUIMTE ?? 1.5);
 
 let fouten = 0;
@@ -55,6 +59,13 @@ for (const [niveau, begroting] of Object.entries(BEGROTING)) {
   }
   console.log(`  ${niveau}      ${traagst.toFixed(2)}s     ${begroting}s`);
   if (traagst > begroting * SPEELRUIMTE) fout(`niveau ${niveau}`, `bouwen duurde ${traagst.toFixed(2)} s, begroting ${begroting} s`);
+}
+
+// Het bouwscherm belooft SCHATTING seconden op een telefoon. Die belofte mag
+// nooit korter zijn dan wat de laptop al mag kosten; anders zegt het scherm
+// "hooguit 90 seconden" bij een bord van twee minuten (fase B).
+for (const [niveau, begroting] of Object.entries(BEGROTING)) {
+  if (!(SCHATTING[niveau] >= begroting)) fout(`niveau ${niveau}`, `het bouwscherm belooft ${SCHATTING[niveau]} s, de begroting is ${begroting} s`);
 }
 
 console.log(`\n${fouten} fouten`);
