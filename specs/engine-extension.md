@@ -38,6 +38,37 @@ median ~24 s, worst ~60 s (this board becomes level 7). Memory is not the constr
 the build needs tens). The cost is one core at 100 % for that time, so battery and heat on
 a phone, and a frozen page today because building runs on the main thread.
 
+## Baseline: today's puzzles graded (2026-11-18, phase A step 5)
+The human solver (`src/engine/redeneer.js`) over the keuring sample: the room cases of the
+library plus `keur-0..9` on levels 1–5 and `keur-0..2` on level 6 (91 boards, the PR #15
+engine, unchanged). Numbers from `npm run check:redeneer`, Node 22, Apple-silicon laptop.
+**Chain** counts reasoning steps: every step except reading a clue literally (`direct`),
+placing (`enigeVakje`) and clearing a placed person's row and column (`bezet`). **Top
+tier**: how many boards needed at most tier 1 / 2 / 3 / 4. **Hard steps**: tier 3 or 4.
+
+| level | boards | solved | chain median | chain min–max | top tier 1/2/3/4 | hard steps median | aanname median | solver worst |
+|---|---|---|---|---|---|---|---|---|
+| 1 | 16 | 16 | 3 | 0–9 | 1 / 15 / 0 / 0 | 0 | 0 | 0 ms |
+| 2 | 17 | 17 | 5 | 2–8 | 0 / 17 / 0 / 0 | 0 | 0 | 0 ms |
+| 3 | 16 | 16 | 9.5 | 3–13 | 0 / 16 / 0 / 0 | 0 | 0 | 0 ms |
+| 4 | 17 | 17 | 20 | 8–91 | 0 / 0 / 7 / 10 | 7 | 3 | 401 ms |
+| 5 | 16 | 16 | 41.5 | 32–73 | 0 / 0 / 10 / 6 | 8 | 0 | 109 ms |
+| 6 | 9 | 9 | 88 | 67–114 | 0 / 0 / 7 / 2 | 3 | 0 | 39 ms |
+
+What it says:
+- Every board is solved by the human solver (no stall), every trace is sound and every full
+  solve is unique by `telPlaatsingen` (criteria 1–3). No board, clue or id changed: the 91
+  fingerprints equal those recorded before phase A (`tools/vingerafdruk-kamers.txt`,
+  criterion 6).
+- Criterion 8 already holds: the median chain rises strictly, 3 → 5 → 9.5 → 20 → 41.5 → 88.
+- Levels 1–3 never need more than tier 2, matching their promise (elimination only).
+- Difficulty does not rise with the level beyond 4: level 4 needs an assumption on 10 of 17
+  boards, level 5 on 6 of 16, level 6 on 2 of 9. The large boards are long rather than hard:
+  their chain is mostly `combineer` (up to 106 of 114 steps), many small relational clues.
+  This is the gap the template builder (step 8) and the bands in `difficulty.js` must close.
+- The solver costs under half a second per board on a laptop, so it can run on demand in the
+  page; its work budget (20 million evaluations, deterministic) is 4× the worst seen (4.9 M).
+
 ## Decisions
 1. **Extend, not replace** (ADR-0005): same pipeline, a new human-style solver, and a
    template builder for every level. The old grower stays in the code, unused.
