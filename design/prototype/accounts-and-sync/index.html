@@ -46,7 +46,6 @@
     <li><a href="#uit">1. Sign in (start: signed out)</a></li>
     <li><a href="#niet-gelukt">1b. Sign-in cancelled or not approved</a></li>
     <li><a href="#bibliotheek">2. Go on on another device</a></li>
-    <li><a href="#bord-nieuwer">2b. A newer board arrives while this one is open</a></li>
     <li><a href="#in">3. Delete the account (start: signed in)</a></li>
     <li><a href="#offline">4. Offline while signed in</a></li>
     <li><a href="#verlopen">4b. Session expired</a></li>
@@ -59,7 +58,7 @@
   <div class="tag">Flow 1 · 1 of 4 · Account, signed out (#/account)</div>
   <nav class="menu" aria-label="Menu"><a class="merk" href="#map">Reconstructie</a><a href="#uit">Begin nieuwe puzzel</a><a href="#uit">Alle puzzels</a><a href="#uit">Uitleg</a><a href="#uit" aria-current="page">Inloggen</a><span>☾</span></nav>
   <h1 id="uit-title">Jouw account</h1>
-  <p>Log in met Google, dan staat je spel op al je apparaten: opgeloste puzzels, een half bord, je sterren op het pad.</p>
+  <p>Log in met Google, dan staat je spel op al je apparaten: je opgeloste puzzels en je sterren op het pad.</p>
   <p>Je hoeft niet in te loggen om te spelen. Geen reclame, geen mails, we delen niets.</p>
   <div class="bar"><a class="btn primary" href="#google"><span class="g" aria-hidden="true">G</span>Inloggen met Google</a></div>
   <p class="sub">Heb je een account van Family Link? Dan moet een ouder de eerste keer even meekijken.</p>
@@ -104,48 +103,26 @@
   <nav class="menu" aria-label="Menu"><a class="merk" href="#map">Reconstructie</a><a href="#uit">Begin nieuwe puzzel</a><a href="#uit">Alle puzzels</a><a href="#uit">Uitleg</a><a href="#uit" aria-current="page">Inloggen</a><span>☾</span></nav>
   <h1 id="ng-title">Jouw account</h1>
   <p class="melding" role="alert">Inloggen is niet gelukt.</p>
-  <p>Log in met Google, dan staat je spel op al je apparaten: opgeloste puzzels, een half bord, je sterren op het pad.</p>
+  <p>Log in met Google, dan staat je spel op al je apparaten: je opgeloste puzzels en je sterren op het pad.</p>
   <div class="bar"><a class="btn primary" href="#google"><span class="g" aria-hidden="true">G</span>Inloggen met Google</a></div>
   <p class="sub">Other one-line messages in this place: "In deze browser kan inloggen niet bewaard worden." (private mode)</p>
 </section>
 
 <!-- ============ another device ============ -->
 <section class="screen" id="bibliotheek" aria-labelledby="bib-title">
-  <div class="tag">Flow 2 · 1 of 2 · Library on the laptop, after syncing</div>
+  <div class="tag">Flow 2 · Library on the laptop, after syncing</div>
   <nav class="menu" aria-label="Menu"><a class="merk" href="#map">Reconstructie</a><a href="#bibliotheek">Begin nieuwe puzzel</a><a href="#bibliotheek" aria-current="page">Alle puzzels</a><a href="#bibliotheek">Uitleg</a><a class="badge" href="#in" aria-label="Account van m…@gmail.com">M</a><span>☾</span></nav>
   <h1 id="bib-title">Alle puzzels</h1>
-  <p class="sub">As today. What she did on her phone shows here too: solved, revealed, begun.</p>
+  <p class="sub">As today. What she solved or revealed on her phone shows here too. A board she left half-finished on the phone stays there.</p>
   <ul>
     <li><a href="#bibliotheek">Het landhuis · opgelost ✓</a> <span class="sub">(on the phone)</span></li>
-    <li><a href="#verder">De kinderboerderij · begonnen</a> <span class="sub">(on the phone)</span></li>
+    <li><a href="#bibliotheek">De kinderboerderij · oplossing bekeken</a> <span class="sub">(on the phone)</span></li>
     <li><a href="#bibliotheek">Het schoolplein</a></li>
   </ul>
 </section>
 
-<section class="screen" id="verder" aria-labelledby="verder-title">
-  <div class="tag">Flow 2 · 2 of 2 · Puzzle, with the phone's board</div>
-  <h1 id="verder-title">Op de kinderboerderij: Wie is de dader?</h1>
-  <div class="img" role="img" aria-label="Image: the board with the crosses and figures she set on her phone">Image: the board with the crosses and figures she set on her phone</div>
-  <p class="sub">No message: it simply opens where she stopped.</p>
-  <div class="bar"><a class="btn" href="#map">Back to the map</a></div>
-</section>
 
-<section class="screen" id="bord-nieuwer" aria-labelledby="bn-title">
-  <div class="tag">Flow 2b · Puzzle open here; a newer board for it arrives from another device</div>
-  <h1 id="bn-title">Op de kinderboerderij: Wie is de dader?</h1>
-  <div class="melding" role="status">
-    <p>Op een ander apparaat ben je verder gekomen.</p>
-    <div class="bar"><a class="btn primary" href="#verder">Laden</a><a class="btn" href="#bord-hier">Hier verder</a></div>
-  </div>
-  <div class="img" role="img" aria-label="Image: this device's board, unchanged">Image: this device's board, unchanged</div>
-</section>
 
-<section class="screen" id="bord-hier" aria-labelledby="bh-title">
-  <div class="tag">Flow 2b · after "Hier verder": bar gone, this board stays; her next move makes it the newest</div>
-  <h1 id="bh-title">Op de kinderboerderij: Wie is de dader?</h1>
-  <div class="img" role="img" aria-label="Image: this device's board, unchanged">Image: this device's board, unchanged</div>
-  <div class="bar"><a class="btn" href="#map">Back to the map</a></div>
-</section>
 
 <!-- ============ delete ============ -->
 <section class="screen" id="verwijder-vraag" aria-labelledby="vv-title">
@@ -189,7 +166,7 @@
   <div class="tag">Flow 5 · Privacy: a section on Uitleg, and the same text as privacy.html</div>
   <h1 id="pr-title">Wat we bewaren</h1>
   <p><b>Zonder account:</b> niets. Je voortgang staat alleen in deze browser.</p>
-  <p><b>Met een account:</b> je e-mailadres van Google en je spel (opgeloste puzzels, je halve borden, je sterren, je niveau en twee instellingen). Alleen om dat op al je apparaten te laten zien.</p>
+  <p><b>Met een account:</b> je e-mailadres van Google en welke puzzels je hebt opgelost of bekeken, je sterren, je niveau en twee instellingen. Alleen om dat op al je apparaten te laten zien.</p>
   <p><b>Waar:</b> bij Supabase, in Parijs.</p>
   <p><b>Hoe lang:</b> tot je je account verwijdert. Dat kan zelf, op de <a href="#in">accountpagina</a>.</p>
   <p><b>Kinderen met Family Link:</b> een ouder geeft de eerste keer toestemming, en kan die later weer intrekken in de Family Link-app.</p>

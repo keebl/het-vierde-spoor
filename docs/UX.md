@@ -23,8 +23,7 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
 - The daughter (level path) — When I open the site, I want to see how far I got and what is
   next, so I can carry on in one click.
 - The daughter (accounts and sync) — When I switch from my phone to the laptop, I want the
-  puzzles I solved, the board I was halfway through and my stars to be there, so I can go
-  on where I stopped.
+  puzzles I solved and my stars to be there, so I can go on with the next one.
 - The owner (accounts and sync) — When my daughter signs in with her Family Link account, I
   want to approve it once and know what is stored, so I can say yes without worry.
 
@@ -75,11 +74,11 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
   gelukt."
 
 ### Go on on another device (accounts and sync)
-- Trigger: she opens a puzzle on the laptop that she was playing on the phone.
-- Steps: Library or Puzzle → Puzzle with the phone's board
-- End state: the newest board is on screen.
-- Unhappy path: the puzzle is already open here when a newer board arrives → Puzzle with
-  the bar "Op een ander apparaat ben je verder gekomen." (Laden / Hier verder).
+- Trigger: she opens the library (or the path) on the laptop after playing on the phone.
+- Steps: Library → Puzzle
+- End state: puzzles solved or revealed on the phone show as such; stars on the path match.
+- Unhappy path: a puzzle she left half-finished on the phone opens with the laptop's own
+  board (or empty): half boards stay on their device.
 
 ### Delete the account (accounts and sync)
 - Trigger: "Account verwijderen" on the account page.
@@ -179,7 +178,7 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
   Link, link to privacy.
 - Primary action: Inloggen met Google · Secondary: Privacy
 - Copy: title "Jouw account"; "Log in met Google, dan staat je spel op al je apparaten:
-  opgeloste puzzels, een half bord, je sterren op het pad." / "Je hoeft niet in te loggen om
+  je opgeloste puzzels en je sterren op het pad." / "Je hoeft niet in te loggen om
   te spelen. Geen reclame, geen mails, we delen niets." / button "Inloggen met Google" /
   "Heb je een account van Family Link? Dan moet een ouder de eerste keer even meekijken." /
   link "Wat we bewaren".
@@ -205,17 +204,11 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
 - Copy: "Je account is verwijderd." / "Op dit apparaat kun je gewoon verder spelen." / button
   "Naar de puzzels".
 
-### Newer board bar (accounts and sync)
-- Purpose: never change the board under her hands, but tell her.
-- Content: a bar above the board.
-- Copy: "Op een ander apparaat ben je verder gekomen." buttons "Laden" (primary) and "Hier
-  verder".
-
 ### Privacy (accounts and sync)
 - Purpose: what is stored, for the player and for a parent. On Uitleg and as `privacy.html`.
 - Copy: heading "Wat we bewaren"; "Zonder account: niets. Je voortgang staat alleen in deze
-  browser." / "Met een account: je e-mailadres van Google en je spel (opgeloste puzzels, je
-  halve borden, je sterren, je niveau en twee instellingen). Alleen om dat op al je
+  browser." / "Met een account: je e-mailadres van Google en welke puzzels je
+  hebt opgelost of bekeken, je sterren, je niveau en twee instellingen. Alleen om dat op al je
   apparaten te laten zien." / "Waar: bij Supabase, in Parijs." / "Hoe lang: tot je je account
   verwijdert. Dat kan zelf, op de accountpagina." / "Kinderen met Family Link: een ouder geeft
   de eerste keer toestemming, en kan die later weer intrekken in de Family Link-app." /
@@ -235,10 +228,15 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
 - (accounts and sync) Playing never waits for the account, so everything is saved on the
   device first and syncing happens behind it.
 - (accounts and sync) Nothing she did is ever lost by syncing, so solved, revealed and stars
-  only add up, and an open board never changes without her say.
+  only add up, and a half-finished board is never touched: it stays on its device.
 
 ## Review log
 - 2026-11-18 — "Goedgekeurd" (forwarded verbatim by the main session): 1A, 2A, 3A, 4A — no change
 - 2026-11-18 (level path) — "Goedgekeurd": path button above the levels, stars above the
   portrait; "maak het wel een beetje creatief en speels gebruik de drawthings optie als je
   leuke afbeeldingen nodig hebt" (goes to the visual half) — no change to the sketch
+- 2026-11-18 (accounts and sync) — "Rondje met letter", "Uitleg + privacy.html", on half
+  boards "ik weet niet of we hier wat mee moeten, als mensen op twee aparateren tegelijk
+  werken wordt alleen een afgeronde puzzel opgeslagen of kijk jij daar anders naar?" then
+  "Alleen afgerond mee", verdict "Goedgekeurd, zo bouwen" (forwarded verbatim by the main
+  session) — half boards no longer sync: "newer board" bar and its screens removed
