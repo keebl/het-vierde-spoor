@@ -321,7 +321,7 @@ export function renderPlayer(puzzle, mount) {
       state.note = hint
         ? { kind: 'ok', text: hint.text }
         : { kind: 'ok', text: puzzle.kind === 'kamer'
-          ? `Er valt niets meer bij te zeggen: alles wat waar is, staat er al. Over ${puzzle.zaak?.rolwoord ?? 'het slachtoffer'} staat met opzet niets; die plek is het vakje dat overblijft.`
+          ? 'Er valt niets meer bij te zeggen: alles wat waar is, staat er al.'
           : 'Er valt niets meer bij te zeggen: alles wat waar is, staat er al.' };
       const was = state.solved;
       if (isSolved(puzzle, state)) state.solved = true;
@@ -647,11 +647,12 @@ function aanwijzingKnop(clue, state, opnieuw, waar) {
   return btn;
 }
 
-// Over het slachtoffer staat nooit iets (zie zet() in generate-rooms.js),
-// en dat is zo bedoeld, niet overgebleven. Bij hem zegt de zin dat ook.
+// Over het slachtoffer staat nooit iets (zie zet() in generate-rooms.js).
+// Daar stond een zin bij die uitlegde waarom; Guus (2026-11-18): "dat hoeft
+// niet". Het kopje met "de bestolene" zegt genoeg, dus bij hem staat niets.
 function nietsOver(puzzle, p) {
   return p === puzzle.slachtofferIdx
-    ? `Over ${puzzle.zaak?.rolwoord ?? 'het slachtoffer'} staat niets, met opzet. Die plek volgt uit de rest: als alle anderen staan, is er nog één vakje over.`
+    ? null
     : 'Hierover staat niets. Deze plek volgt uit de rest: als alle anderen staan, is er nog één vakje over.';
 }
 
@@ -661,15 +662,25 @@ function nietsOver(puzzle, p) {
 //
 // Elke naam krijgt een kopje, ook als er niets over hem gezegd wordt.
 //
-// Een aanwijzing staat onder iedere naam die erin voorkomt: "Ada stond ten
-// noorden van Bram" staat bij Ada én bij Bram, als dezelfde zin. Eerder
-// stond hij alleen bij Ada en kreeg Bram "staat ook in aanwijzing 5" - maar
-// die nummers zeiden de speler niets, en wie bij Bram kijkt wil de zin
-// lezen. De indeling zelf staat in src/aanwijzingen.js, zodat het kastje
-// onder de namen op een telefoon precies dezelfde zinnen laat zien.
+// Een aanwijzing over twee mensen staat hier één keer, onder de naam waar de
+// zin mee begint: "Ada stond ten noorden van Bram" staat bij Ada. Tot
+// 2026-11-18 stond hij bij Ada én bij Bram, en dan leest een lijst van vijf
+// namen als dezelfde zinnen twee keer (Guus, op het Rietveld College:
+// "bij dezelfde personen dezelfde aanwijzingen"). Wie dan nergens meer een
+// eigen regel heeft, krijgt een verwijzing naar de naam waar hij wel staat,
+// geen nummer: die zeiden de speler niets.
+//
+// Het kastje onder de namen op een telefoon houdt de zin wel bij allebei
+// (aanwijzingenPerPersoon in src/aanwijzingen.js): daar zie je maar één
+// naam tegelijk, en wie Bram kiest wil lezen wat er over Bram gezegd is.
 //
 // Tellingen ("in de keuken stonden precies twee mensen") gaan over niemand
 // in het bijzonder en staan apart, onderaan.
+// "Ada", "Ada en Bram", "Ada, Bram en Cas".
+function opsomming(namen) {
+  return namen.length < 2 ? namen.join('') : `${namen.slice(0, -1).join(', ')} en ${namen.at(-1)}`;
+}
+
 function perNaam(puzzle, extra, knopVoor) {
   const { perPersoon, algemeen } = aanwijzingenPerPersoon(puzzle, extra);
 
@@ -678,7 +689,10 @@ function perNaam(puzzle, extra, knopVoor) {
   // Iedereen op het bord langs, in de volgorde van het palet, zodat de
   // lijst dezelfde volgorde heeft als de penningen erboven.
   for (let p = 0; p < puzzle.personen.length; p++) {
-    const mijn = perPersoon[p];
+    const mijn = perPersoon[p].filter((clue) => clue.ruw?.p === p);
+    const elders = [...new Set(perPersoon[p]
+      .filter((clue) => clue.ruw?.p !== p)
+      .map((clue) => puzzle.personen[clue.ruw.p]))];
     // Een naam waar niets over gezegd wordt, werd hier overgeslagen. Op een
     // bord van vijf stonden er dan vier namen in de lijst, en dat leest als
     // een fout: alsof die ene vergeten is.
@@ -697,13 +711,13 @@ function perNaam(puzzle, extra, knopVoor) {
     ]);
     const lijst = el('div', { class: 'clues' });
     for (const clue of mijn) lijst.append(knopVoor(clue));
+    const leegZin = elders.length
+      ? `Staat in een aanwijzing bij ${opsomming(elders)}.`
+      : nietsOver(puzzle, p);
     uit.push(el('div', { class: leeg ? 'clue-groep clue-groep-leeg' : 'clue-groep', 'data-persoon': String(p) }, [
       kop,
       leeg
-        ? el('p', {
-          class: 'clue-leeg',
-          text: nietsOver(puzzle, p),
-        })
+        ? (leegZin ? el('p', { class: 'clue-leeg', text: leegZin }) : null)
         : lijst,
     ]));
   }
@@ -961,9 +975,9 @@ function aanwijzingenKastje(puzzle, state, indeling, knopVoorAanwijzing) {
     return kastje;
   }
   const mijn = indeling.perPersoon[wie] ?? [];
-  kastje.append(mijn.length
-    ? el('div', { class: 'clues' }, mijn.map((c) => knopVoorAanwijzing(c, 'kastje')))
-    : el('p', { class: 'clue-leeg', text: nietsOver(puzzle, wie) }));
+  const leegZin = nietsOver(puzzle, wie);
+  if (mijn.length) kastje.append(el('div', { class: 'clues' }, mijn.map((c) => knopVoorAanwijzing(c, 'kastje'))));
+  else if (leegZin) kastje.append(el('p', { class: 'clue-leeg', text: leegZin }));
   return kastje;
 }
 
