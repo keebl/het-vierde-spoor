@@ -10,6 +10,9 @@ day the changelog was introduced; everything before that is in git history only.
 ## [Unreleased]
 
 ### Added
+- Optional Google sign-in is now switched on: "Inloggen" in the menu keeps your solved
+  puzzels, stars and level in step on all your devices. Playing without an account stays
+  exactly as before.
 - `privacy.html`: what the site stores when you sign in. Sign-in itself (Google, optional,
   progress on all your devices) is built but switched off until go-live.
 
