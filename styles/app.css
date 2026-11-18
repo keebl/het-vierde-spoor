@@ -3222,3 +3222,16 @@ body .kamerbord .kamernaam {
    (ontknoping.js). Een zin met een link, onder de slotzin. */
 .ontknoping-zwaarder { margin: 0; text-align: center; font-size: var(--t-sm); }
 .ontknoping-zwaarder a { font-weight: 600; color: var(--accent); }
+
+/* "Hoe je dit bord bedient" (player.js, bedieningUitleg): een kopje per
+   stand in plaats van één lange alinea. */
+.bediening { display: grid; gap: var(--s3); }
+.bediening-blok h4 {
+  margin: 0 0 2px;
+  font-size: var(--t-sm);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.bediening-blok p { margin: 0; font-size: var(--t-sm); line-height: 1.5; }
+@media (min-width: 700px) { .bediening { grid-template-columns: 1fr 1fr; } }
