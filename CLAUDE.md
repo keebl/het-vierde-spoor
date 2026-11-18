@@ -5,7 +5,11 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 
 ## Commands
 - Install: `npm install`
-- Run / stop: `npm start` / Ctrl-C — serves on http://localhost:4173
+- Run / stop: `npm start` / Ctrl-C — serves on http://localhost:4173; this is the variant
+  Claude runs, without secrets (the site works without the AI key)
+- Run with secrets (AI texts on; Guus's own Terminal only, Claude never runs it):
+  `~/.claude/bin/secrets-run -- npm start` — values come from Bitwarden via the `bws:`
+  references in `.env.example`
 - Test (all): `npm run check:all` — the keuring, 9 checks, about twelve minutes on an
   idle laptop (the sweep alone is six), longer on a busy one
 - Test (one file): `npm run check:kamers` (also `check:regels`, `check:iconen`,
