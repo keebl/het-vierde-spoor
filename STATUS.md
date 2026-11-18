@@ -12,6 +12,15 @@ standing guidance rather than state moved to `CLAUDE.md`.
 - 2026-11-18, later: #22 merged (`b46a683`) — "op het schoolplein" for eight open places
   (keuring rule `VOORZETSEL` in `check-kamers.mjs`) and one line per thought in the numbered
   solution; eight fingerprints changed for clue text only, boards identical.
+- 2026-11-18, later: merged and live — #23 (squash of `20b94c7`): second click on a level
+  starts a puzzle (the two buttons under the picker are gone), the closing sheet suggests one
+  level harder after a self-solve, "Hoe je dit bord bedient" has a heading per mode.
+  In progress in session "engine-extension-phase-b" (branch `claude/engine-phase-b`, not
+  pushed as PR yet): phase B with props and either-clues; new builder on levels 1–4 (build
+  time no criterion, Worker with progress; level-4 budget 4 s); victim/missing person never
+  named in a clue; levels 5–6 get denser boards, clue choice by remaining solution count and
+  an offline pool of 300 boards per level (Guus: "a+b+c"). Not started: the level path
+  ("Candy Crush"-style route with very gradual difficulty) needs a spec first.
 - 2026-11-18: merged and live — #20 (`af2131b`) clue list: a two-person clue once, under
   the first name, a name without a line points to where it is mentioned, the victim shows
   only its header (Guus's Rietveld report; his "two solutions" was one, checked by hand);
