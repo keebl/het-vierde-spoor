@@ -4,11 +4,17 @@
 // Dit is versiering en niets anders. Er gaat geen aanwijzing over, het staat
 // niet in de legenda, en het blokkeert geen vakje. Waarom het er dan is: een
 // plattegrond met alleen vloer en meubels voelt als een bouwtekening. Een
-// kleed, een stapel boeken, een plas water, een spinnenweb in de hoek - dat
-// is wat een ruimte een ruimte maakt.
+// stapel boeken, een plas water, een spinnenweb in de hoek - dat is wat een
+// ruimte een ruimte maakt.
+//
+// Nooit iets dat ook een puzzelstuk is. Er stond een krukje en een kleed als
+// versiering, terwijl een aanwijzing zei "zat op een kruk"; welke kruk telde
+// er dan? (Guus, 2026-11-19: "piepkleine krukjes versieringen ... niet een
+// kruk die je als aanwijzing gebruikt".) De keuring (check-kamers) weigert nu
+// elk motief met de naam van een stuk uit kamersoorten.js.
 //
 // Elke soort ruimte heeft zijn eigen motieven, en per vakje wordt er een
-// andere gekozen. Hetzelfde kleed vier keer onder elkaar is geen sfeer maar
+// andere gekozen. Dezelfde plant vier keer onder elkaar is geen sfeer maar
 // behang.
 
 import { tekenGeschilderd } from './geschilderd.js';
@@ -39,7 +45,7 @@ const vloer = (stof, d) => ({ stof, d, grond: true });
 const streep = (stof, dik, d) => ({ lijn: true, stof, dik, d });
 
 // Een ding neerzetten in zijn eigen vierkant van 48 bij 48, midden op het
-// vakje. `maat` is hoe groot het staat ten opzichte van het vakje: een krukje
+// vakje. `maat` is hoe groot het staat ten opzichte van het vakje: een plant
 // hoort kleiner te zijn dan een kast, anders is het geen aankleding meer.
 const prop = (delen, maat = 0.52, zak = 0.04) => (g, cx, cy, CEL) => {
   const grootte = CEL * maat;
@@ -48,33 +54,6 @@ const prop = (delen, maat = 0.52, zak = 0.04) => (g, cx, cy, CEL) => {
   });
 };
 
-// Een kleur lichter of donkerder maken, zodat een kleed een rand en een
-// medaillon kan hebben die bij zijn eigen kleur horen.
-function schuif(hex, factor) {
-  const n = parseInt(hex.slice(1), 16);
-  const kanaal = (v) => Math.max(0, Math.min(255, Math.round(v * factor)));
-  return `#${((kanaal((n >> 16) & 255) << 16) | (kanaal((n >> 8) & 255) << 8) | kanaal(n & 255))
-    .toString(16).padStart(6, '0')}`;
-}
-
-// Een kleed was een rechthoek met een randje. Dat is geen kleed, dat is een
-// gekleurd vlak. Een echt kleed heeft een geweven rand, een medaillon in het
-// midden, franje die niet overal even lang is, en een hoek die omkrult.
-const kleed = (kleur, breed = 0.74) => (g, cx, cy, CEL) => {
-  const donker = schuif(kleur, 0.7);
-  const licht = schuif(kleur, 1.28);
-  const grootte = CEL * breed * 1.04;
-  tekenGeschilderd(g, [
-    { kleur, grond: true, d: 'M2.6 11 Q24 8 45.4 11 Q47 24 45.4 37 Q24 40 2.6 37 Q1 24 2.6 11 Z' },
-    { kleur: donker, d: 'M6 14 Q24 11.6 42 14 Q43.2 24 42 34 Q24 36.4 6 34 Q4.8 24 6 14 Z' },
-    { kleur, d: 'M9.4 16.6 Q24 14.6 38.6 16.6 Q39.6 24 38.6 31.4 Q24 33.4 9.4 31.4 Q8.4 24 9.4 16.6 Z' },
-    { kleur: licht, d: 'M24 17.4 L32 24 L24 30.6 L16 24 Z' },
-    { kleur: donker, d: 'M24 20.6 L28 24 L24 27.4 L20 24 Z' },
-    { lijn: true, kleur: donker, dik: 0.6, d: 'M12 12.4 L14 35.6 M20 11.4 L21 36.6 M28 11.4 L27 36.6 M36 12.4 L34 35.6' },
-    { lijn: true, kleur: licht, dik: 0.9, d: 'M2.4 13 L-0.2 11.6 M2.2 19 L-0.4 18.2 M2.4 25 L-0.2 25 M2.2 31 L-0.4 31.8 M45.6 13 L48.2 11.6 M45.8 19 L48.4 18.2 M45.6 25 L48.2 25 M45.8 31 L48.4 31.8' },
-    { kleur: schuif(kleur, 0.88), d: 'M45.4 28.6 Q45.8 33.4 45.4 37 Q39.4 37.6 34.6 36.4 Q40.6 33.4 45.4 28.6 Z' },
-  ], { x: cx - grootte / 2, y: cy - grootte / 2, grootte });
-};
 const boekenstapel = prop([
   vloer('houtrood', romp(8, 30, 32, 6, { taps: 0.02 })),
   v('stofblauw', romp(10, 24, 29, 6, { taps: 0.02 })),
@@ -95,11 +74,6 @@ const voetsporen = (g, cx, cy) => {
   }
 };
 
-const loper = prop([
-  vloer('stofgroen', 'M15 2 Q24 0.6 33 2 Q34.4 24 33 46 Q24 47.4 15 46 Q13.6 24 15 2 Z'),
-  v('stofgroen', 'M17.4 5 Q24 4 30.6 5 Q31.6 24 30.6 43 Q24 44 17.4 43 Q16.4 24 17.4 5 Z'),
-  streep('houtdonker', 0.8, 'M20 4.4 Q19.4 24 20 43.6 M28 4.4 Q28.6 24 28 43.6'),
-], 0.96, 0);
 const spinnenweb = (g, cx, cy, CEL) => {
   const hx = cx - CEL * 0.34;
   const hy = cy - CEL * 0.34;
@@ -193,7 +167,7 @@ const kaarsstompje = prop([
 //
 // Met alleen kleden en vlekken blijft een kamer leeg: je ziet vloer, en daar
 // ligt iets op. Wat een ruimte bewoond maakt zijn de dingen die er staan en
-// die niemand heeft opgeruimd - een kruk, een plant, een krant die iemand
+// die niemand heeft opgeruimd - een plant, een krant die iemand
 // heeft laten vallen. Ze blokkeren geen vakje en er gaat geen aanwijzing
 // over; ze staan er omdat kamers zo zijn.
 
@@ -206,12 +180,6 @@ const kamerplant = prop([
   vloer('houtrood', bak(24, 26, 22, 16, 14)),
   v('houtrood', plaat(12.4, 25.4, 23.2, 3, { zak: 0.6 })),
 ], 0.58);
-const kruk = prop([
-  vloer('hout', plaat(10, 20, 28, 4, { zak: 0.8 })),
-  v('houtdonker', poot(13, 24, 5, 16, { schuin: -1.4 })),
-  v('houtdonker', poot(30, 24, 5, 16, { schuin: 1.4 })),
-  v('houtdonker', plaat(14, 33, 20, 2.4, { zak: 0.5 })),
-], 0.5);
 const krant = prop([
   vloer('papier', 'M6 31 Q24 26.4 42 30 Q42.6 35 42 39.4 Q24 42.6 6 39 Z'),
   v('papier', 'M6 31 Q15 28.6 23.6 29.6 Q24 34.4 23.6 39.4 Q15 41 6 39 Z'),
@@ -378,51 +346,54 @@ const afvoerrooster = prop([
   streep('metaal', 1, 'M16 31.4 H32 M15.4 33.4 H32.6 M16 35.4 H32'),
 ], 0.55);
 
-const MOTIEVEN = {
+// Bij naam, zodat de keuring kan zien wat er ligt (zie bovenaan).
+const TEKENING = {
+  boekenstapel, kandelaarvlek, voetsporen, spinnenweb, plas, bladeren, keien,
+  paddenstoelen, putdeksel, olievlek, bouten, scherven, kruimels,
+  sterrenkaartjes, grafscheur, kaarsstompje, kamerplant, krant, kussen, flessen,
+  jutezak, emmer, gereedschap, varens, wortels, bloempol, struik, botjes, urn,
+  buisjes, vijzel, pantoffels, rolpapier, brievenbakje, rimpeling, schuim,
+  baanlijn, duikring, afvoerrooster,
+};
+
+export const MOTIEVEN = {
   zaal: [
-    kleed('#a8543c'), kamerplant, kandelaarvlek, kruk, kleed('#7a4a66', 0.5),
-    krant, boekenstapel, kussen, kamerplant, kleed('#8a6a3c', 0.46),
+    'kamerplant', 'kandelaarvlek', 'krant', 'boekenstapel', 'kussen',
+    'kamerplant', 'kandelaarvlek',
   ],
   bibliotheek: [
-    kleed('#6f5a8e'), boekenstapel, kruk, kandelaarvlek, krant,
-    kleed('#8a5a3c', 0.5), rolpapier, boekenstapel, kamerplant,
+    'boekenstapel', 'kandelaarvlek', 'krant', 'rolpapier', 'boekenstapel',
+    'kamerplant',
   ],
-  slaapkamer: [
-    kleed('#b8795e'), pantoffels, kussen, kleed('#8e6f9e', 0.5),
-    voetsporen, kamerplant, kruk, kussen,
-  ],
-  gang: [
-    loper, voetsporen, brievenbakje, kleed('#5f7f6a', 0.5),
-    kamerplant, kruk, voetsporen,
-  ],
-  keuken: [kruimels, emmer, plas, jutezak, voetsporen, kruk, kruimels, flessen],
-  kelder: [putdeksel, flessen, spinnenweb, jutezak, plas, keien, flessen, emmer],
-  werkplaats: [olievlek, gereedschap, bouten, emmer, putdeksel, jutezak, gereedschap],
+  slaapkamer: ['pantoffels', 'kussen', 'voetsporen', 'kamerplant', 'boekenstapel', 'kussen'],
+  gang: ['voetsporen', 'brievenbakje', 'kamerplant', 'krant', 'voetsporen', 'pantoffels'],
+  keuken: ['kruimels', 'emmer', 'plas', 'jutezak', 'voetsporen', 'kruimels', 'flessen'],
+  kelder: ['putdeksel', 'flessen', 'spinnenweb', 'jutezak', 'plas', 'keien', 'flessen', 'emmer'],
+  werkplaats: ['olievlek', 'gereedschap', 'bouten', 'emmer', 'putdeksel', 'jutezak', 'gereedschap'],
   bad: [
-    rimpeling, schuim, baanlijn, bladeren, duikring, afvoerrooster,
-    rimpeling, schuim, rimpeling,
+    'rimpeling', 'schuim', 'baanlijn', 'bladeren', 'duikring', 'afvoerrooster',
+    'rimpeling', 'schuim', 'rimpeling',
   ],
   buiten: [
-    struik, bladeren, varens, keien, bloempol, paddenstoelen, wortels,
-    plas, struik, varens, bladeren, bloempol,
+    'struik', 'bladeren', 'varens', 'keien', 'bloempol', 'paddenstoelen', 'wortels',
+    'plas', 'struik', 'varens', 'bladeren', 'bloempol',
   ],
-  grafkelder: [grafscheur, urn, spinnenweb, botjes, kaarsstompje, keien, urn, botjes],
-  laboratorium: [scherven, buisjes, plas, vijzel, kruimels, flessen, buisjes],
+  grafkelder: ['grafscheur', 'urn', 'spinnenweb', 'botjes', 'kaarsstompje', 'keien', 'urn', 'botjes'],
+  laboratorium: ['scherven', 'buisjes', 'plas', 'vijzel', 'kruimels', 'flessen', 'buisjes'],
   sterrenwacht: [
-    sterrenkaartjes, rolpapier, kleed('#4a5a8a', 0.6), kandelaarvlek,
-    kruk, boekenstapel, rolpapier,
+    'sterrenkaartjes', 'rolpapier', 'kandelaarvlek', 'boekenstapel', 'krant', 'rolpapier',
   ],
   // Binnen, maar groen: potgrond op de tegels, varens, een omgevallen
   // bloempot. Geen paddenstoelen en geen wortels - dat is bos.
   serre: [
-    kamerplant, varens, bloempol, plas, kruk, bladeren, emmer, kamerplant,
-    varens, bloempol,
+    'kamerplant', 'varens', 'bloempol', 'plas', 'bladeren', 'emmer', 'kamerplant',
+    'varens', 'bloempol',
   ],
 };
 
 // Welke motieven horen bij deze soort ruimte? Onbekend: dan maar niets, dat
 // is beter dan een spinnenweb in een keuken.
-export const motievenVoor = (soort) => MOTIEVEN[soort] ?? [];
+export const motievenVoor = (soort) => (MOTIEVEN[soort] ?? []).map((naam) => TEKENING[naam]);
 
 // Stof, krasjes en kruimels: wat er op een vloer ligt zonder dat het iets is.
 //

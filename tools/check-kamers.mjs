@@ -13,7 +13,7 @@ import {
   WERELDMEUBELS, WERELDVERWANT, WERELDVLOER, meubelsVoor, soortVan,
   OUDERWETS, MODERNE_WERELDEN, voorzetselVan,
   rekwisietenVoor, TYPE_VAN_TEKENING, REKWISIETTYPEN, RIJDIEREN_VAN_PLEK,
-  KLEED_VAN_MAAT, VAKER,
+  KLEED_VAN_MAAT, VAKER, REKWISIETEN_VAN,
 } from '../src/content/kamersoorten.js';
 import { GESLACHT_VAN } from '../src/content/namen.js';
 import { readFileSync } from 'node:fs';
@@ -22,7 +22,7 @@ import { GESCHILDERD } from '../src/ui/meubelkunst-geschilderd.js';
 import { STOFFEN } from '../src/ui/geschilderd.js';
 import { RANDSTIJLEN } from '../src/ui/bordrand.js';
 import { DESSINS } from '../src/ui/board-rooms.js';
-import { motievenVoor } from '../src/ui/aankleding.js';
+import { motievenVoor, MOTIEVEN } from '../src/ui/aankleding.js';
 
 const fouten = [];
 const meld = (soort, wat) => fouten.push(`${soort.padEnd(20)}${wat}`);
@@ -55,6 +55,28 @@ for (const s of soorten) {
   }
   if (!MEUBELS_VAN[s]?.length) meld('GEEN MEUBELS', s);
   if (MEUBELS_VAN[s] && MEUBELS_VAN[s].length < 4) meld('TE WEINIG MEUBELS', s);
+}
+
+// ------------------------------------- versiering is nooit een puzzelstuk
+//
+// Er lag een krukje als versiering naast een aanwijzing "zat op een kruk",
+// en een kleed naast "stond op het kleed" (Guus, 2026-11-19). Versiering mag
+// niets zijn waar een aanwijzing over kan gaan: geen zit-, lig- of rijstuk
+// (REKWISIETTYPEN, TYPE_VAN_TEKENING) en geen meubel of rekwisiet van die
+// soort ruimte. Ook niet verkleind ("krukje") en niet onder een andere naam:
+// een loper is een kleed.
+const OOK_EEN_STUK = { loper: 'kleed', vloerkleed: 'kleed', tapijt: 'kleed', kussenkruk: 'kruk' };
+const stukwoorden = new Set([...Object.keys(REKWISIETTYPEN), ...Object.keys(TYPE_VAN_TEKENING)]);
+for (const [soort, namen] of Object.entries(MOTIEVEN)) {
+  const hier = new Set(stukwoorden);
+  for (const [naam, sleutel] of [...(MEUBELS_VAN[soort] ?? []), ...(REKWISIETEN_VAN[soort] ?? [])]) {
+    hier.add(sleutel);
+    hier.add(naam.split(' ').pop());
+  }
+  for (const m of new Set(namen)) {
+    const stuk = OOK_EEN_STUK[m] ?? [...hier].find((w) => m === w || m.startsWith(w) && /^(je|tje|pje)$/.test(m.slice(w.length)));
+    if (stuk) meld('VERSIERING IS STUK', `${soort}: ${m} lijkt op ${stuk}`);
+  }
 }
 
 // --------------------------------------------- naam, tekening, een-op-een
