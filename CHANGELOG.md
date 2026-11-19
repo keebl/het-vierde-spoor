@@ -19,6 +19,9 @@ day the changelog was introduced; everything before that is in git history only.
 - The floor decoration on a room board no longer draws stools, rugs or runners: those
   are puzzle pieces a clue can name, and a decorative stool next to "zat op een kruk"
   read as one. Boards and solutions are unchanged.
+- Spacing across the site follows one rhythm: 8 px inside a group, 24 px between groups
+  (16 px on a phone) and 48 px between sections. The board no longer touches the switches
+  under it, and the panels below the board sit evenly apart.
 
 ### Added
 - Optional Google sign-in is now switched on: "Inloggen" in the menu keeps your solved

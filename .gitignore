@@ -12,3 +12,6 @@ CLAUDE.local.md
 
 # macOS
 .DS_Store
+
+# ui-check output, regenerated on every run
+tests/ui/out/

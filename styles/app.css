@@ -137,6 +137,16 @@
   --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
   --s5: 24px; --s6: 32px; --s7: 48px; --s8: 72px;
 
+  /* Drie afstanden, elk met een eigen betekenis (specs/spacing-rhythm.md).
+     Dichtbij hoort bij elkaar, verder weg niet. Er stonden er acht door
+     elkaar: tussen twee klepjes 12, 28, 48, 64 of 80, en het bord plakte
+     tegen de schakelaars eronder (Guus, 2026-11-19: "sommige te dicht op
+     elkaar en andere weer te veel afstand"). Een afstand tussen dingen komt
+     voortaan hier vandaan; tools/check-afstanden.mjs bewaakt dat. */
+  --ruimte-binnen: var(--s2);  /* binnen een groep: knoppen die bij elkaar horen */
+  --ruimte-tussen: var(--s4);  /* tussen groepen, 24 op een breder scherm */
+  --ruimte-sectie: var(--s7);  /* tussen secties */
+
   --t-xs: 0.75rem; --t-sm: 0.86rem; --t-base: 0.95rem;
   --t-md: 1.06rem; --t-lg: 1.3rem; --t-xl: 1.75rem; --t-2xl: 2.4rem;
 
@@ -165,6 +175,8 @@
   --page: 1240px;
   --prose: 74ch;
 }
+/* Tussen groepen: 16 op een telefoon, 24 als er ruimte is (Guus, 2026-11-19). */
+@media (min-width: 681px) { :root { --ruimte-tussen: var(--s5); } }
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -290,13 +302,13 @@ h2 {
   margin: 0 0 var(--s3);
 }
 
-.lede { color: var(--text-2); max-width: var(--prose); margin: 0 0 var(--s5); font-size: var(--t-md); line-height: 1.65; }
+.lede { color: var(--text-2); max-width: var(--prose); margin: 0 0 var(--ruimte-tussen); font-size: var(--t-md); line-height: 1.65; }
 .prose { max-width: var(--prose); color: var(--text-2); }
 .prose p { margin: 0 0 var(--s4); }
 .prose strong, .prose b { color: var(--text); font-weight: 600; }
 
 /* Een sectie met een hairline erboven: rustiger dan kaders om alles heen. */
-.section { margin-top: var(--s8); }
+.section { margin-top: var(--ruimte-sectie); }
 .section-head {
   display: flex;
   align-items: baseline;
@@ -304,7 +316,7 @@ h2 {
   gap: var(--s4);
   padding-bottom: var(--s3);
   border-bottom: 1px solid var(--line);
-  margin-bottom: var(--s5);
+  margin-bottom: var(--ruimte-tussen);
   flex-wrap: wrap;
 }
 .section-head h2 { margin: 0; }
@@ -336,8 +348,8 @@ h2 {
 
 .hero {
   display: grid;
-  gap: var(--s5);
-  padding-bottom: var(--s7);
+  gap: var(--ruimte-tussen);
+  padding-bottom: var(--ruimte-sectie);
   border-bottom: 1px solid var(--line);
 }
 
@@ -523,7 +535,7 @@ h2 {
   line-height: 1;
 }
 
-.kaart-tekst { padding: var(--s5) var(--s4) var(--s4); display: grid; gap: 5px; align-content: start; }
+.kaart-tekst { padding: var(--s5) var(--s4) var(--s4); display: grid; gap: var(--s1); align-content: start; }
 .kaart-titel { font-family: var(--display); font-weight: 600; font-size: var(--t-md); line-height: 1.25; }
 .kaart-sub { color: var(--text-2); font-size: var(--t-sm); line-height: 1.45; }
 .kaart-voet {
@@ -531,7 +543,7 @@ h2 {
   align-items: center;
   justify-content: space-between;
   gap: var(--s3);
-  margin-top: 4px;
+  margin-top: var(--s1);
   color: var(--text-3);
   font-size: var(--t-xs);
 }
@@ -585,7 +597,7 @@ h2 {
   font-variant-numeric: tabular-nums;
 }
 
-.row-body { display: grid; gap: 3px; min-width: 0; }
+.row-body { display: grid; gap: var(--s1); min-width: 0; }
 .row-title { font-family: var(--display); font-weight: 600; font-size: var(--t-md); line-height: 1.3; }
 .row-sub { color: var(--text-2); font-size: var(--t-sm); line-height: 1.5; }
 
@@ -598,7 +610,7 @@ h2 {
   white-space: nowrap;
 }
 
-.dots { display: inline-flex; gap: 3px; }
+.dots { display: inline-flex; gap: var(--s1); }
 .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--surface-3); }
 .dot.on { background: var(--accent); }
 
@@ -657,11 +669,11 @@ h2 {
 
 /* ============================================================= filters */
 
-.filters + .section { margin-top: var(--s5); }
+.filters + .section { margin-top: var(--ruimte-tussen); }
 
 .filters {
   display: flex;
-  gap: var(--s3);
+  gap: var(--ruimte-binnen);
   align-items: center;
   flex-wrap: wrap;
   padding: var(--s3) 0 var(--s5);
@@ -719,7 +731,7 @@ select:hover { border-color: #c3b393; }
   cursor: pointer;
   font-size: var(--t-sm);
   display: grid;
-  gap: 3px;
+  gap: var(--s1);
 }
 
 .opt small { color: var(--text-3); font-size: var(--t-xs); line-height: 1.5; }
@@ -861,7 +873,7 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
   font-size: var(--t-md);
   line-height: 1.7;
   color: var(--text);
-  margin: 0 0 var(--s5);
+  margin: 0 0 var(--ruimte-tussen);
   padding-left: var(--s4);
   border-left: 2px solid var(--accent);
 }
@@ -905,7 +917,7 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
   margin: 0;
   padding: var(--s3) var(--s4) var(--s3) calc(var(--s4) + 16px);
   display: grid;
-  gap: 6px;
+  gap: var(--ruimte-binnen);
   font-size: var(--t-sm);
   color: var(--text-2);
   line-height: 1.5;
@@ -916,7 +928,7 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 .blok-kop { margin-top: var(--s6); }
 .blok-paar .label { color: var(--text-3); }
 
-.play { display: grid; gap: var(--s6); align-items: start; }
+.play { display: grid; gap: var(--ruimte-sectie); align-items: start; }
 /* Op een smal scherm één kolom: bord, legenda, aanwijzingen, knoppen. Op
    een telefoon zag je anders eerst veertien zinnen voordat je het bord vond.
    Het blad met de zwevende knop (aanwijzingenKnop in player.js) haalt ze
@@ -943,8 +955,7 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
        passen (zie de containerregel hieronder). */
     grid-template-columns: minmax(0, 720px) minmax(340px, 1fr);
     grid-template-rows: auto auto 1fr;
-    column-gap: var(--s7);
-    row-gap: var(--s5);
+    gap: var(--ruimte-sectie);
   }
   .play > .boards, .play > .aanwijzingen-kolom + * { grid-column: 1; }
   /* De kop over beide kolommen, met dezelfde kolomgrenzen als eronder.
@@ -968,7 +979,7 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
   .play > .puzzle-head .spelregels { display: none; }
   .aanwijzingen-kolom > .aanwijzingen-vraag { display: block; }
   .aanwijzingen-kolom > .aanwijzingen-vraag .question { display: none; }
-  .aanwijzingen-kolom > .aanwijzingen-vraag .spelregels { margin: 0 0 var(--s3); }
+  .aanwijzingen-kolom > .aanwijzingen-vraag .spelregels { margin: 0 0 var(--ruimte-tussen); }
   .play > .aanwijzingen-kolom {
     grid-column: 2;
     grid-row: 2 / -1;
@@ -1004,8 +1015,6 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 
 @media screen and (min-width: 1100px) {
 
-  /* Namenrij en bord samen in beeld: minder lucht ertussen. */
-  .play > .boards { gap: var(--s4); }
   /* De namen en de drie standen plakken onder de kop terwijl je langs het
      bord scrolt: wie naar de onderste rij kijkt, moet nog een andere naam
      kunnen pakken zonder eerst terug naar boven. Op een telefoon plakken
@@ -1031,6 +1040,17 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 /* De zwevende knop en het blad, alleen op een smal scherm. */
 .aanwijzingen-sluit { display: none; }
 @media screen and (max-width: 1099px) {
+  /* In één kolom is het klepje Aanwijzingen gewoon het volgende klepje
+     onder het bord, en staat het even ver van "Hoe je dit bord bedient"
+     als de klepjes onderling. Het kreeg de sectie-afstand plus de 16 px
+     marge van .paneel, 64 in plaats van 24 (Guus, 2026-11-19: "dat mag
+     net als wat er op het bord staat en de regels van de reconstructie
+     aan afstand hebben"). Niet in het blad: daar staat het los. */
+  .play > .boards + .aanwijzingen-kolom:not(.aanwijzingen-blad) {
+    margin-top: calc(var(--ruimte-tussen) - var(--ruimte-sectie));
+  }
+  .play > .boards + .aanwijzingen-kolom:not(.aanwijzingen-blad) > .paneel { margin-top: 0; }
+
   .aanwijzingen-knop {
     position: fixed;
     right: var(--s4);
@@ -1129,9 +1149,11 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 
 .toolbar {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
-  gap: var(--s3);
-  margin-top: var(--s5);
+  /* 9.5rem: bij 8.5 pasten er met de kleinere tussenruimte vijf op een
+     rij en raakte "Bewaar deze puzzel" de rand van zijn knop. */
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: var(--ruimte-binnen);
+  margin-top: 0;
 }
 .toolbar .btn { justify-content: center; }
 
@@ -1146,11 +1168,16 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 .note-good { border-color: color-mix(in oklab, var(--good) 45%, var(--line)); color: var(--good); }
 .note-bad { border-color: color-mix(in oklab, var(--bad) 45%, var(--line)); color: var(--bad); }
 
-.legend { font-size: var(--t-xs); color: var(--text-3); margin: var(--s3) 0 0; line-height: 1.6; }
+.legend { font-size: var(--t-xs); color: var(--text-3); margin: var(--ruimte-binnen) 0 0; line-height: 1.6; }
 
 /* =============================================================== borden */
 
-.boards { display: grid; gap: var(--s6); }
+.boards { display: grid; gap: var(--ruimte-tussen); }
+/* Wat in .boards staat, krijgt zijn afstand van het raster, niet van een
+   eigen marge: marge plus rij-afstand gaf 32 tussen het ene klepje en 64
+   tussen het volgende. */
+.boards > .paneel, .boards > .regels-onder { margin-top: 0; }
+.regels-onder > .spelregels { margin: 0; }
 .board-wrap { overflow-x: auto; padding-bottom: var(--s1); }
 
 table.grid { border-collapse: collapse; font-size: var(--t-sm); }
@@ -1307,8 +1334,6 @@ table.latin td.cell { width: 78px; height: 46px; }
   .nav { width: 100%; }
   .nav a { padding: var(--s2) var(--s2); }
 
-  .section { margin-top: var(--s6); }
-  .hero { padding-bottom: var(--s5); }
 }
 
 /* ======================================================== kamerraster */
@@ -1581,7 +1606,7 @@ table.latin td.cell { width: 78px; height: 46px; }
      alleen Uitsluiten en Schetsen nog staan. */
   top: var(--kop-hoogte);
   z-index: 5;
-  margin-bottom: var(--s4);
+  margin-bottom: 0;
   padding: var(--s2) 0;
   background: var(--bg);
   border-bottom: 1px solid var(--line-soft);
@@ -1602,7 +1627,7 @@ table.latin td.cell { width: 78px; height: 46px; }
 .palet-standen {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 3px;
+  gap: var(--s1);
   flex: 1 1 auto;
   min-width: 0;
   max-width: 26rem;
@@ -1615,7 +1640,7 @@ table.latin td.cell { width: 78px; height: 46px; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: var(--s1);
   min-height: 36px;
   padding: 4px 6px;
   border: 0;
@@ -1649,7 +1674,7 @@ table.latin td.cell { width: 78px; height: 46px; }
   flex: none;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--s1);
   min-height: 46px;
   padding: 4px 14px 4px 10px;
   border: 2px solid var(--line);
@@ -1692,12 +1717,12 @@ table.latin td.cell { width: 78px; height: 46px; }
      naar 276, met 348 bord en 32 ertussen 656 van de ~660 die Safari op
      375×812 laat zien. Er is dus geen ruimte meer: wie iets hoger maakt,
      haalt het elders weg. */
-  .palet-namen { gap: 4px; }
+  .palet-namen { gap: 4px; } /* ui-lint: allow — telefoonbalk, tot de pixel gemeten (zie boven) */
   .palet-namen .palet-knop {
     flex: 1 1 auto;
     box-sizing: border-box;
     height: 30px;
-    gap: 5px;
+    gap: 5px; /* ui-lint: allow — telefoonbalk, tot de pixel gemeten */
     padding: 0 10px 0 2px;
     font-size: var(--t-xs);
   }
@@ -1708,14 +1733,14 @@ table.latin td.cell { width: 78px; height: 46px; }
   .palet-namen::after { content: ''; flex: 999 1 0; }
   .palet-namen .palet-portret svg { width: 22px; height: 22px; }
   .palet-kastje {
-    margin-top: 8px;
+    margin-top: var(--ruimte-binnen);
     border: 2px solid var(--line);
     border-radius: var(--r);
     box-shadow: 0 2px 0 var(--line);
   }
   .palet-kastje .clue,
   .palet-kastje .clue-feit { padding: 2px 10px; }
-  .palet-kastje .clue-leeg { margin: var(--s1) 10px; }
+  .palet-kastje .clue-leeg { margin: var(--s1) 10px; } /* ui-lint: allow — zelfde inspringing als .clue erboven */
   .palet-standen { max-width: none; box-sizing: border-box; height: 40px; box-shadow: 0 2px 0 var(--line); }
   /* Op een telefoon alleen de pijl: met het woord erbij werd de schuifknop
      zo smal dat "Neerzetten" eruit liep. Het woord blijft voor de
@@ -1724,7 +1749,7 @@ table.latin td.cell { width: 78px; height: 46px; }
   .palet-terug-woord { display: none; }
   .palet-terug-pijl svg { width: 20px; height: 20px; }
   /* De standen staan nu naast Terug: wat smaller gestoken. */
-  .palet-stand { min-height: 0; height: 30px; padding: 0 2px; gap: 4px; }
+  .palet-stand { min-height: 0; height: 30px; padding: 0 2px; gap: 4px; } /* ui-lint: allow — telefoonbalk, tot de pixel gemeten */
 }
 /* Op 320 breed passen drie woorden met elk een fiche er niet naast elkaar;
    de balk duwde de hele pagina opzij. Het woord is wat telt, de fiche gaat. */
@@ -2472,9 +2497,14 @@ body[data-wereld="pretpark"] .gloedrand { stop-color: #2a2010; }
 .niveaukiezer {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-  gap: var(--s2);
-  margin: var(--s2) 0 var(--s4);
+  gap: var(--ruimte-binnen);
+  margin: 0;
 }
+/* Het kopje hoort bij de knoppen eronder: binnen-afstand, niet de
+   tussen-afstand van het raster. Het waren 44 en 40 pixels door marges die
+   bij de rij-afstand opgeteld werden. */
+.hero > .label { margin: 0; }
+.hero > .label + .niveaukiezer { margin-top: calc(var(--ruimte-binnen) - var(--ruimte-tussen)); }
 .btn-groot { font-size: var(--t-md); padding: var(--s3) var(--s5); }
 
 
@@ -2517,7 +2547,7 @@ body[data-wereld="pretpark"] .gloedrand { stop-color: #2a2010; }
   flex: none;
   width: 7px;
   height: 7px;
-  margin: 0 2px;
+  margin: 0 2px; /* ui-lint: allow — optisch: het hoekje uit twee randen in het midden */
   border: solid currentColor;
   border-width: 0 2px 2px 0;
   color: var(--text-3);
@@ -2542,7 +2572,7 @@ body[data-wereld="pretpark"] .gloedrand { stop-color: #2a2010; }
 /* De zelfgemaakte puzzels onder de vaste zaken van hetzelfde niveau. Ze
    staan als regels en niet als kaarten: ze hebben geen titel en geen
    omslag, alleen een decor en hoe ver je bent. */
-.eigen-kop { margin: var(--s5) 0 var(--s2); }
+.eigen-kop { margin: var(--ruimte-tussen) 0 var(--ruimte-binnen); }
 
 
 /* ------------------------------------------------ schakelaars in het palet
@@ -2559,9 +2589,10 @@ body[data-wereld="pretpark"] .gloedrand { stop-color: #2a2010; }
   display: flex;
   gap: var(--s2);
   flex-wrap: wrap;
-  /* Dicht tegen het bord aan: ze horen erbij, en de rij eronder is de
-     legenda - die mag wel op afstand staan. */
-  margin: calc(var(--s4) * -1) 0 0;
+  /* Dicht bij het bord: ze horen erbij, en de rij eronder is de legenda -
+     die mag wel op afstand staan. Dicht, niet ertegenaan: met -16 plakten
+     ze er op een breed scherm met 0 pixels tegen. */
+  margin: calc(var(--ruimte-binnen) - var(--ruimte-tussen)) 0 0;
 }
 .bordschakelaars .palet-schakel { white-space: nowrap; }
 
@@ -2761,7 +2792,7 @@ body[data-wereld] .btn-primary {
   background: var(--kleur, var(--accent));
   color: #fff;
   font-size: var(--t-base);
-  margin-top: -2px;
+  margin-top: -2px; /* ui-lint: allow — optisch: het cijfer staat anders te laag */
 }
 .level-btn .mini-figuur { fill: var(--kleur, var(--accent)); }
 .level-btn[aria-pressed="true"] .mini-vloer { fill: color-mix(in srgb, var(--kleur, var(--accent)) 22%, var(--surface)); }
@@ -3127,7 +3158,7 @@ select, input[type="text"] { border-radius: 999px; border-width: 2px; }
   .brand { font-size: var(--t-md); }
   /* De ronde menuknoppen zijn breder dan de oude; op 375 pixels duwden ze
      de themaknop van het scherm. Kleiner, en de themaknop rechts vast. */
-  .nav { gap: 2px; justify-content: space-between; }
+  .nav { gap: 2px; justify-content: space-between; } /* ui-lint: allow — op 375 past het menu anders niet */
   .nav a { font-size: var(--t-sm); padding: 6px 9px; }
   .puzzle-head h1 { font-size: 1.75rem; }
 }
@@ -3160,7 +3191,7 @@ body .kamerbord .kamernaam {
    papier een eigen vel met de kop "Oplossing", altijd open. */
 .oplossing-stappen { margin: var(--s5) 0 0; }
 .oplossing-stappen .stap-regel { display: block; }
-.oplossing-stappen .stap-regel + .stap-regel { margin-top: var(--s1, 4px); }
+.oplossing-stappen .stap-regel + .stap-regel { margin-top: var(--s1); }
 .oplossing-stappen .stappen-sub {
   margin: var(--s3) var(--s4) 0;
   font-size: var(--t-sm);
@@ -3194,7 +3225,7 @@ body .kamerbord .kamernaam {
 .level-btn .level-start { display: none; }
 .level-btn[aria-pressed="true"] .level-start {
   display: block;
-  margin-top: var(--s1, 4px);
+  margin-top: var(--s1);
   font-size: var(--t-xs, 0.75rem);
   font-weight: 600;
   color: var(--kleur, var(--accent));
@@ -3209,7 +3240,7 @@ body .kamerbord .kamernaam {
    stand in plaats van één lange alinea. */
 .bediening { display: grid; gap: var(--s3); }
 .bediening-blok h4 {
-  margin: 0 0 2px;
+  margin: 0 0 var(--s1);
   font-size: var(--t-sm);
   color: var(--accent);
   text-transform: uppercase;
@@ -3256,7 +3287,7 @@ a.accountknop-letter {
 }
 a.accountknop-letter:hover { color: #fff; background: linear-gradient(135deg, var(--pop-1), var(--pop-2)); }
 a.accountknop-letter[aria-current="page"] { outline: 2px solid var(--accent); outline-offset: 2px; color: #fff; }
-.knoppen { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; margin: var(--s4) 0; }
+.knoppen { display: flex; flex-wrap: wrap; gap: var(--ruimte-binnen); align-items: center; margin: var(--s4) 0; }
 .googleknop { gap: var(--s2); background: var(--surface); }
 .googleknop svg { flex: none; }
 .accountstatus { color: var(--text-2); }
