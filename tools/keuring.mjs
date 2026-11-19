@@ -25,6 +25,7 @@ const TOETSEN = [
   ['de iconen', 'check-iconen.mjs', []],
   ['de kamers', 'check-kamers.mjs', []],
   ['de afstanden', 'check-afstanden.mjs', []],
+  ['het ritme', 'check-ritme.mjs', []],
   ['de redenering', 'check-redeneer.mjs', []],
   ['de sync', 'check-sync.mjs', []],
   ['de voorraad', 'check-voorraad.mjs', []],
@@ -55,7 +56,9 @@ if (ALLEEN && !TOETSEN.some(([naam]) => naam === ALLEEN)) {
 // `npm run check:all`, ook voor een release.
 const KORT = process.argv.includes('--kort');
 const KORT_BAAR = new Set(['de spreiding', 'de redenering', 'de voorraad']);
-const ZWAAR = new Set(['de motor', 'de bibliotheek', 'de aanwijzingen', 'de spreiding', 'de veegronde', 'de weggevers', 'de redenering', 'de voorraad']);
+// Het ritme start een browser; die is er niet in de sandbox van een sessie
+// en kost een paar minuten, dus hoort hij niet bij --snel.
+const ZWAAR = new Set(['het ritme', 'de motor', 'de bibliotheek', 'de aanwijzingen', 'de spreiding', 'de veegronde', 'de weggevers', 'de redenering', 'de voorraad']);
 
 const uitslag = [];
 

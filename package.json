@@ -17,6 +17,7 @@
     "check:iconen": "node tools/check-iconen.mjs",
     "check:kamers": "node tools/check-kamers.mjs",
     "check:afstanden": "node tools/check-afstanden.mjs",
+    "check:ritme": "node tools/check-ritme.mjs",
     "check:regels": "node tools/check-regels.mjs",
     "check:redeneer": "node tools/check-redeneer.mjs",
     "check:daglimiet": "node tools/check-daglimiet.mjs",
