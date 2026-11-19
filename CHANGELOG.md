@@ -9,6 +9,10 @@ day the changelog was introduced; everything before that is in git history only.
 
 ## [Unreleased]
 
+### Changed
+- Rugs on the room boards lie on the floor with a margin around them instead of filling
+  their squares edge to edge.
+
 ### Added
 - Optional Google sign-in is now switched on: "Inloggen" in the menu keeps your solved
   puzzles, stars and level in step on all your devices. Playing without an account stays
