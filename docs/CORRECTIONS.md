@@ -1,0 +1,17 @@
+# Corrections — Reconstructie
+
+Everything Guus had to point out about what he sees. Append only, newest at the bottom,
+one line each, in his words. This file is the product's memory of his taste and the
+workbench's list of rules that are still missing (`/portfolio-review` reads it in every
+project).
+
+Kinds: layout · spacing · type · colour · copy · flow · behaviour · missing state · other.
+"Catchable": the check that should have caught it (`ui-lint`, `ui-check <rule>`,
+`copy-check <rule>`, `ui-reviewer`, `copy-editor`, `ux-walk`), `new rule: <what>` when none
+could yet, or `no` when it is taste nobody could have known.
+
+| Date | Screen | Kind | What Guus said | Fix | Catchable |
+|---|---|---|---|---|---|
+| 2026-11-19 | Room board, rugs | layout | "Omdat het kleed strak langs de randen van de vakken ligt lijkt het nu niet echt op een kleed" — "er bestaan geen kleden die strak langs een muur liggen in het echt" | Rugs drawn with a floor margin (#31) | new rule: a piece that covers whole cells is drawn inset from the cell edges |
+| 2026-11-19 | Room board, rugs | other | "de kleedjes moeten gevarieerder, en als je een zelfde kleed neerlegd hebt dan moet die wel de zelfde grote zijn" | Pattern follows from size, rag rug added (#33) | new rule: one rug design per size (keuring) |
+| 2026-11-19 | Rug spec | other | "je hebt nu meerdere kleden met dezelfde patroon in verschillende maten, dat ziet er gek uit. Ik zou per maar 1 patroon aan houden" | Spec changed to one pattern per size (#33) | no |
