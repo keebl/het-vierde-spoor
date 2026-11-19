@@ -1040,6 +1040,17 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 /* De zwevende knop en het blad, alleen op een smal scherm. */
 .aanwijzingen-sluit { display: none; }
 @media screen and (max-width: 1099px) {
+  /* In één kolom is het klepje Aanwijzingen gewoon het volgende klepje
+     onder het bord, en staat het even ver van "Hoe je dit bord bedient"
+     als de klepjes onderling. Het kreeg de sectie-afstand plus de 16 px
+     marge van .paneel, 64 in plaats van 24 (Guus, 2026-11-19: "dat mag
+     net als wat er op het bord staat en de regels van de reconstructie
+     aan afstand hebben"). Niet in het blad: daar staat het los. */
+  .play > .boards + .aanwijzingen-kolom:not(.aanwijzingen-blad) {
+    margin-top: calc(var(--ruimte-tussen) - var(--ruimte-sectie));
+  }
+  .play > .boards + .aanwijzingen-kolom:not(.aanwijzingen-blad) > .paneel { margin-top: 0; }
+
   .aanwijzingen-knop {
     position: fixed;
     right: var(--s4);
