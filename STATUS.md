@@ -359,6 +359,9 @@ standing guidance rather than state moved to `CLAUDE.md`.
   Console is his own decision (`docs/RELEASE.md`, Spend caps) (2026-11-19)
 
 ## Workbench feedback
+- 2026-11-19 — `ui-check` cannot measure this site: its `page.addStyleTag` is blocked by the
+  site's CSP `style-src 'self'`. Use CDP `Page.setBypassCSP` in ui-check rather than
+  weakening the CSP; the spacing PR was checked by hand in the browser pane instead.
 - 2026-11-18 — A card answer or button on a turn started by another session does not count
   as Guus's words for `start_session` (cwd) or a merge; the main session had to ask him to
   type the same answer as a chat message. Cards should carry that authority.
