@@ -107,6 +107,10 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
   not out of the code.
 - **If a drawing lies, draw it.** A world layer can rename a piece, never re-draw it;
   reusing a drawing whose shape says something else is the bug this project keeps making.
+- **Looks change, places do not.** When an item only changes its appearance and not its
+  place (a rug's pattern, an icon), rename or redraw it after generation, in the content
+  layer; never re-generate the puzzle, so boards, solutions and `pool/` stay the same
+  (Guus, 2026-11-19).
 
 ## Where to look
 - `STATUS.md` — current state and next steps
