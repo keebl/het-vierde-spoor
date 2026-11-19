@@ -14,11 +14,11 @@
 import { spawnSync } from 'node:child_process';
 
 const TOETSEN = [
-  ['de motor', 'check.mjs', ['2']],
+  ['de motor', 'check.mjs', ['2', '--voorraad']],
   ['de bibliotheek', 'check-catalog.mjs', []],
   ['de aanwijzingen', 'check-aanwijzingen.mjs', []],
   ['de spreiding', 'check-spreiding.mjs', []],
-  ['de veegronde', 'check-regels.mjs', ['2']],
+  ['de veegronde', 'check-regels.mjs', ['2', '--voorraad']],
   ['het AI-vangnet', 'check-ai-guard.mjs', []],
   ['de weggevers', 'check-weggevers.mjs', []],
   ['de iconen', 'check-iconen.mjs', []],

@@ -14,7 +14,42 @@ on:
 permissions:
   contents: read
 
+# A newer push to a pull request cancels the run it replaces; runs on main always finish.
+# Before this, two superseded runs on PR #28 each burned 40 minutes x 7 jobs.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
+  wijzigingen:
+    # Does this pull request touch anything the keuring judges? Only text that no check reads
+    # (docs, specs, design, markdown) skips the heavy matrix. Anything else, a workflow file
+    # included, runs it: a list of what may skip fails safe, a list of what must run does not.
+    name: what changed
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # "de voorraad" (the slowest PR check) only proves that pool/ matches the engine, so it
+    # runs when the pull request touches pool/, the CI set-up, or a file the store check or
+    # the store builder imports (tools/afhankelijk.mjs reads the imports, so a new engine
+    # file is never missed).
+    outputs:
+      zwaar: ${{ steps.kijk.outputs.zwaar }}
+      voorraad: ${{ steps.kijk.outputs.voorraad }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - id: kijk
+        run: |
+          git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" > gewijzigd.txt
+          cat gewijzigd.txt
+          # Not `grep -vq`: on macOS it said "docs only" for a list with src/x.js in it.
+          if [ -n "$(grep -vE '^(docs/|specs/|design/)|\.md$' gewijzigd.txt)" ]; then echo zwaar=true; else echo zwaar=false; fi >> "$GITHUB_OUTPUT"
+          node tools/afhankelijk.mjs tools/check-voorraad.mjs tools/pool.mjs > raakt.txt
+          printf '%s\n' tools/keuring.mjs tools/afhankelijk.mjs package.json package-lock.json >> raakt.txt
+          if [ -n "$(grep -xFf raakt.txt gewijzigd.txt; grep -E '^(pool/|\.github/workflows/)' gewijzigd.txt)" ]; then echo voorraad=true; else echo voorraad=false; fi >> "$GITHUB_OUTPUT"
+
   snel:
     name: keuring (fast, 3 checks)
     runs-on: ubuntu-latest
@@ -37,11 +72,14 @@ jobs:
     # on a laptop and ran past the 45-minute limit on a hosted runner (PR #15, after levels
     # 5 and 6 got slower to build). The three light checks run in `snel` above. Pull requests
     # only, so a push to main is not held up by a second full run of what the PR already ran.
-    if: github.event_name == 'pull_request'
+    needs: wijzigingen
+    if: github.event_name == 'pull_request' && needs.wijzigingen.outputs.zwaar == 'true'
     runs-on: ubuntu-latest
-    # The sweep alone builds every level-5 board on the template builder (120 s budget each):
-    # 29 minutes on a laptop, past 40 on a hosted runner (PR #28). The others stay at 40.
-    timeout-minutes: ${{ matrix.toets == 'de veegronde' && 90 || 40 }}
+    # The motor and the sweep take the level 5-6 room boards from pool/ (`--voorraad`);
+    # building them took half an hour and over an hour here (PR #28). The full runs are
+    # nightly (nachtrun.yml), and "de voorraad" (its own job below) proves the store still
+    # matches the engine.
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
@@ -65,19 +103,42 @@ jobs:
           node tools/keuring.mjs --alleen "${{ matrix.toets }}" 2>&1 | tee keuring.txt
           grep -q 'volledige keuring exit=0' keuring.txt
 
+  voorraad:
+    name: keuring (de voorraad)
+    needs: wijzigingen
+    if: github.event_name == 'pull_request' && needs.wijzigingen.outputs.voorraad == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Keuring, the store
+        run: |
+          node tools/keuring.mjs --alleen "de voorraad" 2>&1 | tee keuring.txt
+          grep -q 'volledige keuring exit=0' keuring.txt
+
   volledig-oordeel:
-    # One check name that is green only when every heavy check is.
-    # The name says 8 although there are 9 checks now: a repository ruleset requires it.
+    # One check name that is green only when every heavy check is, or when a check was
+    # skipped on purpose (text only; nothing the store depends on).
+    # The name says 8 although there are more checks now: a repository ruleset requires it.
     name: keuring (all 8 checks)
     if: always() && github.event_name == 'pull_request'
-    needs: [snel, volledig]
+    needs: [wijzigingen, snel, volledig, voorraad]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Verdict
         run: |
-          echo "snel: ${{ needs.snel.result }}, volledig: ${{ needs.volledig.result }}"
-          test "${{ needs.snel.result }}" = success && test "${{ needs.volledig.result }}" = success
+          echo "wijzigingen: ${{ needs.wijzigingen.result }} (zwaar=${{ needs.wijzigingen.outputs.zwaar }}, voorraad=${{ needs.wijzigingen.outputs.voorraad }}), snel: ${{ needs.snel.result }}, volledig: ${{ needs.volledig.result }}, voorraad: ${{ needs.voorraad.result }}"
+          test "${{ needs.wijzigingen.result }}" = success
+          test "${{ needs.snel.result }}" = success
+          verwacht() { if [ "$1" = true ]; then test "$2" = success; else test "$2" = skipped; fi; }
+          verwacht "${{ needs.wijzigingen.outputs.zwaar }}" "${{ needs.volledig.result }}"
+          verwacht "${{ needs.wijzigingen.outputs.voorraad }}" "${{ needs.voorraad.result }}"
 
   secrets:
     runs-on: ubuntu-latest
