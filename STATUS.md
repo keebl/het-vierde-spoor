@@ -1,6 +1,6 @@
 # Status — Reconstructie
 
-Last updated: 2026-11-18
+Last updated: 2026-11-19
 Live: yes (since 2026-11-13)
 UX approved: 2026-11-18
 
@@ -9,6 +9,16 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-19: **phase B is live.** het-vierde-spoor#28 merged (`2ebccdd`, Guus: "Ja, beide"),
+  Pages built it; a level-6 board on reconstructie.app shows an either-clue, no console
+  errors, live `pool/` is `b2` with 306 boards. het-vierde-spoor#29 merged (`e1c1821`): PR CI
+  judges the level 5–6 room boards from `pool/` (`--voorraad`), a concurrency group cancels
+  superseded PR runs, docs-only PRs skip the heavy matrix, and "de voorraad" runs only when
+  `pool/`, the workflows or a file it imports changes (`tools/afhankelijk.mjs`). PR CI went
+  from ~1h09m to ~17m wall clock. The full motor and sweep run nightly
+  (`.github/workflows/nachtrun.yml`, 02:17 UTC); first nightly run not yet seen.
+  Remote branch `claude/engine-phase-b-2` (merged) and the stale `claude/engine-phase-b`
+  are still on the remote.
 - 2026-11-18, late: phase B rebased on main and finished in the main session; the phase-B
   session (`local_e3f35404`) went idle before its PR (its 300-seed pool run finished later). Pushed as branch
   `claude/engine-phase-b-2` (the remote `claude/engine-phase-b` holds an older WIP commit
