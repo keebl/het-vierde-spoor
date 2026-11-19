@@ -13,6 +13,7 @@ import { extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildPuzzle, parsePuzzleId } from '../src/puzzle.js';
 import { SYSTEEM, bouwVraag, leesAntwoord } from '../src/ai/opdracht.js';
+import { magNogEen } from './daglimiet.mjs';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const ROOT = resolve(here, '..');
@@ -153,6 +154,12 @@ async function flavour(req, res) {
   }
   if (puzzle.kind === 'latin' || !puzzle.clues.length) {
     return send(res, 400, 'Niets te herschrijven');
+  }
+
+  // Pas tellen als we echt naar het model gaan (server/daglimiet.mjs).
+  if (!magNogEen()) {
+    res.writeHead(429, { 'content-type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'de dagelijkse limiet is bereikt' }));
   }
 
   const { default: Anthropic } = await import('@anthropic-ai/sdk');

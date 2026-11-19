@@ -6,6 +6,7 @@ node_modules/
 !.env.example
 
 # Personal, per-machine
+.ai-dagteller.json
 CLAUDE.local.md
 .claude/settings.local.json
 

@@ -18,7 +18,7 @@ TOEGESTANE_HERKOMST = "https://reconstructie.app"
 MODEL = "claude-sonnet-5-5"
 # De remmen. Per IP-adres per uur, en een dagtotaal voor de hele site.
 UURLIMIET = "20"
-DAGLIMIET = "200"
+AI_DAILY_CALL_LIMIT = "200"
 
 # Hierin komen de herschreven teksten (voor altijd, per puzzel-id) en de
 # tellers (die ruimen zichzelf op).

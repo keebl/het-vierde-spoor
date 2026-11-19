@@ -108,7 +108,10 @@ export default {
 
 async function remmen(env, request) {
   const uurLimiet = Number(env.UURLIMIET ?? 20);
-  const dagLimiet = Number(env.DAGLIMIET ?? 200);
+  // AI_DAILY_CALL_LIMIT, zoals de lokale server (server/daglimiet.mjs). Geen
+  // geheel getal? Dan dicht: liever geen AI-teksten dan geen plafond.
+  const ruw = String(env.AI_DAILY_CALL_LIMIT ?? '200').trim();
+  const dagLimiet = /^\d+$/.test(ruw) ? Number(ruw) : 0;
   const ip = request.headers.get('cf-connecting-ip') ?? 'onbekend';
   const nu = new Date();
   const uurSleutel = `uur:${ip}:${nu.toISOString().slice(0, 13)}`;
