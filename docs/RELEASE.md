@@ -65,8 +65,9 @@ per item: which service, which plan, where the dashboard is. No keys or account 
 - Legal pages: privacy statement drafted in `store/privacy-policy.md` (NL and EN), not yet
   on the site; no terms needed (nothing is sold).
 - Spend caps: GitHub Pages and the Cloudflare free plan cost nothing; the Anthropic API key
-  is used only by the owner's tools (`npm run ai:vooraf`) and by the undeployed worker,
-  whose own brakes are `UURLIMIET`/`DAGLIMIET` in `worker/wrangler.toml`. (assumption: no
+  is used only by the owner's tools (`npm run ai:vooraf`, `npm start` with the key) and by
+  the undeployed worker. All of them stop at `AI_DAILY_CALL_LIMIT` paid calls a day (`.env`
+  for the tools, `worker/wrangler.toml` for the worker, next to its hourly `UURLIMIET`). (assumption: no
   spend limit set in the Anthropic console)
 - Dependency alerts: Dependabot alerts on since 2026-11-14; `.github/dependabot.yml`
   weekly for npm and github-actions.

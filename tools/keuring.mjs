@@ -20,6 +20,7 @@ const TOETSEN = [
   ['de spreiding', 'check-spreiding.mjs', []],
   ['de veegronde', 'check-regels.mjs', ['2', '--voorraad']],
   ['het AI-vangnet', 'check-ai-guard.mjs', []],
+  ['de daglimiet', 'check-daglimiet.mjs', []],
   ['de weggevers', 'check-weggevers.mjs', []],
   ['de iconen', 'check-iconen.mjs', []],
   ['de kamers', 'check-kamers.mjs', []],

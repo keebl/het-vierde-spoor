@@ -10,7 +10,7 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - Run with secrets (AI texts on; Guus's own Terminal only, Claude never runs it):
   `~/.claude/bin/secrets-run -- npm start` — values come from Bitwarden via the `bws:`
   references in `.env.example`
-- Test (all): `npm run check:all` — the keuring, 12 checks. The motor and the sweep judge
+- Test (all): `npm run check:all` — the keuring, 13 checks. The motor and the sweep judge
   the level 5–6 room boards from `pool/` (`--voorraad`, about three and four minutes);
   `npm run check` and `npm run check:regels` without the flag build every board (about 13
   and 29 minutes) and run nightly in `.github/workflows/nachtrun.yml`. CI on a pull
@@ -18,7 +18,8 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
   store check take a smaller level 5–6 sample; `check:all` and the nightly run stay full
 - Test (one file): `npm run check:kamers` (also `check:regels`, `check:iconen`,
   `check:catalog`, `check:aanwijzingen`, `check:spreiding`, `check:weggevers`,
-  `check:ai`, `check:redeneer`, `check:sync`, `check`). `check:sync` checks the optional
+  `check:ai`, `check:redeneer`, `check:sync`, `check:daglimiet`, `check`). `check:daglimiet` checks the
+  daily cap on paid AI calls (`AI_DAILY_CALL_LIMIT`, `server/daglimiet.mjs`), well under a second. `check:sync` checks the optional
   account sync (`specs/accounts-and-sync.md`) with a fake database, no network, ~0.1 s. `check:spreiding` checks the room-board clue rules of
   `specs/harder-clues.md` (no row/column clues, caps per name and per kind, no
   2-cell clue from level 3) over the library and a seed sample, about a minute. `check:redeneer` runs the human

@@ -18,6 +18,7 @@
     "check:kamers": "node tools/check-kamers.mjs",
     "check:regels": "node tools/check-regels.mjs",
     "check:redeneer": "node tools/check-redeneer.mjs",
+    "check:daglimiet": "node tools/check-daglimiet.mjs",
     "check:sync": "node tools/check-sync.mjs",
     "check:voorraad": "node tools/check-voorraad.mjs",
     "pool": "node tools/pool.mjs",

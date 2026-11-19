@@ -22,6 +22,7 @@ import { fileURLToPath } from 'node:url';
 import { CATALOG, catalogSettings } from '../src/content/catalog.js';
 import { buildPuzzle, puzzleId } from '../src/puzzle.js';
 import { SYSTEEM, bouwVraag, leesAntwoord } from '../src/ai/opdracht.js';
+import { daglimiet, magNogEen } from '../server/daglimiet.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DOEL = join(ROOT, 'src/content/ai-teksten.json');
@@ -64,6 +65,10 @@ for (const entry of CATALOG) {
   // Het dienstrooster heeft geen verhaalzinnen om te herschrijven.
   if (puzzle.kind === 'latin' || !puzzle.clues.length) { overgeslagen++; continue; }
 
+  if (!magNogEen()) {
+    console.log(`\nDaglimiet bereikt (AI_DAILY_CALL_LIMIT=${daglimiet()}); morgen verder.`);
+    break;
+  }
   process.stdout.write(`${entry.titel.padEnd(36)} `);
   const antwoord = await client.messages.create({
     model: MODEL,
