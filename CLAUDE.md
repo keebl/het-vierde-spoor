@@ -10,15 +10,16 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - Run with secrets (AI texts on; Guus's own Terminal only, Claude never runs it):
   `~/.claude/bin/secrets-run -- npm start` — values come from Bitwarden via the `bws:`
   references in `.env.example`
-- Test (all): `npm run check:all` — the keuring, 13 checks. The motor and the sweep judge
+- Test (all): `npm run check:all` — the keuring, 14 checks. The motor and the sweep judge
   the level 5–6 room boards from `pool/` (`--voorraad`, about three and four minutes);
   `npm run check` and `npm run check:regels` without the flag build every board (about 13
   and 29 minutes) and run nightly in `.github/workflows/nachtrun.yml`. CI on a pull
   request adds `--kort` (`node tools/keuring.mjs --kort`): the spread, the reasoning and the
   store check take a smaller level 5–6 sample; `check:all` and the nightly run stay full
 - Test (one file): `npm run check:kamers` (also `check:regels`, `check:iconen`,
-  `check:catalog`, `check:aanwijzingen`, `check:spreiding`, `check:weggevers`,
-  `check:ai`, `check:redeneer`, `check:sync`, `check:daglimiet`, `check`). `check:daglimiet` checks the
+  `check:catalog`, `check:aanwijzingen`, `check:spreiding`, `check:afstanden`, `check:weggevers`,
+  `check:ai`, `check:redeneer`, `check:sync`, `check:daglimiet`, `check`). `check:afstanden` refuses a
+  typed gap or margin in `styles/app.css` (`specs/spacing-rhythm.md`), well under a second. `check:daglimiet` checks the
   daily cap on paid AI calls (`AI_DAILY_CALL_LIMIT`, `server/daglimiet.mjs`), well under a second. `check:sync` checks the optional
   account sync (`specs/accounts-and-sync.md`) with a fake database, no network, ~0.1 s. `check:spreiding` checks the room-board clue rules of
   `specs/harder-clues.md` (no row/column clues, caps per name and per kind, no
@@ -27,7 +28,7 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
   solve proven unique by `telPlaatsingen`, and board fingerprints equal to
   `tools/vingerafdruk-kamers.txt` (rewrite with `--schrijf` only when boards shift on
   purpose), about a minute and a half
-- Test (fast): `npm run check:snel` — the 4 checks that build no puzzles, ~1 second
+- Test (fast): `npm run check:snel` — the 6 checks that build no puzzles, ~1 second
 - Typecheck: none (plain ES modules, no TypeScript)
 - Lint / format: none configured
 - Static check in place of typecheck/lint: `npm run check:snel` — the content lint

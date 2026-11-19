@@ -1,0 +1,12 @@
+{
+  "bases": {
+    "site": "http://127.0.0.1:4173"
+  },
+  "locale": "nl-NL",
+  "screens": [
+    { "name": "voorpagina", "base": "site", "path": "/#/", "job": "Choose a level and start a puzzle", "steps": [{ "wait": ".niveaukiezer" }] },
+    { "name": "bibliotheek", "base": "site", "path": "/#/puzzels", "job": "Pick a case from the library", "steps": [{ "wait": ".kaarten" }] },
+    { "name": "puzzel", "base": "site", "path": "/#/puzzel/dader.landhuis.kamer.3.demo-4", "job": "Solve a room board", "steps": [{ "wait": ".boards .board-wrap svg" }] },
+    { "name": "uitleg", "base": "site", "path": "/#/uitleg", "job": "Read how the game works", "steps": [{ "wait": ".section .prose" }] }
+  ]
+}

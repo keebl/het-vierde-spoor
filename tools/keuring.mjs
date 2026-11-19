@@ -24,6 +24,7 @@ const TOETSEN = [
   ['de weggevers', 'check-weggevers.mjs', []],
   ['de iconen', 'check-iconen.mjs', []],
   ['de kamers', 'check-kamers.mjs', []],
+  ['de afstanden', 'check-afstanden.mjs', []],
   ['de redenering', 'check-redeneer.mjs', []],
   ['de sync', 'check-sync.mjs', []],
   ['de voorraad', 'check-voorraad.mjs', []],
