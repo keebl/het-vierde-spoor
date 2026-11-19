@@ -230,7 +230,12 @@ function tweeVakjes() {
 
 // ---------------------------------------------------------------- de puzzels
 
-const SEEDS = { 1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 3 };
+// `--kort` (elke pull request): niveau vijf en zes, die minuten per bord
+// kosten, met minder seeds. Vol duurde deze toets op een runner 12 tot 16
+// minuten (PR #33); de volle set draait 's nachts (nachtrun.yml) en voor een
+// release (`npm run check:all`).
+const KORT = process.argv.includes('--kort');
+const SEEDS = KORT ? { 1: 10, 2: 10, 3: 10, 4: 10, 5: 3, 6: 1 } : { 1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 3 };
 const lijst = [];
 for (const e of CATALOG) if (e.mechaniek === 'kamer') lijst.push([e.titel, catalogSettings(e)]);
 for (const [niveau, aantal] of Object.entries(SEEDS)) {

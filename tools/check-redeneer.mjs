@@ -208,7 +208,12 @@ const vingerafdruk = (p) => createHash('sha256')
   .update(JSON.stringify([p.id, p.oplossing, p._ruwe, p.slachtofferIdx, p.kamerVan, p.meubelOp, p.clues.map((c) => c.text)]))
   .digest('hex').slice(0, 16);
 
-const SEEDS = { 1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 3 };
+// `--kort` (elke pull request): niveau vijf en zes, die minuten per bord
+// kosten, met minder seeds. Vol duurde deze toets op een runner 12 tot 16
+// minuten (PR #33); de volle set draait 's nachts (nachtrun.yml) en voor een
+// release (`npm run check:all`).
+const KORT = process.argv.includes('--kort');
+const SEEDS = KORT ? { 1: 10, 2: 10, 3: 10, 4: 10, 5: 3, 6: 1 } : { 1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 3 };
 const lijst = [];
 for (const e of CATALOG) if (e.mechaniek === 'kamer') lijst.push(catalogSettings(e));
 for (const [niveau, aantal] of Object.entries(SEEDS)) {
@@ -235,6 +240,8 @@ for (const [niveau, aantal] of Object.entries(SEEDS)) {
 
 const AFDRUKKEN = new URL('vingerafdruk-kamers.txt', import.meta.url);
 const SCHRIJF = process.argv.includes('--schrijf');
+// Met --kort ontbreken borden; die zou --schrijf uit het bestand gooien.
+if (SCHRIJF && KORT) { console.log('--schrijf en --kort samen zou vingerafdrukken weggooien'); process.exit(1); }
 const vastgelegd = new Map(SCHRIJF ? [] : readFileSync(AFDRUKKEN, 'utf8').trim().split('\n').map((r) => r.split(' ')));
 const nieuw = [];
 const perNiveau = {};
@@ -272,7 +279,7 @@ for (const t of Object.keys(TECHNIEKEN)) if (!technieken.has(t)) fout('keuringss
 if (SCHRIJF) {
   writeFileSync(AFDRUKKEN, `${nieuw.join('\n')}\n`);
   console.log(`${nieuw.length} vingerafdrukken geschreven naar tools/vingerafdruk-kamers.txt`);
-} else if (vastgelegd.size !== nieuw.length) {
+} else if (!KORT && vastgelegd.size !== nieuw.length) {
   fout('vingerafdrukken', `${vastgelegd.size} vastgelegd, ${nieuw.length} gebouwd`);
 }
 

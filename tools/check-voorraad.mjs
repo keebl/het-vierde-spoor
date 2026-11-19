@@ -26,6 +26,13 @@ import { SCHATTING } from '../src/ui/bouwer.js';
 export const BEGROTING = { 1: 0.25, 2: 0.25, 3: 0.25, 4: 4, 5: 120, 6: 15 };
 const SPEELRUIMTE = Number(process.env.BEGROTING_SPEELRUIMTE ?? 1.5);
 
+// `--kort` (elke pull request): drie borden per niveau en drie seeds voor de
+// bouwtijd in plaats van tien. Deze toets duurde 17 minuten op een runner en
+// hield elke pull request zo lang op (PR #33); bijna alles daarvan was niveau
+// vijf. De volle toets draait 's nachts (nachtrun.yml) en voor een release
+// (`npm run check:all`).
+const AANTAL = process.argv.includes('--kort') ? 3 : 10;
+
 let fouten = 0;
 const fout = (waar, wat) => { fouten++; console.log(`FOUT  ${waar}: ${wat}`); };
 
@@ -36,9 +43,9 @@ for (const niveau of VOORRAAD_NIVEAUS) {
   if (bestand.versie !== BORDVERSIE) fout(`niveau ${niveau}`, `de voorraad is van versie ${bestand.versie}, de motor is ${BORDVERSIE} (node tools/pool.mjs)`);
   const pool = bestand.borden ?? {};
   const ids = Object.keys(pool);
-  const stap = Math.max(1, Math.floor(ids.length / 10));
+  const stap = Math.max(1, Math.floor(ids.length / AANTAL));
   let gekeurd = 0;
-  for (let i = 0; i < ids.length && gekeurd < 10; i += stap) {
+  for (let i = 0; i < ids.length && gekeurd < AANTAL; i += stap) {
     const [opdracht, wereld, mechaniek, n, ...rest] = ids[i].split('.');
     const settings = { opdracht, wereld, mechaniek, niveau: Number(n), seed: rest.join('.') };
     const nu = JSON.stringify(genNaarData(bouwKamerGen(settings)));
@@ -51,7 +58,7 @@ for (const niveau of VOORRAAD_NIVEAUS) {
 console.log('\nniveau  traagste  begroting');
 for (const [niveau, begroting] of Object.entries(BEGROTING)) {
   let traagst = 0;
-  for (let s = 0; s < 10; s++) {
+  for (let s = 0; s < AANTAL; s++) {
     const seed = `keur-${s}`;
     const t0 = performance.now();
     bouwKamerGen({ opdracht: 'dader', mechaniek: 'kamer', wereld: wereldVoorSeed(seed), niveau: Number(niveau), seed });

@@ -79,6 +79,11 @@ jobs:
     # building them took half an hour and over an hour here (PR #28). The full runs are
     # nightly (nachtrun.yml), and "de voorraad" (its own job below) proves the store still
     # matches the engine.
+    # `--kort`: the spread, the reasoning and the store check build fewer level 5-6 boards
+    # on a pull request (3 and 1 instead of 10 and 3; 3 store boards per level instead of
+    # 10). Full, they took 16:11, 12:13 and 17:09 here (PR #33) and held every pull request
+    # that long. The full checks run nightly (nachtrun.yml) and before a release
+    # (`npm run check:all`, docs/RELEASE.md).
     timeout-minutes: 40
     strategy:
       fail-fast: false
@@ -100,7 +105,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - name: Keuring, one check
         run: |
-          node tools/keuring.mjs --alleen "${{ matrix.toets }}" 2>&1 | tee keuring.txt
+          node tools/keuring.mjs --kort --alleen "${{ matrix.toets }}" 2>&1 | tee keuring.txt
           grep -q 'volledige keuring exit=0' keuring.txt
 
   voorraad:
@@ -118,7 +123,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - name: Keuring, the store
         run: |
-          node tools/keuring.mjs --alleen "de voorraad" 2>&1 | tee keuring.txt
+          node tools/keuring.mjs --kort --alleen "de voorraad" 2>&1 | tee keuring.txt
           grep -q 'volledige keuring exit=0' keuring.txt
 
   volledig-oordeel:

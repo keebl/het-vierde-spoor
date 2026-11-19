@@ -19,7 +19,9 @@ not yet confirmed by the owner.
 ## Steps after the tag
 1. No build: `main` is the release.
 2. Before the merge: `npm run check:all` green — read the `volledige keuring exit=0` line —
-   and the CI workflow green on the pull request.
+   and the CI workflow green on the pull request. CI on a pull request runs the spread, the
+   reasoning and the store check on a smaller level 5-6 sample (`--kort`); `check:all` and the
+   nightly run (`.github/workflows/nachtrun.yml`) run them in full.
 3. Merge the pull request; GitHub Pages publishes within a few minutes
    (`cache-control: max-age=600`, so allow ten minutes before judging).
 4. Verify: open https://reconstructie.app/, `location.reload()`, play one puzzle from
@@ -68,8 +70,9 @@ per item: which service, which plan, where the dashboard is. No keys or account 
   spend limit set in the Anthropic console)
 - Dependency alerts: Dependabot alerts on since 2026-11-14; `.github/dependabot.yml`
   weekly for npm and github-actions.
-- CI: `.github/workflows/ci.yml` — fast keuring on every pull request and push, full keuring
-  and gitleaks on pull requests.
+- CI: `.github/workflows/ci.yml` — fast keuring on every pull request and push, the heavy
+  checks (three of them on a smaller sample, `--kort`) and gitleaks on pull requests;
+  `.github/workflows/nachtrun.yml` builds everything in full once a night.
 
 ## Launch
 - First ten users: the owner's daughter first; anyone after her finds the public link
