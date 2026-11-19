@@ -1641,7 +1641,7 @@ export const TYPE_VAN_TEKENING = {
   stam: 'boomstam',
   schommel: 'schommel',
   bed: 'bed', ziekenhuisbed: 'bed', slaapcapsule: 'slaapcapsule', ligbed: 'ligbed', hangmat: 'hangmat',
-  kleedperzisch: 'kleed', kleedstreep: 'kleed', kleedruit: 'kleed',
+  kleedperzisch: 'kleed', kleedstreep: 'kleed', kleedruit: 'kleed', kleedlappen: 'kleed',
   deurmat: 'mat', mosmat: 'mat', duikplank: 'duikplank',
   paard: 'paard', pony: 'pony', ezel: 'ezel', draaimolenpaard: 'draaimolenpaard',
   botsauto: 'botsauto', fiets: 'fiets', deelscooter: 'step',
@@ -1703,7 +1703,24 @@ export const REKWISIETEN_VAN = {
 // krukken heeft drie krukken; een aanwijzing zegt dan "op een kruk", nooit
 // "op de kruk" (zie zinVoor in rooms-text.js). Een stuk met een eigen naam
 // ("de leren fauteuil") komt maar één keer voor.
-export const VAKER = ['kruk', 'kleedperzisch', 'kleedstreep', 'kleedruit', 'deurmat', 'mosmat', 'bidbank', 'zitblok', 'botsauto'];
+export const VAKER = ['kruk', 'kleedperzisch', 'kleedstreep', 'kleedruit', 'kleedlappen', 'deurmat', 'mosmat', 'bidbank', 'zitblok', 'botsauto'];
+
+// Welk kleed er ligt volgt uit zijn maat, gedraaid of niet: elke maat één
+// dessin, elk dessin één maat (specs/rug-variety.md). Hetzelfde Perzische
+// kleed lag op het ene bord als 2x2 en op het volgende als 2x3 (Guus,
+// 2026-11-19). De motor kiest de maat en zet het kleed neer; puzzle.js
+// kiest daarna alleen naam en tekening. Zo verschuift er geen bord: wat
+// alleen van uiterlijk verandert, hoeft de puzzel niet opnieuw te verzinnen.
+// De sleutel is de maat met de korte kant eerst. Het ronde kleed (3x3) en
+// de schapenvacht (1x1) komen met de volgende verschuiving (fase C): die
+// maten maakt de motor nu niet.
+export const KLEED_VAN_MAAT = {
+  '2x3': ['het Perzische kleed', 'kleedperzisch'],
+  '2x2': ['het geruite kleed', 'kleedruit'],
+  '1x3': ['het gestreepte kleed', 'kleedstreep'],
+  '1x2': ['het lappenkleed', 'kleedlappen'],
+};
+export const kleedMaat = (h, b) => `${Math.min(h, b)}x${Math.max(h, b)}`;
 
 // Rijdieren alleen waar een plek het eerlijk maakt (Guus, 2026-11-17): een
 // stal, een binnenplaats, een weide, de kermis. Niet binnen in een landhuis.
