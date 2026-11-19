@@ -348,6 +348,15 @@ standing guidance rather than state moved to `CLAUDE.md`.
   three to six in a separate round (until 2026-11-28)
 - `error-monitoring` — chosen, but needs a Sentry project in the owner's console first;
   steps in Next, item 6 (until 2026-11-28)
+- `naming` — renaming the GitHub repository (`het-vierde-spoor`), `docs/decisions/` →
+  `docs/adr/` and the worker `vierdespoor-ai`: Guus, 2026-11-19, "Nu niet, uitstellen"
+  (until the monthly review)
+
+## Cost guard
+- Anthropic: app-side daily limit `AI_DAILY_CALL_LIMIT` (default 200, UTC day) checked
+  before every paid call in `server/serve.mjs`, `tools/ai-vooraf.mjs` and the undeployed
+  worker; Guus, 2026-11-19, "Ja, daglimiet". A spend cap or budget alert in the Anthropic
+  Console is his own decision (`docs/RELEASE.md`, Spend caps) (2026-11-19)
 
 ## Workbench feedback
 - 2026-11-18 — A card answer or button on a turn started by another session does not count
