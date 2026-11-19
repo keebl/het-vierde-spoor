@@ -1,10 +1,11 @@
 # Spec: one spacing rhythm across the site
 
-Status: draft (awaiting Guus's approval)
+Status: approved
 Date: 2026-11-19 (Guus on the live puzzle page: "De afstand tussen de buttons
 (tekstvlakken/kolommen of hoe wil je ze noemen) is ongelijk sommige te dicht op elkaar en
 andere weer te veel afstand. Hoe zorgen er voor dat dit er netjes uit komt te zien." Chose
-"Spec + decoratie nu" via mission control, ask-5a1c7e20.)
+"Spec + decoratie nu" via mission control, ask-5a1c7e20. Approved 2026-11-19: "dit ziet er goed uit ga je gang", with the
+recommended answer to the open question.)
 
 ## Goal
 Every gap on the site says how two things relate, and the same relation always gets the
@@ -36,7 +37,7 @@ buttons gets 3 px while separate groups get 8.
 1. **Three roles, named in `app.css`**, each pointing at the existing scale:
    - `--ruimte-binnen` = 8 px — inside one group: buttons that belong together, name chips,
      a label and its value.
-   - `--ruimte-tussen` = 16 px (24 on a wide screen) — between groups in one section: names
+   - `--ruimte-tussen` = 24 px on a wide screen, 16 px on a phone — between groups in one section: names
      → modes → board → switches; fold-out → fold-out.
    - `--ruimte-sectie` = 48 px — between sections: the board block and the explanation
      under it, the story and the board, page header and content.
@@ -95,7 +96,6 @@ Estimate: half a day to a day. Risk: the sticky name/mode bar and the phone clue
 tuned by hand (CHANGELOG, "On a phone, the name pills ... line up on one grid"); they are
 re-checked at 390 px in step 2.
 
-## Open question for Guus
-Between groups on a wide screen: 16 px everywhere (calmer, more compact) or 24 px on
-desktop and 16 on a phone (more air around the board)? Recommendation: 24 on desktop, 16
-on a phone.
+## Decided
+Between groups: 24 px on a wide screen, 16 px on a phone (the recommendation; Guus,
+2026-11-19).
