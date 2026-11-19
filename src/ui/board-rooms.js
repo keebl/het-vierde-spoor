@@ -621,6 +621,13 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
   }
   // Een kleed ligt plat over zijn hele rechthoek, onder alles wat erop
   // staat. Eén tekening per kleed, niet een per vakje.
+  //
+  // Met vloer eromheen: een kleed dat strak langs de vakranden liep, las als
+  // een gekleurd vlak in plaats van een kleed (Guus, 2026-11-19: "er bestaan
+  // geen kleden die strak langs een muur liggen"). Elk vakje eronder blijft
+  // voor meer dan de helft bedekt, en dat is genoeg om te zien dat je er op
+  // het kleed staat.
+  const KLEEDMARGE = Math.round(CEL * 0.22);
   const kleedGedaan = new Set();
   for (let i = 0; i < n * n; i++) {
     const m = puzzle.meubelOp[i];
@@ -632,7 +639,7 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
     const k0 = Math.min(...cellen.map(kol));
     const h = Math.max(...cellen.map(rij)) - r0 + 1;
     const b = Math.max(...cellen.map(kol)) - k0 + 1;
-    tekenKleed(spullen, KLEEDDESSIN[puzzle.meubelIconen[m]], x(k0) + 7, y(r0) + 7, b * CEL - 14, h * CEL - 14);
+    tekenKleed(spullen, KLEEDDESSIN[puzzle.meubelIconen[m]], x(k0) + KLEEDMARGE, y(r0) + KLEEDMARGE, b * CEL - 2 * KLEEDMARGE, h * CEL - 2 * KLEEDMARGE);
   }
   for (let i = 0; i < n * n; i++) {
     const m = puzzle.meubelOp[i];
