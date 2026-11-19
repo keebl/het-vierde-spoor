@@ -123,12 +123,15 @@ const LICHTBRONNEN = new Set([
   'haard', 'fornuis', 'vuur', 'kaarsentafel', 'distilleerketel', 'ketel',
 ]);
 
-// De drie kleden: grondkleur, rand en motief. Kleuren uit de vaste set van
-// het bord, geen nieuwe (spec: "rugs use the world's palette").
+// De kleden: grondkleur, rand en motief. Kleuren uit de vaste set van het
+// bord, geen nieuwe (spec: "rugs use the world's palette"). Welk dessin er
+// ligt volgt uit de maat van het kleed (KLEED_VAN_MAAT in kamersoorten.js),
+// dus hetzelfde dessin is op elk bord even groot (specs/rug-variety.md).
 const KLEEDDESSIN = {
   kleedperzisch: { grond: '#b8452f', rand: '#e9b949', motief: 'ruit', accent: '#2f5fa8' },
   kleedstreep: { grond: '#3f8f5a', rand: '#f3ead2', motief: 'streep', accent: '#2f5fa8' },
   kleedruit: { grond: '#2f5fa8', rand: '#f3ead2', motief: 'blokjes', accent: '#f3ead2' },
+  kleedlappen: { grond: '#f3ead2', rand: '#f3ead2', motief: 'lappen', banen: ['#b8452f', '#2f5fa8', '#e9b949', '#3f8f5a'] },
 };
 
 function tekenKleed(ouder, d, x0, y0, b, h) {
@@ -145,6 +148,17 @@ function tekenKleed(ouder, d, x0, y0, b, h) {
     for (let t = 0.3; t < 0.75; t += 0.2) {
       if (b >= h) g.append(el('rect', { x: x0 + 9, y: y0 + h * t - 3, width: b - 18, height: 6, fill: d.rand }));
       else g.append(el('rect', { x: x0 + b * t - 3, y: y0 + 9, width: 6, height: h - 18, fill: d.rand }));
+    }
+  } else if (d.motief === 'lappen') {
+    // Banen dwars op de lange kant, elke baan een andere lap.
+    const lang = Math.max(b, h);
+    const tel = Math.max(5, Math.round(lang / 14));
+    const stap = (lang - 14) / tel;
+    for (let t = 0; t < tel; t++) {
+      const kleur = d.banen[t % d.banen.length];
+      const dik = stap * 0.62;
+      if (b >= h) g.append(el('rect', { x: x0 + 7 + t * stap + (stap - dik) / 2, y: y0 + 5, width: dik, height: h - 10, fill: kleur }));
+      else g.append(el('rect', { x: x0 + 5, y: y0 + 7 + t * stap + (stap - dik) / 2, width: b - 10, height: dik, fill: kleur }));
     }
   } else {
     for (let yy = y0 + 16; yy < y0 + h - 12; yy += 22) {

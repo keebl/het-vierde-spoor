@@ -13,6 +13,7 @@ import { kamerParams } from './engine/difficulty.js';
 import { zinVoor, namenIn } from './content/rooms-text.js';
 import {
   soortVan, meubelsVoor, blokMeubelsVoor, vormVan, rekwisietenVoor, TYPE_VAN_TEKENING, REKWISIETTYPEN, BUITEN_SOORTEN, VAKER,
+  KLEED_VAN_MAAT, kleedMaat,
 } from './content/kamersoorten.js';
 import { makeRng } from './engine/rng.js';
 import { ZAKEN, stilSlot } from './content/zaken.js';
@@ -434,6 +435,18 @@ function buildKamerPuzzle({ world, settings, gen: klaar = null }) {
     if (stuk.houding !== 'blok') {
       meubelNamen[mi] = stuk.sleutel;
       meubelIconen[mi] = new Map(rekwisietenVoor(kamerNamen[gen.rooster.kamerVan[cel]], world.id)).get(stuk.sleutel);
+      // Een kleed heet naar zijn maat, niet naar wat de inrichting koos:
+      // zo heeft hetzelfde dessin altijd dezelfde maat (KLEED_VAN_MAAT).
+      // Alleen naam en tekening; de motor heeft het bord al gemaakt, dus er
+      // verschuift niets.
+      if (stuk.type === 'kleed') {
+        const n = gen.rooster.n;
+        const rijen = stuk.cellen.map((c) => Math.floor(c / n));
+        const kolommen = stuk.cellen.map((c) => c % n);
+        const maat = kleedMaat(Math.max(...rijen) - Math.min(...rijen) + 1, Math.max(...kolommen) - Math.min(...kolommen) + 1);
+        const kleed = KLEED_VAN_MAAT[maat];
+        if (kleed) [meubelNamen[mi], meubelIconen[mi]] = kleed;
+      }
       continue;
     }
     if (stuk.naamloos) continue;

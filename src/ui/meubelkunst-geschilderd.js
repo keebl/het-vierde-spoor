@@ -2935,6 +2935,17 @@ export const GESCHILDERD = {
     v('papier', 'M42.6 29 L42.6 38.6 L34 38.6 Z'),
   ],
 
+  // Een lappenkleed: banen in alle kleuren die er nog lagen, franjes aan de
+  // korte kanten.
+  kleedlappen: [
+    vloer('papier', romp(9, 12, 30, 26, { taps: 0.01, bol: 0.3 })),
+    v('houtrood', plaat(9.4, 15, 29.2, 3.4, { zak: 0.2 })),
+    v('stofblauw', plaat(9.4, 20.4, 29.2, 3.4, { zak: 0.2 })),
+    v('goud', plaat(9.4, 25.8, 29.2, 3.4, { zak: 0.2 })),
+    v('stofgroen', plaat(9.4, 31.2, 29.2, 3.4, { zak: 0.2 })),
+    streep('papier', 0.9, 'M11 12 L11 9 M16 12 L16 9 M21 12 L21 9 M27 12 L27 9 M32 12 L32 9 M37 12 L37 9 M11 38 L11 41 M16 38 L16 41 M21 38 L21 41 M27 38 L27 41 M32 38 L32 41 M37 38 L37 41'),
+  ],
+
   // Een kokosmat met een rode rand.
   deurmat: [
     vloer('houtrood', romp(7, 16, 34, 20, { taps: 0.01, bol: 0.3 })),

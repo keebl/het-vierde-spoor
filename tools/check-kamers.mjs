@@ -13,6 +13,7 @@ import {
   WERELDMEUBELS, WERELDVERWANT, WERELDVLOER, meubelsVoor, soortVan,
   OUDERWETS, MODERNE_WERELDEN, voorzetselVan,
   rekwisietenVoor, TYPE_VAN_TEKENING, REKWISIETTYPEN, RIJDIEREN_VAN_PLEK,
+  KLEED_VAN_MAAT, VAKER,
 } from '../src/content/kamersoorten.js';
 import { GESLACHT_VAN } from '../src/content/namen.js';
 import { readFileSync } from 'node:fs';
@@ -196,6 +197,30 @@ for (const w of WORLDS) {
     }
   }
 }
+// ------------------------------------------------- één maat per kleed
+// specs/rug-variety.md: welk kleed er ligt volgt uit zijn maat. Hetzelfde
+// Perzische kleed lag op het ene bord als 2x2 en op het volgende als 2x3
+// (Guus, 2026-11-19). De tabel moet een-op-een zijn: elke maat één
+// dessin en elk dessin één maat, anders kan dat opnieuw gebeuren. Elk
+// kleed staat in VAKER, want er kunnen er twee van dezelfde maat liggen.
+const kleedTekeningen = Object.keys(TYPE_VAN_TEKENING).filter((s) => REKWISIETTYPEN[TYPE_VAN_TEKENING[s]]?.kleed);
+const maatVanDessin = new Map();
+const naamVanDessin = new Map();
+for (const [maat, [naam, sleutel]] of Object.entries(KLEED_VAN_MAAT)) {
+  if (!/^(\d)x(\d)$/.test(maat) || Number(maat[0]) > Number(maat[2])) meld('KLEEDMAAT RAAR', `${maat}: korte kant eerst`);
+  if (maatVanDessin.has(sleutel)) meld('KLEED IN TWEE MATEN', `${sleutel}: ${maatVanDessin.get(sleutel)} en ${maat}`);
+  if ([...naamVanDessin.values()].includes(naam)) meld('KLEEDNAAM TWEE KEER', naam);
+  maatVanDessin.set(sleutel, maat);
+  naamVanDessin.set(sleutel, naam);
+  if (!kleedTekeningen.includes(sleutel)) meld('MAAT ZONDER KLEED', `${maat}: ${sleutel}`);
+  if (!GESCHILDERD[sleutel]) meld('KLEED ZONDER TEKENING', sleutel);
+  if (!VAKER.includes(sleutel)) meld('KLEED NIET IN VAKER', sleutel);
+  gebruikteSleutels.add(sleutel);
+}
+for (const sleutel of kleedTekeningen) {
+  if (!maatVanDessin.has(sleutel)) meld('KLEED ZONDER MAAT', sleutel);
+}
+
 for (const [sleutel, type] of Object.entries(TYPE_VAN_TEKENING)) {
   if (!GESCHILDERD[sleutel]) meld('TYPE ZONDER TEKENING', sleutel);
   if (!REKWISIETTYPEN[type]) meld('ONBEKEND REKWISIETTYPE', `${sleutel} -> ${type}`);
@@ -658,6 +683,7 @@ console.log(`eigen meubelnamen  ${wereldenMetLaag} werelden dopen het meubilair 
 console.log(`bordranden         ${Object.keys(RANDSTIJLEN).length}, één per wereld, elk een eigen nacht`);
 console.log('gelijkende namen   geen twee die in dezelfde puzzel op hetzelfde woord eindigen');
 console.log(`eigen vloeren      ${Object.keys(VLOER_VAN_PLEK).length} plekken waar de soort de grond niet goed raadt`);
+console.log(`kleden             ${Object.keys(KLEED_VAN_MAAT).length} maten, elk een eigen dessin`);
 console.log('namen als belofte  wat een kamer heet klopt met de vloer en met wat erin kan staan');
 console.log(`portretten         ${alleNamen.size} namen, elk met een kop die bij de naam past`);
 

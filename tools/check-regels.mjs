@@ -37,7 +37,7 @@ import { levelParams, kamerParams, KAMER_LEVELS, LEVEL_IDS } from '../src/engine
 import { keepsNames } from '../src/ai/opdracht.js';
 import { readFileSync } from 'node:fs';
 import {
-  soortVan, meubelsVoor, vormVan, rekwisietenVoor, houdingVanTekening, VAKER,
+  soortVan, meubelsVoor, vormVan, rekwisietenVoor, houdingVanTekening, VAKER, KLEED_VAN_MAAT, kleedMaat, TYPE_VAN_TEKENING,
 } from '../src/content/kamersoorten.js';
 import { redeneer } from '../src/engine/redeneer.js';
 import { oplossingInStappen } from '../src/content/redeneer-text.js';
@@ -169,6 +169,11 @@ function keurKamer(p, waar) {
       eis('een kleed is een rechthoek van twee tot zes vakjes in één kamer',
         st.type === 'kleed' && h * b === st.cellen.length && st.cellen.length <= 6
         && st.cellen.every((c) => kamerVan[c] === kamerVan[st.cellen[0]]), waar, p.meubelNamen[meubelOp[st.cellen[0]]]);
+      // Het dessin volgt uit de maat (specs/rug-variety.md): hetzelfde kleed
+      // is op elk bord even groot.
+      eis('een kleed heeft het dessin en de naam van zijn maat',
+        KLEED_VAN_MAAT[kleedMaat(h, b)]?.[1] === icoon
+        && KLEED_VAN_MAAT[kleedMaat(h, b)]?.[0] === p.meubelNamen[meubelOp[st.cellen[0]]], waar, `${p.meubelNamen[meubelOp[st.cellen[0]]]} ${h}x${b}`);
     }
   }
   {
@@ -358,9 +363,17 @@ function keurKamer(p, waar) {
     const m = p.meubelOp[cel];
     if (m == null) continue;
     const soort = soortVan(p.kamerNamen[kamerVan[cel]]);
-    const mag = rooster.stukken?.[m]?.houding && rooster.stukken[m].houding !== 'blok'
+    const rekwisiet = rooster.stukken?.[m]?.houding && rooster.stukken[m].houding !== 'blok';
+    const mag = rekwisiet
       ? rekwisietenVoor(p.kamerNamen[kamerVan[cel]], p.world?.id).map(([naam]) => naam)
       : meubelsVoor(soort, p.world?.id).flat().map(([naam]) => naam);
+    // Een ruimte belooft een kleed, niet welk: het dessin volgt uit de maat
+    // (KLEED_VAN_MAAT, specs/rug-variety.md). Mag de ruimte een kleed, dan
+    // mag elk dessin; de regel bij het stuk zelf houdt maat en dessin samen.
+    if (rekwisiet && rooster.stukken[m].type === 'kleed'
+      && rekwisietenVoor(p.kamerNamen[kamerVan[cel]], p.world?.id).some(([, icoon]) => TYPE_VAN_TEKENING[icoon] === 'kleed')) {
+      mag.push(...Object.values(KLEED_VAN_MAAT).map(([naam]) => naam));
+    }
     eis('het meubilair past bij de soort ruimte',
       mag.includes(p.meubelNamen[m]), waar,
       `${p.meubelNamen[m]} in ${p.kamerNamen[kamerVan[cel]]} (${soort})`);

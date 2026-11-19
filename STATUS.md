@@ -9,6 +9,11 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-19: **rug variety built** (`specs/rug-variety.md`, revised: pattern from size,
+  Guus "Ja, omzetten"): `src/puzzle.js` names and draws each rug after its size
+  (`KLEED_VAN_MAAT`: 2×3 Persian, 2×2 checked, 1×3 runner, 1×2 new rag rug). No engine
+  change, no board shift, `pool/` untouched. Round rug (3×3) and sheepskin (1×1) wait for
+  phase C; one design can still lie up to four times on a manor board.
 - 2026-11-19: **phase B is live.** het-vierde-spoor#28 merged (`2ebccdd`, Guus: "Ja, beide"),
   Pages built it; a level-6 board on reconstructie.app shows an either-clue, no console
   errors, live `pool/` is `b2` with 306 boards. het-vierde-spoor#29 merged (`e1c1821`): PR CI

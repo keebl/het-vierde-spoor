@@ -12,6 +12,10 @@ day the changelog was introduced; everything before that is in git history only.
 ### Changed
 - Rugs on the room boards lie on the floor with a margin around them instead of filling
   their squares edge to edge.
+- A rug's pattern now follows from its size, so the same pattern is always the same
+  size: Persian 2×3, checked 2×2, striped runner 1×3 and a new rag rug 1×2. Boards and
+  solutions are unchanged; only a clue that names the board's single rug can read
+  differently.
 
 ### Added
 - Optional Google sign-in is now switched on: "Inloggen" in the menu keeps your solved
