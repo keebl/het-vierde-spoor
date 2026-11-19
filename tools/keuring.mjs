@@ -47,6 +47,12 @@ if (ALLEEN && !TOETSEN.some(([naam]) => naam === ALLEEN)) {
   console.log('volledige keuring exit=1');
   process.exit(1);
 }
+// `--kort` geeft de drie traagste toetsen een kleinere steekproef van niveau
+// vijf en zes. Zo draait CI ze op elke pull request (die duurde 17 minuten,
+// PR #33); de volle toetsen draaien 's nachts (nachtrun.yml) en lokaal met
+// `npm run check:all`, ook voor een release.
+const KORT = process.argv.includes('--kort');
+const KORT_BAAR = new Set(['de spreiding', 'de redenering', 'de voorraad']);
 const ZWAAR = new Set(['de motor', 'de bibliotheek', 'de aanwijzingen', 'de spreiding', 'de veegronde', 'de weggevers', 'de redenering', 'de voorraad']);
 
 const uitslag = [];
@@ -56,7 +62,7 @@ for (const [naam, script, args] of TOETSEN) {
   if (ALLEEN && naam !== ALLEEN) continue;
   console.log(`\n${'='.repeat(64)}\n== ${naam}\n${'='.repeat(64)}`);
   const begin = Date.now();
-  const r = spawnSync(process.execPath, [new URL(script, import.meta.url).pathname, ...args], {
+  const r = spawnSync(process.execPath, [new URL(script, import.meta.url).pathname, ...args, ...(KORT && KORT_BAAR.has(naam) ? ['--kort'] : [])], {
     stdio: 'inherit',
   });
   const code = r.status ?? 1;

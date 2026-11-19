@@ -13,7 +13,9 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - Test (all): `npm run check:all` — the keuring, 12 checks. The motor and the sweep judge
   the level 5–6 room boards from `pool/` (`--voorraad`, about three and four minutes);
   `npm run check` and `npm run check:regels` without the flag build every board (about 13
-  and 29 minutes) and run nightly in `.github/workflows/nachtrun.yml`
+  and 29 minutes) and run nightly in `.github/workflows/nachtrun.yml`. CI on a pull
+  request adds `--kort` (`node tools/keuring.mjs --kort`): the spread, the reasoning and the
+  store check take a smaller level 5–6 sample; `check:all` and the nightly run stay full
 - Test (one file): `npm run check:kamers` (also `check:regels`, `check:iconen`,
   `check:catalog`, `check:aanwijzingen`, `check:spreiding`, `check:weggevers`,
   `check:ai`, `check:redeneer`, `check:sync`, `check`). `check:sync` checks the optional
