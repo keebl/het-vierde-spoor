@@ -376,3 +376,44 @@ Risks:
 - **Determinism**: every new draw has its own rng; the version in the id isolates the
   switch.
 - **Main-thread fallback** on old browsers keeps today's frozen-page behaviour.
+
+## Phase B as built (2026-11-18)
+Built on branch `claude/engine-phase-b` together with `specs/props-and-either-clues.md`
+A1–A4 and B1–B2. Every board shifts once (decision 4); the fingerprints in
+`tools/vingerafdruk-kamers.txt` were rewritten for that shift.
+
+- **Step 6** — board model: pieces have a posture (`rooster.stukken`), rugs span 2–6 cells,
+  windows on the outer wall (`rooster.ramen`). Rooms are named per attempt (the props
+  depend on the room kind). **Deferred to step 16:** rectangular boards and "at most one
+  per row and column" — no level uses them before level 6 becomes 12×14.
+- **Step 7** — clue kinds `op`, `nietOp`, `enigeOp`, `aantalOp`, `naastType`, `voorRaam`,
+  `hoekKamer`, `rijEnKamerAls`, `kamerOf`, `nietNiet`, `typeOf`, `en`, `ofwelPersoon`,
+  `wieOp` (`hoekRooster` is the existing `hoek`). The human solver's `direct` now strikes
+  only what a clue excludes (`false`), so a clue about "the only one" works.
+- **Step 8** — `bouwPerPersoon` (one own clue per suspect by gain, an improvement round,
+  then at most `ceil(n/3)` shared clues, pruned), bands in `BOUW` in `difficulty.js`.
+  Keuring rules 9–12 in `check-spreiding.mjs`. **Stop rule hit on levels 5–6** at first
+  (boards too open, own clues too weak, selection by struck cells). Guus chose "a+b+c":
+  level 5 now gets unnamed blocks (`extraDeel` 0.3, about 40 % closed, never in a clue),
+  12 rooms and clue choice by remaining solutions (`opTelling`): 8 of 8 seeds, 1–23 s per
+  board. Level 6 (16×16) also works but takes ~7.5 min per board; it keeps the old builder
+  with the new kinds until step 16 (option A, with Guus). `minVrij` 2 on levels 4–5.
+- **Victim** (Guus, 2026-11-18): no clue mentions the victim, also not as the other person
+  of a pair, an "ofwel" or a "wie op"; the clue list leaves the victim out. Keuring rule 6
+  in `check-spreiding.mjs`.
+- **Build time** (Guus, 2026-11-18: build time matters little now that it is
+  asynchronous): level-4 laptop budget 4 s in `check-voorraad.mjs`.
+- **Step 9** — 13 new drawings, token at 70 % on a piece, one drawing per rug, windows.
+- **Step 10** — `src/engine/worker.js`, `src/ui/bouwer.js`: estimate, progress per
+  attempt, cancel, prefetch of the next puzzle, main-thread fallback. Worker and Node give
+  identical boards (browser pane, levels 1, 3, 4, 5).
+- **Step 11** — `src/ui/opslag.js` (IndexedDB, 100 per level from level 4, oldest out),
+  `tools/pool.mjs` and `pool/niveau-5.json`, `pool/niveau-6.json` (library cases plus
+  300 `voorraad-*` seeds each, `BORDVERSIE` in each file), `tools/check-voorraad.mjs` (rebuild sample,
+  build-time budget: level 4 at 4 s and level 5 at 120 s, Guus: build time matters
+  little now that it runs in the worker; the keuring measured 67 s and 106 s on level 5,
+  so 30 s became 120 s, and the build screen's phone estimate, now four minutes for
+  level 5, may never be below the budget).
+
+Measured on `meet-0..19` (laptop), median chain 2 / 3 / 5 / 6 / 30 / 45 for levels 1–6
+(criterion 8 holds); levels 1–4 build 20 of 20 seeds.

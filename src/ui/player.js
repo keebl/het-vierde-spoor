@@ -177,6 +177,8 @@ export function renderPlayer(puzzle, mount) {
   // zaak zelf is opgelost doet er niet toe: hij telt nooit mee.
   let volgendeId = null;
   const naarVolgende = () => (volgendeId ??= volgendeZaak(puzzle));
+  // Zodat main.js de volgende alvast kan laten bouwen (bouwVooruit).
+  mount.dataset.volgende = naarVolgende();
 
   // De menselijke solver redeneert de puzzel pas op als iemand de stappen
   // wil zien: op niveau vier kost dat tot een halve seconde, en wie zelf
@@ -511,7 +513,8 @@ function head(puzzle) {
         // de dief?"). Bij een zelfgemaakte puzzel is dat precies wat er al
         // boven staat, en dan stond er twee keer dezelfde regel.
         kop === puzzle.title ? null : el('p', { class: 'puzzel-ondertitel', text: puzzle.title }),
-        ...introMetVerder(puzzle.intro),
+        // Het hele verhaal, zonder Lees verder (Guus, 2026-11-18).
+        el('p', { class: 'intro' }, el('span', { class: 'intro-tekst', text: puzzle.intro })),
       ]),
       el('div', { class: 'puzzle-zijkant' }, vraagBlok(puzzle)),
     ]),
@@ -530,26 +533,6 @@ function vraagBlok(puzzle, extra = '') {
     ]),
     spelregelBlok(puzzle),
   ]);
-}
-
-// Het verhaal, ingeklapt op drie regels als het langer is. Of er iets is
-// weggevallen weet je pas als de tekst op het scherm staat en zijn breedte
-// heeft; daarom kijkt een ResizeObserver, ook na het draaien van een
-// telefoon of het breder maken van het venster.
-function introMetVerder(tekst) {
-  // Het inklappen zit op de tekst binnen het vak, niet op het vak: dat heeft
-  // een binnenrand, en daarin piepte een halve vierde regel onder de drie.
-  const intro = el('span', { class: 'intro-tekst intro-dicht', text: tekst });
-  const knop = el('button', { class: 'intro-verder', type: 'button', text: 'Lees verder', hidden: '' });
-  knop.addEventListener('click', () => {
-    const dicht = intro.classList.toggle('intro-dicht');
-    knop.textContent = dicht ? 'Lees verder' : 'Minder';
-  });
-  new ResizeObserver(() => {
-    if (!intro.classList.contains('intro-dicht')) return;
-    knop.hidden = intro.scrollHeight <= intro.clientHeight + 1;
-  }).observe(intro);
-  return [el('p', { class: 'intro' }, intro), knop];
 }
 
 // De spelregels bij de puzzel. Dichtgeklapt, want wie het spel kent heeft ze
@@ -719,11 +702,17 @@ function perNaam(puzzle, extra, knopVoor) {
 
   // Iedereen op het bord langs, in de volgorde van het palet, zodat de
   // lijst dezelfde volgorde heeft als de penningen erboven.
+  // "Wie op het kleed stond, ..." heeft geen p maar één genoemde (ref).
+  const eigenaar = (r) => r?.p ?? r?.ref;
   for (let p = 0; p < puzzle.personen.length; p++) {
-    const mijn = perPersoon[p].filter((clue) => clue.ruw?.p === p);
+    // De persoon om wie het draait (de dode, de vermiste, de bestolene)
+    // staat niet in de lijst: geen aanwijzing noemt hem, dus er is niets
+    // over hem te lezen (Guus, 2026-11-18: "die naam ... weg laten").
+    if (p === puzzle.slachtofferIdx) continue;
+    const mijn = perPersoon[p].filter((clue) => eigenaar(clue.ruw) === p);
     const elders = [...new Set(perPersoon[p]
-      .filter((clue) => clue.ruw && clue.ruw.p !== p)
-      .map((clue) => puzzle.personen[clue.ruw.p]))];
+      .filter((clue) => clue.ruw && eigenaar(clue.ruw) !== p)
+      .map((clue) => puzzle.personen[eigenaar(clue.ruw)]))];
     // Een naam waar niets over gezegd wordt, werd hier overgeslagen. Op een
     // bord van vijf stonden er dan vier namen in de lijst, en dat leest als
     // een fout: alsof die ene vergeten is.
@@ -789,7 +778,7 @@ function bedieningUitleg(vanzelf) {
   ]);
   return [
     el('div', { class: 'bediening' }, [
-      blok('De regel', ['Precies ', { b: 'één verdachte per rij en per kolom' }, ', en niemand staat op een meubelstuk.']),
+      blok('De regel', ['Precies ', { b: 'één verdachte per rij en per kolom' }, '. Op een meubelstuk staat niemand, behalve als je erop kunt zitten, liggen, staan of rijden: een stoel, een bed, een kleed, een paard.']),
       blok('Neerzetten', ['Kies onder de namen een figuur en klik een leeg vakje. ', { b: 'Klik op een figuur' }, ' op het bord om hem op te pakken, ', { b: 'nog een keer' }, ' en hij gaat eraf.']),
       blok('Schetsen', ['Zet de ', { b: 'beginletter' }, ' van een figuur in een vakje: een notitie van wie daar zou kunnen staan.']),
       blok('Uitsluiten', ['Zet je ', { b: 'eigen kruisjes' }, '. Tik daarna een naam aan en je staat weer op Neerzetten.']),
@@ -854,6 +843,9 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions, knopVoorAanwijzi
         kruisjesAan: vanzelf, randAan: randAan(),
       }),
       klepje('legenda', 'Wat er op het bord staat', false, [renderLegenda(puzzle)]),
+      // De regels ook onder het bord, waar je kijkt terwijl je puzzelt
+      // (Guus, 2026-11-18); boven bij de vraag staan ze ook nog.
+      el('div', { class: 'regels-onder' }, spelregelBlok(puzzle)),
       klepje('uitleg', 'Hoe je dit bord bedient', false, bedieningUitleg(vanzelf)),
     ];
   }
@@ -1083,10 +1075,13 @@ function toolbar(puzzle, state, actions, volgende = null) {
   // Altijd een weg naar de volgende zaak, ook zonder deze eerst op te
   // lossen: een tester op een telefoon zocht hem naast Controleer en
   // Printen en vond hem niet. Zelfde doel als de knop op het blad.
+  //
+  // Achteraan en in een eigen kleur (Guus, 2026-11-18): de laatste stap,
+  // niet een van de gereedschappen.
+  add('Bewaar deze puzzel', actions.share);
   if (volgende) {
     bar.append(el('a', { class: 'btn btn-volgende', href: `#/puzzel/${volgende}`, text: 'Volgende puzzel' }));
   }
-  add('Bewaar deze puzzel', actions.share);
   return bar;
 }
 

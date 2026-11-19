@@ -7,6 +7,7 @@ import { renderGenerator } from './ui/generator.js';
 import { renderUitleg } from './ui/uitleg.js';
 import { renderPlayer } from './ui/player.js';
 import { buildPuzzle, parsePuzzleId } from './puzzle.js';
+import { bouw, bouwVooruit, SCHATTING, duurTekst } from './ui/bouwer.js';
 import { el } from './ui/boards.js';
 import { dressUp } from './ai/flavour.js';
 import { pasToe as pasThemaToe, hangThemaknopOp } from './ui/thema.js';
@@ -57,7 +58,17 @@ export function zetWereldThema(wereldId) {
   else document.body.style.removeProperty('--wkleur');
 }
 
+// Elke route krijgt een volgnummer. Een bouw die klaar is terwijl je al
+// ergens anders bent, ziet dat aan dit nummer (niet aan de hash: een
+// substring en een niet-gedecodeerde hash gaven de verkeerde puzzel of
+// geen, review fase B).
+let routeNr = 0;
+let lopendeBouw = null;
+
 function route() {
+  const nr = ++routeNr;
+  lopendeBouw?.();
+  lopendeBouw = null;
   const hash = location.hash || '#/';
   const path = hash.slice(2);
   window.scrollTo(0, 0);
@@ -66,11 +77,81 @@ function route() {
   if (path.startsWith('puzzel/')) {
     markNav(null);
     const id = decodeURIComponent(path.slice('puzzel/'.length));
+    const settings = parsePuzzleId(id);
+    // Een Reconstructie bouwt in een Web Worker, met een schatting vooraf en
+    // een balk die na elke poging oploopt (specs/engine-extension.md stap
+    // 10). Tot en met niveau drie is dat zo snel dat er niets te zien is.
+    if (settings.mechaniek === 'kamer') {
+      const traag = settings.niveau >= 4;
+      const balk = el('span', { class: 'bouwbalk-vulling' });
+      const stop = el('button', { class: 'btn', type: 'button', text: 'Annuleer' });
+      app.replaceChildren(traag
+        ? el('div', { class: 'bouwen', 'data-niveau': String(settings.niveau) }, [
+          el('p', { class: 'bouwen-kop', text: 'De puzzel wordt gebouwd en nagerekend.' }),
+          el('p', { class: 'bouwen-schatting', text: `Op een telefoon duurt dat hooguit ongeveer ${duurTekst(SCHATTING[settings.niveau])}, op een computer meestal korter.` }),
+          el('span', { class: 'bouwbalk', role: 'progressbar', 'aria-label': 'Voortgang van het bouwen' }, balk),
+          stop,
+        ])
+        : el('p', { class: 'spinner', text: 'De puzzel wordt gebouwd en nagerekend...' }));
+      // De balk volgt de pogingen, maar één poging op zestien bij zestien
+      // duurt seconden, en de eerste lukt meestal: dan stond hij stil tot
+      // het klaar was. Daarom loopt hij tussendoor mee op de schatting, tot
+      // hooguit negentig procent (criterium 22: hij beweegt elke seconde).
+      let gemeld = 0;
+      const begin = Date.now();
+      const teken = () => {
+        const geschat = Math.min(0.9, (Date.now() - begin) / 1000 / (SCHATTING[settings.niveau] ?? 10));
+        balk.style.width = `${Math.round(Math.max(0.04, gemeld, geschat) * 100)}%`;
+      };
+      const klok = traag ? setInterval(teken, 500) : null;
+      const taak = bouw(settings, {
+        opVoortgang: (deel) => { gemeld = Math.min(1, deel); teken(); },
+      });
+      const stopBouw = () => { clearInterval(klok); taak.afbreken(); };
+      taak.data.finally(() => clearInterval(klok)).catch(() => {});
+      stop.addEventListener('click', () => { stopBouw(); location.hash = '#/'; });
+      // Wie wegnavigeert terwijl er gebouwd wordt: de worker stopt (route()
+      // roept lopendeBouw aan bij elke volgende route).
+      lopendeBouw = stopBouw;
+      taak.data.then((gen) => {
+        if (nr !== routeNr) return;
+        lopendeBouw = null;
+        let puzzle;
+        try {
+          puzzle = buildPuzzle(settings, { gen });
+        } catch (err) {
+          // Een bewaard bord dat niet meer past: dan toch zelf bouwen.
+          console.warn('bewaard bord paste niet, opnieuw gebouwd', err);
+          puzzle = buildPuzzle(settings);
+        }
+        if (puzzle._mis) console.warn(`bord buiten zijn sjabloon (mis ${puzzle._mis})`, id);
+        zetWereldThema(puzzle.world?.id);
+        renderPlayer(puzzle, app);
+        // De volgende alvast, op de achtergrond (criterium 24).
+        const volgende = app.dataset.volgende;
+        if (volgende) bouwVooruit(parsePuzzleId(volgende));
+        dressUp(puzzle).then((dressed) => {
+          if (dressed.aiUsed && nr === routeNr) {
+            zetWereldThema(dressed.world?.id);
+            renderPlayer(dressed, app);
+          }
+        }).catch((err) => console.error(err));
+      }).catch((err) => {
+        if (err?.message === 'afgebroken' || nr !== routeNr) return;
+        console.error(err);
+        // Een bekende wereld en opdracht die niet te bouwen was, is geen
+        // verkeerde link; zeg dat dan ook.
+        showError(/onbekende/.test(err?.message ?? '')
+          ? 'Deze link hoort niet bij een bestaande puzzel. Hij is misschien verouderd of verkeerd overgenomen.'
+          : 'Deze puzzel lukte niet om te bouwen. Probeer een andere.', true);
+      });
+      return;
+    }
     // Even laten tekenen voordat we gaan rekenen: bouwen kan een seconde duren.
     app.replaceChildren(el('p', { class: 'spinner', text: 'De puzzel wordt gebouwd en nagerekend...' }));
     setTimeout(() => {
       try {
-        const puzzle = buildPuzzle(parsePuzzleId(id));
+        const puzzle = buildPuzzle(settings);
         zetWereldThema(puzzle.world?.id);
         renderPlayer(puzzle, app);
         // De puzzel staat er al en is speelbaar. Daarna kijken we nog of er

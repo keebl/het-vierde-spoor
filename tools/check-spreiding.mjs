@@ -31,7 +31,10 @@
 import { CATALOG, catalogSettings } from '../src/content/catalog.js';
 import { buildPuzzle, wereldVoorSeed } from '../src/puzzle.js';
 import { aanwijzingenPerPersoon } from '../src/aanwijzingen.js';
-import { extraAanwijzing, maxPerSoort, vakjesOver } from '../src/engine/generate-rooms.js';
+import {
+  extraAanwijzing, maxPerSoort, vakjesOver, isEigen, overStuk, opIets, isOf, bandMis,
+} from '../src/engine/generate-rooms.js';
+import { redeneer } from '../src/engine/redeneer.js';
 import { telPlaatsingen, graad } from '../src/engine/rooms.js';
 import { kamerParams } from '../src/engine/difficulty.js';
 import { makeRng } from '../src/engine/rng.js';
@@ -48,12 +51,39 @@ export function keur(p, { hint = null, uniek = true } = {}) {
   for (const c of ruw) if (VERBODEN.has(c.soort)) fouten.push(`regel 1: ${c.soort}`);
   if (hint && VERBODEN_HINT.has(hint.soort)) fouten.push(`regel 2: hint is ${hint.soort}`);
 
+  // Met een sjabloon (engine-extension stap 8) zijn de plafonds strenger:
+  // twee regels per naam (criterium 10) in plaats van drie tot vijf.
+  const sjabloon = !!params.bouw;
+  const plafond = sjabloon ? 2 : params.maxPerNaam;
   const { perPersoon } = aanwijzingenPerPersoon(p);
   perPersoon.forEach((lijst, i) => {
-    if (params.maxPerNaam != null && lijst.length > params.maxPerNaam) {
-      fouten.push(`regel 3: ${p.personen[i]} heeft ${lijst.length} aanwijzingen (max ${params.maxPerNaam})`);
+    if (plafond != null && lijst.length > plafond) {
+      fouten.push(`regel 3: ${p.personen[i]} heeft ${lijst.length} aanwijzingen (max ${plafond})`);
     }
   });
+  if (sjabloon) {
+    // Regel 9: elke verdachte precies één eigen aanwijzing (criterium 9).
+    const eigen = ruw.filter(isEigen);
+    p.personen.forEach((_, i) => {
+      if (i === p.slachtofferIdx) return;
+      const aantal = eigen.filter((c) => c.p === i).length;
+      if (aantal !== 1) fouten.push(`regel 9: ${p.personen[i]} heeft ${aantal} eigen aanwijzingen`);
+    });
+    // Regel 10: relationeel en algemeen samen hooguit ceil(personen / 3).
+    const samen = ruw.length - eigen.length;
+    const max = Math.ceil(p.personen.length / 3);
+    if (samen > max) fouten.push(`regel 10: ${samen} aanwijzingen over twee of iedereen (max ${max})`);
+    // Regel 11: minstens de helft over iets op het bord; vanaf niveau drie
+    // een stuk om op te zitten en een "of" (criterium 11 van beide specs).
+    if (eigen.filter(overStuk).length * 2 < eigen.length) fouten.push(`regel 11: ${eigen.filter(overStuk).length} van ${eigen.length} eigen aanwijzingen over het bord`);
+    if (p.niveau >= 3 && !ruw.some(opIets)) fouten.push('regel 11: geen aanwijzing over iemand op een stuk');
+    if (p.niveau >= 3 && !ruw.some(isOf)) fouten.push('regel 11: geen "of"');
+    // Regel 12: de menselijke solver lost hem op, binnen de band (criterium 7).
+    if (uniek) {
+      const mis = bandMis(redeneer(p._rooster, ruw), params.bouw.band);
+      if (mis) fouten.push(`regel 12: buiten de band van niveau ${p.niveau} (mis ${mis.toFixed(2)})`);
+    }
+  }
 
   const perSoort = new Map();
   for (const c of ruw) perSoort.set(c.soort, (perSoort.get(c.soort) ?? 0) + 1);
@@ -62,16 +92,20 @@ export function keur(p, { hint = null, uniek = true } = {}) {
     if (aantal > max) fouten.push(`regel 4: ${soort} ${aantal} van ${ruw.length} keer (max ${max})`);
   }
 
-  if (params.minVrij) {
+  const minVrij = params.bouw?.minVrij ?? params.minVrij;
+  if (minVrij) {
     for (const c of ruw) {
       if (c.p == null || c.q != null) continue;
       const over = vakjesOver(p._rooster, c);
-      if (over < params.minVrij) fouten.push(`regel 5: ${c.soort} over ${p.personen[c.p]} laat ${over} vakjes`);
+      if (over < minVrij) fouten.push(`regel 5: ${c.soort} over ${p.personen[c.p]} laat ${over} vakjes`);
     }
   }
 
   for (const c of [...ruw, ...(hint ? [hint] : [])]) {
-    if (c.p === p.slachtofferIdx || c.q === p.slachtofferIdx) fouten.push(`regel 6: ${c.soort} noemt het slachtoffer`);
+    // Ook niet als de ander in een paar, een "ofwel" of een "wie op het
+    // kleed" (Guus, 2026-11-18): de naam komt in geen enkele aanwijzing voor.
+    if (c.p === p.slachtofferIdx || c.q === p.slachtofferIdx || c.ref === p.slachtofferIdx) fouten.push(`regel 6: ${c.soort} noemt het slachtoffer`);
+    if (zinVoor(c, p.woorden).includes(p.slachtofferNaam)) fouten.push(`regel 6: de zin noemt ${p.slachtofferNaam}`);
   }
   if (uniek) {
     const uit = telPlaatsingen(p._rooster, ruw, 2, 30000 * p._rooster.n);
@@ -79,6 +113,9 @@ export function keur(p, { hint = null, uniek = true } = {}) {
   }
   if (params.style === 'shallow') {
     ruw.forEach((c, i) => {
+      // Een eigen aanwijzing hoort er ook als hij niets toevoegt: iedereen
+      // krijgt er één (criterium 9).
+      if (sjabloon && isEigen(c)) return;
       if (graad(p._rooster, ruw.filter((_, j) => j !== i)).opgelost) {
         fouten.push(`regel 8: ${c.soort}${c.p != null ? ` over ${p.personen[c.p]}` : ''} is overbodig`);
       }
@@ -155,14 +192,17 @@ function tweeVakjes() {
     ], 'regel 4'],
     ['een aanwijzing die twee vakjes laat', ...tweeVakjes(), 'regel 5'],
     // Een ware aanwijzing erbij op een bord dat al vastlag: die is overbodig.
+    // Niveau 2 bouwt met een sjabloon: een eigen aanwijzing mag overbodig
+    // zijn, een over twee mensen niet.
     ['een overbodige aanwijzing', p2, [...p2._ruwe, (() => {
-      const cel = p2.oplossing[v2];
       const n = p2._rooster.n;
-      const r = Math.floor(cel / n);
-      const k = cel % n;
-      return { soort: 'rand', p: v2, ja: r === 0 || k === 0 || r === n - 1 || k === n - 1 };
+      const [a, b] = [v2, ander(p2)];
+      return Math.floor(p2.oplossing[a] / n) < Math.floor(p2.oplossing[b] / n) ? { soort: 'noord', p: a, q: b } : { soort: 'noord', p: b, q: a };
     })()], 'regel 8'],
+    ['twee eigen aanwijzingen voor één naam', p2, [...p2._ruwe, { soort: 'rand', p: v2, ja: true }], 'regel 9'],
     ['een aanwijzing over het slachtoffer', p2, [...p2._ruwe, { soort: 'rand', p: p2.slachtofferIdx, ja: true }], 'regel 6'],
+    ['een "wie op" met het slachtoffer als ander', p2, [...p2._ruwe, { soort: 'wieOp', t: 'kruk', ref: p2.slachtofferIdx, rel: 'noord' }], 'regel 6'],
+    ['een "ofwel" met het slachtoffer', p2, [...p2._ruwe, { soort: 'ofwelPersoon', p: v2, q: p2.slachtofferIdx, a: { soort: 'kamer', kamerIdx: 0, ja: true } }], 'regel 6'],
   ];
   for (const [wat, p, ruw, regel] of proeven) {
     const uit = keur(metAanwijzingen(p, ruw), { uniek: false });

@@ -19,7 +19,7 @@ if (p.kind === 'kamer') {
     for (let k = 0; k < r.n; k++) {
       const cel = rij * r.n + k;
       const wie = p.oplossing.indexOf(cel);
-      regel += wie >= 0 ? p.personen[wie].charAt(0) : r.meubelOp[cel] != null ? '#' : '.';
+      regel += wie >= 0 ? p.personen[wie].charAt(0) : r.meubelOp[cel] == null ? '.' : r.vrij[cel] ? '~' : '#';
       regel += String.fromCharCode(97 + r.kamerVan[cel]) + ' ';
     }
     console.log(regel);

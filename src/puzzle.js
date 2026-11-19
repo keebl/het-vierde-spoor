@@ -11,14 +11,18 @@ import { generateLatin, latinDepth } from './engine/latin.js';
 import { genereerKamerpuzzel } from './engine/generate-rooms.js';
 import { kamerParams } from './engine/difficulty.js';
 import { zinVoor, namenIn } from './content/rooms-text.js';
-import { soortVan, meubelsVoor, vormVan } from './content/kamersoorten.js';
+import {
+  soortVan, meubelsVoor, blokMeubelsVoor, vormVan, rekwisietenVoor, TYPE_VAN_TEKENING, REKWISIETTYPEN, BUITEN_SOORTEN, VAKER,
+} from './content/kamersoorten.js';
 import { makeRng } from './engine/rng.js';
 import { ZAKEN, stilSlot } from './content/zaken.js';
 import { geslachtVan } from './content/namen.js';
 
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
-export function buildPuzzle(settings) {
+// `gen`: een bord dat al gebouwd is (door de worker of uit de opslag);
+// dan wordt alleen nog aangekleed.
+export function buildPuzzle(settings, { gen = null } = {}) {
   const { opdracht, wereld, mechaniek, niveau, seed } = settings;
   const world = WORLD_BY_ID.get(wereld);
   const assignment = ASSIGNMENT_BY_ID.get(opdracht);
@@ -27,7 +31,7 @@ export function buildPuzzle(settings) {
   if (!assignment.mechanics.includes(mechaniek)) {
     throw new Error(`${assignment.name} werkt niet met ${mechaniek}`);
   }
-  if (mechaniek === 'kamer') return buildKamerPuzzle({ world, settings });
+  if (mechaniek === 'kamer') return buildKamerPuzzle({ world, settings, gen: gen ? genUitData(gen) : null });
   const params = levelParams(niveau);
   return mechaniek === 'latin'
     ? buildLatinPuzzle({ world, params, settings })
@@ -262,15 +266,27 @@ function noemKamers(rooster, voorraad, rng) {
   // lukraak: de grootste kamers die nog open liggen krijgen de zaalnamen en
   // de kleinste de hoeknamen, zodat een zaal nooit kleiner uitvalt dan een
   // nis.
+  // Strooknamen komen als laatste: hierboven liggen de langste kamers al
+  // weggegeven, dus een strooknaam hier viel op een kamer die korter is dan
+  // een put of nis ("de smalle schacht" op een vlak van 4x5, catacomben,
+  // veegronde fase B). `stroken` telt al genoeg strooknamen voor wat de
+  // andere namen niet dekken, dus de strooknamen raken hier nooit aan de beurt.
   open.sort((a, b) => b.cellen - a.cellen || a.k - b.k);
-  const rest = [...emmer.groot, ...emmer.vrij, ...emmer.smal, ...emmer.klein];
+  const rest = [...emmer.groot, ...emmer.vrij, ...emmer.klein, ...emmer.smal];
   for (const m of open) namen[m.k] = rest.shift();
   return namen;
 }
 
 
 
-function buildKamerPuzzle({ world, settings }) {
+// Het dure deel van een Reconstructie: het bord en de aanwijzingen. Los van
+// de rest, zodat een Web Worker het kan doen terwijl de pagina blijft
+// reageren (specs/engine-extension.md stap 10), en zodat een gebouwd bord
+// bewaard kan worden (stap 11). Wat eruit komt is gewone data (genNaarData).
+// `voortgang(t, pogingen)` loopt na elke poging.
+export function bouwKamerGen(settings, voortgang = null) {
+  const world = WORLD_BY_ID.get(settings.wereld);
+  if (!world) throw new Error(`onbekende wereld: ${settings.wereld}`);
   const { seed, niveau } = settings;
   const params = kamerParams(niveau);
   // De wereld bepaalt hoeveel verschillende meubels en kamers er benoembaar
@@ -290,14 +306,64 @@ function buildKamerPuzzle({ world, settings }) {
   const soortenHier = new Set(
     [...world.places, ...(world.plekkenXL ?? [])].map(soortVan),
   );
+  // Alleen de blokken tellen: de zitstukken komen uit hun eigen voorraad
+  // (rekwisietenVoor).
   const krapste = Math.min(
-    ...[...soortenHier].map((s) => meubelsVoor(s, world.id).flat().length),
+    ...[...soortenHier].map((s) => blokMeubelsVoor(s, world.id).flat().length),
   );
+  // De kamers krijgen hun naam nu al tijdens het bouwen, want wat er in een
+  // kamer kan staan hangt af van wat voor kamer het is: een paard in de
+  // stal, een kleed in de bibliotheek. De motor vraagt het per poging.
+  const inrichting = (rooster, rng) => {
+    const voorraad = rooster.kamers <= world.places.length ? world.places : [...world.places, ...(world.plekkenXL ?? [])];
+    const kamerNamen = noemKamers(rooster, voorraad, rng);
+    const aanbod = kamerNamen.map((plek) => rekwisietenVoor(plek, world.id).map(([naam, icoon]) => {
+      const type = TYPE_VAN_TEKENING[icoon];
+      return {
+        sleutel: naam, type, houding: REKWISIETTYPEN[type].houding,
+        kleed: !!REKWISIETTYPEN[type].kleed, vaker: VAKER.includes(icoon),
+      };
+    }));
+    const binnen = kamerNamen.map((plek) => !BUITEN_SOORTEN.includes(soortVan(plek)));
+    return { kamerNamen, aanbod, binnen };
+  };
   const gen = genereerKamerpuzzel(seed, {
     ...params,
-    kamers: Math.min(params.kamers, world.places.length + (world.plekkenXL?.length ?? 0)),
+    kamers: Math.min(params.bouw?.kamers ?? params.kamers, world.places.length + (world.plekkenXL?.length ?? 0)),
     maxMeubels: Math.min(20, krapste),
+    inrichting,
+    voortgang,
   });
+  return gen;
+}
+
+// Een gebouwd bord als gewone data: wat de worker terugstuurt en wat de
+// opslag bewaart. Zonder de tussenstanden (_buren en dergelijke) en met de
+// Set van de ramen als lijst.
+// De versie van motor en inhoud waarmee een bord gebouwd is. Een bewaard
+// bord (IndexedDB, pool/) van een andere versie telt niet: na een wijziging
+// aan de motor of de inrichting zou dezelfde link anders een ander bord
+// geven dan een nieuwe bezoeker ziet (review fase B). Ophogen bij elke
+// wijziging die borden verschuift; tools/pool.mjs schrijft hem mee.
+export const BORDVERSIE = 'b2';
+
+const GEN_VELDEN = ['plaats', 'slachtofferIdx', 'dader', 'kamerIdx', 'aanwijzingen', 'graad', 'mis', 'poging'];
+const ROOSTER_VELDEN = ['n', 'kamerVan', 'meubelOp', 'vrij', 'kamers', 'meubelAantal', 'blokAantal', 'stukken', 'ramen', 'kamerNamen'];
+export function genNaarData(gen) {
+  const uit = { versie: BORDVERSIE, rooster: {} };
+  for (const k of GEN_VELDEN) if (gen[k] !== undefined) uit[k] = gen[k];
+  for (const k of ROOSTER_VELDEN) uit.rooster[k] = gen.rooster[k];
+  return JSON.parse(JSON.stringify(uit));
+}
+export function genUitData(data) {
+  const rooster = { ...data.rooster };
+  rooster.raamCel = new Set((rooster.ramen ?? []).map((r) => r.cel));
+  return { ...data, rooster };
+}
+
+function buildKamerPuzzle({ world, settings, gen: klaar = null }) {
+  const { seed, niveau } = settings;
+  const gen = klaar ?? bouwKamerGen(settings);
   const rng = makeRng(`${seed}:kamerwoorden`);
 
   // Elke figuur op het bord krijgt een naam. Een van hen is het slachtoffer:
@@ -352,11 +418,7 @@ function buildKamerPuzzle({ world, settings }) {
   const zaak = zRng.pick(ZAKEN);
   const zin = zRng.pick(zaak.opdracht);
 
-  const kamerNamen = noemKamers(
-    gen.rooster,
-    gen.rooster.kamers <= world.places.length ? world.places : [...world.places, ...(world.plekkenXL ?? [])],
-    rng,
-  );
+  const kamerNamen = gen.rooster.kamerNamen;
   // Een meubelstuk krijgt zijn naam van de kamer waarin het staat: in de
   // keuken een koelkast, in het grafvertrek een sarcofaag. Namen blijven
   // binnen een puzzel uniek, want de aanwijzingen verwijzen ernaar.
@@ -366,10 +428,18 @@ function buildKamerPuzzle({ world, settings }) {
   const voorraad = new Map();
   for (let cel = 0; cel < gen.rooster.n * gen.rooster.n; cel++) {
     const mi = gen.rooster.meubelOp[cel];
-    if (mi == null) continue;
+    if (mi == null || meubelNamen[mi]) continue;
+    // Een stuk waar je op kunt zitten heeft zijn naam al uit de inrichting.
+    const stuk = gen.rooster.stukken[mi];
+    if (stuk.houding !== 'blok') {
+      meubelNamen[mi] = stuk.sleutel;
+      meubelIconen[mi] = new Map(rekwisietenVoor(kamerNamen[gen.rooster.kamerVan[cel]], world.id)).get(stuk.sleutel);
+      continue;
+    }
+    if (stuk.naamloos) continue;
     const soort = soortVan(kamerNamen[gen.rooster.kamerVan[cel]]);
     if (!voorraad.has(soort)) {
-      const [eigen, verwant] = meubelsVoor(soort, world.id);
+      const [eigen, verwant] = blokMeubelsVoor(soort, world.id);
       // Eerst alles wat in deze soort ruimte hoort, daarna pas wat in een
       // verwante ruimte past. Een keuken levert nooit meubilair voor een bos.
       voorraad.set(soort, [...rng.shuffle(eigen), ...rng.shuffle(verwant)]);
@@ -380,11 +450,46 @@ function buildKamerPuzzle({ world, settings }) {
     meubelNamen[mi] = keuze[0];
     meubelIconen[mi] = keuze[1];
   }
+  // De naamloze blokken (extraDeel, niveau vijf en zes): een tekening uit de
+  // eigen soort ruimte, nooit de naam van een blok dat in een aanwijzing
+  // staat. Ze mogen elkaars naam delen; geen zin noemt ze. Raakt de soort
+  // op (in het woud: negentien namen, negentien benoemde blokken), dan lenen
+  // ze de naam van een benoemd blok dat geen zin noemt: twee boomstronken
+  // zonder aanwijzing zijn niet dubbelzinnig, een tweede "de boomstronk"
+  // naast een aanwijzing over de boomstronk wel (veegronde fase B).
+  const genoemd = new Set();
+  for (const c of gen.aanwijzingen) {
+    for (const m of [c.m, c.a?.m, c.b?.m]) if (m != null) genoemd.add(meubelNamen[m]);
+  }
+  for (let cel = 0; cel < gen.rooster.n * gen.rooster.n; cel++) {
+    const mi = gen.rooster.meubelOp[cel];
+    if (mi == null || meubelNamen[mi] || !gen.rooster.stukken[mi].naamloos) continue;
+    const soort = soortVan(kamerNamen[gen.rooster.kamerVan[cel]]);
+    const [eigen, verwant] = blokMeubelsVoor(soort, world.id);
+    const alle = [...eigen, ...verwant];
+    const vrijeNamen = alle.filter(([naam]) => !gebruikt.has(naam));
+    const leenbaar = alle.filter(([naam]) => !genoemd.has(naam));
+    const keuze = vrijeNamen.length ? rng.pick(vrijeNamen)
+      : leenbaar.length ? rng.pick(leenbaar) : rng.pick(eigen);
+    meubelNamen[mi] = keuze[0];
+    meubelIconen[mi] = keuze[1];
+  }
   // Hoe de wereld een ruimte noemt, met voorzetsel en al: "in dezelfde
   // kamer", "op dezelfde plek", "in hetzelfde gewelf".
   const zelfde = (world.sameRoom ?? 'in dezelfde kamer als').replace(/ als$/, '');
 
+  // Hoeveel stukken van elk type er liggen, en hoe het enige heet: "op het
+  // paard" als er één is, "op een kruk" als er drie zijn (rooms-text.js).
+  const typeAantal = {};
+  const typeNaam = {};
+  gen.rooster.stukken.forEach((st, m) => {
+    if (!st.type) return;
+    typeAantal[st.type] = (typeAantal[st.type] ?? 0) + 1;
+    typeNaam[st.type] = meubelNamen[m];
+  });
   const woorden = {
+    typeAantal,
+    typeNaam,
     personen: namen,
     kamerNamen,
     meubelNamen,
@@ -436,6 +541,7 @@ function buildKamerPuzzle({ world, settings }) {
     // het bord
     n: gen.rooster.n,
     kamerVan: gen.rooster.kamerVan,
+    ramen: gen.rooster.ramen ?? [],
     kamerNamen,
     meubelOp: gen.rooster.meubelOp,
     meubelNamen,
@@ -453,6 +559,8 @@ function buildKamerPuzzle({ world, settings }) {
     woorden,
     _rooster: gen.rooster,
     _ruwe: gen.aanwijzingen,
+    // Hoe ver de bouwer van zijn sjabloon zat (0 = goed); de keuring valt erover.
+    _mis: gen.mis ?? 0,
   };
 }
 

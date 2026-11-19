@@ -406,6 +406,7 @@ export const VOORZETSEL_VAN = {
   // lijst plekken is toen nagelopen op hetzelfde soort woord.
   'het schoolplein': 'op',
   'de regenachtige binnenplaats': 'op',
+  'de kinderboerderij': 'op',
   'de dienstbodentrap': 'op',
   'het besneeuwde terras': 'op',
   'het dakterras': 'op',
@@ -1610,3 +1611,148 @@ const omdopen = ([naam, icoon], laag) => {
   const nieuw = laag?.anders?.[naam];
   return nieuw ? [nieuw[0], nieuw[1] ?? icoon] : [naam, icoon];
 };
+
+// ---------------------------------------------- waar je op kunt zitten
+//
+// specs/props-and-either-clues.md, deel A. Tot nu toe was elk meubelstuk een
+// muur in vermomming: op een vakje met een stoel kon niemand staan, ook niet
+// zitten. Nu heeft elk stuk een houding:
+//
+//   blok   niemand staat erop (alles wat hieronder niet staat)
+//   zit    een stoel, een bank, een kruk, een schommel
+//   lig    een bed, een ligbed, een hangmat
+//   sta    een kleed, een mat, de duikplank
+//   rijd   een paard, een pony, een fiets, een botsauto
+//
+// De houding hangt aan de tekening, niet aan de naam. Een wereld kan een
+// stuk omdopen ("de leesstoel" heet op het kantoor "de draaistoel"), maar
+// wat je op het bord ziet is een stoel, dus je zit erop. Zo lieg een
+// omgedoopt stuk nooit over wat je ermee kunt (CLAUDE.md: if a drawing lies,
+// draw it).
+//
+// Het type is wat een aanwijzing noemt: "Pien zat op een stoel" geldt voor
+// de leesstoel, de leren fauteuil en de bureaustoel tegelijk.
+export const TYPE_VAN_TEKENING = {
+  stoel: 'stoel', fauteuil: 'stoel', rietenstoel: 'stoel', bureaustoel: 'stoel',
+  gamestoel: 'stoel', stuurstoel: 'stoel',
+  zitzak: 'zitzak',
+  marmerbank: 'bank', wachtbank: 'bank', loungebank: 'bank', mosbank: 'bank', bidbank: 'bank',
+  zitblok: 'kruk', kruk: 'kruk',
+  stam: 'boomstam',
+  schommel: 'schommel',
+  bed: 'bed', ziekenhuisbed: 'bed', slaapcapsule: 'slaapcapsule', ligbed: 'ligbed', hangmat: 'hangmat',
+  kleedperzisch: 'kleed', kleedstreep: 'kleed', kleedruit: 'kleed',
+  deurmat: 'mat', mosmat: 'mat', duikplank: 'duikplank',
+  paard: 'paard', pony: 'pony', ezel: 'ezel', draaimolenpaard: 'draaimolenpaard',
+  botsauto: 'botsauto', fiets: 'fiets', deelscooter: 'step',
+};
+
+// Per type: de houding, hoe het heet (lidwoord, enkelvoud, meervoud) en hoe
+// je erop bent. Het werkwoord komt van het type, niet van de aanwijzing: je
+// zit op een stoel, je ligt in een bed maar op een ligbed, je rijdt op een
+// paard en je zit in een botsauto. `kleed` beslaat meer vakjes (zie
+// richIn in rooms.js); alle andere stukken één.
+export const REKWISIETTYPEN = {
+  stoel:           { houding: 'zit', lw: 'de', een: 'stoel', meer: 'stoelen', was: 'zat', is: 'zit', vz: 'op' },
+  zitzak:          { houding: 'zit', lw: 'de', een: 'zitzak', meer: 'zitzakken', was: 'zat', is: 'zit', vz: 'in' },
+  bank:            { houding: 'zit', lw: 'de', een: 'bank', meer: 'banken', was: 'zat', is: 'zit', vz: 'op' },
+  kruk:            { houding: 'zit', lw: 'de', een: 'kruk', meer: 'krukken', was: 'zat', is: 'zit', vz: 'op' },
+  boomstam:        { houding: 'zit', lw: 'de', een: 'boomstam', meer: 'boomstammen', was: 'zat', is: 'zit', vz: 'op' },
+  schommel:        { houding: 'zit', lw: 'de', een: 'schommel', meer: 'schommels', was: 'zat', is: 'zit', vz: 'op' },
+  bed:             { houding: 'lig', lw: 'het', een: 'bed', meer: 'bedden', was: 'lag', is: 'ligt', vz: 'in' },
+  slaapcapsule:    { houding: 'lig', lw: 'de', een: 'slaapcapsule', meer: 'slaapcapsules', was: 'lag', is: 'ligt', vz: 'in' },
+  ligbed:          { houding: 'lig', lw: 'het', een: 'ligbed', meer: 'ligbedden', was: 'lag', is: 'ligt', vz: 'op' },
+  hangmat:         { houding: 'lig', lw: 'de', een: 'hangmat', meer: 'hangmatten', was: 'lag', is: 'ligt', vz: 'in' },
+  kleed:           { houding: 'sta', lw: 'het', een: 'kleed', meer: 'kleden', was: 'stond', is: 'staat', vz: 'op', kleed: true },
+  mat:             { houding: 'sta', lw: 'de', een: 'mat', meer: 'matten', was: 'stond', is: 'staat', vz: 'op' },
+  duikplank:       { houding: 'sta', lw: 'de', een: 'duikplank', meer: 'duikplanken', was: 'stond', is: 'staat', vz: 'op' },
+  paard:           { houding: 'rijd', lw: 'het', een: 'paard', meer: 'paarden', was: 'reed', is: 'rijdt', vz: 'op' },
+  pony:            { houding: 'rijd', lw: 'de', een: 'pony', meer: "pony's", was: 'reed', is: 'rijdt', vz: 'op' },
+  ezel:            { houding: 'rijd', lw: 'de', een: 'ezel', meer: 'ezels', was: 'reed', is: 'rijdt', vz: 'op' },
+  draaimolenpaard: { houding: 'rijd', lw: 'het', een: 'draaimolenpaard', meer: 'draaimolenpaarden', was: 'zat', is: 'zit', vz: 'op' },
+  botsauto:        { houding: 'rijd', lw: 'de', een: 'botsauto', meer: "botsauto's", was: 'zat', is: 'zit', vz: 'in' },
+  fiets:           { houding: 'rijd', lw: 'de', een: 'fiets', meer: 'fietsen', was: 'reed', is: 'rijdt', vz: 'op' },
+  step:            { houding: 'rijd', lw: 'de', een: 'step', meer: 'steps', was: 'reed', is: 'rijdt', vz: 'op' },
+};
+
+export const houdingVanTekening = (icoon) => REKWISIETTYPEN[TYPE_VAN_TEKENING[icoon]]?.houding ?? 'blok';
+
+// Wat er naast de zitstukken uit MEUBELS_VAN nog in een soort ruimte kan
+// liggen of staan. `tijd: 'nu'` alleen in een wereld van nu, `tijd:
+// 'vroeger'` alleen daarbuiten. Elke naam één tekening, zoals overal.
+export const REKWISIETEN_VAN = {
+  keuken: [['de kruk', 'kruk']],
+  zaal: [['het Perzische kleed', 'kleedperzisch'], ['de kruk', 'kruk']],
+  bibliotheek: [['het geruite kleed', 'kleedruit'], ['de kruk', 'kruk']],
+  sterrenwacht: [['het geruite kleed', 'kleedruit'], ['de kruk', 'kruk']],
+  slaapkamer: [['het gestreepte kleed', 'kleedstreep']],
+  gang: [['de deurmat', 'deurmat'], ['het gestreepte kleed', 'kleedstreep']],
+  kelder: [['de kruk', 'kruk']],
+  werkplaats: [['de kruk', 'kruk']],
+  laboratorium: [['de kruk', 'kruk']],
+  buiten: [
+    ['de hangmat', 'hangmat'], ['de schommel', 'schommel'], ['de mosmat', 'mosmat', { tijd: 'vroeger' }],
+    ['de fiets', 'fiets', { tijd: 'nu' }],
+  ],
+  serre: [['de hangmat', 'hangmat']],
+  grafkelder: [],
+  bad: [],
+};
+
+// Wat vaker op één bord mag liggen, onder dezelfde naam. Een keuken met drie
+// krukken heeft drie krukken; een aanwijzing zegt dan "op een kruk", nooit
+// "op de kruk" (zie zinVoor in rooms-text.js). Een stuk met een eigen naam
+// ("de leren fauteuil") komt maar één keer voor.
+export const VAKER = ['kruk', 'kleedperzisch', 'kleedstreep', 'kleedruit', 'deurmat', 'mosmat', 'bidbank', 'zitblok', 'botsauto'];
+
+// Rijdieren alleen waar een plek het eerlijk maakt (Guus, 2026-11-17): een
+// stal, een binnenplaats, een weide, de kermis. Niet binnen in een landhuis.
+export const RIJDIEREN_VAN_PLEK = {
+  'de koetshuisstal': [['het paard', 'paard']],
+  'de regenachtige binnenplaats': [['het paard', 'paard']],
+  'de kinderboerderij': [['de pony', 'pony'], ['de ezel', 'ezel']],
+  'de picknickweide': [['de pony', 'pony']],
+  'de draaimolen': [['het draaimolenpaard', 'draaimolenpaard']],
+  'de botsautobaan': [['het botsautootje', 'botsauto']],
+};
+
+// Een wereld die maar een paar typen eerlijk kan tekenen. Een ruimteschip
+// en een ruimtestation hebben stoelen, banken en kooien, geen Perzisch kleed
+// (spec, deel A: "seats and bunks only").
+export const WERELDREKWISIETEN = {
+  station: ['stoel', 'bank', 'kruk', 'bed', 'slaapcapsule', 'zitzak'],
+  ruimteschip: ['stoel', 'bank', 'kruk', 'bed', 'slaapcapsule', 'zitzak'],
+};
+
+// Een wereld waar elke plek buiten is, ook als de soort iets anders zegt:
+// in het woud heet een holle eik een kelder (voor zijn vloer en zijn
+// meubilair), maar er staat geen kruk in. Daar komt alles van buiten.
+export const WERELDREKWISIETSOORT = { woud: 'buiten' };
+
+// Buiten heeft geen muur, dus ook geen raam. Een bad ook niet.
+export const BUITEN_SOORTEN = ['buiten', 'bad'];
+
+// Alles waar je in deze plek op kunt zitten, liggen, staan of rijden, met
+// de namen van deze wereld: de zitstukken die de soort zelf al had, wat
+// REKWISIETEN_VAN erbij zet, en de rijdieren van de plek.
+export function rekwisietenVoor(plek, wereld) {
+  const soort = WERELDREKWISIETSOORT[wereld] ?? soortVan(plek);
+  const modern = MODERNE_WERELDEN.includes(wereld);
+  const [eigen] = meubelsVoor(soort, wereld);
+  const zitstukken = eigen.filter(([, icoon]) => TYPE_VAN_TEKENING[icoon]);
+  const extra = (REKWISIETEN_VAN[soort] ?? [])
+    .filter(([, , o]) => !o?.tijd || o.tijd === (modern ? 'nu' : 'vroeger'))
+    .map(([naam, icoon]) => [naam, icoon]);
+  let alles = [...zitstukken, ...extra, ...(RIJDIEREN_VAN_PLEK[plek] ?? [])];
+  if (modern) alles = alles.filter(([, icoon]) => !OUDERWETS.includes(icoon));
+  const alleen = WERELDREKWISIETEN[wereld];
+  if (alleen) alles = alles.filter(([, icoon]) => alleen.includes(TYPE_VAN_TEKENING[icoon]));
+  const gezien = new Set();
+  return alles.filter(([naam]) => (gezien.has(naam) ? false : gezien.add(naam)));
+}
+
+// Het meubilair waar niemand op kan: wat overblijft als de zitstukken eruit
+// zijn. Daaruit kiest buildKamerPuzzle de blokken.
+export function blokMeubelsVoor(soort, wereld) {
+  return meubelsVoor(soort, wereld).map((lijst) => lijst.filter(([, icoon]) => !TYPE_VAN_TEKENING[icoon]));
+}

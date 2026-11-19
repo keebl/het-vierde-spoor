@@ -2888,4 +2888,150 @@ export const GESCHILDERD = {
     v('scherm', romp(13.2, 3.8, 17.6, 8.6, { taps: 0 }), { glans: 1 }),
     v('kunststofwit', plaat(14, 15.8, 14, 1.6, { zak: 0.1 })),
   ],
+  // ================================================= om op te zitten en te staan
+  //
+  // specs/props-and-either-clues.md, deel A. Op deze stukken kan iemand
+  // zitten, liggen, staan of rijden; het bord tekent de penning er kleiner
+  // overheen, dus de vorm moet ook half bedekt nog te lezen zijn: een
+  // zitting, een kleedrand, een paardenhoofd dat boven de penning uitsteekt.
+
+  // Een ronde kruk op drie poten, met een ring tussen de poten.
+  kruk: [
+    v('hout', poot(13, 24, 4, 17, { schuin: -2.4 })),
+    v('hout', poot(31, 24, 4, 17, { schuin: 2.4 })),
+    v('houtdonker', poot(22, 25, 4, 15)),
+    v('houtdonker', plaat(14, 32, 20, 2, { zak: 0.3 })),
+    vloer('hout', ovaal(24, 22, 13, 4.4)),
+    v('stofgroen', ovaal(24, 20.6, 11, 3.2), { glans: 0.6 }),
+  ],
+
+  // Drie kleden, elk met een eigen dessin. Op het bord ligt een kleed over
+  // zijn hele rechthoek (board-rooms.js); dit is het stuk zoals het in de
+  // legenda staat.
+  kleedperzisch: [
+    vloer('houtrood', romp(5, 9, 38, 30, { taps: 0.01, bol: 0.3 })),
+    v('goud', romp(8, 12, 32, 24, { taps: 0.01, bol: 0.2 })),
+    v('houtrood', romp(10.4, 14.4, 27.2, 19.2, { taps: 0.01, bol: 0.2 })),
+    v('stofblauw', 'M24 16 L33 24 L24 32 L15 24 Z'),
+    v('goud', 'M24 19.4 L29.4 24 L24 28.6 L18.6 24 Z'),
+    streep('goud', 0.9, 'M5 10 L3 8 M5 38 L3 40 M43 10 L45 8 M43 38 L45 40'),
+  ],
+  kleedstreep: [
+    vloer('stofgroen', romp(5, 9, 38, 30, { taps: 0.01, bol: 0.3 })),
+    v('papier', plaat(5.4, 14, 37.2, 3.4, { zak: 0.2 })),
+    v('stofblauw', plaat(5.4, 20, 37.2, 2.4, { zak: 0.2 })),
+    v('papier', plaat(5.4, 25, 37.2, 3.4, { zak: 0.2 })),
+    v('stofblauw', plaat(5.4, 31, 37.2, 2.4, { zak: 0.2 })),
+    streep('papier', 0.9, 'M7 39 L7 42 M13 39 L13 42 M19 39 L19 42 M25 39 L25 42 M31 39 L31 42 M37 39 L37 42'),
+  ],
+  kleedruit: [
+    vloer('stofblauw', romp(5, 9, 38, 30, { taps: 0.01, bol: 0.3 })),
+    v('papier', 'M5.4 9.4 L14 9.4 L5.4 19 Z'),
+    v('papier', 'M18 9.4 L30 9.4 L24 16 Z'),
+    v('papier', 'M34 9.4 L42.6 9.4 L42.6 19 Z'),
+    v('papier', 'M24 18 L32 24 L24 30 L16 24 Z'),
+    v('papier', 'M5.4 29 L14 38.6 L5.4 38.6 Z'),
+    v('papier', 'M24 32 L30 38.6 L18 38.6 Z'),
+    v('papier', 'M42.6 29 L42.6 38.6 L34 38.6 Z'),
+  ],
+
+  // Een kokosmat met een rode rand.
+  deurmat: [
+    vloer('houtrood', romp(7, 16, 34, 20, { taps: 0.01, bol: 0.3 })),
+    v('touw', romp(9.4, 18.4, 29.2, 15.2, { taps: 0.01, bol: 0.2 })),
+    streep('houtdonker', 0.6, 'M12 21 H36 M12 24 H36 M12 27 H36 M12 30 H36'),
+  ],
+
+  // Een mat van mos: een groene, bobbelige plak met een paar steeltjes.
+  mosmat: [
+    vloer('blad', 'M6 30 Q5 21 13 19 Q18 14 26 17 Q35 14 40 21 Q45 27 40 33 Q33 38 24 36 Q12 38 6 30 Z'),
+    v('blad', bol(15, 25, 4), { glans: 0.5 }),
+    v('blad', bol(29, 23, 4.6), { glans: 0.5 }),
+    v('blad', bol(35, 30, 3.4), { glans: 0.5 }),
+    streep('houtdonker', 0.8, 'M20 28 L19 23 M24 30 L25 25 M31 31 L31 27'),
+  ],
+
+  // Een hangmat tussen twee palen.
+  hangmat: [
+    vloer('hout', poot(3, 8, 3.6, 33)),
+    v('hout', poot(41.4, 8, 3.6, 33)),
+    streep('touw', 0.9, 'M5 12 L10 22 M43 12 L38 22'),
+    v('stofblauw', 'M9 21 Q24 36 39 21 L39 25 Q24 40 9 25 Z'),
+    v('papier', 'M11 23.4 Q24 34.6 37 23.4 L37 24.6 Q24 36 11 24.6 Z'),
+  ],
+
+  // Een schommel: een plankje aan twee touwen onder een balk.
+  schommel: [
+    v('hout', plaat(3, 4, 42, 4, { zak: 0.4 })),
+    vloer('houtdonker', poot(4, 7, 3.4, 34, { schuin: -1 })),
+    v('houtdonker', poot(40.6, 7, 3.4, 34, { schuin: 1 })),
+    streep('touw', 1, 'M15 8 L15 29 M33 8 L33 29'),
+    v('houtrood', plaat(12, 28, 24, 4, { zak: 0.6 })),
+  ],
+
+  // Een paard van opzij, met zadel, zodat er iemand op kan.
+  paard: [
+    vloer('houtrood', poot(12, 30, 4, 13)),
+    v('houtrood', poot(32, 30, 4, 13)),
+    v('houtdonker', poot(16, 30, 3.4, 12)),
+    v('houtdonker', poot(28, 30, 3.4, 12)),
+    v('houtrood', romp(9, 19, 30, 14, { taps: -0.04, bol: 2, kroon: 2, voet: 2 })),
+    v('houtrood', 'M33 22 Q35 12 39 8 L45 10 Q46 14 42 15 L39 16 Q38 22 37 26 Z'),
+    v('donker', 'M33 21 Q34 12 38 7 L37 13 Q35 18 35 23 Z'),
+    v('donker', 'M9 21 Q4 26 6 34 Q8 28 10 24 Z'),
+    v('donker', bol(41, 11, 0.9)),
+    v('stofblauw', 'M17 19 Q22 15 28 19 L27 25 Q22 27 18 25 Z'),
+  ],
+
+  // Een pony: lager en ronder dan het paard, met een volle manen.
+  pony: [
+    vloer('papier', poot(13, 32, 4.4, 10)),
+    v('papier', poot(30, 32, 4.4, 10)),
+    v('steen', poot(17, 32, 3.6, 9)),
+    v('steen', poot(26, 32, 3.6, 9)),
+    v('papier', romp(10, 22, 26, 13, { taps: -0.04, bol: 2.4, kroon: 2, voet: 2 })),
+    v('papier', 'M31 25 Q33 16 37 13 L43 15 Q44 19 40 20 L37 21 Q36 26 35 29 Z'),
+    v('houtdonker', 'M30 24 Q31 15 37 11 L36 17 Q33 21 33 27 Z'),
+    v('houtdonker', 'M10 24 Q5 28 7 36 Q9 30 11 27 Z'),
+    v('donker', bol(39.6, 16, 0.9)),
+  ],
+
+  // Een ezel: grijs, met lange oren.
+  ezel: [
+    vloer('steen', poot(13, 31, 4, 11)),
+    v('steen', poot(30, 31, 4, 11)),
+    v('steenkoel', poot(17, 31, 3.4, 10)),
+    v('steenkoel', poot(26, 31, 3.4, 10)),
+    v('steen', romp(10, 21, 26, 13, { taps: -0.04, bol: 2, kroon: 1.6, voet: 2 })),
+    v('steen', 'M31 24 Q33 16 36 14 L42 16 Q43 20 40 21 L37 22 Q36 26 35 28 Z'),
+    v('steen', 'M34 15 L33 5 L36 6 L36.4 14 Z'),
+    v('steen', 'M36.6 14.6 L38 5 L40.4 6.4 L38.4 15 Z'),
+    v('papier', ovaal(41, 18.6, 2, 1.6)),
+    v('donker', bol(38.4, 17, 0.8)),
+    streep('donker', 0.8, 'M10 24 Q6 28 7 34'),
+  ],
+
+  // Een paard van de draaimolen: aan een gouden paal, met sierzadel.
+  draaimolenpaard: [
+    v('goud', staaf(24, 2, 24, 44, 1.8, { krimp: 0 })),
+    vloer('goud', ovaal(24, 43, 6, 1.6)),
+    v('papier', poot(13, 28, 3.4, 10, { schuin: -3 })),
+    v('papier', poot(33, 28, 3.4, 10, { schuin: 3 })),
+    v('papier', romp(10, 19, 28, 11, { taps: -0.04, bol: 2, kroon: 1.6, voet: 1.6 })),
+    v('papier', 'M33 21 Q35 12 39 9 L44 11 Q45 15 41 16 L38 17 Q37 22 36 25 Z'),
+    v('kunststofroze', 'M32 20 Q33 12 38 8 L37 14 Q35 18 35 22 Z'),
+    v('kunststofblauw', 'M17 18 Q24 14 30 18 L29 24 Q24 26 18 24 Z'),
+    v('donker', bol(41, 12, 0.9)),
+  ],
+
+  // Een fiets van opzij.
+  fiets: [
+    vloer('donker', ring(12, 32, 8, 1.8), { gat: true }),
+    v('donker', ring(36, 32, 8, 1.8), { gat: true }),
+    streep('kunststofblauw', 1.8, 'M12 32 L20 20 L32 20 L36 32 M20 20 L24 32 L32 20 M24 32 L12 32'),
+    streep('metaal', 1.4, 'M32 20 L31 13 M28 13 L35 12'),
+    v('donker', ovaal(20, 18.6, 3.6, 1.4)),
+    v('metaal', bol(24, 32, 1.6)),
+  ],
+
 };

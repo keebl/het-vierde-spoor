@@ -4,7 +4,10 @@
 // tools/check-regels.mjs rekent ze na over elke puzzel:
 //
 //   1. Een rooster van n bij n vakjes, verdeeld in aaneengesloten kamers.
-//   2. Op sommige vakjes staat een meubelstuk; daar kan niemand staan.
+//   2. Op sommige vakjes staat een meubelstuk; daar staat niemand, behalve
+//      als je erop kunt zitten, liggen, staan of rijden (een stoel, een bed,
+//      een kleed, een paard). Op zo'n stuk past één persoon, op een kleed
+//      één per vakje (specs/props-and-either-clues.md).
 //   3. Er staat precies een figuur per rij en precies een figuur per kolom.
 //   4. Het slachtoffer is zelf een van die figuren: waar het lichaam ligt moet
 //      je dus net zo goed uitpuzzelen. De dader is de enige verdachte die
@@ -13,7 +16,7 @@
 //      Een muur ertussen is geen "naast": je staat niet naast de werkbank als
 //      die aan de andere kant van de muur staat. Dat geldt voor mensen naast
 //      een meubelstuk en voor twee mensen naast elkaar. Diagonaal is nooit
-//      naast.
+//      naast. Wie op een stuk zit, staat er niet naast.
 //   6. RIJ, KOLOM, NOORD, WEST, BUITENMUUR en HOEK gaan over de plattegrond
 //      als geheel en lopen dus wel door muren heen. Noord is boven.
 //
@@ -75,7 +78,9 @@ function meubelBurenTabel(rooster) {
     const uit = [];
     for (const b of buren[i]) {
       const m = meubelOp[b];
-      if (m != null && !uit.includes(m)) uit.push(m);
+      // Wie op het kleed staat, staat er niet naast - ook al ligt het
+      // vakje naast hem ook onder het kleed.
+      if (m != null && m !== meubelOp[i] && !uit.includes(m)) uit.push(m);
     }
     tabel[i] = uit;
   }
@@ -168,7 +173,13 @@ function heeftPlaatsing(n, vrij) {
 // maxMeubels begrenst hoeveel verschillende meubels er in het rooster komen.
 // De wereld levert de namen, en er mogen er nooit meer gevraagd worden dan er
 // namen zijn - anders staat er "undefined" in een aanwijzing.
-export function bouwRooster(n, rng, { kamers, meubelDeel = 0.22, maxMeubels = Infinity }) {
+// extraDeel: daarbovenop nog zoveel naamloze blokken (een deel van de
+// vakjes). Die komen in geen enkele aanwijzing ("naast de kast" moet één kast
+// zijn), maar maken een groot bord dichter: op twaalf bij twaalf stonden er
+// hooguit twintig meubels, want zoveel namen heeft een wereld, en dan is
+// een bord te open om met één aanwijzing per persoon rond te krijgen
+// (diagnose fase B, 2026-11-18).
+export function bouwRooster(n, rng, { kamers, meubelDeel = 0.22, maxMeubels = Infinity, extraDeel = 0 }) {
   for (let poging = 0; poging < 40; poging++) {
     const kamerVan = verdeelKamers(n, kamers, rng);
     const meubelOp = new Array(n * n).fill(null);
@@ -207,9 +218,40 @@ export function bouwRooster(n, rng, { kamers, meubelDeel = 0.22, maxMeubels = In
       gezet++;
     }
     if (gezet < 2) continue;
+    const benoemd = gezet;
+    if (extraDeel > 0) {
+      // Zelfde regels: een kamer houdt minstens twee vrije vakjes, en er
+      // moet een plaatsing blijven bestaan.
+      const extra = Math.round(n * n * extraDeel);
+      const ruimte2 = grootte.map((g) => Math.max(1, Math.floor(g / (extraDeel > 0.32 ? 1.9 : 2.2))));
+      let bij = 0;
+      for (const cel of rng.shuffle([...Array(n * n).keys()])) {
+        if (bij >= extra) break;
+        if (!vrij[cel]) continue;
+        const kamer = kamerVan[cel];
+        if (inKamer[kamer] >= ruimte2[kamer]) continue;
+        const vrijInKamer = vrij.filter((v, i) => v && kamerVan[i] === kamer).length;
+        if (vrijInKamer <= 3) continue;
+        vrij[cel] = false;
+        if (!heeftPlaatsing(n, vrij)) { vrij[cel] = true; continue; }
+        meubelOp[cel] = gezet;
+        inKamer[kamer]++;
+        gezet++;
+        bij++;
+      }
+    }
     if (!heeftPlaatsing(n, vrij)) continue;
 
-    return { n, kamerVan, meubelOp, vrij, kamers, meubelAantal: gezet };
+    // Per stuk wat je ermee kunt. Deze blokken staan in de weg; wat je
+    // erop kunt, zet richIn erbij.
+    const stukken = Array.from({ length: gezet }, (_, m) => (m < benoemd
+      ? { houding: 'blok', type: null, cellen: [] }
+      : { houding: 'blok', type: null, cellen: [], naamloos: true }));
+    for (let i = 0; i < n * n; i++) if (meubelOp[i] != null) stukken[meubelOp[i]].cellen.push(i);
+    return {
+      n, kamerVan, meubelOp, vrij, kamers, meubelAantal: gezet,
+      blokAantal: gezet, benoemdAantal: benoemd, stukken, ramen: [],
+    };
   }
   throw new Error('kon geen bruikbaar rooster bouwen');
 }
@@ -238,6 +280,145 @@ export function tekenPlaatsing(rooster, rng) {
   const plaats = new Array(n);
   personen.forEach((p, r) => { plaats[p] = idx(n, r, kolVoorRij[r]); });
   return plaats;
+}
+
+// --------------------------------------------------------- de inrichting
+//
+// Wat er naast de blokken nog in een kamer staat: stukken waar je op kunt
+// zitten, liggen, staan of rijden, en ramen in de buitenmuur
+// (specs/props-and-either-clues.md deel A, specs/engine-extension.md stap 6).
+//
+// De motor weet niet wat een stoel is. Hij krijgt per kamer een aanbod van
+// de inhoud (puzzle.js, uit kamersoorten.js): per stuk een sleutel (de naam,
+// voor hem een label), het type, de houding en of het een kleed is. Hij
+// kiest, zet neer en onthoudt; wat het heet is aan de inhoud.
+//
+// Alles hier trekt uit eigen rngs (rngStukken, rngRamen): het rooster en de
+// blokken van bouwRooster verschuiven er niet door (CLAUDE.md: everything
+// follows from the seed).
+//
+// Een stuk komt alleen op een vrij vakje, dus waar iemand kan staan
+// verandert niet: heeftPlaatsing blijft waar.
+export const HOUDINGEN = ['zit', 'lig', 'sta', 'rijd'];
+
+// Kleden: een rechthoek van twee tot zes vakjes, helemaal binnen één kamer.
+const KLEEDMATEN = [[2, 3], [3, 2], [2, 2], [1, 3], [3, 1], [1, 2], [2, 1]];
+
+function zoekKleed(rooster, k, bezet, rng) {
+  const { n, kamerVan, vrij } = rooster;
+  const kan = (i) => kamerVan[i] === k && vrij[i] && !bezet[i];
+  // Een kleed laat minstens twee vrije vakjes in de kamer over: anders past
+  // de kamernaam nergens meer (een kamer van 2x2 die helemaal kleed was,
+  // stond zonder naam op het bord, 2026-11-18).
+  let los = 0;
+  for (let i = 0; i < n * n; i++) if (kan(i)) los++;
+  for (const [h, b] of rng.shuffle(KLEEDMATEN.slice(0, 3)).concat(rng.shuffle(KLEEDMATEN.slice(3)))) {
+    const starts = [];
+    for (let r = 0; r + h <= n; r++) {
+      for (let c = 0; c + b <= n; c++) {
+        let ok = true;
+        for (let dr = 0; dr < h && ok; dr++) for (let dc = 0; dc < b && ok; dc++) ok = kan(idx(n, r + dr, c + dc));
+        if (ok) starts.push([r, c]);
+      }
+    }
+    if (!starts.length || los - h * b < 2) continue;
+    const [r, c] = rng.pick(starts);
+    const cellen = [];
+    for (let dr = 0; dr < h; dr++) for (let dc = 0; dc < b; dc++) cellen.push(idx(n, r + dr, c + dc));
+    return cellen;
+  }
+  return null;
+}
+
+// inrichting: { aanbod: per kamer een lijst { sleutel, type, houding, kleed },
+//               binnen: per kamer true als er muren (en dus ramen) zijn }
+// perKamer: [min, max] stukken per kamer (KAMER_LEVELS.rekwisieten).
+export function richIn(rooster, inrichting, rngStukken, rngRamen, { perKamer = [1, 3] } = {}) {
+  const { n, kamerVan, kamers, meubelOp, vrij } = rooster;
+  const bezet = meubelOp.map((m) => m != null);
+  const gebruikt = new Set();
+  const stukken = rooster.stukken;
+  for (let k = 0; k < kamers; k++) {
+    const aanbod = (inrichting.aanbod?.[k] ?? []);
+    if (!aanbod.length) continue;
+    const vrijHier = [];
+    for (let i = 0; i < n * n; i++) if (kamerVan[i] === k && vrij[i]) vrijHier.push(i);
+    const [lo, hi] = perKamer;
+    let doel = lo + rngStukken.int(hi - lo + 1);
+    doel = Math.min(doel, Math.max(1, Math.floor(vrijHier.length / 2)));
+    // Eerst de kleden: die hebben ruimte nodig, en een kruk past daarna
+    // nog wel ergens.
+    const keuzes = [];
+    const opties = rngStukken.shuffle(aanbod);
+    // Een stuk met een eigen naam één keer per bord; wat vaker mag (een
+    // kruk, een kleed) vult aan tot het doel.
+    for (const o of opties) {
+      if (keuzes.length >= doel) break;
+      if (gebruikt.has(o.sleutel) || keuzes.includes(o)) continue;
+      keuzes.push(o);
+    }
+    const vaker = opties.filter((o) => o.vaker);
+    // Herhalen alleen tot het minimum: drie krukken in een keuken is een
+    // keuken, zes is een rommelhok (gezien in de dierentuin, 2026-11-18).
+    for (let j = 0; keuzes.length < Math.min(doel, lo) && vaker.length && j < doel; j++) keuzes.push(vaker[j % vaker.length]);
+    keuzes.sort((a, b) => Number(!!b.kleed) - Number(!!a.kleed));
+    for (const o of keuzes) {
+      let cellen;
+      if (o.kleed) {
+        cellen = zoekKleed(rooster, k, bezet, rngStukken);
+      } else {
+        const los = vrijHier.filter((i) => !bezet[i]);
+        cellen = los.length > 1 ? [rngStukken.pick(los)] : null;
+      }
+      if (!cellen) continue;
+      const m = stukken.length;
+      for (const i of cellen) { meubelOp[i] = m; bezet[i] = true; }
+      stukken.push({ houding: o.houding, type: o.type, sleutel: o.sleutel, cellen });
+      if (!o.vaker) gebruikt.add(o.sleutel);
+    }
+  }
+  rooster.meubelAantal = stukken.length;
+
+  // Ramen: in een kamer met muren die aan de buitenrand ligt, hooguit één,
+  // en alleen voor een vakje waar iemand kan staan (anders zegt "voor het
+  // raam" niets).
+  const ramen = [];
+  for (let k = 0; k < kamers; k++) {
+    if (!inrichting.binnen?.[k]) continue;
+    const kanten = [];
+    for (let i = 0; i < n * n; i++) {
+      if (kamerVan[i] !== k || !vrij[i]) continue;
+      const r = rijVan(n, i);
+      const c = kolVan(n, i);
+      if (r === 0) kanten.push({ cel: i, kant: 'n' });
+      if (r === n - 1) kanten.push({ cel: i, kant: 'z' });
+      if (c === 0) kanten.push({ cel: i, kant: 'w' });
+      if (c === n - 1) kanten.push({ cel: i, kant: 'o' });
+    }
+    if (!kanten.length || rngRamen() < 0.35) continue;
+    ramen.push(rngRamen.pick(kanten));
+  }
+  rooster.ramen = ramen;
+  rooster.raamCel = new Set(ramen.map((r) => r.cel));
+  delete rooster._meubelBuren;
+  delete rooster._meubelAssen;
+  delete rooster._typeTelling;
+  return rooster;
+}
+
+// Het stuk op dit vakje, of null. Een blok telt ook (houding 'blok').
+export const stukOp = (rooster, cel) => (rooster.meubelOp[cel] == null ? null : rooster.stukken?.[rooster.meubelOp[cel]] ?? null);
+export const typeOp = (rooster, cel) => stukOp(rooster, cel)?.type ?? null;
+
+// Hoeveel stukken van elk type er op het bord liggen. Een aanwijzing over
+// "het paard" kan alleen als er één paard is; bij drie krukken wordt het
+// "een kruk".
+export function typeTelling(rooster) {
+  if (rooster._typeTelling) return rooster._typeTelling;
+  const t = new Map();
+  for (const s of rooster.stukken ?? []) if (s.type) t.set(s.type, (t.get(s.type) ?? 0) + 1);
+  rooster._typeTelling = t;
+  return t;
 }
 
 // ------------------------------------------------------------ aanwijzingen
@@ -383,6 +564,205 @@ export const SOORTEN = {
     },
   },
 };
+
+// ------------------------------------------- aanwijzingen over stukken
+//
+// Fase B (specs/engine-extension.md stap 7, specs/props-and-either-clues.md
+// A2 en B1). Een aanwijzing over één persoon heeft een `eval` die alleen
+// naar die persoon kijkt; staat hij nog niet, dan null. Een aanwijzing die
+// ook iets over de anderen zegt ("de enige op een stoel") geeft null zolang
+// dat nog niet vaststaat, en zegt met `ookAnderen` welke vakjes de anderen
+// daardoor kwijt zijn.
+
+const typeVan = (ctx, cel) => typeOp(ctx.rooster, cel);
+
+// Ligt dit vakje in een hoek van zijn kamer: aan twee kanten die haaks op
+// elkaar staan een muur of de buitenrand.
+export function inKamerhoek(rooster, cel) {
+  const { n, kamerVan } = rooster;
+  const r = rijVan(n, cel);
+  const k = kolVan(n, cel);
+  const muur = (dr, dc) => {
+    const nr = r + dr;
+    const nc = k + dc;
+    return nr < 0 || nc < 0 || nr >= n || nc >= n || kamerVan[idx(n, nr, nc)] !== kamerVan[cel];
+  };
+  return (muur(-1, 0) || muur(1, 0)) && (muur(0, -1) || muur(0, 1));
+}
+
+// Staat iemand op dit vakje naast een stuk van type t (dezelfde kamer, pal
+// ernaast, en niet op dat stuk zelf)?
+export function naastType(rooster, cel, t) {
+  const eigen = rooster.meubelOp[cel];
+  return kamerBuren(rooster, cel).some((b) => rooster.meubelOp[b] !== eigen && typeOp(rooster, b) === t);
+}
+
+// De helft van een `en`, `ofwelPersoon` of `typeOf`: een gewone aanwijzing
+// over één persoon, zonder p. Hier ingevuld voor die persoon.
+const half = (h, p) => ({ ...h, p });
+
+Object.assign(SOORTEN, {
+  op: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      return typeVan(ctx, cel) === c.t;
+    },
+  },
+  nietOp: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      return typeVan(ctx, cel) !== c.t;
+    },
+  },
+  enigeOp: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      if (typeVan(ctx, cel) !== c.t) return false;
+      let open = false;
+      for (let q = 0; q < ctx.plaats.length; q++) {
+        if (q === c.p) continue;
+        const x = ctx.plaats[q];
+        if (x == null) open = true;
+        else if (typeVan(ctx, x) === c.t) return false;
+      }
+      return open ? null : true;
+    },
+    // Niemand anders staat op een stuk van dit type.
+    ookAnderen: (c, rooster) => cellenVanType(rooster, c.t),
+  },
+  aantalOp: {
+    eval(c, ctx) {
+      let zeker = 0;
+      let onbekend = 0;
+      for (const cel of ctx.plaats) {
+        if (cel == null) { onbekend++; continue; }
+        if (typeVan(ctx, cel) === c.t) zeker++;
+      }
+      if (zeker > c.aantal || zeker + onbekend < c.aantal) return false;
+      return onbekend === 0 ? zeker === c.aantal : null;
+    },
+  },
+  naastType: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      return naastType(ctx.rooster, cel, c.t) === c.ja;
+    },
+  },
+  voorRaam: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      return (ctx.rooster.raamCel?.has(cel) ?? false) === c.ja;
+    },
+  },
+  hoekKamer: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      return inKamerhoek(ctx.rooster, cel) === c.ja;
+    },
+  },
+  rijEnKamerAls: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      const { n, kamerVan, meubelOp } = ctx.rooster;
+      const r = rijVan(n, cel);
+      for (let k = 0; k < n; k++) {
+        const x = idx(n, r, k);
+        if (meubelOp[x] === c.m && kamerVan[x] === kamerVan[cel] && x !== cel) return true;
+      }
+      return false;
+    },
+  },
+  kamerOf: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      const k = ctx.rooster.kamerVan[cel];
+      return k === c.kamerIdx || k === c.kamer2;
+    },
+  },
+  nietNiet: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      const k = ctx.rooster.kamerVan[cel];
+      return k !== c.kamerIdx && k !== c.kamer2;
+    },
+  },
+  typeOf: {
+    eval(c, ctx) {
+      const cel = ctx.plaats[c.p];
+      if (cel == null) return null;
+      const t = typeVan(ctx, cel);
+      return t === c.t || t === c.t2;
+    },
+  },
+  en: {
+    eval(c, ctx) {
+      const a = evalAanwijzing(half(c.a, c.p), ctx);
+      const b = evalAanwijzing(half(c.b, c.p), ctx);
+      if (a === false || b === false) return false;
+      if (a == null || b == null) return null;
+      return true;
+    },
+  },
+  // Precies één van de twee: "Ofwel Joep, ofwel Imke reed op het paard."
+  ofwelPersoon: {
+    eval(c, ctx) {
+      const a = evalAanwijzing(half(c.a, c.p), ctx);
+      const b = evalAanwijzing(half(c.a, c.q), ctx);
+      if (a == null || b == null) {
+        if (a === true && b == null) return null;
+        return a === false && b === false ? false : null;
+      }
+      return a !== b;
+    },
+  },
+  // "Wie op het kleed stond, stond ten noorden van Pien." Over één onbekende
+  // (wie er op dat type staat, er is er precies één) en één genoemde (ref).
+  wieOp: {
+    eval(c, ctx) {
+      let wie = -1;
+      let open = false;
+      for (let q = 0; q < ctx.plaats.length; q++) {
+        const x = ctx.plaats[q];
+        if (x == null) { open = true; continue; }
+        if (typeVan(ctx, x) === c.t) {
+          if (wie >= 0) return false;
+          wie = q;
+        }
+      }
+      if (wie === c.ref) return false;
+      if (wie < 0) return open ? null : false;
+      const a = ctx.plaats[wie];
+      const b = ctx.plaats[c.ref];
+      if (b == null) return null;
+      const n = ctx.rooster.n;
+      let waar;
+      if (c.rel === 'noord') waar = rijVan(n, a) < rijVan(n, b);
+      else if (c.rel === 'west') waar = kolVan(n, a) < kolVan(n, b);
+      else waar = ctx.rooster.kamerVan[a] === ctx.rooster.kamerVan[b];
+      if (!waar) return false;
+      return open ? null : true;
+    },
+  },
+});
+
+export function cellenVanType(rooster, t) {
+  const uit = [];
+  for (let i = 0; i < rooster.meubelOp.length; i++) if (typeOp(rooster, i) === t) uit.push(i);
+  return uit;
+}
+
+// Soorten die over één persoon gaan en die de oude propagatie niet kent:
+// die strepen met eval, vakje voor vakje.
+const OVER_EEN = new Set(['op', 'nietOp', 'enigeOp', 'naastType', 'voorRaam', 'hoekKamer', 'rijEnKamerAls', 'kamerOf', 'nietNiet', 'typeOf', 'en']);
 
 export const evalAanwijzing = (c, ctx) => SOORTEN[c.soort].eval(c, ctx);
 
@@ -591,6 +971,11 @@ function propageerAanwijzing(rooster, dom, c) {
       veranderd = filter(dom[c.q], (cel) => kolVan(n, cel) > minP) || veranderd;
       break;
     }
+    case 'aantalOp':
+      if (c.aantal === 0) {
+        for (const d of dom) veranderd = filter(d, (cel) => typeOp(rooster, cel) !== c.t) || veranderd;
+      }
+      break;
     case 'buren': {
       if (c.ja) {
         veranderd = filter(dom[c.p], (cel) => kamerBuren(rooster, cel).some((b) => dom[c.q].has(b))) || veranderd;
@@ -598,6 +983,20 @@ function propageerAanwijzing(rooster, dom, c) {
       }
       break;
     }
+    default:
+      if (OVER_EEN.has(c.soort)) {
+        const plaats = new Array(n).fill(null);
+        const ctx = { rooster, plaats };
+        veranderd = filter(dom[c.p], (cel) => {
+          plaats[c.p] = cel;
+          return evalAanwijzing(c, ctx) !== false;
+        }) || veranderd;
+        const anderen = SOORTEN[c.soort].ookAnderen?.(c, rooster);
+        if (anderen) {
+          const weg = new Set(anderen);
+          for (let q = 0; q < n; q++) if (q !== c.p) veranderd = filter(dom[q], (cel) => !weg.has(cel)) || veranderd;
+        }
+      }
   }
   return veranderd;
 }

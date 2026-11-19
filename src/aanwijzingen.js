@@ -41,11 +41,13 @@ export function aanwijzingenPerPersoon(puzzle, extra = []) {
   const algemeen = [];
   for (const clue of alleAanwijzingen(puzzle, extra)) {
     const r = clue.ruw;
-    if (!r || r.p == null) {
+    // "Wie op het kleed stond, ..." noemt één naam (ref): daar staat hij.
+    const wie = r?.p ?? r?.ref;
+    if (!r || wie == null) {
       algemeen.push(clue);
       continue;
     }
-    perPersoon[r.p]?.push(clue);
+    perPersoon[wie]?.push(clue);
     if (r.q != null && r.q !== r.p) perPersoon[r.q]?.push(clue);
   }
   return { perPersoon, algemeen, feiten: puzzle.feiten ?? [] };

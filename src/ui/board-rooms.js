@@ -123,6 +123,44 @@ const LICHTBRONNEN = new Set([
   'haard', 'fornuis', 'vuur', 'kaarsentafel', 'distilleerketel', 'ketel',
 ]);
 
+// De drie kleden: grondkleur, rand en motief. Kleuren uit de vaste set van
+// het bord, geen nieuwe (spec: "rugs use the world's palette").
+const KLEEDDESSIN = {
+  kleedperzisch: { grond: '#b8452f', rand: '#e9b949', motief: 'ruit', accent: '#2f5fa8' },
+  kleedstreep: { grond: '#3f8f5a', rand: '#f3ead2', motief: 'streep', accent: '#2f5fa8' },
+  kleedruit: { grond: '#2f5fa8', rand: '#f3ead2', motief: 'blokjes', accent: '#f3ead2' },
+};
+
+function tekenKleed(ouder, d, x0, y0, b, h) {
+  const g = el('g', { class: 'kleed' });
+  g.append(el('rect', { x: x0 + 2, y: y0 + 3, width: b, height: h, rx: 5, fill: 'rgba(40,28,14,0.25)', filter: 'url(#vaag)' }));
+  g.append(el('rect', { x: x0, y: y0, width: b, height: h, rx: 5, fill: d.grond, stroke: d.rand, 'stroke-width': 4 }));
+  g.append(el('rect', { x: x0 + 7, y: y0 + 7, width: b - 14, height: h - 14, rx: 3, fill: 'none', stroke: d.rand, 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }));
+  if (d.motief === 'ruit') {
+    const cx = x0 + b / 2;
+    const cy = y0 + h / 2;
+    const rx = Math.min(b, h) * 0.3;
+    g.append(el('path', { d: `M ${cx} ${cy - rx} L ${cx + rx} ${cy} L ${cx} ${cy + rx} L ${cx - rx} ${cy} Z`, fill: d.accent, stroke: d.rand, 'stroke-width': 2 }));
+  } else if (d.motief === 'streep') {
+    for (let t = 0.3; t < 0.75; t += 0.2) {
+      if (b >= h) g.append(el('rect', { x: x0 + 9, y: y0 + h * t - 3, width: b - 18, height: 6, fill: d.rand }));
+      else g.append(el('rect', { x: x0 + b * t - 3, y: y0 + 9, width: 6, height: h - 18, fill: d.rand }));
+    }
+  } else {
+    for (let yy = y0 + 16; yy < y0 + h - 12; yy += 22) {
+      for (let xx = x0 + 16; xx < x0 + b - 12; xx += 22) {
+        g.append(el('rect', { x: xx - 4, y: yy - 4, width: 8, height: 8, transform: `rotate(45 ${xx} ${yy})`, fill: d.accent }));
+      }
+    }
+  }
+  // Franjes aan de korte kanten.
+  const fr = [];
+  if (b >= h) for (let yy = y0 + 4; yy < y0 + h - 2; yy += 5) fr.push(`M ${x0} ${yy} h -4 M ${x0 + b} ${yy} h 4`);
+  else for (let xx = x0 + 4; xx < x0 + b - 2; xx += 5) fr.push(`M ${xx} ${y0} v -4 M ${xx} ${y0 + h} v 4`);
+  g.append(el('path', { d: fr.join(' '), stroke: d.rand, 'stroke-width': 1.2 }));
+  ouder.append(g);
+}
+
 export function renderKamerbord(puzzle, state, acties, opties = {}) {
   // Waar het meubilair in deze wereld van gemaakt is. Zie WERELDSTOF; de
   // ruil gaat er aan het eind van deze functie weer af, zodat de portretjes
@@ -176,8 +214,11 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
   const kol = (i) => i % n;
   const kamer = (i) => puzzle.kamerVan[i];
   const idx = (r, c) => r * n + c;
-  // Een vakje waar een figuur zou kunnen staan: alles behalve een meubelstuk.
-  const bruikbaar = (i) => puzzle.meubelOp[i] == null;
+  // Een vakje waar een figuur zou kunnen staan: alles behalve een blok. Op
+  // een stoel, een bed, een kleed of een paard kan wel iemand
+  // (specs/props-and-either-clues.md).
+  const bruikbaar = (i) => puzzle.vrij[i];
+  const opStuk = (i) => puzzle.meubelOp[i] != null && puzzle.vrij[i];
 
   // ---------------------------------------------------------------- vloer
   // De soort zegt wat voor ruimte het is, de wereld waar hij van gemaakt is.
@@ -454,6 +495,27 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
     buiten.append(el('path', { d, class: 'buitenmuur-voet' }));
     buiten.append(el('path', { d, class: 'buitenmuur-top' }));
   }
+  // Ramen in de buitenmuur (engine-extension stap 6): een licht vlak met
+  // een kozijn en een middenstijl, in de muur zelf, zodat "voor een raam"
+  // op het bord te zien is.
+  for (const { cel, kant } of puzzle.ramen ?? []) {
+    const r = rij(cel);
+    const c = kol(cel);
+    const lang = CEL * 0.56;
+    const dik = 9;
+    const hor = kant === 'n' || kant === 'z';
+    const mx = kant === 'w' ? x(0) : kant === 'o' ? x(n) : x(c) + CEL / 2;
+    const my = kant === 'n' ? y(0) : kant === 'z' ? y(n) : y(r) + CEL / 2;
+    const b = hor ? lang : dik;
+    const h = hor ? dik : lang;
+    const g = el('g', { class: 'raam' });
+    g.append(el('rect', { x: mx - b / 2, y: my - h / 2, width: b, height: h, rx: 1.5, class: 'raamglas' }));
+    g.append(el('path', {
+      d: hor ? `M ${mx} ${my - h / 2} V ${my + h / 2}` : `M ${mx - b / 2} ${my} H ${mx + b / 2}`,
+      class: 'raamstijl',
+    }));
+    buiten.append(g);
+  }
   svg.append(buiten);
 
   // Rij- en kolomaanduiding, plus een kompas: de aanwijzingen spreken over
@@ -557,9 +619,24 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
       r: CEL * 1.05, fill: 'url(#lampgloed)',
     }));
   }
+  // Een kleed ligt plat over zijn hele rechthoek, onder alles wat erop
+  // staat. Eén tekening per kleed, niet een per vakje.
+  const kleedGedaan = new Set();
   for (let i = 0; i < n * n; i++) {
     const m = puzzle.meubelOp[i];
-    if (m == null) continue;
+    if (m == null || kleedGedaan.has(m) || !KLEEDDESSIN[puzzle.meubelIconen?.[m]]) continue;
+    kleedGedaan.add(m);
+    const cellen = [];
+    for (let j = 0; j < n * n; j++) if (puzzle.meubelOp[j] === m) cellen.push(j);
+    const r0 = Math.min(...cellen.map(rij));
+    const k0 = Math.min(...cellen.map(kol));
+    const h = Math.max(...cellen.map(rij)) - r0 + 1;
+    const b = Math.max(...cellen.map(kol)) - k0 + 1;
+    tekenKleed(spullen, KLEEDDESSIN[puzzle.meubelIconen[m]], x(k0) + 7, y(r0) + 7, b * CEL - 14, h * CEL - 14);
+  }
+  for (let i = 0; i < n * n; i++) {
+    const m = puzzle.meubelOp[i];
+    if (m == null || kleedGedaan.has(m)) continue;
     const naam = puzzle.meubelNamen[m];
     // Een schaduw onder het meubel, anders zweeft het boven de vloer. Vaag
     // getrokken: een scherpe ovaal onder een kast is geen schaduw maar een
@@ -600,17 +677,24 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
 
     // Iedereen staat er hetzelfde bij, ook het slachtoffer: een mens, geen
     // krijtcontour. Dat die ene dood is zie je aan het kruis erdoorheen.
-    const maat = CEL - 16;
+    //
+    // Op een stoel, een bed of een paard: de penning kleiner en naar
+    // rechtsboven, zodat het stuk eronder te lezen blijft (spec, deel A,
+    // criterium 13). Op een kleed niet: dat is vloer.
+    const opIets = opStuk(cel) && !KLEEDDESSIN[puzzle.meubelIconen?.[puzzle.meubelOp[cel]]];
+    const maat = opIets ? Math.round((CEL - 16) * 0.7) : CEL - 16;
+    const px = opIets ? cx + CEL / 2 - maat - 3 : cx - maat / 2;
+    const py = opIets ? cy - CEL / 2 + 3 : cy - maat / 2;
     tekenPersoon(g, {
       index: pi,
       letter: (puzzle.personen[pi] ?? '?').charAt(0).toUpperCase(),
       geslacht: geslachtVan(puzzle.personen[pi] ?? ''),
-      x: cx - maat / 2,
-      y: cy - maat / 2,
+      x: px,
+      y: py,
       grootte: maat,
     });
     if (pi === puzzle.slachtofferIdx) {
-      tekenMerk(g, { teken: puzzle.zaak?.merk, x: cx - maat / 2, y: cy - maat / 2, grootte: maat });
+      tekenMerk(g, { teken: puzzle.zaak?.merk, x: px, y: py, grootte: maat });
     }
     // Na een controle: een ring om de penning. Rood om wat verkeerd staat,
     // groen om wat klopt. Alleen rood zou je laten zoeken naar wat je mag
@@ -720,7 +804,14 @@ export function renderKamerbord(puzzle, state, acties, opties = {}) {
       class: 'klikvak', 'data-cel': i,
     });
     const m = puzzle.meubelOp[i];
-    if (m != null) {
+    if (m != null && opStuk(i)) {
+      // Een stuk waar je op kunt: klikken zet iemand neer, de naam staat
+      // in de titel.
+      const titel = el('title');
+      titel.textContent = puzzle.meubelNamen?.[m] ?? '';
+      vak.append(titel);
+      vak.addEventListener('click', () => acties.klikCel(i));
+    } else if (m != null) {
       vak.classList.add('klikvak-dicht');
       // Hoe heet dat ding? Een aanwijzing noemt "de gieterplank", en dan
       // moet je op het bord kunnen opzoeken welk tekeningetje dat is
@@ -1173,12 +1264,16 @@ export function renderLegenda(puzzle) {
   // wachtklok op het station en een houten eronder in de legenda, en dan
   // zoek je het tekeningetje op dat er net niet is.
   zetWereldstof(WERELDSTOF[puzzle.world?.id]);
+  // Eén regel per naam: drie krukken zijn in de legenda één kruk (Guus,
+  // 2026-11-18: "bij een legenda hoef je maar 1 keer uit te leggen wat iets
+  // is").
   const gebruikt = [];
   const gezien = new Set();
   for (let cel = 0; cel < puzzle.n * puzzle.n; cel++) {
     const m = puzzle.meubelOp[cel];
-    if (m == null || gezien.has(m)) continue;
-    gezien.add(m);
+    const naam = m == null ? null : puzzle.meubelNamen[m];
+    if (m == null || gezien.has(naam)) continue;
+    gezien.add(naam);
     gebruikt.push(m);
   }
   gebruikt.sort((a, b) => (puzzle.meubelNamen[a] ?? '').localeCompare(puzzle.meubelNamen[b] ?? ''));
