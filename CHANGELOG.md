@@ -16,6 +16,9 @@ day the changelog was introduced; everything before that is in git history only.
   size: Persian 2×3, checked 2×2, striped runner 1×3 and a new rag rug 1×2. Boards and
   solutions are unchanged; only a clue that names the board's single rug can read
   differently.
+- The floor decoration on a room board no longer draws stools, rugs or runners: those
+  are puzzle pieces a clue can name, and a decorative stool next to "zat op een kruk"
+  read as one. Boards and solutions are unchanged.
 
 ### Added
 - Optional Google sign-in is now switched on: "Inloggen" in the menu keeps your solved
