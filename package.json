@@ -22,6 +22,7 @@
     "check:redeneer": "node tools/check-redeneer.mjs",
     "check:daglimiet": "node tools/check-daglimiet.mjs",
     "check:sync": "node tools/check-sync.mjs",
+    "check:betaalmuur": "node tools/check-betaalmuur.mjs",
     "check:voorraad": "node tools/check-voorraad.mjs",
     "pool": "node tools/pool.mjs",
     "ai:vooraf": "node tools/ai-vooraf.mjs",

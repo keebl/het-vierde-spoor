@@ -28,6 +28,7 @@ const TOETSEN = [
   ['het ritme', 'check-ritme.mjs', []],
   ['de redenering', 'check-redeneer.mjs', []],
   ['de sync', 'check-sync.mjs', []],
+  ['de betaalmuur', 'check-betaalmuur.mjs', []],
   ['de voorraad', 'check-voorraad.mjs', []],
 ];
 
