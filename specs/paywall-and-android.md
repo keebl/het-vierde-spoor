@@ -4,7 +4,8 @@ Status: approved (decisions D1–D9, Guus on mission-control cards, 2026-11-20; 
 Date: 2026-11-20
 
 ## Goal
-Every player keeps two free puzzles per level. After that, playing more needs a purchase.
+Levels 1–3 stay free to taste and to play a little every day; levels 4–6 are what a purchase
+buys (D2, revised 2026-11-20).
 The same game ships as an Android app in Google Play, and an iPhone app comes later. One
 purchase opens the game wherever the buyer signs in: on the web, on Android and later on
 iPhone.
@@ -31,9 +32,12 @@ are solid enough to sell on (see "Production setup").
   applies once the app's target audience includes children. Decision D5.
 
 ## Scope (in)
-1. **The free allowance.** Two puzzles per level are free (levels 1–6, so 12 in all). A
-   puzzle counts once it is opened. A puzzle that was already opened stays playable.
-   Decision D2 says what "opened" and "level" cover.
+1. **The free allowance** (D2, revised 2026-11-20). Without an account: two puzzles each
+   of levels 1, 2 and 3, and one taste puzzle of level 4. Signed in, on top of that: the
+   puzzle of the day, one puzzle a day from levels 1–3, the same for everyone. Levels 5–6
+   and everything beyond the allowance need the purchase, which opens everything,
+   including printing (D6). A puzzle counts once it is opened; a puzzle that was already
+   opened stays playable.
 2. **The paywall screen.** It appears when the third puzzle of a level is opened, and says
    what the buyer gets and what it costs. It has one primary action, "Ontgrendelen", and a
    way back to puzzles the player can still play. Its copy goes into `docs/UX.md` first
@@ -117,7 +121,7 @@ Guus decided D1–D9 on 2026-11-20 on mission-control cards (ask-3e8d51b0, D4 in
 | # | Question | Decided |
 |---|---|---|
 | D1 | What does a buyer pay for? | **One-time unlock** of everything, around €4.99–€7.99. The exact price is set at build time. |
-| D2 | What counts toward the 2 free per level? | **Generated puzzles and the 82 library cases together**, per level. |
+| D2 | What is free? | **Revised 2026-11-20 (Guus: "Ja, met de drie", ask-7c3e91b2):** signed out, 2 puzzles each of levels 1–3 and 1 taste puzzle of level 4; signed in, also the puzzle of the day (one a day from levels 1–3, the same for everyone, level by day: 1, 2, 3, 1, …); levels 5–6 only with the purchase, which opens everything. Generated puzzles and library cases count together. Was: 2 free per level on all six levels. |
 | D3 | Web payment provider | **Stripe Managed Payments** (merchant of record), through Stripe Checkout and signed webhooks. The first choice, Lemon Squeezy, closed to new stores on 2026-11-20 and points to Stripe Managed Payments instead. Chosen over Paddle (ask-5f2b8d14): about €0.50 instead of €0.75 on a €4.99 sale, payouts weekly or faster instead of monthly from €100, and no bespoke pricing for products under $10. The purchase is described as **"volledige toegang tot het spel"**, never as an in-game item, because both providers restrict the sale of game items. |
 | D4 | Where accounts and the entitlement live | **A: stay in `claudeDB`, free**, with a daily ping, an encrypted nightly backup and a script that rebuilds purchases from the stores. Move to an own Pro project once sales exceed about €25 per month for two months. |
 | D5 | Is the Android app aimed at children? | **Yes, it includes children.** Google Play's Families policy applies (see below). |
@@ -274,4 +278,5 @@ halfway leaves the site as players know it.
 Later, own plan: Cloudflare Pages (D7), the Android TWA with Play Billing, the iPhone app.
 
 Open: the level path (`specs/level-path.md`, "never a wall") is not built; when it is,
-it must say how its stops relate to the two free puzzles per level.
+it must say how its stops relate to the free allowance; from level 4 the path meets the
+paywall and must say that full access continues it.

@@ -216,22 +216,26 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
   filled in by the build, from Guus).
 
 ### Paywall (paywall)
-- Purpose: say plainly that the free puzzles of this level are used up, what a purchase
-  gives, and offer the free puzzles that are left; never a dead end.
-- Shown: instead of the third new puzzle of a level, when `BETAALMUUR` is on and the
-  player has no full access (`specs/paywall-and-android.md`).
-- Content, in priority order: title, two short lines, price line (only once the price is
-  set), primary action, "already bought" (signed out), a line for children, the free
-  puzzles of this level, a link to the puzzles.
+- Purpose: say plainly why this puzzle is not free, what a purchase gives, and offer what
+  is still free (the free puzzles of this level, the puzzle of the day); never a dead end.
+- Shown: instead of a puzzle the allowance does not cover, when `BETAALMUUR` is on and the
+  player has no full access (`specs/paywall-and-android.md`, D2 revised 2026-11-20).
+- Content, in priority order: title, one line why, what full access gives, price line
+  (only once the price is set), primary action, "already bought" (signed out), the puzzle
+  of the day, a line for children, the free puzzles of this level, a link to the puzzles.
 - Primary action: "Volledige toegang kopen" (signed in) or "Log in om te kopen" (signed
-  out) · Secondary: the list of the free puzzles of this level · "Naar de puzzels" (quiet).
-- Copy: title "Je gratis puzzels van niveau {n} zijn op"; "Van elk niveau zijn twee
-  puzzels gratis." / "Met volledige toegang speel je alle puzzels op elk niveau, en je
-  kunt ze printen. Je betaalt één keer, geen abonnement." / price "{prijs}" / "Al
-  gekocht? Log in met hetzelfde Google-account." / "Ben je jonger dan 16? Vraag het aan
-  een ouder." / heading above the free puzzles "Je gratis puzzels"; each row: the world,
-  the case title or "Gratis puzzel", and "✓ opgelost", "oplossing bekeken", "mee bezig"
-  or "nog niet begonnen".
+  out) · Secondary: "Speel de puzzel van de dag" (signed in) · the list of the free
+  puzzles of this level · "Naar de puzzels" (quiet).
+- Copy, levels 1–3: title "Je gratis puzzels van niveau {n} zijn op"; "Van niveau 1, 2 en
+  3 zijn twee puzzels gratis."
+- Copy, levels 4–6: title "Niveau {n} hoort bij volledige toegang"; "Niveau 4, 5 en 6 zijn
+  de moeilijkste. Van niveau 4 is één puzzel gratis, om te proeven."
+- Copy, all levels: "Met volledige toegang speel je alle puzzels op elk niveau, en je kunt
+  ze printen. Je betaalt één keer, geen abonnement." / price "{prijs}" / "Al gekocht? Log
+  in met hetzelfde Google-account." / signed out: "Log in, dan speel je elke dag gratis de
+  puzzel van de dag." / "Ben je jonger dan 16? Vraag het aan een ouder." / heading above
+  the free puzzles "Je gratis puzzels"; each row: the world, the case title or "Gratis
+  puzzel", and "✓ opgelost", "oplossing bekeken", "mee bezig" or "nog niet begonnen".
 - Until checkout exists (test mode only): pressing the primary action shows "Kopen kan
   nog niet: dit is de testversie." If sign-in fails: "Inloggen is niet gelukt." (as on the
   account page).
@@ -263,3 +267,7 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
   werken wordt alleen een afgeronde puzzel opgeslagen of kijk jij daar anders naar?" then
   "Alleen afgerond mee", verdict "Goedgekeurd, zo bouwen" (forwarded verbatim by the main
   session) — half boards no longer sync: "newer board" bar and its screens removed
+- 2026-11-20 (paywall) — "Goedkeuren, mergen" (ask-46a0c1e2, via mission control): the paywall
+  screen of PR #46 — no change. Then "Ja, met de drie" (ask-7c3e91b2): free allowance revised
+  (levels 1–3 free to taste, puzzle of the day when signed in, levels 4–6 paid) — copy above
+  split by level.
