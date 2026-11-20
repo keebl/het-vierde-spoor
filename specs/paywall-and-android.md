@@ -277,6 +277,11 @@ halfway leaves the site as players know it.
    `reconstructie`, a script that rebuilds `toegang` from Stripe (and later Play).
 6. **Terms, privacy and the withdrawal waiver**: drafts for Guus.
 7. **Live**: set the price (D1), `BETAALMUUR = 'live'`, test purchase and refund.
+   **Blocker:** remove the tester link first (`tester.html`, `src/betaalmuur/tester.js`,
+   the `/tester` line in `server/serve.mjs`). Guus, 2026-11-20: "Mergen, uit vóór live".
+   A secret code does not help on a static site (it would sit in the public source); tester
+   access after go-live goes through the entitlement table of step 2. `check:betaalmuur`
+   fails while `BETAALMUUR` is `'live'` and `tester.html` exists.
 
 Later, own plan: Cloudflare Pages (D7), the Android TWA with Play Billing, the iPhone app.
 
