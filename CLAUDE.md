@@ -10,7 +10,7 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - Run with secrets (AI texts on; Guus's own Terminal only, Claude never runs it):
   `~/.claude/bin/secrets-run -- npm start` — values come from Bitwarden via the `bws:`
   references in `.env.example`
-- Test (all): `npm run check:all` — the keuring, 15 checks. The motor and the sweep judge
+- Test (all): `npm run check:all` — the keuring, 16 checks. The motor and the sweep judge
   the level 5–6 room boards from `pool/` (`--voorraad`, about three and four minutes);
   `npm run check` and `npm run check:regels` without the flag build every board (about 13
   and 29 minutes) and run nightly in `.github/workflows/nachtrun.yml`. CI on a pull
@@ -18,7 +18,7 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
   store check take a smaller level 5–6 sample; `check:all` and the nightly run stay full
 - Test (one file): `npm run check:kamers` (also `check:regels`, `check:iconen`,
   `check:catalog`, `check:aanwijzingen`, `check:spreiding`, `check:afstanden`, `check:ritme`, `check:weggevers`,
-  `check:ai`, `check:redeneer`, `check:sync`, `check:daglimiet`, `check`). `check:ritme` opens the four screens of `tests/ui/ui-check.json`
+  `check:ai`, `check:redeneer`, `check:sync`, `check:daglimiet`, `check:betaalmuur`, `check`). `check:ritme` opens the four screens of `tests/ui/ui-check.json`
   in a headless Chromium at 390, 800 and 1300 px and fails when blocks that look the same sit
   unequally apart or off the scale (`tools/ritme-meting.js`), about three minutes; it needs a
   browser, so not in the sandbox (paste `tools/ritme-meting.js` into the browser pane and call
@@ -32,7 +32,7 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
   solve proven unique by `telPlaatsingen`, and board fingerprints equal to
   `tools/vingerafdruk-kamers.txt` (rewrite with `--schrijf` only when boards shift on
   purpose), about a minute and a half
-- Test (fast): `npm run check:snel` — the 6 checks that build no puzzles, ~1 second
+- Test (fast): `npm run check:snel` — the 7 checks that build no puzzles, ~1 second
 - Typecheck: none (plain ES modules, no TypeScript)
 - Lint / format: none configured
 - Static check in place of typecheck/lint: `npm run check:snel` — the content lint

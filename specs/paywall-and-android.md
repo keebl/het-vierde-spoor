@@ -247,16 +247,31 @@ service.
   purchase flow.
 
 ## Plan (added after approval)
-To be written on 2026-11-25. Rough order:
-0. Guus's play-round points (he plays before 2026-11-25). They come before the paywall,
-   because the free puzzles per level are what has to convince a buyer.
-1. Play verification and payments profile, payment provider store, Supabase Pro. These
-   are Guus's steps and start first.
-2. Move to Cloudflare Pages.
-3. D4: ping, encrypted backup and the store rebuild script (option A).
-4. Entitlement table and webhook.
-5. Paywall on the web, behind the switch.
-6. Manifest, service worker and TWA.
-7. Play Billing.
-8. Store listing.
-9. Internal test, then production.
+Guus, 2026-11-20: the web paywall now; Android and iPhone later. Each step lands on its
+own behind `BETAALMUUR` ('uit', or 'test', which only `?betaaltest` turns on), so stopping
+halfway leaves the site as players know it.
+
+1. **Free allowance and paywall screen** (client only). `src/betaalmuur/` holds the
+   switch, the price text, the opened-puzzles count per level (`vierdespoor.geopend`, a
+   puzzle with saved progress counts as opened) and the access cache
+   (`vierdespoor.toegang`). The route `#/puzzel/<id>` shows the paywall instead of a third
+   new puzzle of a level. Copy from `docs/UX.md` "Paywall". Keuring `check:betaalmuur`
+   (no network). `test` turns it on only with `?betaaltest` in the address.
+2. **Entitlement table** `reconstructie.toegang` (user id, source, store reference,
+   granted/withdrawn at), RLS: a user reads their own row, nobody writes from a client.
+   RLS tests added. Applying it to `claudeDB` is Guus's approval.
+3. **Stripe checkout and webhook** (after Stripe approves Managed Payments): a product
+   "Volledige toegang", a Supabase Edge Function that creates the Checkout session for a
+   signed-in user and one that receives the signed webhook and writes the entitlement.
+   Keys in Bitwarden and the function's secrets.
+4. **Read access in the client**: after sign-in and after checkout, read the own row,
+   cache it for 30 days; printing unlocks with it (D6).
+5. **Keep `claudeDB` sturdy** (D4 = A): daily ping, encrypted nightly backup of schema
+   `reconstructie`, a script that rebuilds `toegang` from Stripe (and later Play).
+6. **Terms, privacy and the withdrawal waiver**: drafts for Guus.
+7. **Live**: set the price (D1), `BETAALMUUR = 'live'`, test purchase and refund.
+
+Later, own plan: Cloudflare Pages (D7), the Android TWA with Play Billing, the iPhone app.
+
+Open: the level path (`specs/level-path.md`, "never a wall") is not built; when it is,
+it must say how its stops relate to the two free puzzles per level.

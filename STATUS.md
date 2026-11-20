@@ -9,6 +9,11 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-20: **web paywall step 1 built** (`specs/paywall-and-android.md` Plan): two free
+  puzzles per level counted in the browser (`src/betaalmuur/toegang.js`), the paywall screen
+  (`src/ui/betaalmuur.js`, copy in `docs/UX.md`), keuring `check:betaalmuur`. Switch
+  `BETAALMUUR = 'test'`: players see nothing; add `?betaaltest` before the `#` to try it.
+  Buying is not possible yet (step 3 needs Stripe Managed Payments approval).
 - 2026-11-20: **paywall and Android app specced** (`specs/paywall-and-android.md`, draft): two free puzzles per level, one purchase across web and Play, TWA for Android, and a production setup off the hobby stack (Cloudflare Pages, own Supabase Pro project, webhook endpoint). Approved the same day: one-time unlock, Lemon Squeezy, Cloudflare Pages, app includes children (Families policy), database stays in free `claudeDB` with ping, encrypted backup and a purchase rebuild (D4 = A). Reconstructie ships under the photo-cleaner Play organisation account. Build starts 2026-11-25; Guus opens a Stripe account with Managed Payments (D3 changed the same day: Lemon Squeezy closed to new stores) and support@ forwarding before then; the Play app is created together on 2026-11-25.
 - 2026-11-19: **rug variety built** (`specs/rug-variety.md`, revised: pattern from size,
   Guus "Ja, omzetten"): `src/puzzle.js` names and draws each rug after its size

@@ -215,6 +215,27 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
   "Vragen? Mail de maker van Reconstructie." (the owner's name and contact address are
   filled in by the build, from Guus).
 
+### Paywall (paywall)
+- Purpose: say plainly that the free puzzles of this level are used up, what a purchase
+  gives, and offer the free puzzles that are left; never a dead end.
+- Shown: instead of the third new puzzle of a level, when `BETAALMUUR` is on and the
+  player has no full access (`specs/paywall-and-android.md`).
+- Content, in priority order: title, two short lines, price line (only once the price is
+  set), primary action, "already bought" (signed out), a line for children, the free
+  puzzles of this level, a link to the puzzles.
+- Primary action: "Volledige toegang kopen" (signed in) or "Log in om te kopen" (signed
+  out) · Secondary: the list of the free puzzles of this level · "Naar de puzzels" (quiet).
+- Copy: title "Je gratis puzzels van niveau {n} zijn op"; "Van elk niveau zijn twee
+  puzzels gratis." / "Met volledige toegang speel je alle puzzels op elk niveau, en je
+  kunt ze printen. Je betaalt één keer, geen abonnement." / price "{prijs}" / "Al
+  gekocht? Log in met hetzelfde Google-account." / "Ben je jonger dan 16? Vraag het aan
+  een ouder." / heading above the free puzzles "Je gratis puzzels"; each row: the world,
+  the case title or "Gratis puzzel", and "✓ opgelost", "oplossing bekeken", "mee bezig"
+  or "nog niet begonnen".
+- Until checkout exists (test mode only): pressing the primary action shows "Kopen kan
+  nog niet: dit is de testversie." If sign-in fails: "Inloggen is niet gelukt." (as on the
+  account page).
+
 ## Principles
 - The solution teaches, not only tells, so we show reasoning before the placement in every step.
 - Nothing spoils an unsolved board, so we show the steps only after Oplossing or a solve,
@@ -229,6 +250,8 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
   device first and syncing happens behind it.
 - (accounts and sync) Nothing she did is ever lost by syncing, so solved, revealed and stars
   only add up, and a half-finished board is never touched: it stays on its device.
+- (paywall) Never a dead end, so the paywall always offers the free puzzles that are left
+  and a way back.
 
 ## Review log
 - 2026-11-18 — "Goedgekeurd" (forwarded verbatim by the main session): 1A, 2A, 3A, 4A — no change

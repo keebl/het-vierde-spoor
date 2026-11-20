@@ -17,6 +17,11 @@ import { WORLD_BY_ID } from './content/worlds.js';
 import { accountAan } from './sync/config.js';
 import { start as startAccount, komtVanInloggen, GEBEURTENIS } from './sync/sessie.js';
 import { renderAccount, hangAccountknopOp } from './ui/account.js';
+// De betaalmuur (specs/paywall-and-android.md). Staat de schakelaar op
+// 'uit', dan laat magOpenen alles door en verandert er niets.
+import { magOpenen } from './betaalmuur/toegang.js';
+import { renderBetaalmuur } from './ui/betaalmuur.js';
+import { loadProgress } from './ui/state.js';
 
 const app = document.getElementById('app');
 
@@ -78,6 +83,12 @@ function route() {
     markNav(null);
     const id = decodeURIComponent(path.slice('puzzel/'.length));
     const settings = parsePuzzleId(id);
+    // Vóór het bouwen: een derde nieuwe puzzel van een niveau bouwt niet
+    // eens, de muur staat er meteen.
+    if (!magOpenen(id, settings.niveau, { voortgang: (i) => !!loadProgress(i) })) {
+      renderBetaalmuur(app, settings.niveau);
+      return;
+    }
     // Een Reconstructie bouwt in een Web Worker, met een schatting vooraf en
     // een balk die na elke poging oploopt (specs/engine-extension.md stap
     // 10). Tot en met niveau drie is dat zo snel dat er niets te zien is.
