@@ -15,7 +15,8 @@ are solid enough to sell on (see "Production setup").
 ## What this changes
 - It reverses the 2026-11-11 decision that only printing is paid, and the non-goal "No
   monetisation, no ads, no tracking" in `docs/PRODUCT.md`. "No ads, no tracking" stays.
-  `docs/PRODUCT.md` gets an update when this spec is approved.
+  Recorded in `docs/decisions/0007-paid-access-after-a-free-allowance.md`, and
+  `docs/PRODUCT.md` is updated in the same pull request.
 - Reconstructie becomes a trader under the DSA. The KvK registration is in place.
 - `specs/paid-printing.md` (draft, not built) is folded in. Printing becomes one of the
   things the purchase unlocks, so it is no longer a separate €4.99 product. Decision D6.
@@ -88,11 +89,15 @@ under "What changes" is a decision in the table below.
 | Domain and email | reconstructie.app at Cloudflare; `privacy@` forwards | Yes | Add `support@` (Play and the payment provider ask for a support address). |
 
 ### What Guus arranges (accounts and money: only he can)
-1. **Google Play Console as an organisation**, $25 once. It needs a **D-U-N-S number**
-   for the KvK company, which is free from Dun & Bradstreet and can take one to several
-   weeks. Start it first. An organisation account skips the rule that a new personal
-   account must run a closed test with 12 testers for 14 days before it can publish.
-   Then set up the Play payments profile with the business bank account.
+1. **Google Play Console: use the existing organisation account.** Guus already has one
+   for photo-cleaner. Its organisation verification started on 2026-11-10 and is still
+   pending (`photo-cleaner/docs/PLAYSTORE.md`). One developer account can publish many
+   apps, so Reconstructie needs no new $25 account and no new D-U-N-S number. Because it
+   is an organisation account, the 12-testers / 14-days rule does not apply. Still to do:
+   finish the verification, set up the **payments profile** (merchant account, business
+   bank account), which in-app sales need, and create the app "Reconstructie" in the
+   Console. The DSA trader details (organisation name and address) are shown on the
+   listing, as they are for photo-cleaner.
 2. **The payment provider store** for the web (D3), with the KvK details and the business
    bank account.
 3. **Supabase Pro**: a new project for Reconstructie in the EU, about $25 per month (D4).
@@ -165,7 +170,9 @@ under "What changes" is a decision in the table below.
 - **Store policy.** Play rejects an app that links to an outside checkout, and later Apple
   may reject a thin web wrapper. Mitigation: Play Billing in the app; for iPhone, native
   extras in its own spec.
-- **D-U-N-S lead time** can delay the Play launch by weeks. Start it first.
+- **The organisation verification** of the Play account (pending since 2026-11-10)
+  blocks publishing, and Play Billing needs the payments profile. Both are outside our
+  control; the web paywall does not wait for them.
 - **Moving accounts to a new Supabase project** is the riskiest technical step: users,
   tokens and the Google OAuth redirect all change. It needs a plan step of its own with a
   rehearsal.
@@ -173,7 +180,7 @@ under "What changes" is a decision in the table below.
 ## Costs
 | Item | Cost |
 |---|---|
-| Google Play Console | $25 once |
+| Google Play Console | already paid (photo-cleaner's organisation account) |
 | Google Play fee | 15% of the first $1M per year |
 | Web merchant of record | about 5% + €0.50 per sale |
 | Supabase Pro | about $25 per month |
@@ -197,7 +204,8 @@ service.
 
 ## Plan (added after approval)
 To be written once D1–D9 are decided. Rough order:
-1. D-U-N-S, Play Console and store accounts. These are Guus's steps and start first.
+1. Play verification and payments profile, payment provider store, Supabase Pro. These
+   are Guus's steps and start first.
 2. Move to Cloudflare Pages.
 3. Create the new Supabase project and move accounts there.
 4. Entitlement table and webhook.
