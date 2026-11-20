@@ -9,6 +9,7 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-20: **paywall and Android app specced** (`specs/paywall-and-android.md`, draft): two free puzzles per level, one purchase across web and Play, TWA for Android, and a production setup off the hobby stack (Cloudflare Pages, own Supabase Pro project, webhook endpoint). Waiting on Guus for decisions D1–D9 and on his accounts (D-U-N-S first). Building starts 2026-11-25 at the earliest (weekly token budget).
 - 2026-11-19: **rug variety built** (`specs/rug-variety.md`, revised: pattern from size,
   Guus "Ja, omzetten"): `src/puzzle.js` names and draws each rug after its size
   (`KLEED_VAN_MAAT`: 2×3 Persian, 2×2 checked, 1×3 runner, 1×2 new rag rug). No engine
