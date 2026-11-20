@@ -55,7 +55,7 @@ export function renderBetaalmuur(mount, niveau) {
   // Niveau 1 tot en met 3 hebben een tegoed dat op is; 4 tot en met 6 zijn
   // wat je koopt (D2, herzien 2026-11-20). Dus twee verschillende koppen.
   const zwaar = niveau >= 4;
-  const titel = zwaar ? `Niveau ${niveau} hoort bij volledige toegang` : `Je gratis puzzels van niveau ${niveau} zijn op`;
+  const titel = zwaar ? `Niveau ${niveau} zit in volledige toegang` : `Je gratis puzzels van niveau ${niveau} zijn op`;
   // Anders bleef de naam van de vorige puzzel in het tabblad staan.
   document.title = `${titel} · Reconstructie`;
   const gratis = gratisVan(niveau);
@@ -63,12 +63,12 @@ export function renderBetaalmuur(mount, niveau) {
   // in te loggen. Nooit de hoofdknop: dat blijft kopen.
   const dag = ingelogd
     ? el('p', {}, [el('a', { class: 'btn', href: `#/puzzel/${puzzelVanDeDag()}`, text: 'Speel de puzzel van de dag' })])
-    : el('p', { class: 'legend', text: 'Log in, dan speel je elke dag gratis de puzzel van de dag.' });
+    : el('p', { class: 'legend', text: 'Log in en speel elke dag gratis de puzzel van de dag (niveau 1 tot en met 3).' });
   mount.replaceChildren(...[
     el('h1', { text: titel }),
     el('p', { class: 'lede', text: zwaar
-      ? 'Niveau 4, 5 en 6 zijn de moeilijkste. Van niveau 4 is één puzzel gratis, om te proeven.'
-      : 'Van niveau 1, 2 en 3 zijn twee puzzels gratis.' }),
+      ? 'Niveau 4, 5 en 6 zijn de moeilijkste. Van niveau 4 kun je er één gratis proberen.'
+      : 'Van niveau 1, 2 en 3 zijn er twee gratis.' }),
     el('p', { text: 'Met volledige toegang speel je alle puzzels op elk niveau, en je kunt ze printen. Je betaalt één keer, geen abonnement.' }),
     PRIJS ? el('p', { class: 'prijs', text: PRIJS }) : null,
     el('p', { class: 'knoppen' }, [koop]),

@@ -227,13 +227,13 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
   out) · Secondary: "Speel de puzzel van de dag" (signed in) · the list of the free
   puzzles of this level · "Naar de puzzels" (quiet).
 - Copy, levels 1–3: title "Je gratis puzzels van niveau {n} zijn op"; "Van niveau 1, 2 en
-  3 zijn twee puzzels gratis."
-- Copy, levels 4–6: title "Niveau {n} hoort bij volledige toegang"; "Niveau 4, 5 en 6 zijn
-  de moeilijkste. Van niveau 4 is één puzzel gratis, om te proeven."
+  3 zijn er twee gratis."
+- Copy, levels 4–6: title "Niveau {n} zit in volledige toegang"; "Niveau 4, 5 en 6 zijn
+  de moeilijkste. Van niveau 4 kun je er één gratis proberen."
 - Copy, all levels: "Met volledige toegang speel je alle puzzels op elk niveau, en je kunt
   ze printen. Je betaalt één keer, geen abonnement." / price "{prijs}" / "Al gekocht? Log
-  in met hetzelfde Google-account." / signed out: "Log in, dan speel je elke dag gratis de
-  puzzel van de dag." / "Ben je jonger dan 16? Vraag het aan een ouder." / heading above
+  in met hetzelfde Google-account." / signed out: "Log in en speel elke dag gratis de
+  puzzel van de dag (niveau 1 tot en met 3)." / "Ben je jonger dan 16? Vraag het aan een ouder." / heading above
   the free puzzles "Je gratis puzzels"; each row: the world, the case title or "Gratis
   puzzel", and "✓ opgelost", "oplossing bekeken", "mee bezig" or "nog niet begonnen".
 - Until checkout exists (test mode only): pressing the primary action shows "Kopen kan
