@@ -26,18 +26,20 @@ that hands out puzzles, so no server can withhold one.
 4. **The lock is honest, not bypass-proof.** It runs in the client. Making it bypass-proof
    would mean generating puzzles on a server, which would undo ADR-0002's "a push is a
    deploy" and is not worth it for a household puzzle game.
-5. **Money moves the site off the free stack.** Static hosting moves from GitHub Pages
-   (whose terms exclude sites aimed mainly at selling) to Cloudflare Pages. Accounts and
-   the entitlement move from the shared free project `claudeDB` to Reconstructie's own
-   Supabase project on a paid plan with backups. This supersedes ADR-0006's "shared
-   project" choice for Reconstructie, but not its other decisions.
+5. **Money moves static hosting off GitHub Pages** (whose terms exclude sites aimed mainly
+   at selling) to Cloudflare Pages. Where accounts and the entitlement live is decision D4
+   in the spec. The stores (Lemon Squeezy, Google Play) keep every order, so the
+   entitlement can always be rebuilt from them, and our own database is never the only
+   record of a purchase.
+6. **The app includes children** (Google Play Families policy). Playing never needs an
+   account, and a child never pays without a parent's approval.
 
 ## Consequences
 
 - "No ads, no tracking" stays. The money buys access, never data.
 - Reconstructie becomes a trader under the DSA, with its name and address on the Play
   listing.
-- Running costs: about $25 per month for Supabase plus store fees per sale.
+- Running costs: store fees per sale, plus the database cost chosen in D4.
 - A clever player can get around the lock. That is accepted.
 - ADR-0002 still holds for the game itself. The only server code is a webhook endpoint
   for payments.

@@ -79,7 +79,7 @@ under "What changes" is a decision in the table below.
 | Part | Today | Solid enough to sell on? | What changes |
 |---|---|---|---|
 | Static site | GitHub Pages from `main` | **No.** GitHub's terms do not allow Pages to be used mainly for commercial transactions. It also has no deploy previews and no instant rollback. | Move to **Cloudflare Pages** from the same repository. The DNS is already at Cloudflare and the free plan allows commercial use. Deploys stay "push `main`", and every PR gets a preview URL. D7. |
-| Accounts and data | Supabase, free project `claudeDB`, shared with clearhead and crossroads | **No, for money.** A free project pauses after 7 days without traffic, has no backups, and shares Auth and limits with two other apps. | Give Reconstructie its **own Supabase project on the Pro plan** (about $25 per month, EU region, daily backups, no pause). Move the `reconstructie` schema and its users there. D4. |
+| Accounts and data | Supabase, free project `claudeDB`, shared with clearhead and crossroads | **Not as it is.** A free project pauses after 7 days without traffic, has no backups, and shares Auth with two other apps. | D4. Recommended: stay, with a daily ping, an encrypted nightly backup and an entitlement rebuild from the stores; own Pro project once sales pay for it. |
 | Server logic (webhooks, entitlement) | None. `worker/` is not deployed. | n/a | **One small server endpoint** receives the provider's webhook and Google Play's Real-Time Developer Notifications, checks their signatures, and writes the entitlement. It is either a Supabase Edge Function (same project as the data) or a Cloudflare Worker. Recommendation: Edge Function, so there is one place fewer to run. |
 | Payments, web | None (Lemon Squeezy in an unbuilt draft) | Yes, if the provider is a merchant of record | Guus opens a store account. D3. |
 | Payments, Android | None | Yes. Play Billing is required anyway. | Google Play Console account and payments profile. |
@@ -100,7 +100,7 @@ under "What changes" is a decision in the table below.
    listing, as they are for photo-cleaner.
 2. **The payment provider store** for the web (D3), with the KvK details and the business
    bank account.
-3. **Supabase Pro**: a new project for Reconstructie in the EU, about $25 per month (D4).
+3. **Nothing for the database yet** under D4 option A. Under option E: Supabase Pro.
 4. **Cloudflare Pages**: nothing to buy. Claude does the move with the existing Cloudflare
    token once D7 is approved.
 5. **Terms and privacy**: general terms of sale (algemene voorwaarden), the right of
@@ -111,18 +111,62 @@ under "What changes" is a decision in the table below.
 6. **Later, for iPhone**: an Apple Developer Program account as an organisation (same
    D-U-N-S), $99 per year.
 
-## Decisions to make
-| # | Question | Options | Recommendation |
-|---|---|---|---|
-| D1 | What does a buyer pay for? | a) one-time unlock of everything; b) subscription (per month or year) | a) one-time, around €4.99–€7.99. It suits a puzzle game for a household, needs no cancellation flow, and keeps support small. |
-| D2 | What counts toward the 2 free per level? | a) generated puzzles and the 82 library cases together, per level; b) generated only, with the library free; c) the library is the free part and generating needs a purchase | a), the simplest to explain. |
-| D3 | Web payment provider | a) Lemon Squeezy (merchant of record, owned by Stripe); b) Paddle (merchant of record); c) Stripe with our own VAT handling | a), already worked out in `specs/paid-printing.md`. If D8 picks RevenueCat, check its web billing first, because it may replace D3. |
-| D4 | Where accounts and the entitlement live | a) own Supabase project, Pro; b) stay in `claudeDB` (free) | a). Money must not depend on a project that pauses and has no backups. |
-| D5 | Is the Android app aimed at children? | a) "everyone, not aimed at children" (rated by questionnaire); b) includes children (Families policy, stricter rules for ads, data and sign-in) | Discuss. Choosing a) while children clearly play is a policy risk. b) is more work but honest. |
-| D6 | Does the purchase also unlock printing? | a) yes, one purchase for everything; b) printing stays a separate product | a). One product, one paywall. |
-| D7 | Static hosting | a) Cloudflare Pages; b) stay on GitHub Pages | a). |
-| D8 | Entitlement layer | a) own table plus own webhook code per store; b) RevenueCat | a) for Android plus web. Reconsider b) when iPhone starts. |
-| D9 | Signed-out players | a) free allowance in `localStorage`, sign-in needed to buy; b) sign-in needed after the free puzzles even to look at the paywall | a). |
+## Decisions
+Guus decided D1–D9 on 2026-11-20 on mission-control cards (ask-3e8d51b0). D4 is still open.
+
+| # | Question | Decided |
+|---|---|---|
+| D1 | What does a buyer pay for? | **One-time unlock** of everything, around €4.99–€7.99. The exact price is set at build time. |
+| D2 | What counts toward the 2 free per level? | **Generated puzzles and the 82 library cases together**, per level. |
+| D3 | Web payment provider | **Lemon Squeezy** (merchant of record). |
+| D4 | Where accounts and the entitlement live | **Open.** Options below; Guus finds $25 per month too much before the game earns anything. |
+| D5 | Is the Android app aimed at children? | **Yes, it includes children.** Google Play's Families policy applies (see below). |
+| D6 | Does the purchase also unlock printing? | **Yes**, one purchase for everything. |
+| D7 | Static hosting | **Cloudflare Pages.** |
+| D8 | Entitlement layer | **Our own table plus our own webhook code** per store. RevenueCat is reconsidered when iPhone starts. |
+| D9 | Signed-out players | **Free allowance in `localStorage`**; sign-in is needed to buy. |
+
+### D4: where the accounts and the purchases live, at low cost
+A separate free Supabase project is not possible: the free plan allows two active
+projects, and Supabase refused a new one on 2026-11-16 (crossroads `STATUS.md`).
+`claudeDB` already uses that slot.
+
+What makes a cheap option acceptable is that **the purchase data is not the only copy.**
+Lemon Squeezy and Google Play keep every order, so if our database is lost, a script
+rebuilds the entitlement table from their APIs. What is truly ours is the progress data,
+and losing a day of that is annoying but not costly.
+
+| | A. Stay in `claudeDB` (free), make it sturdier | B. Cloudflare D1 + our own sign-in in a Worker | C. Turso + our own sign-in | D. AWS Cognito + DynamoDB | E. Own Supabase project, Pro |
+|---|---|---|---|---|---|
+| Cost | €0 | €0 (free tiers: 5 GB, 5M reads/day, 100k Worker requests/day) | €0 (free tier) | €0 within the always-free tiers | about $25 per month |
+| Sign-in (Google, Family Link) | **Works today** (ADR-0006, live since 2026-11-18). Family Link is the same in every option: it is Google's approval, whatever the backend. | We build Google OAuth (PKCE), sessions and token refresh ourselves in the Worker. | As B, plus a separate place to run the code. | Cognito does Google sign-in. A new cloud, IAM and SDK. | Works; accounts move once. |
+| Pause | Pauses after 7 days without requests. Fix: a daily GitHub Actions ping. | None | None | None | None |
+| Backups | None built in. Fix: a nightly `pg_dump` of schema `reconstructie` in GitHub Actions, **encrypted** (the repository is public), kept 30 days. Plus the store rebuild. | Time Travel: restore to any minute in the last 7 days. | Point-in-time restore on the free tier is short. | DynamoDB on-demand backups (small cost) or point-in-time recovery (paid). | Daily, 7 days. |
+| Shared with other apps | Yes: Auth is shared with clearhead and crossroads (accepted in ADR-0006). | No | No | No | No |
+| Migration later | One move to E when sales pay for it. | Accounts move now, from Supabase to our own auth. | As B | As B | Accounts move now. |
+| Extra build work | Small: ping, backup, rebuild script. | Large: auth is the riskiest code to write ourselves. | Large | Large, plus a new cloud | Medium: the move |
+| Risk for money data | Low, thanks to the store rebuild. Availability depends on the ping. | Low; the auth code itself is the risk. | As B | Low; complexity is the risk. | Lowest |
+
+**Recommendation: A, with a trigger to move to E.** It costs nothing and keeps the sign-in
+that works and was checked live. A ping, an encrypted nightly backup and the store rebuild
+cover the two weaknesses of the free plan (pausing and no backups). Move to E when sales
+are above about €25 per month for two months in a row, which is roughly five sales a
+month. B is the best €0 alternative if Guus wants Reconstructie out of the shared project
+now, but it means writing our own sign-in. C has no advantage over B, now that hosting
+goes to Cloudflare (D7). D is a whole new cloud for the same result.
+
+### D5: what "includes children" means
+- In the Play Console, the target audience includes ages under 13. The app follows the
+  Families policy: no ads (already true), no identifiers beyond what sign-in needs, and a
+  privacy policy that covers children.
+- **Playing must never require an account** (already true), so a child can play the free
+  puzzles without one.
+- **A child does not pay.** In the app, a child's purchase goes through Google's parental
+  approval (Family Link). On the web, the checkout says it is for adults. A child's
+  account is unlocked by a parent's purchase on the child's own Google account, after the
+  parent approves it.
+- Under the AVG, a child under 16 needs a parent's consent for an account. Family Link's
+  approval of the sign-in provides this (`docs/accounts-go-live.md` §4).
 
 ## Acceptance criteria
 1. Given a signed-out player on the web, when they open the third puzzle of a level, then
@@ -183,7 +227,7 @@ under "What changes" is a decision in the table below.
 | Google Play Console | already paid (photo-cleaner's organisation account) |
 | Google Play fee | 15% of the first $1M per year |
 | Web merchant of record | about 5% + €0.50 per sale |
-| Supabase Pro | about $25 per month |
+| Supabase | €0 under D4 option A; about $25 per month once it moves to Pro |
 | Cloudflare Pages | free |
 | Apple Developer (later) | $99 per year |
 
@@ -207,7 +251,7 @@ To be written once D1–D9 are decided. Rough order:
 1. Play verification and payments profile, payment provider store, Supabase Pro. These
    are Guus's steps and start first.
 2. Move to Cloudflare Pages.
-3. Create the new Supabase project and move accounts there.
+3. D4: ping, encrypted backup and the store rebuild script (option A).
 4. Entitlement table and webhook.
 5. Paywall on the web, behind the switch.
 6. Manifest, service worker and TWA.
