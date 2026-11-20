@@ -938,6 +938,15 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
 /* De vraag staat twee keer in de pagina (zie vraagBlok in player.js): in
    de kop en boven aan de aanwijzingen. Standaard alleen die in de kop. */
 .aanwijzingen-vraag { display: none; }
+/* De regels staan op het scherm één keer, onder de aanwijzingen
+   (uitlegNodes); de kopie bij de vraag is voor papier (Guus, 2026-11-20). */
+@media screen { .aanwijzingen-vraag .spelregels { display: none; } }
+
+/* Legenda, bediening en regels onder de aanwijzingen, even ver uit elkaar
+   als de klepjes erboven: de afstand van het raster, niet van een marge. */
+.bord-uitleg { display: grid; gap: var(--ruimte-tussen); }
+.bord-uitleg > .paneel, .bord-uitleg > .regels-onder { margin-top: 0; }
+.play > .bord-uitleg { margin-top: calc(var(--ruimte-tussen) - var(--ruimte-sectie)); }
 .vraagblok .spelregels { margin-bottom: 0; }
 
 /* Op een breed scherm twee kolommen. Bovenaan het verhaal links en de
@@ -954,10 +963,10 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
        overblijft gaat naar de aanwijzingen, die er dan naast elkaar in
        passen (zie de containerregel hieronder). */
     grid-template-columns: minmax(0, 720px) minmax(340px, 1fr);
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto auto auto 1fr;
     gap: var(--ruimte-sectie);
   }
-  .play > .boards, .play > .aanwijzingen-kolom + * { grid-column: 1; }
+  .play > .boards, .play > .aanwijzingen-kolom ~ * { grid-column: 1; }
   /* De kop over beide kolommen, met dezelfde kolomgrenzen als eronder.
      Verhaal en vraag eindigen op dezelfde lijn (align-items: end). */
   .play > .puzzle-head {
@@ -971,15 +980,6 @@ body[data-thema="donker"] .sc-tint { opacity: 0.3; }
   .play > .puzzle-head .puzzle-zijkant { grid-column: 2; }
   .play > .puzzle-head .intro { margin-bottom: 0; }
   .play > .puzzle-head .question { margin-bottom: 0; }
-  /* De regels staan hier niet in de kop maar boven aan de aanwijzingen
-     (de kopie uit vraagBlok, dezelfde die op papier staat). In de kop
-     maakten ze de hele rij hoger als je ze opende, en met die rij zakten
-     het verhaal links en het bord eronder honderden pixels mee. In de
-     kolom groeien ze binnen de kolom, die zelf scrolt; links beweegt niets. */
-  .play > .puzzle-head .spelregels { display: none; }
-  .aanwijzingen-kolom > .aanwijzingen-vraag { display: block; }
-  .aanwijzingen-kolom > .aanwijzingen-vraag .question { display: none; }
-  .aanwijzingen-kolom > .aanwijzingen-vraag .spelregels { margin: 0 0 var(--ruimte-tussen); }
   .play > .aanwijzingen-kolom {
     grid-column: 2;
     grid-row: 2 / -1;
@@ -1935,7 +1935,8 @@ table.latin td.cell { width: 78px; height: 46px; }
   .palet,
   .bordschakelaars,
   .paneel[data-paneel="uitleg"],
-  .boards .paneel:not([open]) { display: none !important; }
+  .boards .paneel:not([open]),
+  .bord-uitleg .paneel:not([open]) { display: none !important; }
   .crumbs .sep:first-of-type { display: none; }
   /* De aanwijzingen in twee kolommen en dichter op elkaar: zo past een
      lijst van zeventien op één vel. */

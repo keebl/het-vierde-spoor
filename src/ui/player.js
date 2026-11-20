@@ -125,6 +125,11 @@ export function renderPlayer(puzzle, mount) {
   const boards = el('div', { class: 'boards' });
   const notes = el('div');
   const clueCol = el('div', { class: 'aanwijzingen-kolom' });
+  // De legenda, de bediening en de regels staan onder de aanwijzingen, in
+  // die volgorde, en alles dichtgeklapt (Guus, 2026-11-20). Ze stonden
+  // tussen het bord en de aanwijzingen, en de regels stonden er twee keer:
+  // ook boven de puzzel. Open zag je op een telefoon het net niet meer.
+  const bordUitleg = el('div', { class: 'bord-uitleg' });
 
   // Op een breed scherm staan de vraag en de aanwijzingen in een kolom
   // rechts, die al naast de titel begint en meeloopt (zie .play in
@@ -135,7 +140,7 @@ export function renderPlayer(puzzle, mount) {
   // blad over de onderkant van het scherm legt (zie aanwijzingenKnop).
   // De kop zit in hetzelfde raster, dus hij krijgt de kleuren van de wereld
   // hier mee en niet van de sfeerplaat.
-  const play = el('div', { class: 'play', style: genreStijl(puzzle.world) }, [kop, boards, clueCol, notes]);
+  const play = el('div', { class: 'play', style: genreStijl(puzzle.world) }, [kop, boards, clueCol, bordUitleg, notes]);
   mount.append(play);
   const blad = aanwijzingenKnop(clueCol);
   mount.append(blad.knop);
@@ -145,7 +150,9 @@ export function renderPlayer(puzzle, mount) {
   // knop Printen, en wie Cmd+P gebruikte kreeg een lege kop op papier. Op
   // papier staan ze op het tweede vel, boven de aanwijzingen (de kopie in
   // de kolom, zie vraagBlok): op het eerste vel duwden ze het bord eraf.
-  const regelsOpPapier = () => play.querySelector('.aanwijzingen-vraag .spelregels');
+  // De aanwijzingen gaan ook open mee: dichtgeklapt (sinds 2026-11-20 de
+  // standaard) drukte alleen hun kop af.
+  const openOpPapier = () => [...play.querySelectorAll('.aanwijzingen-vraag .spelregels, .aanwijzingen-kolom > .paneel')];
   let regelsStonden = null;
   // De genummerde oplossing gaat altijd mee op papier, op een eigen vel
   // achteraan (Guus, 2026-11-18): wie een geprint bord heeft opgegeven,
@@ -155,15 +162,13 @@ export function renderPlayer(puzzle, mount) {
   const voorPrint = () => {
     if (!play.isConnected) { window.removeEventListener('beforeprint', voorPrint); return; }
     if (puzzle.kind === 'kamer') { printen = true; draw(); }
-    const regels = regelsOpPapier();
-    if (!regels) return;
-    regelsStonden = regels.open;
-    regels.open = true;
+    const blokken = openOpPapier();
+    regelsStonden = blokken.map((b) => b.open);
+    for (const b of blokken) b.open = true;
   };
   const naPrint = () => {
     if (!play.isConnected) { window.removeEventListener('afterprint', naPrint); return; }
-    const regels = regelsOpPapier();
-    if (regels && regelsStonden !== null) regels.open = regelsStonden;
+    if (regelsStonden) openOpPapier().forEach((b, i) => { if (i in regelsStonden) b.open = regelsStonden[i]; });
     regelsStonden = null;
     if (printen) { printen = false; draw(); }
   };
@@ -238,7 +243,7 @@ export function renderPlayer(puzzle, mount) {
     // blad dat zelf scrolt sprong je dan terug naar de eerste zin.
     const scroll = clueCol.scrollTop;
     clueCol.replaceChildren(blad.sluiter(), vraagBlok(puzzle, 'aanwijzingen-vraag'), klepje(
-      'aanwijzingen', `Aanwijzingen (${aantal})`, true, [cluePanel(puzzle, state, knopVoorAanwijzing)],
+      'aanwijzingen', `Aanwijzingen (${aantal})`, aanwijzingenStandaardOpen(), [cluePanel(puzzle, state, knopVoorAanwijzing)],
     ));
     clueCol.scrollTop = scroll;
     blad.knop.textContent = `Aanwijzingen (${aantal})`;
@@ -250,6 +255,7 @@ export function renderPlayer(puzzle, mount) {
     const kastScroll = kastje && kastje.dataset.van === String(state.leesNaam) ? kastje.scrollTop : 0;
     const focus = document.activeElement?.closest?.('[data-focus]')?.dataset.focus;
     boards.replaceChildren(...boardNodes(puzzle, state, onCell, toonMeubel, actions, knopVoorAanwijzing));
+    bordUitleg.replaceChildren(...uitlegNodes(puzzle));
     const nieuwKastje = boards.querySelector('.palet-kastje');
     if (nieuwKastje) nieuwKastje.scrollTop = kastScroll;
     if (focus) boards.querySelector(`[data-focus="${focus}"]`)?.focus();
@@ -521,17 +527,19 @@ function head(puzzle) {
   };
 }
 
-// De vraag met de spelregels eronder. Hij staat twee keer in de pagina:
-// in de kop, en boven aan de aanwijzingen. Welke je ziet hangt af van het
-// scherm - op een breed scherm boven de aanwijzingen, waar je kijkt terwijl
-// je puzzelt; in het blad op een telefoon ook, want daar zie je de kop niet.
+// De vraag. Hij staat twee keer in de pagina: in de kop, en boven aan de
+// aanwijzingen (in het blad op een telefoon, waar je de kop niet ziet).
+// Op het scherm staan de spelregels alleen onder de aanwijzingen
+// (uitlegNodes); twee keer dezelfde regels was er één te veel (Guus,
+// 2026-11-20). De kopie hier is alleen voor papier, waar ze op het tweede
+// vel boven de aanwijzingen horen (app.css verbergt hem op het scherm).
 function vraagBlok(puzzle, extra = '') {
   return el('div', { class: `vraagblok ${extra}`.trim() }, [
     el('div', { class: 'question' }, [
       el('span', { class: 'label', text: 'De vraag' }),
       el('b', { text: puzzle.question.text }),
     ]),
-    spelregelBlok(puzzle),
+    extra === 'aanwijzingen-vraag' ? spelregelBlok(puzzle) : null,
   ]);
 }
 
@@ -829,6 +837,26 @@ function aanwijzingenKnop(kolom) {
   return { knop, sluiter };
 }
 
+// Dicht onder het bord, waar ze anders het net van je scherm duwen (Guus,
+// 2026-11-20: "begin standaard met alles ingeklapt"). Op een breed scherm
+// staan ze in een eigen kolom naast het bord en duwen ze niets weg; daar
+// was dicht alleen een lege kolom met één kop.
+function aanwijzingenStandaardOpen() {
+  return window.matchMedia('(min-width: 1100px)').matches;
+}
+
+// Onder de aanwijzingen: wat er op het bord staat, hoe je het bedient en de
+// regels, in die volgorde (Guus, 2026-11-20).
+function uitlegNodes(puzzle) {
+  const regels = el('div', { class: 'regels-onder' }, spelregelBlok(puzzle));
+  if (puzzle.kind !== 'kamer') return [regels];
+  return [
+    klepje('legenda', 'Wat er op het bord staat', false, [renderLegenda(puzzle)]),
+    klepje('uitleg', 'Hoe je dit bord bedient', false, bedieningUitleg(kruisjesVanzelf())),
+    regels,
+  ];
+}
+
 function boardNodes(puzzle, state, onCell, toonMeubel, actions, knopVoorAanwijzing) {
   if (puzzle.kind === 'kamer') {
     const vanzelf = kruisjesVanzelf();
@@ -842,11 +870,6 @@ function boardNodes(puzzle, state, onCell, toonMeubel, actions, knopVoorAanwijzi
         kruisjes: actions.kruisjes, rand: actions.rand,
         kruisjesAan: vanzelf, randAan: randAan(),
       }),
-      klepje('legenda', 'Wat er op het bord staat', false, [renderLegenda(puzzle)]),
-      // De regels ook onder het bord, waar je kijkt terwijl je puzzelt
-      // (Guus, 2026-11-18); boven bij de vraag staan ze ook nog.
-      el('div', { class: 'regels-onder' }, spelregelBlok(puzzle)),
-      klepje('uitleg', 'Hoe je dit bord bedient', false, bedieningUitleg(vanzelf)),
     ];
   }
   if (puzzle.kind === 'latin') {
