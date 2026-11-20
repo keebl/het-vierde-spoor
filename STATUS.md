@@ -360,6 +360,7 @@ standing guidance rather than state moved to `CLAUDE.md`.
   Console is his own decision (`docs/RELEASE.md`, Spend caps) (2026-11-19)
 
 ## Workbench feedback
+- 2026-11-20 — Guus found the rules panel twice on the puzzle page; a rendered UI check could refuse two visible panels or headings with the same text on one screen.
 - 2026-11-19 — Guus had to point out a 64 px gap between two panels that sit 24 apart elsewhere
   in the same stack (puzzle page, one column). Proposed ui-check rule: siblings of one kind in
   one stack must sit equally apart at every width; a static CSS lint cannot see summed margins.

@@ -66,8 +66,10 @@ try {
   for (let i = 0; i < 40; i++) {
     try { await fetch(`http://127.0.0.1:${POORT_SITE}/`); break; } catch { await wacht(250); }
   }
+  // Dertig seconden, niet tien: op een drukke GitHub-runner kwam Chrome
+  // op 2026-11-20 niet op tijd op en viel PR #45 om zonder ritmefout.
   let lijst;
-  for (let i = 0; i < 40 && !lijst; i++) {
+  for (let i = 0; i < 120 && !lijst; i++) {
     try { lijst = await (await fetch(`http://127.0.0.1:${POORT_BROWSER}/json`)).json(); } catch { await wacht(250); }
   }
   if (!lijst) throw new Error(`${browser} kwam niet op. In een sandbox: plak tools/ritme-meting.js in het browserpaneel.`);

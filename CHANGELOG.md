@@ -10,6 +10,9 @@ day the changelog was introduced; everything before that is in git history only.
 ## [Unreleased]
 
 ### Changed
+- On the puzzle page the rules appear once, under the board: clues first, then what is
+  on the board, how to operate it and the rules. On a phone and a tablet they all start
+  folded, so the board and the buttons stay on screen.
 - Rugs on the room boards lie on the floor with a margin around them instead of filling
   their squares edge to edge.
 - A rug's pattern now follows from its size, so the same pattern is always the same
