@@ -247,7 +247,9 @@ service.
   purchase flow.
 
 ## Plan (added after approval)
-To be written once D1–D9 are decided. Rough order:
+To be written on 2026-11-25. Rough order:
+0. Guus's play-round points (he plays before 2026-11-25). They come before the paywall,
+   because the free puzzles per level are what has to convince a buyer.
 1. Play verification and payments profile, payment provider store, Supabase Pro. These
    are Guus's steps and start first.
 2. Move to Cloudflare Pages.
