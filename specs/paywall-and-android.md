@@ -81,7 +81,7 @@ under "What changes" is a decision in the table below.
 | Static site | GitHub Pages from `main` | **No.** GitHub's terms do not allow Pages to be used mainly for commercial transactions. It also has no deploy previews and no instant rollback. | Move to **Cloudflare Pages** from the same repository. The DNS is already at Cloudflare and the free plan allows commercial use. Deploys stay "push `main`", and every PR gets a preview URL. D7. |
 | Accounts and data | Supabase, free project `claudeDB`, shared with clearhead and crossroads | **Not as it is.** A free project pauses after 7 days without traffic, has no backups, and shares Auth with two other apps. | D4 = A: stay, with a daily ping, an encrypted nightly backup and an entitlement rebuild from the stores; own Pro project once sales pay for it. |
 | Server logic (webhooks, entitlement) | None. `worker/` is not deployed. | n/a | **One small server endpoint** receives the provider's webhook and Google Play's Real-Time Developer Notifications, checks their signatures, and writes the entitlement. It is either a Supabase Edge Function (same project as the data) or a Cloudflare Worker. Recommendation: Edge Function, so there is one place fewer to run. |
-| Payments, web | None (Lemon Squeezy in an unbuilt draft) | Yes, if the provider is a merchant of record | Guus opens a store account. D3. |
+| Payments, web | None | Yes, if the provider is a merchant of record | Guus opens a Stripe account with Managed Payments for koach.life. D3. |
 | Payments, Android | None | Yes. Play Billing is required anyway. | Google Play Console account and payments profile. |
 | One view of "who owns the game" across web, Play and later Apple | n/a | n/a | Either our own entitlement table fed by every store, or **RevenueCat** (free up to $2.5k monthly revenue) on top of the stores. RevenueCat adds a dependency but saves most of the Apple work later. D8. |
 | Secrets | Bitwarden Secrets Manager via `secrets-run` | Yes | New keys (webhook secrets, Play service account) go into Bitwarden and the server's own secret store. They never go into the repo or the chat. |
@@ -118,7 +118,7 @@ Guus decided D1–D9 on 2026-11-20 on mission-control cards (ask-3e8d51b0, D4 in
 |---|---|---|
 | D1 | What does a buyer pay for? | **One-time unlock** of everything, around €4.99–€7.99. The exact price is set at build time. |
 | D2 | What counts toward the 2 free per level? | **Generated puzzles and the 82 library cases together**, per level. |
-| D3 | Web payment provider | **Lemon Squeezy** (merchant of record). |
+| D3 | Web payment provider | **Stripe Managed Payments** (merchant of record), through Stripe Checkout and signed webhooks. The first choice, Lemon Squeezy, closed to new stores on 2026-11-20 and points to Stripe Managed Payments instead. Chosen over Paddle (ask-5f2b8d14): about €0.50 instead of €0.75 on a €4.99 sale, payouts weekly or faster instead of monthly from €100, and no bespoke pricing for products under $10. The purchase is described as **"volledige toegang tot het spel"**, never as an in-game item, because both providers restrict the sale of game items. |
 | D4 | Where accounts and the entitlement live | **A: stay in `claudeDB`, free**, with a daily ping, an encrypted nightly backup and a script that rebuilds purchases from the stores. Move to an own Pro project once sales exceed about €25 per month for two months. |
 | D5 | Is the Android app aimed at children? | **Yes, it includes children.** Google Play's Families policy applies (see below). |
 | D6 | Does the purchase also unlock printing? | **Yes**, one purchase for everything. |
@@ -132,7 +132,7 @@ projects, and Supabase refused a new one on 2026-11-16 (crossroads `STATUS.md`).
 `claudeDB` already uses that slot.
 
 What makes a cheap option acceptable is that **the purchase data is not the only copy.**
-Lemon Squeezy and Google Play keep every order, so if our database is lost, a script
+Stripe and Google Play keep every order, so if our database is lost, a script
 rebuilds the entitlement table from their APIs. What is truly ours is the progress data,
 and losing a day of that is annoying but not costly.
 

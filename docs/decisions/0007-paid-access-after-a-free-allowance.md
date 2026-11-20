@@ -28,7 +28,7 @@ that hands out puzzles, so no server can withhold one.
    deploy" and is not worth it for a household puzzle game.
 5. **Money moves static hosting off GitHub Pages** (whose terms exclude sites aimed mainly
    at selling) to Cloudflare Pages. Where accounts and the entitlement live is decision D4
-   in the spec. The stores (Lemon Squeezy, Google Play) keep every order, so the
+   in the spec. The stores (Stripe, Google Play) keep every order, so the
    entitlement can always be rebuilt from them, and our own database is never the only
    record of a purchase.
 6. **The app includes children** (Google Play Families policy). Playing never needs an
