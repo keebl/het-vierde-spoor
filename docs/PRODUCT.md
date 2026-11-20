@@ -51,7 +51,8 @@ her an endless supply; the longer the wait, the more likely she moves on to some
 - **No server for gameplay.** Everything is computed in the visitor's browser; that is why
   no API key needs to exist online. The one server is a small database (Supabase, EU) that
   keeps a signed-in player's progress; when it is unreachable, playing is unaffected.
-- **No monetisation, no ads, no tracking.**
+- **No ads, no tracking.** Paid access after a free allowance is in scope since 2026-11-20
+  (ADR-0007, `specs/paywall-and-android.md`); the money never buys ads or data.
 - **The AI never supplies logic.** Claude may rewrite story text; every rewritten clue must
   keep its proper names, negation, numbers and either/or, or the original sentence stands.
 - **No image files.** Everything visible is drawn in code.
@@ -77,7 +78,8 @@ UI: yes
   visitor's own device.
 - Accounts: optional, Google sign-in only (`docs/decisions/0006-optional-accounts-with-supabase.md`).
   Hidden in production until the shared database closes its other apps to strangers.
-- Monetisation: none. Not a trader under the DSA.
+- Monetisation: two free puzzles per level, then a purchase (ADR-0007, not built yet).
+  A trader under the DSA once the paywall is live.
 
 ## Open product questions
 - TODO(guus): licence for the public repository — "all rights reserved" by default, or MIT
