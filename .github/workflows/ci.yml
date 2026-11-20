@@ -96,6 +96,7 @@ jobs:
           - de veegronde
           - de weggevers
           - de redenering
+          - het ritme
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7

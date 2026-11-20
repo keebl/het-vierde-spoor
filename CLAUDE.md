@@ -10,15 +10,19 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - Run with secrets (AI texts on; Guus's own Terminal only, Claude never runs it):
   `~/.claude/bin/secrets-run -- npm start` — values come from Bitwarden via the `bws:`
   references in `.env.example`
-- Test (all): `npm run check:all` — the keuring, 14 checks. The motor and the sweep judge
+- Test (all): `npm run check:all` — the keuring, 15 checks. The motor and the sweep judge
   the level 5–6 room boards from `pool/` (`--voorraad`, about three and four minutes);
   `npm run check` and `npm run check:regels` without the flag build every board (about 13
   and 29 minutes) and run nightly in `.github/workflows/nachtrun.yml`. CI on a pull
   request adds `--kort` (`node tools/keuring.mjs --kort`): the spread, the reasoning and the
   store check take a smaller level 5–6 sample; `check:all` and the nightly run stay full
 - Test (one file): `npm run check:kamers` (also `check:regels`, `check:iconen`,
-  `check:catalog`, `check:aanwijzingen`, `check:spreiding`, `check:afstanden`, `check:weggevers`,
-  `check:ai`, `check:redeneer`, `check:sync`, `check:daglimiet`, `check`). `check:afstanden` refuses a
+  `check:catalog`, `check:aanwijzingen`, `check:spreiding`, `check:afstanden`, `check:ritme`, `check:weggevers`,
+  `check:ai`, `check:redeneer`, `check:sync`, `check:daglimiet`, `check`). `check:ritme` opens the four screens of `tests/ui/ui-check.json`
+  in a headless Chromium at 390, 800 and 1300 px and fails when blocks that look the same sit
+  unequally apart or off the scale (`tools/ritme-meting.js`), about three minutes; it needs a
+  browser, so not in the sandbox (paste `tools/ritme-meting.js` into the browser pane and call
+  `meetRitme()` there). `check:afstanden` refuses a
   typed gap or margin in `styles/app.css` (`specs/spacing-rhythm.md`), well under a second. `check:daglimiet` checks the
   daily cap on paid AI calls (`AI_DAILY_CALL_LIMIT`, `server/daglimiet.mjs`), well under a second. `check:sync` checks the optional
   account sync (`specs/accounts-and-sync.md`) with a fake database, no network, ~0.1 s. `check:spreiding` checks the room-board clue rules of
@@ -94,6 +98,9 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
   upstream, so a bare `git push` errors, and the tail swallows the message (PR #16
   reported a push that never happened). Push with `git push -u origin HEAD` and confirm
   with `git ls-remote origin <branch>`.
+- **Spacing has three layouts on the puzzle page** (phone, one column up to 1099 px, two
+  columns). Check all three, not just phone and desktop: the one-column width is where a 64 px
+  gap hid on 2026-11-19. `check:ritme` measures all three.
 - **The API key is never read, echoed or committed.** `.env` is git-ignored; the owner
   types the key himself.
 

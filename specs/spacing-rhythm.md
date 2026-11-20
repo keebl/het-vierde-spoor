@@ -99,3 +99,19 @@ re-checked at 390 px in step 2.
 ## Decided
 Between groups: 24 px on a wide screen, 16 px on a phone (the recommendation; Guus,
 2026-11-19).
+
+## Addendum: a rendered rhythm check (2026-11-19)
+After the build, Guus pointed out a 64 px gap above "Aanwijzingen" on the one-column puzzle page,
+where the panels above it sat 24 apart. `check:afstanden` could not see it, because it was a
+sum of two token values. ui-check could not run either (CSP). Guus agreed to a rendered check
+("ja").
+
+- `tools/ritme-meting.js`, run in the page: blocks that look the same (same border, corners,
+  background, shadow, and same width when stacked or same height side by side) and are
+  direct neighbours, with nothing visible between them, must sit equally apart, and on the
+  scale 4/8/12/16/24/32/48/72 (±1.5 px).
+- `tools/check-ritme.mjs` (`npm run check:ritme`, keuring "het ritme", CI matrix) runs it on
+  the four screens of `tests/ui/ui-check.json` at 390, 800 and 1300 px. It uses a headless
+  Chromium over the DevTools protocol and adds no dependency.
+- Acceptance: green on `main` after #41; red on 36ba221 (before #41), with the 28/80/48 px
+  panel gaps at 800 px.
