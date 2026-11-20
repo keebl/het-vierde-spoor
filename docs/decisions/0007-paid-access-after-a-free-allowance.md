@@ -1,9 +1,9 @@
 # ADR-0007: Paid access after a free allowance
 
 Date: 2026-11-20
-Status: proposed (Guus, 2026-11-20: a paywall after two puzzles per level, and an Android
-app; "spec vandaag", build from 2026-11-25). Accepted when `specs/paywall-and-android.md`
-is approved.
+Status: accepted (Guus, 2026-11-20: a paywall after two puzzles per level, and an Android
+app; decisions D1–D9 of `specs/paywall-and-android.md` on mission-control cards, the
+database staying in `claudeDB` as D4 = A)
 
 ## Context
 
@@ -39,7 +39,7 @@ that hands out puzzles, so no server can withhold one.
 - "No ads, no tracking" stays. The money buys access, never data.
 - Reconstructie becomes a trader under the DSA, with its name and address on the Play
   listing.
-- Running costs: store fees per sale, plus the database cost chosen in D4.
+- Running costs: store fees per sale, and €0 for the database until sales pay for a paid plan (D4 = A).
 - A clever player can get around the lock. That is accepted.
 - ADR-0002 still holds for the game itself. The only server code is a webhook endpoint
   for payments.

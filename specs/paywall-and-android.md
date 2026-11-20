@@ -1,6 +1,6 @@
 # Spec: Paywall and Android app (with the production setup they need)
 
-Status: draft
+Status: approved (decisions D1–D9, Guus on mission-control cards, 2026-11-20; build plan follows)
 Date: 2026-11-20
 
 ## Goal
@@ -79,7 +79,7 @@ under "What changes" is a decision in the table below.
 | Part | Today | Solid enough to sell on? | What changes |
 |---|---|---|---|
 | Static site | GitHub Pages from `main` | **No.** GitHub's terms do not allow Pages to be used mainly for commercial transactions. It also has no deploy previews and no instant rollback. | Move to **Cloudflare Pages** from the same repository. The DNS is already at Cloudflare and the free plan allows commercial use. Deploys stay "push `main`", and every PR gets a preview URL. D7. |
-| Accounts and data | Supabase, free project `claudeDB`, shared with clearhead and crossroads | **Not as it is.** A free project pauses after 7 days without traffic, has no backups, and shares Auth with two other apps. | D4. Recommended: stay, with a daily ping, an encrypted nightly backup and an entitlement rebuild from the stores; own Pro project once sales pay for it. |
+| Accounts and data | Supabase, free project `claudeDB`, shared with clearhead and crossroads | **Not as it is.** A free project pauses after 7 days without traffic, has no backups, and shares Auth with two other apps. | D4 = A: stay, with a daily ping, an encrypted nightly backup and an entitlement rebuild from the stores; own Pro project once sales pay for it. |
 | Server logic (webhooks, entitlement) | None. `worker/` is not deployed. | n/a | **One small server endpoint** receives the provider's webhook and Google Play's Real-Time Developer Notifications, checks their signatures, and writes the entitlement. It is either a Supabase Edge Function (same project as the data) or a Cloudflare Worker. Recommendation: Edge Function, so there is one place fewer to run. |
 | Payments, web | None (Lemon Squeezy in an unbuilt draft) | Yes, if the provider is a merchant of record | Guus opens a store account. D3. |
 | Payments, Android | None | Yes. Play Billing is required anyway. | Google Play Console account and payments profile. |
@@ -100,7 +100,7 @@ under "What changes" is a decision in the table below.
    listing, as they are for photo-cleaner.
 2. **The payment provider store** for the web (D3), with the KvK details and the business
    bank account.
-3. **Nothing for the database yet** under D4 option A. Under option E: Supabase Pro.
+3. **Nothing for the database** (D4 = A). Supabase Pro only once sales pay for it.
 4. **Cloudflare Pages**: nothing to buy. Claude does the move with the existing Cloudflare
    token once D7 is approved.
 5. **Terms and privacy**: general terms of sale (algemene voorwaarden), the right of
@@ -112,14 +112,14 @@ under "What changes" is a decision in the table below.
    D-U-N-S), $99 per year.
 
 ## Decisions
-Guus decided D1–D9 on 2026-11-20 on mission-control cards (ask-3e8d51b0). D4 is still open.
+Guus decided D1–D9 on 2026-11-20 on mission-control cards (ask-3e8d51b0, D4 in ask-d4a92c61).
 
 | # | Question | Decided |
 |---|---|---|
 | D1 | What does a buyer pay for? | **One-time unlock** of everything, around €4.99–€7.99. The exact price is set at build time. |
 | D2 | What counts toward the 2 free per level? | **Generated puzzles and the 82 library cases together**, per level. |
 | D3 | Web payment provider | **Lemon Squeezy** (merchant of record). |
-| D4 | Where accounts and the entitlement live | **Open.** Options below; Guus finds $25 per month too much before the game earns anything. |
+| D4 | Where accounts and the entitlement live | **A: stay in `claudeDB`, free**, with a daily ping, an encrypted nightly backup and a script that rebuilds purchases from the stores. Move to an own Pro project once sales exceed about €25 per month for two months. |
 | D5 | Is the Android app aimed at children? | **Yes, it includes children.** Google Play's Families policy applies (see below). |
 | D6 | Does the purchase also unlock printing? | **Yes**, one purchase for everything. |
 | D7 | Static hosting | **Cloudflare Pages.** |
