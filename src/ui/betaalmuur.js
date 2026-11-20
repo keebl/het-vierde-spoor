@@ -45,19 +45,21 @@ export function renderBetaalmuur(mount, niveau) {
   });
 
   // Anders bleef de naam van de vorige puzzel in het tabblad staan.
-  document.title = `Meer puzzels op niveau ${niveau} · Reconstructie`;
+  document.title = `Je gratis puzzels van niveau ${niveau} zijn op · Reconstructie`;
   const gratis = gratisVan(niveau);
   mount.replaceChildren(...[
-    el('h1', { text: `Meer puzzels op niveau ${niveau}` }),
-    el('p', { class: 'lede', text: `Van elk niveau zijn twee puzzels gratis. Die van niveau ${niveau} heb je gespeeld.` }),
+    el('h1', { text: `Je gratis puzzels van niveau ${niveau} zijn op` }),
+    el('p', { class: 'lede', text: 'Van elk niveau zijn twee puzzels gratis.' }),
     el('p', { text: 'Met volledige toegang speel je alle puzzels op elk niveau, en je kunt ze printen. Je betaalt één keer, geen abonnement.' }),
-    PRIJS ? el('p', { class: 'prijs', text: `${PRIJS}, eenmalig` }) : null,
+    PRIJS ? el('p', { class: 'prijs', text: PRIJS }) : null,
     el('p', { class: 'knoppen' }, [koop]),
     melding,
-    el('p', { class: 'legend', text: 'Ben je jonger dan 16? Vraag het een ouder.' }),
+    // Wie al kocht, zoekt de weg terug direct onder de knop (ui-review).
     ingelogd ? null : el('p', { class: 'legend', text: 'Al gekocht? Log in met hetzelfde Google-account.' }),
-    gratis.length ? el('p', { class: 'label eigen-kop', text: `Je gratis puzzels van niveau ${niveau}` }) : null,
+    el('p', { class: 'legend', text: 'Ben je jonger dan 16? Vraag het aan een ouder.' }),
+    gratis.length ? el('p', { class: 'label eigen-kop', text: 'Je gratis puzzels' }) : null,
     gratis.length ? el('div', { class: 'rows' }, gratis.map(gratisRij)) : null,
-    el('p', {}, [el('a', { class: 'btn', href: '#/', text: 'Naar het begin' })]),
+    // Rustig, zodat hij niet met de koopknop concurreert (ui-review).
+    el('p', {}, [el('a', { class: 'btn btn-quiet', href: '#/puzzels', text: 'Naar de puzzels' })]),
   ].filter(Boolean));
 }
