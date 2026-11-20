@@ -17,8 +17,13 @@ that hands out puzzles, so no server can withhold one.
 
 ## Decision
 
-1. **Two puzzles per level are free; more needs a single purchase.** That purchase also
-   unlocks printing, so the printing-only product is dropped.
+1. **Levels 1–3 are free to taste and to play daily; levels 4–6 are what the purchase
+   buys.** Revised 2026-11-20 (Guus, ask-7c3e91b2; was: two puzzles per level on every
+   level): signed out, two puzzles each of levels 1–3 and one taste puzzle of level 4;
+   signed in, also one puzzle of the day from levels 1–3. The single purchase opens
+   everything, printing included, so the printing-only product is dropped. Why: the hard
+   levels are what enthusiasts pay for, casual players and children keep something free
+   every day, and the daily puzzle gives a reason to sign in, which buying needs anyway.
 2. **The purchase belongs to the Google account** (ADR-0006). The server holds the
    entitlement, which only payment webhooks write; the client reads it and caches it.
 3. **One entitlement across stores**: a web merchant of record and Google Play Billing (and

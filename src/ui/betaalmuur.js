@@ -7,7 +7,7 @@ import { el } from './boards.js';
 import { parsePuzzleId } from '../puzzle.js';
 import { WORLD_BY_ID } from '../content/worlds.js';
 import { loadProgress } from './state.js';
-import { PRIJS, gratisVan } from '../betaalmuur/toegang.js';
+import { PRIJS, gratisVan, puzzelVanDeDag } from '../betaalmuur/toegang.js';
 import { accountAan } from '../sync/config.js';
 import { ingelogdAls, inloggen } from '../sync/sessie.js';
 
@@ -52,18 +52,30 @@ export function renderBetaalmuur(mount, niveau) {
     melding.hidden = false;
   });
 
+  // Niveau 1 tot en met 3 hebben een tegoed dat op is; 4 tot en met 6 zijn
+  // wat je koopt (D2, herzien 2026-11-20). Dus twee verschillende koppen.
+  const zwaar = niveau >= 4;
+  const titel = zwaar ? `Niveau ${niveau} zit in volledige toegang` : `Je gratis puzzels van niveau ${niveau} zijn op`;
   // Anders bleef de naam van de vorige puzzel in het tabblad staan.
-  document.title = `Je gratis puzzels van niveau ${niveau} zijn op · Reconstructie`;
+  document.title = `${titel} · Reconstructie`;
   const gratis = gratisVan(niveau);
+  // De puzzel van de dag: ingelogd een knop ernaartoe, anders de reden om
+  // in te loggen. Nooit de hoofdknop: dat blijft kopen.
+  const dag = ingelogd
+    ? el('p', {}, [el('a', { class: 'btn', href: `#/puzzel/${puzzelVanDeDag()}`, text: 'Speel de puzzel van de dag' })])
+    : el('p', { class: 'legend', text: 'Log in en speel elke dag gratis de puzzel van de dag (niveau 1 tot en met 3).' });
   mount.replaceChildren(...[
-    el('h1', { text: `Je gratis puzzels van niveau ${niveau} zijn op` }),
-    el('p', { class: 'lede', text: 'Van elk niveau zijn twee puzzels gratis.' }),
+    el('h1', { text: titel }),
+    el('p', { class: 'lede', text: zwaar
+      ? 'Niveau 4, 5 en 6 zijn de moeilijkste. Van niveau 4 kun je er één gratis proberen.'
+      : 'Van niveau 1, 2 en 3 zijn er twee gratis.' }),
     el('p', { text: 'Met volledige toegang speel je alle puzzels op elk niveau, en je kunt ze printen. Je betaalt één keer, geen abonnement.' }),
     PRIJS ? el('p', { class: 'prijs', text: PRIJS }) : null,
     el('p', { class: 'knoppen' }, [koop]),
     melding,
     // Wie al kocht, zoekt de weg terug direct onder de knop (ui-review).
     ingelogd ? null : el('p', { class: 'legend', text: 'Al gekocht? Log in met hetzelfde Google-account.' }),
+    dag,
     el('p', { class: 'legend', text: 'Ben je jonger dan 16? Vraag het aan een ouder.' }),
     gratis.length ? el('p', { class: 'label eigen-kop', text: 'Je gratis puzzels' }) : null,
     gratis.length ? el('div', { class: 'rows' }, gratis.map(gratisRij)) : null,

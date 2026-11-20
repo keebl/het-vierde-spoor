@@ -15,7 +15,7 @@ import { WORLD_BY_ID } from './content/worlds.js';
 // Optionele accounts (specs/accounts-and-sync.md). Zonder schakelaar doet
 // dit niets; supabase-js zelf wordt pas geladen als er een sessie is.
 import { accountAan } from './sync/config.js';
-import { start as startAccount, komtVanInloggen, GEBEURTENIS } from './sync/sessie.js';
+import { start as startAccount, komtVanInloggen, ingelogdAls, GEBEURTENIS } from './sync/sessie.js';
 import { renderAccount, hangAccountknopOp } from './ui/account.js';
 // De betaalmuur (specs/paywall-and-android.md). Staat de schakelaar op
 // 'uit', dan laat magOpenen alles door en verandert er niets.
@@ -85,7 +85,10 @@ function route() {
     const settings = parsePuzzleId(id);
     // Vóór het bouwen: een derde nieuwe puzzel van een niveau bouwt niet
     // eens, de muur staat er meteen.
-    if (!magOpenen(id, settings.niveau, { voortgang: (i) => !!loadProgress(i) })) {
+    if (!magOpenen(id, settings.niveau, {
+      voortgang: (i) => !!loadProgress(i),
+      ingelogd: accountAan() && !!ingelogdAls(),
+    })) {
       renderBetaalmuur(app, settings.niveau);
       return;
     }

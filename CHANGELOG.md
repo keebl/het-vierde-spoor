@@ -27,6 +27,8 @@ day the changelog was introduced; everything before that is in git history only.
   under it, and the panels below the board sit evenly apart.
 
 ### Added
+- A link for testers, `/tester`: in that browser every puzzle stays free once the paywall
+  is on. `/tester?uit` turns it off again.
 - Optional Google sign-in is now switched on: "Inloggen" in the menu keeps your solved
   puzzles, stars and level in step on all your devices. Playing without an account stays
   exactly as before.

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="robots" content="noindex">
+<title>Testtoegang — Reconstructie</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/styles/app.css">
+</head>
+<body>
+<!-- De link voor testers (src/betaalmuur/tester.js zet de testtoegang).
+     Absolute paden: GitHub Pages serveert deze pagina ook als /tester. -->
+<header class="top">
+  <a class="brand" href="/#/">
+    <span class="brand-text">Reconstructie</span>
+  </a>
+</header>
+<main id="app">
+  <p class="eyebrow">Testen</p>
+  <div id="aan" hidden>
+    <h1>Je kunt alles spelen</h1>
+    <p class="lede">In deze browser zijn alle puzzels vrij, op elk niveau. Bedankt dat je de site test.</p>
+  </div>
+  <div id="uit" hidden>
+    <h1>Testtoegang staat uit</h1>
+    <p class="lede">In deze browser geldt weer het gewone gratis aanbod.</p>
+  </div>
+  <noscript><h1>Zet JavaScript aan</h1><p class="lede">Zonder JavaScript werkt de site niet.</p></noscript>
+  <p><a class="btn btn-primary" href="/#/puzzels">Naar de puzzels</a></p>
+</main>
+<script type="module" src="/src/betaalmuur/tester.js"></script>
+</body>
+</html>

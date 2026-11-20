@@ -9,6 +9,13 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-20: **tester link** `/tester` (Guus): in that browser everything is free, as before
+  the paywall; `/tester?uit` turns it off. Same PR #47.
+- 2026-11-20: **paywall model revised** (Guus "Ja, met de drie", ask-7c3e91b2; D2 and ADR-0007):
+  signed out, 2 free puzzles each of levels 1–3 and 1 taste puzzle of level 4; signed in, also
+  the puzzle of the day (levels 1–3, same for everyone); levels 5–6 and more only with full
+  access. Built behind the same `'test'` switch; the level path must still explain the level-4
+  wall when it is built.
 - 2026-11-20: **web paywall step 1 built** (`specs/paywall-and-android.md` Plan): two free
   puzzles per level counted in the browser (`src/betaalmuur/toegang.js`), the paywall screen
   (`src/ui/betaalmuur.js`, copy in `docs/UX.md`), keuring `check:betaalmuur`. Switch
