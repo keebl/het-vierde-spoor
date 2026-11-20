@@ -34,10 +34,18 @@ export function renderBetaalmuur(mount, niveau) {
     type: 'button',
     text: ingelogd ? 'Volledige toegang kopen' : 'Log in om te kopen',
   });
-  koop.addEventListener('click', () => {
+  koop.addEventListener('click', async () => {
     // Inloggen kan al; afrekenen pas als Stripe er is (stap 3 van het plan).
+    // Afgewacht, zodat een mislukte login niet als losse fout verdwijnt
+    // (SonarCloud, PR #46).
     if (!ingelogd && accountAan()) {
-      inloggen();
+      try {
+        await inloggen();
+      } catch (fout) {
+        console.warn('inloggen mislukt:', fout?.name || 'onbekend');
+        melding.textContent = 'Inloggen is niet gelukt.';
+        melding.hidden = false;
+      }
       return;
     }
     melding.textContent = 'Kopen kan nog niet: dit is de testversie.';

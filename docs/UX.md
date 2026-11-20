@@ -233,7 +233,8 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
   the case title or "Gratis puzzel", and "✓ opgelost", "oplossing bekeken", "mee bezig"
   or "nog niet begonnen".
 - Until checkout exists (test mode only): pressing the primary action shows "Kopen kan
-  nog niet: dit is de testversie."
+  nog niet: dit is de testversie." If sign-in fails: "Inloggen is niet gelukt." (as on the
+  account page).
 
 ## Principles
 - The solution teaches, not only tells, so we show reasoning before the placement in every step.
