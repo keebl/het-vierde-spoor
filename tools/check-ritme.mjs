@@ -51,26 +51,44 @@ if (!browser) {
 const omgeving = { ...process.env, PORT: String(POORT_SITE) };
 delete omgeving.ANTHROPIC_API_KEY;
 const site = spawn(process.execPath, [pad('../server/serve.mjs')], { env: omgeving, stdio: 'ignore' });
-const proc = spawn(browser, [
-  '--headless=new', '--disable-gpu', '--no-first-run', '--hide-scrollbars',
-  `--remote-debugging-port=${POORT_BROWSER}`,
-  `--user-data-dir=${mkdtempSync(join(tmpdir(), 'ritme-'))}`,
-  // Ubuntu op de GitHub-runner staat de zandbak van Chromium niet toe;
-  // de browser opent hier alleen onze eigen pagina op localhost.
-  ...(process.platform === 'linux' ? ['--no-sandbox'] : []),
-  'about:blank',
-], { stdio: 'ignore' });
+// Chrome start op de GitHub-runner soms wel, maar opent zijn debugpoort
+// nooit: PR #45 en #48 vielen zo om na 30 s wachten, terwijl het in de
+// andere runs binnen twee seconden lukte. Langer wachten helpt dan niet;
+// opnieuw starten, met een vers profiel, wel. Wat Chrome op stderr zegt,
+// bewaren we, zodat een volgende keer de echte reden in het log staat.
+let proc;
+let stderr = '';
+function startBrowser() {
+  stderr = '';
+  proc = spawn(browser, [
+    '--headless=new', '--disable-gpu', '--no-first-run', '--hide-scrollbars',
+    `--remote-debugging-port=${POORT_BROWSER}`,
+    `--user-data-dir=${mkdtempSync(join(tmpdir(), 'ritme-'))}`,
+    // Ubuntu op de GitHub-runner staat de zandbak van Chromium niet toe;
+    // de browser opent hier alleen onze eigen pagina op localhost.
+    ...(process.platform === 'linux' ? ['--no-sandbox'] : []),
+    'about:blank',
+  ], { stdio: ['ignore', 'ignore', 'pipe'] });
+  proc.stderr.on('data', (d) => { stderr = (stderr + d).slice(-4000); });
+}
 
 let code = 1;
 try {
   for (let i = 0; i < 40; i++) {
     try { await fetch(`http://127.0.0.1:${POORT_SITE}/`); break; } catch { await wacht(250); }
   }
-  // Dertig seconden, niet tien: op een drukke GitHub-runner kwam Chrome
-  // op 2026-11-20 niet op tijd op en viel PR #45 om zonder ritmefout.
+  // Drie pogingen van vijftien seconden: zie startBrowser.
   let lijst;
-  for (let i = 0; i < 120 && !lijst; i++) {
-    try { lijst = await (await fetch(`http://127.0.0.1:${POORT_BROWSER}/json`)).json(); } catch { await wacht(250); }
+  for (let poging = 1; poging <= 3 && !lijst; poging++) {
+    startBrowser();
+    for (let i = 0; i < 60 && !lijst; i++) {
+      try { lijst = await (await fetch(`http://127.0.0.1:${POORT_BROWSER}/json`, { signal: AbortSignal.timeout(2000) })).json(); } catch { await wacht(250); }
+    }
+    if (!lijst) {
+      console.log(`poging ${poging}: ${browser} opende de debugpoort niet${stderr ? `; stderr:\n${stderr.trim()}` : ''}`);
+      proc.kill('SIGKILL');
+      await wacht(500);
+    }
   }
   if (!lijst) throw new Error(`${browser} kwam niet op. In een sandbox: plak tools/ritme-meting.js in het browserpaneel.`);
 
@@ -126,7 +144,7 @@ try {
 } catch (e) {
   console.log(e.message);
 } finally {
-  proc.kill();
+  proc?.kill();
   site.kill();
 }
 process.exit(code);

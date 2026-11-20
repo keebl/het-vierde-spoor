@@ -6,6 +6,7 @@
 
 import { magOpenen, muurActief, heeftToegang, isTester, zetTester, gratisVan, puzzelVanDeDag, vandaag, BETAALMUUR, PRIJS, GRATIS } from '../src/betaalmuur/toegang.js';
 import { parsePuzzleId } from '../src/puzzle.js';
+import { existsSync } from 'node:fs';
 
 let fouten = 0;
 const zeg = (goed, wat) => { if (!goed) fouten++; console.log(`${goed ? 'ok  ' : 'FOUT'}  ${wat}`); };
@@ -18,6 +19,12 @@ const live = { stand: 'live', zoek: '' };
 
 zeg(['uit', 'test', 'live'].includes(BETAALMUUR), `schakelaar heeft een bekende stand (${BETAALMUUR})`);
 zeg(BETAALMUUR !== 'live' || !!PRIJS, "'live' alleen met een vastgestelde prijs");
+// De testerslink zet in elke browser alles open, voor wie hem kent. Goed om
+// te testen, niet als de muur echt staat: Guus, 2026-11-20, "uit vóór live".
+// Een geheime code helpt op een statische site niet (hij staat dan in de
+// broncode); wie testers na live nog wil, doet dat via de server (stap 4).
+const testerslink = existsSync(new URL('../tester.html', import.meta.url));
+zeg(BETAALMUUR !== 'live' || !testerslink, "'live' alleen zonder tester.html (go-live-blokkade)");
 zeg(JSON.stringify(GRATIS) === '{"1":2,"2":2,"3":2,"4":1,"5":0,"6":0}', 'tegoed per niveau volgens D2 (2/2/2/1/0/0)');
 
 zeg(!muurActief('uit', '?betaaltest'), "'uit' toont nooit een muur");

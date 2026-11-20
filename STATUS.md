@@ -168,6 +168,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   giveaways 71s, library 33s, the other three a tenth of a second each.
 
 ## Next
+- **Go-live blocker for the paywall:** remove the tester link (`tester.html`,
+  `src/betaalmuur/tester.js`, `/tester` in `server/serve.mjs`) before `BETAALMUUR` goes to
+  `'live'` (Guus, 2026-11-20, "uit vóór live"). `check:betaalmuur` refuses `'live'` while
+  `tester.html` exists.
 - Merge the phase B PR when it is green (main session), then propose the level-path build
   card (`specs/level-path.md`, approved; Draw Things images need a card first because
   PRODUCT.md says "no image files"). The level path calls `meldWijziging('pad', k)`.
