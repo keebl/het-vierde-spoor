@@ -240,6 +240,18 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
   nog niet: dit is de testversie." If sign-in fails: "Inloggen is niet gelukt." (as on the
   account page).
 
+### Tester access (paywall)
+- Purpose: a link Guus shares with people who test the site, so they play everything as
+  before the paywall, in that browser (Guus, 2026-11-20).
+- Shown: at `/tester` (`tester.html`); `/tester?uit` turns it off again. Not linked from
+  the site, `noindex`.
+- Copy, on: eyebrow "Testen"; title "Je kunt alles spelen"; "In deze browser zijn alle
+  puzzels vrij, op elk niveau. Bedankt dat je de site test."
+- Copy, off: title "Testtoegang staat uit"; "In deze browser geldt weer het gewone gratis
+  aanbod."
+- Primary action: "Naar de puzzels". Without JavaScript: "Zet JavaScript aan" / "Zonder
+  JavaScript werkt de site niet."
+
 ## Principles
 - The solution teaches, not only tells, so we show reasoning before the placement in every step.
 - Nothing spoils an unsolved board, so we show the steps only after Oplossing or a solve,

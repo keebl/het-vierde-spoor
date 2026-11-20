@@ -4,7 +4,7 @@
 // puzzel blijft open, de schakelaar laat in 'uit' alles door, en 'live' kan niet zonder
 // prijs. Met een nep-opslag, zonder browser of netwerk.
 
-import { magOpenen, muurActief, heeftToegang, gratisVan, puzzelVanDeDag, vandaag, BETAALMUUR, PRIJS, GRATIS } from '../src/betaalmuur/toegang.js';
+import { magOpenen, muurActief, heeftToegang, isTester, zetTester, gratisVan, puzzelVanDeDag, vandaag, BETAALMUUR, PRIJS, GRATIS } from '../src/betaalmuur/toegang.js';
 import { parsePuzzleId } from '../src/puzzle.js';
 
 let fouten = 0;
@@ -12,7 +12,7 @@ const zeg = (goed, wat) => { if (!goed) fouten++; console.log(`${goed ? 'ok  ' :
 
 const nepOpslag = (begin = {}) => {
   const m = new Map(Object.entries(begin));
-  return { getItem: (k) => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), m };
+  return { getItem: (k) => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: (k) => m.delete(k), m };
 };
 const live = { stand: 'live', zoek: '' };
 
@@ -74,6 +74,16 @@ zeg(muurActief('live', ''), "'live': muur");
   const morgen = new Date(2026, 10, 21, 12).getTime();
   zeg(magOpenen(id, niveau, { opslag: vol, ...live, nu: morgen }), 'een geopende puzzel van de dag blijft van jou, ook de dag erna');
   zeg(!magOpenen(puzzelVanDeDag('2026-11-19'), parsePuzzleId(puzzelVanDeDag('2026-11-19')).niveau, { opslag: nepOpslag({ 'vierdespoor.geopend': '{"1":["a","b"],"2":["a","b"],"3":["a","b"]}' }), ...live, nu, ingelogd: true }), 'de puzzel van gisteren, nooit geopend: niet gratis');
+}
+{
+  // De testerslink (tester.html): alles open, met ?uit weer het gewone tegoed.
+  const opslag = nepOpslag({ 'vierdespoor.geopend': '{"3":["a","b"]}' });
+  zetTester(true, opslag);
+  zeg(isTester(opslag) && magOpenen('c', 3, { opslag, ...live }) && magOpenen('x', 6, { opslag, ...live }), 'tester: alles open, ook niveau 6');
+  zeg(gratisVan(3, opslag).length === 2, 'tester: kost geen tegoed');
+  zetTester(false, opslag);
+  zeg(!isTester(opslag) && !magOpenen('d', 3, { opslag, ...live }), 'tester uit: weer het gewone tegoed');
+  zeg(!isTester(nepOpslag({ 'vierdespoor.tester': '"ja"' })), 'alleen precies true telt als tester');
 }
 
 console.log(`\n${fouten} fouten`);

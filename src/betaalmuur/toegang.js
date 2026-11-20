@@ -37,6 +37,7 @@ export const PRIJS = null;
 const GEOPEND = 'vierdespoor.geopend';
 const DAGEN = 'vierdespoor.dagpuzzels';
 const TOEGANG = 'vierdespoor.toegang';
+const TESTER = 'vierdespoor.tester';
 
 export function muurActief(stand = BETAALMUUR, zoek = globalThis.location?.search ?? '') {
   if (stand === 'live') return true;
@@ -89,10 +90,30 @@ export function puzzelVanDeDag(datum = vandaag()) {
   return puzzleId({ opdracht: 'dader', wereld: wereldVoorSeed(seed), mechaniek: 'kamer', niveau, seed });
 }
 
+// Testtoegang: wie /tester opent (tester.html), speelt in die browser alles,
+// zoals vóór de betaalmuur. Guus deelt die link met mensen die de site
+// testen (2026-11-20). Net als het tegoed geen slot: wie de link kent, kan
+// erin, en dat is goed zo.
+export function isTester(opslag = globalThis.localStorage) {
+  return lees(opslag, TESTER, false) === true;
+}
+
+export function zetTester(aan, opslag = globalThis.localStorage) {
+  if (aan) schrijf(opslag, TESTER, true);
+  else {
+    try {
+      opslag?.removeItem(TESTER);
+    } catch {
+      /* geen opslag: dan stond hij ook niet aan */
+    }
+  }
+}
+
 // Volledige toegang, zoals de server die het laatst gaf (stap 4): een
 // tijdstip tot wanneer de bewaarde uitslag geldt. Tot de server er is,
-// staat hier niets en is het antwoord nee.
+// staat hier niets en is het antwoord nee. Een tester heeft altijd toegang.
 export function heeftToegang(opslag = globalThis.localStorage, nu = Date.now()) {
+  if (isTester(opslag)) return true;
   const t = lees(opslag, TOEGANG, null);
   return !!t && typeof t.tot === 'number' && t.tot > nu;
 }

@@ -261,6 +261,9 @@ halfway leaves the site as players know it.
    (`vierdespoor.toegang`). The route `#/puzzel/<id>` shows the paywall instead of a third
    new puzzle of a level. Copy from `docs/UX.md` "Paywall". Keuring `check:betaalmuur`
    (no network). `test` turns it on only with `?betaaltest` in the address.
+   **Tester access** (Guus, 2026-11-20): `/tester` (`tester.html`) sets
+   `vierdespoor.tester` in that browser, which counts as full access; `/tester?uit` clears
+   it. Like the allowance it is not a lock: anyone with the link gets in.
 2. **Entitlement table** `reconstructie.toegang` (user id, source, store reference,
    granted/withdrawn at), RLS: a user reads their own row, nobody writes from a client.
    RLS tests added. Applying it to `claudeDB` is Guus's approval.

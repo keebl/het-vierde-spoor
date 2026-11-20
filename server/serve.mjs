@@ -73,12 +73,14 @@ function lanAdressen() {
 // Wat de buitenwereld mag zien. Een witte lijst, geen zwarte: de projectmap
 // bevat ook .env, .git en de serverbron, en die horen nooit over de lijn te
 // gaan. Zeker niet als je de site op het huisnetwerk openzet.
-const PUBLIEK = new Set(['index.html', 'privacy.html', 'iconen.html', 'vergelijk.html', 'favicon.svg', 'styles', 'src', 'pool']);
+const PUBLIEK = new Set(['index.html', 'privacy.html', 'tester.html', 'iconen.html', 'vergelijk.html', 'favicon.svg', 'styles', 'src', 'pool']);
 
 async function serveStatic(req, res) {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   let path = decodeURIComponent(url.pathname);
   if (path === '/' || path === '') path = '/index.html';
+  // Zoals GitHub Pages: /tester is tester.html, de link die testers krijgen.
+  if (path === '/tester') path = '/tester.html';
 
   const delen = normalize(path).split('/').filter(Boolean);
   // Geen verborgen bestanden of mappen (.env, .git, ...), geen uitstapjes
