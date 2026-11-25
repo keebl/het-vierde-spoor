@@ -10,7 +10,7 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - Run with secrets (AI texts on; Guus's own Terminal only, Claude never runs it):
   `~/.claude/bin/secrets-run -- npm start` — values come from Bitwarden via the `bws:`
   references in `.env.example`
-- Test (all): `npm run check:all` — the keuring, 16 checks. The motor and the sweep judge
+- Test (all): `npm run check:all` — the keuring, 17 checks. The motor and the sweep judge
   the level 5–6 room boards from `pool/` (`--voorraad`, about three and four minutes);
   `npm run check` and `npm run check:regels` without the flag build every board (about 13
   and 29 minutes) and run nightly in `.github/workflows/nachtrun.yml`. CI on a pull
@@ -18,13 +18,16 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
   store check take a smaller level 5–6 sample; `check:all` and the nightly run stay full
 - Test (one file): `npm run check:kamers` (also `check:regels`, `check:iconen`,
   `check:catalog`, `check:aanwijzingen`, `check:spreiding`, `check:afstanden`, `check:ritme`, `check:weggevers`,
-  `check:ai`, `check:redeneer`, `check:sync`, `check:daglimiet`, `check:betaalmuur`, `check`). `check:ritme` opens the four screens of `tests/ui/ui-check.json`
+  `check:ai`, `check:redeneer`, `check:sync`, `check:daglimiet`, `check:betaalmuur`, `check:pad`, `check`). `check:ritme` opens the five screens of `tests/ui/ui-check.json`
   in a headless Chromium at 390, 800 and 1300 px and fails when blocks that look the same sit
   unequally apart or off the scale (`tools/ritme-meting.js`), about three minutes; it needs a
   browser, so not in the sandbox (paste `tools/ritme-meting.js` into the browser pane and call
   `meetRitme()` there). `check:afstanden` refuses a
   typed gap or margin in `styles/app.css` (`specs/spacing-rhythm.md`), well under a second. `check:daglimiet` checks the
-  daily cap on paid AI calls (`AI_DAILY_CALL_LIMIT`, `server/daglimiet.mjs`), well under a second. `check:sync` checks the optional
+  daily cap on paid AI calls (`AI_DAILY_CALL_LIMIT`, `server/daglimiet.mjs`), well under a second. `check:pad` checks the 100 level-path stops (`specs/level-path.md`: one solution, the human
+  solver, the difficulty tolerance, sizes in order, fingerprints in `tools/vingerafdruk-pad.txt`,
+  a rebuild sample against `pool/pad.json`) and the path progress, about a minute; rebuild the
+  path with `node tools/pad.mjs bouw <maat>` and `kies`. `check:sync` checks the optional
   account sync (`specs/accounts-and-sync.md`) with a fake database, no network, ~0.1 s. `check:spreiding` checks the room-board clue rules of
   `specs/harder-clues.md` (no row/column clues, caps per name and per kind, no
   2-cell clue from level 3) over the library and a seed sample, about a minute. `check:redeneer` runs the human
