@@ -142,6 +142,9 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
 - Primary action: the current stop ("Speel stap 14") · Secondary: any solved stop (replay)
 - Copy for a locked stop on tap: "Nog op slot. Los eerst stap 14 op."
 - Copy when storage is blocked: "Je voortgang wordt in deze browser niet bewaard."
+- Free part (Guus, 2026-11-25, ask-8d1f2961 "A"): stops 1–18 (5×5 and 6×6) are free for
+  everyone and never count against a level's free puzzles. With the paywall on and no full
+  access, a sign sits on the path between stop 18 and 19: "Vanaf hier met volledige toegang".
 
 ### Path stop (puzzle) (level path)
 - Purpose: play, knowing this is a path step.
@@ -230,6 +233,9 @@ Extended 2026-11-18 for `specs/level-path.md` (the level path); its parts are ma
   3 zijn er twee gratis."
 - Copy, levels 4–6: title "Niveau {n} zit in volledige toegang"; "Niveau 4, 5 en 6 zijn
   de moeilijkste. Van niveau 4 kun je er één gratis proberen."
+- Copy, path stops 19–100: title "Vanaf stap 19 zit het pad in volledige toegang"; "De
+  eerste 18 stappen, van 5 bij 5 en 6 bij 6, zijn gratis voor iedereen." The quiet link
+  reads "Naar het pad" instead of "Naar de puzzels".
 - Copy, all levels: "Met volledige toegang speel je alle puzzels op elk niveau, en je kunt
   ze printen. Je betaalt één keer, geen abonnement." / price "{prijs}" / "Al gekocht? Log
   in met hetzelfde Google-account." / signed out: "Log in en speel elke dag gratis de

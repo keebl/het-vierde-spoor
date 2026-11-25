@@ -9,8 +9,10 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- 2026-11-25: **level path built** (`specs/level-path.md`), on branch
-  `claude/build-paywall-level-path-eb4c8b`, not merged, not live. Difficulty measure
+- 2026-11-25: **hand-off (context limit).** Level path merged and live as PR #50. Free
+  boundary (steps 1–18 free, sign at 18/19, path paywall copy) open as PR #51, branch
+  `claude/pad-gratis-grens`, head 0036616, CI running, Auto-fix on. Next: merge #51 when green.
+- 2026-11-25: **level path built** (`specs/level-path.md`), merged as PR #50 (309f8bc). Difficulty measure
   `src/engine/zwaarte.js` (calibrated with `tools/meet-zwaarte.mjs`: level medians 6, 9,
   12, 15, 27, 84); in-between sizes 8, 10, 11, 13, 14 in `padParams`; `tools/pad.mjs` builds
   and picks 100 stops into `src/content/pad.js` and `pool/pad.json` (boards ≥ 10×10);
@@ -176,6 +178,7 @@ standing guidance rather than state moved to `CLAUDE.md`.
   giveaways 71s, library 33s, the other three a tenth of a second each.
 
 ## Next
+- Merge PR #51 (free path steps) once CI is green; then nothing open from the level path.
 - **Go-live blocker for the paywall:** remove the tester link (`tester.html`,
   `src/betaalmuur/tester.js`, `/tester` in `server/serve.mjs`) before `BETAALMUUR` goes to
   `'live'` (Guus, 2026-11-20, "uit vóór live"). `check:betaalmuur` refuses `'live'` while
@@ -287,10 +290,6 @@ standing guidance rather than state moved to `CLAUDE.md`.
   never be copied in. (assumption: no legal advice taken)
 
 ## Blocked / open questions
-- **Level path and the free allowance: waiting on Guus.** Path steps pass `magOpenen` like
-  any puzzle of their level, so with the paywall live a signed-out player would meet it at
-  step 3 (the third level-1 puzzle). The spec does not say; asked via mission control on
-  2026-11-25. Harmless while the paywall is `'test'`.
 - **Stripe Managed Payments: waiting on Guus.** On 2026-11-25 he answered "Later" to the
   eligibility check (ask-7bf35043). Buying and paywall step 3 stay closed until he opens
   the Stripe side; the paywall stays in test mode with the tester link.
@@ -299,6 +298,9 @@ standing guidance rather than state moved to `CLAUDE.md`.
   the paid plan (~$5/month) or a host with a higher limit. Deliberately postponed.
 
 ## Recent decisions
+- 2026-11-25 — Level path and the paywall: "A: 18 stappen gratis" (ask-8d1f2961, via mission
+  control). Steps 1–18 (5×5, 6×6) are free for everyone and do not use a level's free puzzles;
+  from step 19 the path needs full access, marked by a sign on the path (`PAD_GRATIS`).
 - 2026-11-18 — Accounts and sync approved: "Goedgekeurd, zo bouwen" (forwarded verbatim by
   the main session; `specs/accounts-and-sync.md`). Product change: accounts optional, one
   database for progress only. Choices: claudeDB not a new project ("ik mag maar 1 project"),

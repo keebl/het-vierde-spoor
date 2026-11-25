@@ -4,8 +4,9 @@
 // puzzel blijft open, de schakelaar laat in 'uit' alles door, en 'live' kan niet zonder
 // prijs. Met een nep-opslag, zonder browser of netwerk.
 
-import { magOpenen, muurActief, heeftToegang, isTester, zetTester, gratisVan, puzzelVanDeDag, vandaag, BETAALMUUR, PRIJS, GRATIS } from '../src/betaalmuur/toegang.js';
+import { magOpenen, magPadStap, padGrensZichtbaar, PAD_GRATIS, muurActief, heeftToegang, isTester, zetTester, gratisVan, puzzelVanDeDag, vandaag, BETAALMUUR, PRIJS, GRATIS } from '../src/betaalmuur/toegang.js';
 import { parsePuzzleId } from '../src/puzzle.js';
+import { PAD } from '../src/content/pad.js';
 import { existsSync } from 'node:fs';
 
 let fouten = 0;
@@ -91,6 +92,24 @@ zeg(muurActief('live', ''), "'live': muur");
   zetTester(false, opslag);
   zeg(!isTester(opslag) && !magOpenen('d', 3, { opslag, ...live }), 'tester uit: weer het gewone tegoed');
   zeg(!isTester(nepOpslag({ 'vierdespoor.tester': '"ja"' })), 'alleen precies true telt als tester');
+}
+
+{
+  // Het pad (Guus, 2026-11-25, ask-8d1f2961 "A"): de eerste 18 stappen gratis,
+  // zonder het tegoed van een niveau aan te spreken; daarna volledige toegang.
+  // De teksten zeggen "van 5 bij 5 en 6 bij 6": dat moet ook zo blijven.
+  zeg(PAD_GRATIS === 18, 'het pad heeft 18 gratis stappen');
+  zeg(PAD.slice(0, PAD_GRATIS).every((s) => s.maat === 5 || s.maat === 6) && PAD[PAD_GRATIS].maat > 6,
+    'de gratis stappen zijn precies de stappen van 5 bij 5 en 6 bij 6');
+  const opslag = nepOpslag();
+  zeg([1, 3, 18].every((k) => magPadStap(k, `pad-${k}`, { opslag, ...live })), 'pad: stap 1 tot en met 18 mag open');
+  zeg(gratisVan(1, opslag).length === 0, 'pad: de gratis stappen kosten geen tegoed');
+  zeg(!magPadStap(19, 'pad-19', { opslag, ...live }), 'pad: stap 19 zonder toegang niet');
+  zeg(magPadStap(19, 'pad-19', { opslag, ...live, voortgang: () => true }), 'pad: een begonnen stap blijft speelbaar');
+  zeg(magPadStap(60, 'pad-60', { opslag, stand: 'test', zoek: '' }), 'pad: zonder muur mag alles');
+  zeg(padGrensZichtbaar({ opslag, ...live }) && !padGrensZichtbaar({ opslag, stand: 'test', zoek: '' }), 'pad: grens alleen met de muur aan');
+  zetTester(true, opslag);
+  zeg(magPadStap(60, 'pad-60', { opslag, ...live }) && !padGrensZichtbaar({ opslag, ...live }), 'pad: een tester loopt door, zonder grens');
 }
 
 console.log(`\n${fouten} fouten`);
