@@ -7,6 +7,8 @@
 
 import { bouwKamerGen, genNaarData, puzzleId, BORDVERSIE } from '../puzzle.js';
 import { haal, bewaar, gespeeld, BEWAAR_VANAF } from './opslag.js';
+import { maatVanSeed } from '../engine/difficulty.js';
+import { PAD_BEWAAR_VANAF } from '../content/pad.js';
 
 // Hoe lang het op een gemiddelde telefoon hooguit duurt, in seconden: de
 // prestatiebegroting van de spec (vier keer de laptop tot het gemeten is).
@@ -33,12 +35,15 @@ function maakWorker() {
 
 // Uit de repo: een vaste voorraad per niveau (tools/pool.mjs), alleen
 // geladen als dat niveau gevraagd wordt.
+// De stappen van het pad van tien bij tien en groter liggen in
+// pool/pad.json (tools/pad.mjs); hun niveau zegt niets over welk bestand.
 const pools = new Map();
 async function uitPool(settings) {
-  const n = settings.niveau;
-  if (n < 5) return null;
+  const maat = maatVanSeed(settings.seed);
+  const n = maat ? (maat >= PAD_BEWAAR_VANAF ? 'pad' : null) : settings.niveau;
+  if (n == null || (typeof n === 'number' && n < 5)) return null;
   if (!pools.has(n)) {
-    pools.set(n, fetch(new URL(`../../pool/niveau-${n}.json`, import.meta.url))
+    pools.set(n, fetch(new URL(`../../pool/${n === 'pad' ? 'pad' : `niveau-${n}`}.json`, import.meta.url))
       .then((r) => (r.ok ? r.json() : {}))
       .catch(() => ({})));
   }

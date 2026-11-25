@@ -24,6 +24,8 @@ import { WORLD_BY_ID } from '../content/worlds.js';
 import { LEVEL_IDS } from '../engine/difficulty.js';
 import { MECHANIC_BY_ID } from '../content/assignments.js';
 import { sceneVoor } from './scenes.js';
+import { padStand, huidigeStap } from './pad-voortgang.js';
+import { AANTAL_STAPPEN } from './pad.js';
 
 const STAPPEN = [
   {
@@ -93,6 +95,9 @@ export function renderHome(mount) {
           text: 'Je krijgt een paar verdachten en een lijstje aanwijzingen. Streep weg wat niet kan, en er blijft één antwoord over. Gokken hoeft nooit, ook niet bij de moeilijkste.',
         }),
       ]),
+      // Het pad, boven de niveaus: één klik om verder te gaan
+      // (specs/level-path.md, criterium 10).
+      padKnop(),
       el('p', { class: 'label', text: 'Hoe zwaar wil je het hebben? Kies een niveau en klik er nog eens op om te beginnen.' }),
       niveaus,
       el('p', {
@@ -119,6 +124,21 @@ export function renderHome(mount) {
       ),
     ])
   );
+}
+
+// "Begin het pad" zonder voortgang, anders verder waar je was. Aan het eind
+// naar het pad zelf, waar het eindbericht staat.
+function padKnop() {
+  const pad = padStand();
+  const hier = huidigeStap(pad, AANTAL_STAPPEN);
+  const begonnen = Object.keys(pad.stappen).length > 0;
+  const [href, tekst] = hier > AANTAL_STAPPEN
+    ? ['#/pad', 'Verder op het pad']
+    : begonnen ? [`#/pad/${hier}`, `Verder op het pad · stap ${hier}`] : ['#/pad/1', 'Begin het pad'];
+  return el('div', { class: 'pad-knop-blok' }, [
+    el('a', { class: 'btn btn-primary btn-groot', href, text: tekst }),
+    el('p', { class: 'hero-note', text: 'Elke stap een tikje zwaarder, van 5 bij 5 tot 16 bij 16.' }),
+  ]);
 }
 
 // Een plattegrond om naar te kijken, niet om in te spelen: hij staat op de

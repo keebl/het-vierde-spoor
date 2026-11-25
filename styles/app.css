@@ -3159,8 +3159,11 @@ select, input[type="text"] { border-radius: 999px; border-width: 2px; }
   .brand { font-size: var(--t-md); }
   /* De ronde menuknoppen zijn breder dan de oude; op 375 pixels duwden ze
      de themaknop van het scherm. Kleiner, en de themaknop rechts vast. */
-  .nav { gap: 2px; justify-content: space-between; } /* ui-lint: allow — op 375 past het menu anders niet */
-  .nav a { font-size: var(--t-sm); padding: 6px 9px; }
+  /* Met "Het pad" erbij (vier links) liep Uitleg op 375 veertien pixels
+     over de rand: zijkanten 7 in plaats van 9, en op een nog smaller scherm
+     liever een tweede regel dan een link half buiten beeld. */
+  .nav { gap: 2px; justify-content: space-between; flex-wrap: wrap; } /* ui-lint: allow — op 375 past het menu anders niet */
+  .nav a { font-size: var(--t-sm); padding: 6px 7px; }
   .puzzle-head h1 { font-size: 1.75rem; }
 }
 
@@ -3334,3 +3337,72 @@ a.accountknop-letter[aria-current="page"] { outline: 2px solid var(--accent); ou
 .bouwen[data-niveau="4"] .bouwbalk-vulling { background: var(--pop-2); }
 .bouwen[data-niveau="5"] .bouwbalk-vulling { background: var(--pop-1); }
 .bouwen[data-niveau="6"] .bouwbalk-vulling { background: var(--pop-6); }
+
+/* --------------------------------------------- het pad (specs/level-path.md)
+   Een slingerend pad van muntjes in de kleur van hun niveau, dezelfde
+   kleuren als de niveaukiezer op de voordeur. Getekend in src/ui/pad.js. */
+.pad-pagina { display: grid; gap: var(--ruimte-tussen); }
+.pad-kop { display: grid; gap: var(--ruimte-binnen); justify-items: start; }
+.pad-kop h1, .pad-kop p { margin: 0; }
+.pad-stand { font-size: var(--t-md); font-weight: 600; color: var(--text-2); }
+.pad-acties { display: flex; flex-wrap: wrap; gap: var(--ruimte-binnen); }
+.pad-opslag { color: var(--text-3); font-size: var(--t-sm); }
+.pad-melding { color: var(--text-2); font-weight: 600; min-height: 1.5em; }
+.pad-melding:empty { min-height: 0; }
+
+.pad-kaart-wrap { display: grid; justify-items: center; }
+.pad-kaart { width: 100%; max-width: 420px; height: auto; overflow: visible; }
+
+.pad-weg { fill: none; stroke: var(--surface-3); stroke-width: 26; stroke-linecap: round; }
+.pad-weg-streep { fill: none; stroke: var(--line-soft); stroke-width: 2; stroke-dasharray: 2 9; stroke-linecap: round; }
+.pad-weg-gelopen { fill: none; stroke: var(--pop-3); stroke-width: 6; stroke-linecap: round; opacity: 0.9; }
+
+.pad-bordje-plank { fill: var(--surface); stroke: var(--kleur); stroke-width: 3; }
+.pad-bordje-tekst { font-family: var(--display); font-weight: 700; font-size: 15px; fill: var(--text); }
+
+.niveau-1 { --kleur: var(--pop-4); }
+.niveau-2 { --kleur: var(--pop-5); }
+.niveau-3 { --kleur: var(--pop-6); }
+.niveau-4 { --kleur: var(--pop-1); }
+.niveau-5 { --kleur: var(--pop-2); }
+.niveau-6 { --kleur: #e0281f; } /* ui-lint: allow — de kleur van Monsterlijk in de niveaukiezer, die geen token heeft */
+
+.pad-stop { cursor: pointer; outline: none; }
+.pad-munt { fill: var(--kleur); stroke: var(--surface); stroke-width: 3; transition: transform 0.15s ease; transform-box: fill-box; transform-origin: center; }
+.pad-stop:hover .pad-munt, .pad-stop:focus-visible .pad-munt { transform: scale(1.08); }
+.pad-stop:focus-visible .pad-munt { stroke: var(--accent); stroke-width: 4; }
+.pad-nummer { font-family: var(--display); font-weight: 800; font-size: 18px; fill: #fff; pointer-events: none; } /* ui-lint: allow — wit op de niveaukleur, net als de munt in de kiezer */
+.pad-hier .pad-nummer { font-size: 24px; }
+.pad-hier-ring { fill: none; stroke: var(--kleur); stroke-width: 3; stroke-dasharray: 5 5; }
+.pad-hier-tekst { font-family: var(--display); font-weight: 700; font-size: 14px; fill: var(--text); }
+
+.pad-dicht { cursor: default; }
+.pad-dicht .pad-munt { fill: var(--surface-2); stroke: var(--line-soft); stroke-dasharray: 4 4; }
+.pad-dicht .pad-nummer { fill: var(--text-2); }
+.pad-dicht:focus-visible .pad-munt { stroke: var(--accent); stroke-dasharray: none; }
+.pad-slot-beugel { fill: none; stroke: var(--text-2); stroke-width: 2.4; }
+.pad-slot-kast { fill: var(--text-2); }
+/* De sterren onder een stap staan op de weg; zonder plankje liep de streep
+   er dwars doorheen (ui-reviewer, 2026-11-25). */
+.pad-sterren-plank { fill: var(--surface); stroke: var(--line-soft); }
+
+.pad-ster { fill: none; stroke: var(--text-3); stroke-width: 1.4; stroke-linejoin: round; }
+.pad-ster-aan { fill: var(--pop-3); stroke: var(--pop-2); }
+
+/* De sterren op het blad na een stap (docs/UX.md: boven het portret). */
+.ontknoping-sterren { display: grid; justify-items: center; gap: var(--s1); margin: 0; }
+.ontknoping-sterren svg { width: 180px; height: 60px; overflow: visible; }
+/* Op het blad van een padstap staan drie knoppen. Viel de derde alleen op
+   een tweede regel, dan oogde hij verdwaald (ui-reviewer, 2026-11-25): de
+   hoofdknop krijgt de hele eerste regel, de twee andere delen de tweede. */
+.ontknoping-terug { flex: 1 1 8rem; justify-content: center; }
+.ontknoping-knoppen:has(.ontknoping-terug) .ontknoping-verder { flex-basis: 100%; }
+.ontknoping-sterren p { margin: 0; font-size: var(--t-sm); color: var(--text-2); }
+.ontknoping-sterren b { color: var(--text); }
+
+/* De kruimel boven een stap: terug naar het pad. */
+.crumbs-pad a { font-weight: 700; }
+
+/* De knop naar het pad op de voordeur, boven de niveaus. */
+.pad-knop-blok { display: grid; gap: var(--ruimte-binnen); justify-items: start; }
+.pad-knop-blok p { margin: 0; }
