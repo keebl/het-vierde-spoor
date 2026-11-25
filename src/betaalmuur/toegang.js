@@ -118,6 +118,33 @@ export function heeftToegang(opslag = globalThis.localStorage, nu = Date.now()) 
   return !!t && typeof t.tot === 'number' && t.tot > nu;
 }
 
+// Het pad (Guus, 2026-11-25, ask-8d1f2961 "A"): de eerste PAD_GRATIS
+// stappen, vijf bij vijf en zes bij zes, zijn gratis voor iedereen en
+// tellen niet mee voor het tegoed van een niveau. Daarna is het pad
+// volledige toegang. Liep het pad gewoon door magOpenen, dan stond een
+// speler zonder account al bij stap 3 voor de muur: zijn derde puzzel van
+// niveau 1. Wat je al begon, blijft speelbaar, net als bij magOpenen.
+export const PAD_GRATIS = 18;
+
+export function magPadStap(k, id, {
+  opslag = globalThis.localStorage,
+  voortgang = () => false,
+  stand = BETAALMUUR,
+  zoek = globalThis.location?.search ?? '',
+  nu = Date.now(),
+} = {}) {
+  if (!muurActief(stand, zoek)) return true;
+  if (k <= PAD_GRATIS) return true;
+  if (heeftToegang(opslag, nu)) return true;
+  return voortgang(id);
+}
+
+// Of het pad een grens toont: alleen als de muur aan staat en je geen
+// volledige toegang hebt. Anders is er geen grens om te laten zien.
+export function padGrensZichtbaar({ opslag = globalThis.localStorage, stand = BETAALMUUR, zoek = globalThis.location?.search ?? '', nu = Date.now() } = {}) {
+  return muurActief(stand, zoek) && !heeftToegang(opslag, nu);
+}
+
 // Mag deze puzzel open? Zo ja, en hij was nog niet geteld, dan telt hij nu
 // mee. `voortgang(id)` zegt of er voor die puzzel al iets bewaard is.
 export function magOpenen(id, niveau, {

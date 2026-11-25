@@ -21,7 +21,7 @@ import { start as startAccount, komtVanInloggen, ingelogdAls, GEBEURTENIS } from
 import { renderAccount, hangAccountknopOp } from './ui/account.js';
 // De betaalmuur (specs/paywall-and-android.md). Staat de schakelaar op
 // 'uit', dan laat magOpenen alles door en verandert er niets.
-import { magOpenen } from './betaalmuur/toegang.js';
+import { magOpenen, magPadStap } from './betaalmuur/toegang.js';
 import { renderBetaalmuur } from './ui/betaalmuur.js';
 import { loadProgress } from './ui/state.js';
 
@@ -77,11 +77,12 @@ let lopendeBouw = null;
 function openPuzzel(id, settings, nr, pad = null) {
   // Vóór het bouwen: een derde nieuwe puzzel van een niveau bouwt niet
   // eens, de muur staat er meteen.
-  if (!magOpenen(id, settings.niveau, {
-    voortgang: (i) => !!loadProgress(i),
-    ingelogd: accountAan() && !!ingelogdAls(),
-  })) {
-    renderBetaalmuur(app, settings.niveau);
+  const voortgang = (i) => !!loadProgress(i);
+  const mag = pad
+    ? magPadStap(pad.k, id, { voortgang })
+    : magOpenen(id, settings.niveau, { voortgang, ingelogd: accountAan() && !!ingelogdAls() });
+  if (!mag) {
+    renderBetaalmuur(app, settings.niveau, { padStap: pad?.k ?? null });
     return;
   }
   // Een Reconstructie bouwt in een Web Worker, met een schatting vooraf en

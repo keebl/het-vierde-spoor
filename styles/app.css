@@ -3359,6 +3359,10 @@ a.accountknop-letter[aria-current="page"] { outline: 2px solid var(--accent); ou
 
 .pad-bordje-plank { fill: var(--surface); stroke: var(--kleur); stroke-width: 3; }
 .pad-bordje-tekst { font-family: var(--display); font-weight: 700; font-size: 15px; fill: var(--text); }
+/* De grens van het gratis deel: geen maat maar een andere soort bordje,
+   dus de klikkleur en een stippelrand (docs/UX.md, Path). */
+.pad-grens { --kleur: var(--pop-1); }
+.pad-grens .pad-bordje-plank { stroke-dasharray: 6 4; }
 
 .niveau-1 { --kleur: var(--pop-4); }
 .niveau-2 { --kleur: var(--pop-5); }

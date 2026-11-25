@@ -14,6 +14,8 @@ day the changelog was introduced; everything before that is in git history only.
   5×5 to 16×16, each a little harder than the one before, with three stars per step for
   solving without Hint or Controleer. A step opens when you solve the one before it
   yourself; using Oplossing does not count. Progress stays in this browser.
+- The first 18 steps of the path (5×5 and 6×6) are free for everyone; once the paywall
+  is on, a sign on the path marks where full access begins.
 
 ### Changed
 - On the puzzle page the rules appear once, under the board: clues first, then what is

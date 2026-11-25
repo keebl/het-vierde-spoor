@@ -14,6 +14,7 @@ import { PAD } from '../content/pad.js';
 import { padStand, huidigeStap, isOpen, totaalSterren, opslagWerkt } from './pad-voortgang.js';
 import { NIVEAU_VAN_MAAT } from '../engine/difficulty.js';
 import { nieuwePuzzel } from './volgende.js';
+import { PAD_GRATIS, padGrensZichtbaar } from '../betaalmuur/toegang.js';
 
 export const AANTAL_STAPPEN = PAD.length;
 
@@ -44,12 +45,23 @@ const BORDJE = 64;    // extra ruimte waar een nieuwe maat begint
 const BOVEN = 24;
 
 // Waar elke stap en elk bordje staat. Puur, zodat het eenmaal gerekend wordt.
-function indeling() {
+// `grens`: na stap `grens` een bordje dat het pad vanaf daar volledige
+// toegang is (docs/UX.md, Path), met eigen ruimte, vóór het maatbordje.
+function indeling(grens = null) {
   const stops = [];
   const bordjes = [];
+  let grensBordje = null;
   let y = BOVEN;
   let vorigeMaat = null;
   PAD.forEach((s, i) => {
+    if (grens != null && i === grens) {
+      // Twee regels hoog, en ruim boven het maatbordje dat er meteen op
+      // volgt: twee bordjes tegen elkaar lazen als één rommelig label
+      // (ui-reviewer, 2026-11-25).
+      y += BORDJE / 2 + 8;
+      grensBordje = { y };
+      y += BORDJE / 2 + 4;
+    }
     if (s.maat !== vorigeMaat) {
       y += BORDJE / 2;
       bordjes.push({ y, maat: s.maat });
@@ -59,7 +71,7 @@ function indeling() {
     stops.push({ k: i + 1, x: BAAN[PATROON[i % PATROON.length]], y: y + 28, maat: s.maat });
     y += RIJ;
   });
-  return { stops, bordjes, hoogte: y + 16 };
+  return { stops, bordjes, grensBordje, hoogte: y + 16 };
 }
 
 // Een ster als pad, middelpunt (cx, cy), straal r: vijf punten, iets
@@ -147,7 +159,7 @@ export function renderPad(mount, { opSlot = null } = {}) {
   if (!opslagWerkt()) kop.push(el('p', { class: 'pad-opslag', text: 'Je voortgang wordt in deze browser niet bewaard.' }));
   kop.push(melding);
 
-  const { stops, bordjes, hoogte } = indeling();
+  const { stops, bordjes, grensBordje, hoogte } = indeling(padGrensZichtbaar() ? PAD_GRATIS : null);
   const svg = svgEl('svg', {
     class: 'pad-kaart',
     viewBox: `0 0 ${BREED} ${hoogte}`,
@@ -171,6 +183,20 @@ export function renderPad(mount, { opSlot = null } = {}) {
     svg.append(svgEl('g', { class: `pad-bordje niveau-${NIVEAU_VAN_MAAT[b.maat]}`, 'aria-hidden': 'true' }, [
       svgEl('rect', { x: BREED / 2 - breed / 2, y: b.y - 15, width: breed, height: 30, rx: 8, class: 'pad-bordje-plank' }),
       svgEl('text', { x: BREED / 2, y: b.y + 5, 'text-anchor': 'middle', class: 'pad-bordje-tekst' }, document.createTextNode(tekst)),
+    ]));
+  }
+
+  // De grens van het gratis deel: hetzelfde bordje, eigen kleur, en
+  // voorgelezen (de maatbordjes zijn versiering, deze is informatie).
+  // Op twee regels, zodat het bordje smal blijft en de weg erlangs te zien is.
+  if (grensBordje) {
+    const regels = ['Vanaf hier met', 'volledige toegang'];
+    const breed = 26 + Math.max(...regels.map((r) => r.length)) * 8.2;
+    const tekst = svgEl('text', { x: BREED / 2, y: grensBordje.y - 4, 'text-anchor': 'middle', class: 'pad-bordje-tekst', 'aria-hidden': 'true' });
+    regels.forEach((r, i) => tekst.append(svgEl('tspan', { x: BREED / 2, dy: i ? 19 : 0 }, document.createTextNode(r))));
+    svg.append(svgEl('g', { class: 'pad-bordje pad-grens', role: 'listitem', 'aria-label': `Vanaf stap ${PAD_GRATIS + 1} met volledige toegang` }, [
+      svgEl('rect', { x: BREED / 2 - breed / 2, y: grensBordje.y - 24, width: breed, height: 48, rx: 10, class: 'pad-bordje-plank' }),
+      tekst,
     ]));
   }
 
