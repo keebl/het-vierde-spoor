@@ -97,6 +97,7 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
   .git/config`), so the shell stays on the branch it was on. Chained with `&&`, the
   commands after it stop; run one at a time and the next merge lands on `main`. To try a
   merge locally, check `git branch --show-current` first, or merge in a scratch clone.
+  `git switch --no-track -c <branch> origin/main` works: the lock is for writing tracking config.
 - **A push piped into `| tail -1` can fail silently.** A new worktree branch has no
   upstream, so a bare `git push` errors, and the tail swallows the message (PR #16
   reported a push that never happened). Push with `git push -u origin HEAD` and confirm
