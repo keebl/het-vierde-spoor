@@ -100,7 +100,9 @@ on the spot — scope and non-goals in `docs/PRODUCT.md`. Read `STATUS.md` first
 - **A push piped into `| tail -1` can fail silently.** A new worktree branch has no
   upstream, so a bare `git push` errors, and the tail swallows the message (PR #16
   reported a push that never happened). Push with `git push -u origin HEAD` and confirm
-  with `git ls-remote origin <branch>`.
+  with `git ls-remote origin <branch>`. A later bare `git push -q` on that branch pushed nothing
+  and printed nothing on 2026-11-25 (the upstream came out as `origin/refs/heads/…`); push
+  with `git push origin HEAD:<branch>` and check `ls-remote` every time.
 - **Spacing has three layouts on the puzzle page** (phone, one column up to 1099 px, two
   columns). Check all three, not just phone and desktop: the one-column width is where a 64 px
   gap hid on 2026-11-19. `check:ritme` measures all three.
