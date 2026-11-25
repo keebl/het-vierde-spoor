@@ -16,6 +16,11 @@ from this repo.
 - `puzzels` — per user and puzzle id: `opgelost`, `onthuld` (at most 2,000 per user).
 - `pad` — per user and level-path stop: `sterren` (0–3), `opgelost`.
 - `voorkeuren` — per user: `niveau`, `kruisjes`, `panelen`, each with the time it was chosen.
+- `toegang` — the paywall entitlement (`specs/paywall-and-android.md`, plan step 2): one row
+  per store purchase (`bron`, `referentie` as key, `toegekend`, `ingetrokken`). A user reads
+  their own rows; only the store webhooks write, as `service_role`. Account deletion removes
+  the rows; the store keeps the order, so a mistaken deletion is restored by hand
+  (`bron = 'handmatig'`).
 - Functions: `bewaar_puzzels`, `bewaar_pad`, `bewaar_voorkeuren` (security invoker, apply
   the merge rules), `verwijder_mijn_account()` (security definer, acts only on `auth.uid()`;
   deletes the login only when no table outside `auth` and `reconstructie` references it).
@@ -25,6 +30,11 @@ from this repo.
   toepassen"); `tests/reconstructie_rls.sql` 30/30; security advisors: nothing for
   `reconstructie` (one existing Auth warning, leaked-password protection, belongs to the
   shared project).
+- Not applied yet: `20261125120000_reconstructie_toegang.sql` (entitlement table, and
+  `verwijder_mijn_account()` also deletes `toegang`). Waits on Guus's yes. Checked on
+  2026-11-25 in PGlite (Postgres in WASM, `auth` stubbed): `tests/reconstructie_rls.sql`
+  36/36, and 35/36 with a deliberate insert policy on `toegang`. Run the test file on
+  `claudeDB` after applying it; before that it fails, since it needs the table.
 
 ## Found while testing: clearhead seeds every new login
 A trigger in clearhead fills `public.areas` for every new row in `auth.users`. So every
