@@ -110,12 +110,41 @@ export function zetTester(aan, opslag = globalThis.localStorage) {
 }
 
 // Volledige toegang, zoals de server die het laatst gaf (stap 4): een
-// tijdstip tot wanneer de bewaarde uitslag geldt. Tot de server er is,
-// staat hier niets en is het antwoord nee. Een tester heeft altijd toegang.
+// tijdstip tot wanneer de bewaarde uitslag geldt. Zonder uitslag is het
+// antwoord nee. Een tester heeft altijd toegang.
 export function heeftToegang(opslag = globalThis.localStorage, nu = Date.now()) {
   if (isTester(opslag)) return true;
   const t = lees(opslag, TOEGANG, null);
   return !!t && typeof t.tot === 'number' && t.tot > nu;
+}
+
+// Hoe lang een gekochte toegang zonder contact met de server blijft gelden
+// (spec, criterium 8): een maand offline spelen na een aankoop.
+export const TOEGANG_GELDIG_MS = 30 * 24 * 60 * 60 * 1000;
+
+// Wat de server over de eigen rijen van reconstructie.toegang zei, in de
+// cache zetten. `rijen` komt van het netwerk en kan van alles zijn: alleen
+// een rij met een leesbare toegekend en zonder ingetrokken telt. Geen
+// geldige rij (nooit gekocht, of terugbetaald): de cache gaat weg, zodat
+// een terugbetaling binnen een ronde doorwerkt (criterium 6). Geeft terug
+// of de speler nu toegang heeft volgens de server.
+export function verwerkToegang(rijen, opslag = globalThis.localStorage, nu = Date.now()) {
+  const geldig = Array.isArray(rijen) && rijen.some((r) => r && typeof r === 'object'
+    && typeof r.toegekend === 'string' && !Number.isNaN(Date.parse(r.toegekend))
+    && r.ingetrokken == null);
+  if (geldig) schrijf(opslag, TOEGANG, { tot: nu + TOEGANG_GELDIG_MS });
+  else vergeetToegang(opslag);
+  return geldig;
+}
+
+// Na uitloggen of account verwijderen: de toegang hoort bij het account,
+// niet bij de browser. Wie daarna op dit apparaat speelt, heeft het tegoed.
+export function vergeetToegang(opslag = globalThis.localStorage) {
+  try {
+    opslag?.removeItem(TOEGANG);
+  } catch {
+    /* geen opslag: dan stond er ook niets */
+  }
 }
 
 // Het pad (Guus, 2026-11-25, ask-8d1f2961 "A"): de eerste PAD_GRATIS

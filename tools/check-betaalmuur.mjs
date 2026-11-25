@@ -2,9 +2,9 @@
 // twee nieuwe puzzels van niveau 1 tot en met 3, één van niveau 4, geen van
 // 5 en 6, de puzzel van de dag alleen ingelogd, een geopende of begonnen
 // puzzel blijft open, de schakelaar laat in 'uit' alles door, en 'live' kan niet zonder
-// prijs. Met een nep-opslag, zonder browser of netwerk.
+// prijs, en wat de server over de toegang zegt komt goed in de cache (stap 4). Met een nep-opslag, zonder browser of netwerk.
 
-import { magOpenen, magPadStap, padGrensZichtbaar, PAD_GRATIS, muurActief, heeftToegang, isTester, zetTester, gratisVan, puzzelVanDeDag, vandaag, BETAALMUUR, PRIJS, GRATIS } from '../src/betaalmuur/toegang.js';
+import { magOpenen, magPadStap, padGrensZichtbaar, PAD_GRATIS, muurActief, heeftToegang, isTester, zetTester, verwerkToegang, vergeetToegang, TOEGANG_GELDIG_MS, gratisVan, puzzelVanDeDag, vandaag, BETAALMUUR, PRIJS, GRATIS } from '../src/betaalmuur/toegang.js';
 import { parsePuzzleId } from '../src/puzzle.js';
 import { PAD } from '../src/content/pad.js';
 import { existsSync } from 'node:fs';
@@ -110,6 +110,33 @@ zeg(muurActief('live', ''), "'live': muur");
   zeg(padGrensZichtbaar({ opslag, ...live }) && !padGrensZichtbaar({ opslag, stand: 'test', zoek: '' }), 'pad: grens alleen met de muur aan');
   zetTester(true, opslag);
   zeg(magPadStap(60, 'pad-60', { opslag, ...live }) && !padGrensZichtbaar({ opslag, ...live }), 'pad: een tester loopt door, zonder grens');
+}
+
+{
+  // Stap 4: de eigen rijen van reconstructie.toegang in de cache. Wat van
+  // het netwerk komt, is niet te vertrouwen; alleen een geldige, niet
+  // ingetrokken rij opent.
+  const nu = Date.parse('2026-11-25T12:00:00Z');
+  const opslag = nepOpslag();
+  const rij = { toegekend: '2026-11-25T11:59:00+00:00', ingetrokken: null };
+  zeg(verwerkToegang([rij], opslag, nu) && heeftToegang(opslag, nu), 'toegang: een gekochte rij opent');
+  zeg(heeftToegang(opslag, nu + TOEGANG_GELDIG_MS - 1) && !heeftToegang(opslag, nu + TOEGANG_GELDIG_MS + 1),
+    'toegang: geldt dertig dagen zonder contact, daarna niet (criterium 8)');
+  zeg(magOpenen('z', 6, { opslag, ...live, nu }), 'toegang: niveau 6 opent met een gelezen aankoop');
+  zeg(!verwerkToegang([{ ...rij, ingetrokken: '2026-11-26T09:00:00+00:00' }], opslag, nu) && !heeftToegang(opslag, nu),
+    'toegang: een terugbetaling sluit weer (criterium 6)');
+  verwerkToegang([rij], opslag, nu);
+  zeg(!verwerkToegang([], opslag, nu) && !heeftToegang(opslag, nu), 'toegang: geen rij meer, geen toegang');
+  const vreemd = [null, 'ja', { toegekend: 'gisteren', ingetrokken: null }, { toegekend: 5 }, { ingetrokken: null }];
+  zeg(!verwerkToegang(vreemd, opslag, nu) && !verwerkToegang({ toegekend: rij.toegekend }, opslag, nu) && !verwerkToegang(null, opslag, nu),
+    'toegang: vreemde antwoorden openen niets');
+  zeg(verwerkToegang([{ ...rij, ingetrokken: '2026-11-20T00:00:00Z' }, rij], opslag, nu), 'toegang: één geldige aankoop naast een teruggedraaide is genoeg');
+  vergeetToegang(opslag);
+  zeg(!heeftToegang(opslag, nu), 'toegang: na uitloggen weg');
+  const stuk = { getItem() { throw new Error('geblokkeerd'); }, setItem() { throw new Error('geblokkeerd'); }, removeItem() { throw new Error('geblokkeerd'); } };
+  let gooit = false;
+  try { verwerkToegang([rij], stuk, nu); vergeetToegang(stuk); } catch { gooit = true; }
+  zeg(!gooit, 'toegang: geblokkeerde opslag gooit niet');
 }
 
 console.log(`\n${fouten} fouten`);

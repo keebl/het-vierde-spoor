@@ -9,6 +9,13 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-25: **paywall step 4 built** (read access): after each successful sync round, at
+  most every ten minutes, the client reads its own `toegang` rows and caches access for 30
+  days (`verwerkToegang` in `src/betaalmuur/toegang.js`, `vernieuwToegang` in
+  `src/sync/sessie.js`); a refund clears it, sign-out forgets it, any error keeps the cache.
+  A paywall on screen gives way to the puzzle as soon as access is read. Until the table is
+  applied the read fails quietly. Not built: polling right after checkout (needs step 3's
+  return URL) and locking printing (asked: does a free puzzle still print?).
 - 2026-11-25: **hand-off (context limit).** Level path merged and live as PR #50. Free
   boundary (steps 1–18 free, sign at 18/19, path paywall copy) open as PR #51, branch
   `claude/pad-gratis-grens`, head 0036616, CI running, Auto-fix on. Next: merge #51 when green.
