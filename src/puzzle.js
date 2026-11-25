@@ -9,7 +9,7 @@ import { makeCtx, emptyCols } from './engine/assign.js';
 import { phraseClue } from './engine/clues.js';
 import { generateLatin, latinDepth } from './engine/latin.js';
 import { genereerKamerpuzzel } from './engine/generate-rooms.js';
-import { kamerParams } from './engine/difficulty.js';
+import { kamerParams, padParams, maatVanSeed, NIVEAU_VAN_MAAT } from './engine/difficulty.js';
 import { zinVoor, namenIn } from './content/rooms-text.js';
 import {
   soortVan, meubelsVoor, blokMeubelsVoor, vormVan, rekwisietenVoor, TYPE_VAN_TEKENING, REKWISIETTYPEN, BUITEN_SOORTEN, VAKER,
@@ -289,7 +289,9 @@ export function bouwKamerGen(settings, voortgang = null) {
   const world = WORLD_BY_ID.get(settings.wereld);
   if (!world) throw new Error(`onbekende wereld: ${settings.wereld}`);
   const { seed, niveau } = settings;
-  const params = kamerParams(niveau);
+  // Een padseed (`pad8-3`) draagt zijn eigen maat; zie padParams.
+  const maat = maatVanSeed(seed);
+  const params = maat ? padParams(maat) : kamerParams(niveau);
   // De wereld bepaalt hoeveel verschillende meubels en kamers er benoembaar
   // zijn; meer dan dat kan de motor niet gebruiken.
   // Hoeveel meubelstukken er hoogstens op het bord mogen.
@@ -590,6 +592,17 @@ export function wereldVoorSeed(seed) {
     som = (som * 31 + String(seed).charCodeAt(i)) % 1000003;
   }
   return WORLDS[som % WORLDS.length].id;
+}
+
+// De instellingen van een stap op het pad (specs/level-path.md). Alles volgt
+// uit de seed: de maat staat erin (pad8-3), de wereld volgt eruit zoals bij
+// elke puzzel, en het niveau is dat van de maat. Dat niveau kleurt de stap,
+// noemt hem in de kop en telt voor de betaalmuur; het bord zelf komt uit
+// padParams (bouwKamerGen leest de maat uit de seed).
+export function padInstellingen(seed) {
+  const maat = maatVanSeed(seed);
+  if (!maat) throw new Error(`geen padseed: ${seed}`);
+  return { opdracht: 'dader', mechaniek: 'kamer', wereld: wereldVoorSeed(seed), niveau: NIVEAU_VAN_MAAT[maat], seed };
 }
 
 export function puzzleId(settings) {
