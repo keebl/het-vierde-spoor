@@ -146,12 +146,12 @@ begin
   exception when others then uitslag := uitslag || text 'ok   toegang: A kan geen aankoop toevoegen'::text;
   end;
   begin
-    update reconstructie.toegang set ingetrokken = null, user_id = a;
+    update reconstructie.toegang set ingetrokken = null where user_id = a;
     uitslag := uitslag || text 'FOUT toegang: A kon een aankoop wijzigen'; fouten := fouten + 1;
   exception when others then uitslag := uitslag || text 'ok   toegang: A kan geen aankoop wijzigen'::text;
   end;
   begin
-    delete from reconstructie.toegang;
+    delete from reconstructie.toegang where user_id = a;
     uitslag := uitslag || text 'FOUT toegang: A kon een aankoop verwijderen'; fouten := fouten + 1;
   exception when others then uitslag := uitslag || text 'ok   toegang: A kan geen aankoop verwijderen'::text;
   end;
