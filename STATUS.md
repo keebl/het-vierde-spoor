@@ -9,6 +9,13 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-25, late: **hand-off (context limit)** of build session "build-paywall". Open PRs, all
+  Sonar-green: #53 step 2 (head 9c07b8b, full CI running at hand-off), #54 step 4, #55
+  step 5 (has #53 merged in; merge after #53), #56 step 6, #57 this STATUS. Guus said "Ja,
+  toepassen" to migration `20261125120000_reconstructie_toegang.sql`; apply it only after #53
+  merges, then `supabase/tests/reconstructie_rls.sql` (expect 36/36) and the security
+  advisors. The build session could not turn on the Supabase connector (auto-mode refused);
+  ask-5d8e2f61 asks mission control to apply it or Guus to enable the connector.
 - 2026-11-25: **paywall steps 2, 4, 5 and 6 built**, each its own PR (`specs/paywall-and-android.md` Plan):
   - #53 step 2: entitlement table `reconstructie.toegang` (read own rows, no client writes;
     account deletion removes it). RLS test 36/36 in PGlite (`auth` stubbed).
