@@ -9,6 +9,10 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
+- 2026-11-25: **paywall step 2 built**: entitlement table `reconstructie.toegang`
+  (`supabase/migrations/20261125120000_reconstructie_toegang.sql`), read own rows only, no
+  client writes; account deletion removes it. RLS test 36/36 in PGlite. **Not applied to
+  `claudeDB`** — waits on Guus's yes (ask via mission control).
 - 2026-11-25: **hand-off (context limit).** Level path merged and live as PR #50. Free
   boundary (steps 1–18 free, sign at 18/19, path paywall copy) open as PR #51, branch
   `claude/pad-gratis-grens`, head 0036616, CI running, Auto-fix on. Next: merge #51 when green.

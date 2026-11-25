@@ -1,5 +1,6 @@
 -- RLS and merge tests for schema reconstructie (specs/accounts-and-sync.md, criteria 11, 12,
--- 14, 15 and 16, plus the merge rules). Run as the project owner (Supabase connector
+-- 14, 15 and 16, plus the merge rules) and the paywall entitlement table `toegang`
+-- (specs/paywall-and-android.md, plan step 2: read own rows, write none). Run as the project owner (Supabase connector
 -- execute_sql or the SQL editor) after the migration.
 --
 -- Everything happens in one DO block that ALWAYS ends by raising an exception carrying the
@@ -44,6 +45,10 @@ begin
   create schema reconstructie_proef;
   create table reconstructie_proef.kladblok (user_id uuid references auth.users (id) on delete cascade);
   insert into reconstructie_proef.kladblok values (b);
+
+  -- Entitlement rows as the store webhook would write them (service_role; here the owner).
+  insert into reconstructie.toegang (user_id, bron, referentie) values
+    (a, 'stripe', 'cs_test_proef_a'), (b, 'play', 'GPA.proef-b');
 
   ---------------------------------------------------------------- as user A
   perform set_config('role', 'authenticated', true);
@@ -131,6 +136,26 @@ begin
   exception when others then uitslag := uitslag || text 'FOUT bij 2.000 werd een bestaande puzzel geweigerd'::text; fouten := fouten + 1;
   end;
 
+  -- the entitlement (specs/paywall-and-android.md, plan step 2): read own, write nothing
+  select count(*) into n from reconstructie.toegang;
+  uitslag := uitslag || (case when n = 1 then 'ok   ' else 'FOUT ' end || 'toegang: A ziet alleen de eigen aankoop');
+  fouten := fouten + (n <> 1)::int;
+  begin
+    insert into reconstructie.toegang (user_id, bron, referentie) values (a, 'handmatig', 'zelf-ontgrendeld');
+    uitslag := uitslag || text 'FOUT toegang: A kon zichzelf ontgrendelen'; fouten := fouten + 1;
+  exception when others then uitslag := uitslag || text 'ok   toegang: A kan geen aankoop toevoegen'::text;
+  end;
+  begin
+    update reconstructie.toegang set ingetrokken = null, user_id = a;
+    uitslag := uitslag || text 'FOUT toegang: A kon een aankoop wijzigen'; fouten := fouten + 1;
+  exception when others then uitslag := uitslag || text 'ok   toegang: A kan geen aankoop wijzigen'::text;
+  end;
+  begin
+    delete from reconstructie.toegang;
+    uitslag := uitslag || text 'FOUT toegang: A kon een aankoop verwijderen'; fouten := fouten + 1;
+  exception when others then uitslag := uitslag || text 'ok   toegang: A kan geen aankoop verwijderen'::text;
+  end;
+
   ---------------------------------------------------------------- as user B
   perform set_config('request.jwt.claims', json_build_object('sub', b, 'role', 'authenticated')::text, true);
   perform reconstructie.bewaar_puzzels('[{"puzzel_id":"p1","opgelost":false,"onthuld":true}]');
@@ -150,6 +175,9 @@ begin
   update reconstructie.puzzels set onthuld = false where user_id = a;
   get diagnostics n = row_count;
   uitslag := uitslag || (case when n = 0 then 'ok   ' else 'FOUT ' end || 'criterium 14: B verandert niets bij A');
+  fouten := fouten + (n <> 0)::int;
+  select count(*) into n from reconstructie.toegang where user_id = a;
+  uitslag := uitslag || (case when n = 0 then 'ok   ' else 'FOUT ' end || 'toegang: B ziet de aankoop van A niet');
   fouten := fouten + (n <> 0)::int;
   delete from reconstructie.pad where user_id = a;
   get diagnostics n = row_count;
@@ -172,6 +200,11 @@ begin
   exception when others then uitslag := uitslag || text 'ok   criterium 15: anon leest niets'::text;
   end;
   begin
+    select count(*) into n from reconstructie.toegang;
+    uitslag := uitslag || text 'FOUT toegang: anon kon aankopen lezen'; fouten := fouten + 1;
+  exception when others then uitslag := uitslag || text 'ok   toegang: anon leest geen aankopen'::text;
+  end;
+  begin
     perform reconstructie.bewaar_puzzels('[{"puzzel_id":"anon","opgelost":true,"onthuld":false}]');
     uitslag := uitslag || text 'FOUT criterium 15: anon kon bewaar_puzzels aanroepen'; fouten := fouten + 1;
   exception when others then uitslag := uitslag || text 'ok   criterium 15: anon kan bewaar_puzzels niet aanroepen'::text;
@@ -188,7 +221,8 @@ begin
   x := reconstructie.verwijder_mijn_account();
   perform set_config('role', 'none', true);
   select count(*) into n from reconstructie.puzzels where user_id = a;
-  n := n + (select count(*) from reconstructie.pad where user_id = a) + (select count(*) from reconstructie.voorkeuren where user_id = a);
+  n := n + (select count(*) from reconstructie.pad where user_id = a) + (select count(*) from reconstructie.voorkeuren where user_id = a)
+    + (select count(*) from reconstructie.toegang where user_id = a);
   uitslag := uitslag || (case when n = 0 then 'ok   ' else 'FOUT ' end || 'criterium 11: alle rijen van A zijn weg');
   fouten := fouten + (n <> 0)::int;
   uitslag := uitslag || (case when x and not exists (select 1 from auth.users where id = a) then 'ok   ' else 'FOUT ' end || 'criterium 12: A had elders niets, dus de login is weg');
