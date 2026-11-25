@@ -7,6 +7,7 @@
     { "name": "voorpagina", "base": "site", "path": "/#/", "job": "Choose a level and start a puzzle", "steps": [{ "wait": ".niveaukiezer" }] },
     { "name": "bibliotheek", "base": "site", "path": "/#/puzzels", "job": "Pick a case from the library", "steps": [{ "wait": ".kaarten" }] },
     { "name": "puzzel", "base": "site", "path": "/#/puzzel/dader.landhuis.kamer.3.demo-4", "job": "Solve a room board", "steps": [{ "wait": ".boards .board-wrap svg" }] },
+    { "name": "pad", "base": "site", "path": "/#/pad", "job": "See where you are on the level path and play the next step", "steps": [{ "wait": ".pad-kaart" }] },
     { "name": "uitleg", "base": "site", "path": "/#/uitleg", "job": "Read how the game works", "steps": [{ "wait": ".section .prose" }] }
   ]
 }

@@ -215,3 +215,44 @@ export function kamerParams(level) {
   const l = Math.min(6, Math.max(1, Number(level) || 1));
   return { ...KAMER_LEVELS[l], bouw: SJABLOON_NIVEAUS.includes(l) ? BOUW[l] : undefined };
 }
+
+// ------------------------------------------------------------- het pad
+//
+// specs/level-path.md: een route van ongeveer honderd vaste puzzels die heel
+// langzaam zwaarder wordt, van vijf bij vijf tot zestien bij zestien. Zes
+// van de maten zijn gewoon de niveaus hierboven; de tussenmaten (8, 10, 11,
+// 13 en 14) liggen ertussenin, met de knoppen van het niveau eronder en het
+// rooster, de kamers en het plafond aan aanwijzingen er net boven. Acht bij
+// acht blijft doorstrepen (shallow, sjabloon van niveau drie): de spec
+// belooft alleen wegstrepen tot en met acht bij acht.
+//
+// Dertien en veertien bouwen met de oude bouwer, zoals niveau zes: het
+// sjabloon kostte op zestien bij zestien zeven en een halve minuut per bord.
+export const PAD_MATEN = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16];
+// Het gewone niveau bij een maat: de kleur, de naam en de betaalmuur.
+export const NIVEAU_VAN_MAAT = { 5: 1, 6: 2, 7: 3, 8: 3, 9: 4, 10: 4, 11: 4, 12: 5, 13: 5, 14: 5, 16: 6 };
+const TUSSEN = {
+  8: { van: 3, n: 8, kamers: 6, meubelDeel: 0.23, maxClues: 20, bouw: BOUW[3] },
+  10: { van: 4, n: 10, kamers: 7, maxClues: 29, bouw: { ...BOUW[4], band: { maxTier: 4, min: 4 } } },
+  11: { van: 4, n: 11, kamers: 8, maxClues: 31, maxPerNaam: 5, bouw: { ...BOUW[4], band: { maxTier: 4, min: 5 } } },
+  13: { van: 6, n: 13, kamers: 9, meubelDeel: 0.23, maxClues: 44 },
+  14: { van: 6, n: 14, kamers: 10, meubelDeel: 0.22, maxClues: 48 },
+};
+export function padParams(maat) {
+  const m = Number(maat);
+  if (TUSSEN[m]) {
+    const { van, bouw, ...rest } = TUSSEN[m];
+    return { ...KAMER_LEVELS[van], ...rest, bouw };
+  }
+  const niveau = NIVEAU_VAN_MAAT[m];
+  if (!niveau || KAMER_LEVELS[niveau].n !== m) throw new Error(`geen padmaat: ${maat}`);
+  return kamerParams(niveau);
+}
+
+// Een padbord heeft een seed als `pad8-3`: de maat staat erin, zodat het
+// bord helemaal uit zijn seed volgt, ook als iemand de link deelt.
+export const PADSEED = /^pad(\d+)-\d+$/;
+export const maatVanSeed = (seed) => {
+  const m = PADSEED.exec(String(seed));
+  return m && PAD_MATEN.includes(Number(m[1])) ? Number(m[1]) : null;
+};

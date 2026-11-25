@@ -24,6 +24,7 @@
     "check:sync": "node tools/check-sync.mjs",
     "check:betaalmuur": "node tools/check-betaalmuur.mjs",
     "check:voorraad": "node tools/check-voorraad.mjs",
+    "check:pad": "node tools/check-pad.mjs",
     "pool": "node tools/pool.mjs",
     "ai:vooraf": "node tools/ai-vooraf.mjs",
     "ai:online": "node tools/ai-online.mjs"

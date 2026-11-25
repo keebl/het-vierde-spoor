@@ -22,6 +22,7 @@ import { blad, bol, kussen } from './vormen.js';
 import { makeRng } from '../engine/rng.js';
 import { ZICHTBARE_LEVEL_IDS, LEVELS, KAMER_LEVELS } from '../engine/difficulty.js';
 import { nieuwePuzzel } from './volgende.js';
+import { sterrenRij, sterrenTekst } from './pad.js';
 
 const SVG = 'http://www.w3.org/2000/svg';
 const svgEl = (naam, attrs = {}) => {
@@ -52,7 +53,12 @@ export function sluitOntknoping() {
 // `opnieuw`: dit is het openen bij het tekenen van een al opgeloste
 // puzzel, niet bij het oplossen zelf. Dan geen confetti, en niet terug als
 // de speler hem net voor deze puzzel heeft dichtgedaan.
-export function openOntknoping(puzzle, { onthuld = false, feest = false, opnieuw = false, volgende, terug } = {}) {
+// `pad`: dit is een stap op het pad (specs/level-path.md). Dan sterren
+// boven het portret, "Volgende stap" in plaats van "Volgende zaak", en geen
+// voorstel voor een niveau zwaarder: het pad is zelf de volgende stap.
+// { k, aantal, sterren, eerder, opnieuwProberen }: sterren is wat deze keer
+// opleverde (of null bij heropenen), eerder wat er al stond.
+export function openOntknoping(puzzle, { onthuld = false, feest = false, opnieuw = false, volgende, terug, pad = null } = {}) {
   if (opnieuw && geslotenVoor === puzzle.id) return;
   const vorige = huidige;
   if (vorige) {
@@ -84,31 +90,54 @@ export function openOntknoping(puzzle, { onthuld = false, feest = false, opnieuw
   const sluit = el('button', { class: 'ontknoping-sluit', type: 'button', 'aria-label': 'Sluiten en het bord bekijken', text: '×' });
   sluit.addEventListener('click', () => dialoog.close());
 
-  const verder = el('a', {
-    class: 'btn btn-primary btn-groot ontknoping-verder',
-    href: `#/puzzel/${volgende ?? ''}`,
-    autofocus: '',
-    text: 'Volgende zaak',
-  });
   const bekijk = el('button', { class: 'btn ontknoping-bekijk', type: 'button', text: 'Bekijk het bord' });
   bekijk.addEventListener('click', () => dialoog.close());
 
-  const zwaarder = onthuld ? null : zwaarderVoorstel(puzzle);
+  let verder;
+  let knoppen;
+  if (pad) {
+    const laatste = pad.k >= pad.aantal;
+    if (onthuld) {
+      // Na Oplossing telt de stap niet (criterium 3): opnieuw proberen.
+      verder = el('button', { class: 'btn btn-primary btn-groot ontknoping-verder', type: 'button', text: 'Opnieuw proberen' });
+      verder.addEventListener('click', () => { dialoog.close(); pad.opnieuwProberen?.(); });
+    } else {
+      verder = el('a', {
+        class: 'btn btn-primary btn-groot ontknoping-verder',
+        href: laatste ? '#/pad' : `#/pad/${pad.k + 1}`,
+        text: laatste ? 'Naar het pad' : 'Volgende stap',
+      });
+    }
+    knoppen = [verder, bekijk, onthuld || !laatste ? el('a', { class: 'btn ontknoping-terug', href: '#/pad', text: 'Naar het pad' }) : null];
+  } else {
+    verder = el('a', {
+      class: 'btn btn-primary btn-groot ontknoping-verder',
+      href: `#/puzzel/${volgende ?? ''}`,
+      autofocus: '',
+      text: 'Volgende zaak',
+    });
+    knoppen = [verder, bekijk];
+  }
+
+  const zwaarder = onthuld || pad ? null : zwaarderVoorstel(puzzle);
 
   const tekst = onthuld
-    ? zaak.stil ?? `Dit was ${zaak.antwoordwoord ?? 'het antwoord'}.`
+    ? pad
+      ? `Deze stap telt nog niet: je liet de oplossing invullen. Probeer hem opnieuw om stap ${pad.k + 1} te openen.`
+      : zaak.stil ?? `Dit was ${zaak.antwoordwoord ?? 'het antwoord'}.`
     : zaak.slot ?? '';
 
   dialoog.append(el('div', { class: 'ontknoping-blad' }, [
     feest && !onthuld ? confetti(puzzle.seed) : null,
     sluit,
     el('p', { class: 'eyebrow ontknoping-kop', text: onthuld ? 'Oplossing bekeken' : 'Zaak gesloten' }),
+    pad && !onthuld ? sterrenBlok(pad) : null,
     el('div', { class: 'ontknoping-schijf' }, [portret]),
     el('h2', { id: kopId, class: 'ontknoping-naam', text: naam }),
     el('p', { class: 'ontknoping-rol' }, [merk, el('span', { text: zaak.antwoordwoord ?? '' })]),
     el('p', { class: 'ontknoping-slot', text: tekst }),
     zwaarder,
-    el('div', { class: 'ontknoping-knoppen' }, [verder, bekijk]),
+    el('div', { class: 'ontknoping-knoppen' }, knoppen),
   ]));
 
   // Een klik naast het blad (op de achtergrond) sluit het ook.
@@ -161,6 +190,26 @@ function confetti(seed) {
     svg.append(pad);
   }
   return svg;
+}
+
+// De sterren van een stap op het pad, groot, met de regel die zegt waarom
+// (docs/UX.md, "Path stop solved"). Wie bij opnieuw spelen minder haalt,
+// houdt wat hij had (criterium 6), en dat staat er dan ook.
+const STERREGEL = {
+  3: 'zonder hint en zonder controleren.',
+  2: 'met één hulpje.',
+  1: 'opgelost met hulp.',
+};
+function sterrenBlok({ sterren, eerder = 0 }) {
+  const behaald = sterren ?? eerder;
+  const getoond = Math.max(behaald, eerder);
+  const svg = svgEl('svg', { viewBox: '-66 -22 132 44', 'aria-hidden': 'true' });
+  svg.append(sterrenRij(getoond, { r: 19, gat: 6 }));
+  return el('div', { class: 'ontknoping-sterren', role: 'img', 'aria-label': `${getoond} van 3 sterren` }, [
+    svg,
+    el('p', {}, [el('b', { text: sterrenTekst(behaald) }), ` — ${STERREGEL[behaald] ?? ''}`]),
+    eerder > behaald ? el('p', { text: `Je houdt je ${sterrenTekst(eerder)}.` }) : null,
+  ]);
 }
 
 // Zelf opgelost? Dan een voorstel om een niveau zwaarder te proberen

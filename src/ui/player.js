@@ -23,6 +23,7 @@ import { zinVoor } from '../content/rooms-text.js';
 import { aanwijzingenPerPersoon, heeftIedereen } from '../aanwijzingen.js';
 import { makeRng } from '../engine/rng.js';
 import { openOntknoping, sluitOntknoping } from './ontknoping.js';
+import { losStapOp, padStand } from './pad-voortgang.js';
 import { volgendeZaak } from './volgende.js';
 import { redeneer } from '../engine/redeneer.js';
 import { oplossingInStappen } from '../content/redeneer-text.js';
@@ -46,7 +47,10 @@ function bewaardeStand(puzzle) {
 // verliest alles; een opgeloste puzzel bewaart daarom geen geschiedenis.
 const TERUG_MAX = 30;
 
-export function renderPlayer(puzzle, mount) {
+// `pad`: deze puzzel is een stap op het pad (specs/level-path.md), geopend
+// via #/pad/<k>. { k, aantal, maat, volgendeId }. Alleen dan telt oplossen
+// voor het pad; dezelfde puzzel via een gedeelde link speelt gewoon.
+export function renderPlayer(puzzle, mount, { pad = null } = {}) {
   const saved = bewaardeStand(puzzle);
   const state = {
     marks: saved.marks ?? (puzzle.kind === 'assign' ? emptyMarks(puzzle) : {}),
@@ -91,6 +95,9 @@ export function renderPlayer(puzzle, mount) {
     // herhalen. Ze blijven bewaard: wie terugkomt is zijn hints niet kwijt.
     extra: Array.isArray(saved.extra) ? saved.extra : [],
     solved: !!saved.solved,
+    // Hoe vaak Hint of Controleer gebruikt is voordat hij opgelost was: dat
+    // bepaalt de sterren op het pad. Bewaard, zodat herladen niet helpt.
+    hulp: Number.isInteger(saved.hulp) && saved.hulp > 0 ? saved.hulp : 0,
     // Wie de oplossing opvraagt heeft hem niet zelf gevonden. Dat houden we
     // apart bij, zodat de lijst niet doet alsof je hem hebt opgelost.
     onthuld: !!saved.onthuld,
@@ -112,6 +119,7 @@ export function renderPlayer(puzzle, mount) {
       extra: state.extra,
       solved: state.solved,
       onthuld: state.onthuld,
+      hulp: state.hulp,
       geschiedenis: state.solved ? [] : state.geschiedenis,
       titel: puzzle.title,
       bordversie: BORDVERSIE,
@@ -119,7 +127,7 @@ export function renderPlayer(puzzle, mount) {
   };
 
   mount.replaceChildren();
-  const { decor, kop } = head(puzzle);
+  const { decor, kop } = head(puzzle, pad);
   mount.append(decor);
 
   const boards = el('div', { class: 'boards' });
@@ -181,9 +189,10 @@ export function renderPlayer(puzzle, mount) {
   // het blad en die onder het bord ook niet meer naar dezelfde. Of deze
   // zaak zelf is opgelost doet er niet toe: hij telt nooit mee.
   let volgendeId = null;
-  const naarVolgende = () => (volgendeId ??= volgendeZaak(puzzle));
+  const naarVolgende = () => (pad ? pad.volgendeId : (volgendeId ??= volgendeZaak(puzzle)));
   // Zodat main.js de volgende alvast kan laten bouwen (bouwVooruit).
-  mount.dataset.volgende = naarVolgende();
+  if (naarVolgende()) mount.dataset.volgende = naarVolgende();
+  else delete mount.dataset.volgende;
 
   // De menselijke solver redeneert de puzzel pas op als iemand de stappen
   // wil zien: op niveau vier kost dat tot een halve seconde, en wie zelf
@@ -203,17 +212,30 @@ export function renderPlayer(puzzle, mount) {
   // De ontknoping: alleen bij de Reconstructie, het enige speltype dat je
   // te zien krijgt. De andere houden hun regel onder het bord.
   const metOntknoping = puzzle.kind === 'kamer';
+  // Op het pad: de sterren van deze keer (null bij heropenen) en wat er al
+  // stond. losStapOp schrijft alleen bij zelf oplossen; Oplossing telt niet.
+  const padOpties = (uitslag = null) => pad && {
+    k: pad.k,
+    aantal: pad.aantal,
+    sterren: uitslag?.sterren ?? null,
+    eerder: uitslag ? uitslag.eerder : (padStand().stappen[String(pad.k)]?.sterren ?? 0),
+    opnieuwProberen: () => actions.reset({ zonderVragen: true }),
+  };
   const toonOntknoping = (opties = {}) => {
     if (!metOntknoping) return;
     openOntknoping(puzzle, {
       onthuld: state.onthuld,
       volgende: naarVolgende(),
       terug: () => notes.querySelector('[data-ontknoping]'),
+      pad: padOpties(),
       ...opties,
     });
   };
   // Net opgelost, door wat dan ook: een figuur, Controleer of een hint.
-  const netOpgelost = () => toonOntknoping({ feest: true });
+  const netOpgelost = () => {
+    const uitslag = pad && !state.onthuld ? losStapOp(pad.k, state.hulp) : null;
+    toonOntknoping({ feest: true, pad: padOpties(uitslag) });
+  };
 
   // Eén knop per aanwijzing, voor de lijst en voor het kastje: allebei
   // strepen ze dezelfde state.struck weg, dus ze zijn het altijd eens.
@@ -268,7 +290,9 @@ export function renderPlayer(puzzle, mount) {
         onToggle: (open) => { if (!printen) stappenOpen = open; },
       })
       : null;
-    notes.replaceChildren(toolbar(puzzle, state, actions, metOntknoping ? naarVolgende() : null), noteNode(state), ...(blok ? [blok] : []));
+    notes.replaceChildren(toolbar(puzzle, state, actions, !metOntknoping ? null
+      : pad ? { href: '#/pad', tekst: 'Naar het pad' }
+        : { href: `#/puzzel/${naarVolgende()}`, tekst: 'Volgende puzzel' }), noteNode(state), ...(blok ? [blok] : []));
   };
 
   // Tikken op een meubelstuk: de naam eronder. Aanwijzen met de muis geeft
@@ -324,6 +348,7 @@ export function renderPlayer(puzzle, mount) {
     },
     check() {
       const was = state.solved;
+      if (!was) state.hulp += 1;
       const { wrong, goed, filled, total } = inspect(puzzle, state);
       state.wrong = wrong;
       state.fout = wrong;
@@ -354,6 +379,7 @@ export function renderPlayer(puzzle, mount) {
       if (state.solved && !was) netOpgelost();
     },
     hint() {
+      if (!state.solved) state.hulp += 1;
       state.wrong = new Set();
       state.fout = new Set();
       state.goed = new Set();
@@ -383,9 +409,11 @@ export function renderPlayer(puzzle, mount) {
       draw();
       toonOntknoping();
     },
-    reset() {
+    // `zonderVragen`: Opnieuw proberen op het blad van een padstap. Daar koos
+    // de speler het al; nog eens vragen of alles weg mag is dubbel.
+    reset(opties) {
       const bezig = Object.keys(state.plaats).length || Object.keys(state.marks).length || state.kruis.size;
-      if (bezig && !window.confirm('Alles wissen en opnieuw beginnen?')) return;
+      if (bezig && opties?.zonderVragen !== true && !window.confirm('Alles wissen en opnieuw beginnen?')) return;
       state.onthuld = false;
       state.marks = puzzle.kind === 'assign' ? emptyMarks(puzzle) : {};
       state.plaats = {};
@@ -397,6 +425,7 @@ export function renderPlayer(puzzle, mount) {
       state.fout = new Set();
       state.goed = new Set();
       state.solved = false;
+      state.hulp = 0;
       state.note = null;
       stappenOpen = null;
       clearProgress(puzzle.id);
@@ -477,7 +506,7 @@ export function renderPlayer(puzzle, mount) {
 
 // ----------------------------------------------------------------- kop
 
-function head(puzzle) {
+function head(puzzle, pad = null) {
   const mech = MECHANIC_BY_ID.get(puzzle.mechaniek);
   const deel = (tekst) => el('span', { text: tekst });
   const sep = () => el('span', { class: 'sep', text: '·' });
@@ -494,7 +523,14 @@ function head(puzzle) {
     /* geen document, geen titel */
   }
 
-  const crumbs = el('div', { class: 'crumbs' }, [
+  // Op het pad zegt de kruimel waar je bent op het pad (docs/UX.md).
+  const crumbs = pad ? el('div', { class: 'crumbs crumbs-pad' }, [
+    el('a', { href: '#/pad', text: 'Het pad' }),
+    sep(),
+    deel(`stap ${pad.k} van ${pad.aantal}`),
+    sep(),
+    deel(`${pad.maat} bij ${pad.maat}`),
+  ]) : el('div', { class: 'crumbs' }, [
     el('a', { href: `#/puzzels?wereld=${puzzle.world.id}`, text: `${puzzle.world.icon} ${puzzle.world.name}` }),
     sep(),
     deel(mech?.name ?? puzzle.mechaniek),
@@ -1078,6 +1114,7 @@ function bordschakelaars(acties) {
   ]);
 }
 
+// `volgende`: { href, tekst } voor de knop achteraan, of null.
 function toolbar(puzzle, state, actions, volgende = null) {
   const bar = el('div', { class: 'toolbar' });
   const add = (label, fn, primary) => {
@@ -1103,7 +1140,7 @@ function toolbar(puzzle, state, actions, volgende = null) {
   // niet een van de gereedschappen.
   add('Bewaar deze puzzel', actions.share);
   if (volgende) {
-    bar.append(el('a', { class: 'btn btn-volgende', href: `#/puzzel/${volgende}`, text: 'Volgende puzzel' }));
+    bar.append(el('a', { class: 'btn btn-volgende', href: volgende.href, text: volgende.tekst }));
   }
   return bar;
 }

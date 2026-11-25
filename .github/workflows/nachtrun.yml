@@ -31,6 +31,8 @@ jobs:
         toets:
           - { naam: de motor, script: check.mjs }
           - { naam: de veegronde, script: check-regels.mjs }
+          # Every stored path board rebuilt and compared with pool/pad.json.
+          - { naam: het pad, script: check-pad.mjs --alles }
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7

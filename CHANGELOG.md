@@ -9,6 +9,12 @@ day the changelog was introduced; everything before that is in git history only.
 
 ## [Unreleased]
 
+### Added
+- The level path ("Het pad", in the menu and on the front page): a hundred fixed steps from
+  5×5 to 16×16, each a little harder than the one before, with three stars per step for
+  solving without Hint or Controleer. A step opens when you solve the one before it
+  yourself; using Oplossing does not count. Progress stays in this browser.
+
 ### Changed
 - On the puzzle page the rules appear once, under the board: clues first, then what is
   on the board, how to operate it and the rules. On a phone and a tablet they all start
