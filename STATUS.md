@@ -287,6 +287,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   never be copied in. (assumption: no legal advice taken)
 
 ## Blocked / open questions
+- **Level path and the free allowance: waiting on Guus.** Path steps pass `magOpenen` like
+  any puzzle of their level, so with the paywall live a signed-out player would meet it at
+  step 3 (the third level-1 puzzle). The spec does not say; asked via mission control on
+  2026-11-25. Harmless while the paywall is `'test'`.
 - **Stripe Managed Payments: waiting on Guus.** On 2026-11-25 he answered "Later" to the
   eligibility check (ask-7bf35043). Buying and paywall step 3 stay closed until he opens
   the Stripe side; the paywall stays in test mode with the tester link.
