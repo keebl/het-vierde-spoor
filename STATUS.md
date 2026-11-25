@@ -9,12 +9,27 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- 2026-11-25: **paywall build resumed** (new build session after the hand-off). Level path
-  (#50, `309f8bc`) and the free path boundary (#51, `38fce3a`: steps 1–18 free, sign at 18/19,
-  path paywall copy) are merged and live. Next: the paywall plan steps that need neither Stripe
-  nor the Play Console — step 2 (entitlement table), step 4 (read access in the client),
-  step 5 (ping and backup), step 6 (drafts of terms and withdrawal waiver). Step 3 and 7 wait
-  on Stripe (Guus: "Later").
+- 2026-11-25, late: **hand-off (context limit)** of build session "build-paywall". Open PRs, all
+  Sonar-green: #53 step 2 (head 9c07b8b, full CI running at hand-off), #54 step 4, #55
+  step 5 (has #53 merged in; merge after #53), #56 step 6, #57 this STATUS. Guus said "Ja,
+  toepassen" to migration `20261125120000_reconstructie_toegang.sql`; apply it only after #53
+  merges, then `supabase/tests/reconstructie_rls.sql` (expect 36/36) and the security
+  advisors. The build session could not turn on the Supabase connector (auto-mode refused);
+  ask-5d8e2f61 asks mission control to apply it or Guus to enable the connector.
+- 2026-11-25: **paywall steps 2, 4, 5 and 6 built**, each its own PR (`specs/paywall-and-android.md` Plan):
+  - #53 step 2: entitlement table `reconstructie.toegang` (read own rows, no client writes;
+    account deletion removes it). RLS test 36/36 in PGlite (`auth` stubbed).
+  - #54 step 4: after each sync round, at most every ten minutes, the client reads its own
+    `toegang` rows and caches access 30 days (`verwerkToegang`, `vernieuwToegang`); a refund
+    clears it, sign-out forgets it, a failed read keeps it; a paywall on screen gives way to
+    the puzzle once access is read. Polling right after checkout waits for step 3.
+  - #55 step 5 (stacked on #53): role `reconstructie_backup` and `.github/workflows/claudedb.yml`,
+    a nightly ping and an age-encrypted dump of schema `reconstructie`, kept 30 days; skips
+    with a warning until the secret and key exist. The rebuild of `toegang` from Stripe
+    waits for step 3.
+  - #56 step 6: drafts in `docs/legal/` (terms, withdrawal waiver, privacy additions), not
+    on the site.
+  None of the migrations is applied to `claudeDB` yet. `BETAALMUUR` stays `'test'`.
 - 2026-11-25: **level path built** (`specs/level-path.md`), merged as PR #50 (309f8bc). Difficulty measure
   `src/engine/zwaarte.js` (calibrated with `tools/meet-zwaarte.mjs`: level medians 6, 9,
   12, 15, 27, 84); in-between sizes 8, 10, 11, 13, 14 in `padParams`; `tools/pad.mjs` builds
@@ -181,8 +196,21 @@ standing guidance rather than state moved to `CLAUDE.md`.
   giveaways 71s, library 33s, the other three a tenth of a second each.
 
 ## Next
-- Paywall plan steps 2, 4, 5 and 6 (`specs/paywall-and-android.md` Plan), one PR each; step 3
-  and 7 wait on Stripe Managed Payments (Guus).
+- Merge #53, #54, #55 (after #53) and #56 when green (mission control).
+- **Waits on Guus** (asks sent to mission control 2026-11-25):
+  - apply migrations `20261125120000_reconstructie_toegang.sql` and
+    `20261125130000_reconstructie_backup_rol.sql` to `claudeDB` (ask-4c1e7a92), then run
+    `supabase/tests/reconstructie_rls.sql` and the security advisors;
+  - set up the backup: age key pair, the role's password, secret `CLAUDEDB_BACKUP_URL`
+    (`supabase/README.md`, "Backup and ping"; ask-e3a5c7d8);
+  - does a free puzzle still print without full access (D6)? (ask-9b2d61f0) — if not, the
+    print lock and its copy in `docs/UX.md` are a small UI PR;
+  - read and answer `docs/legal/README.md` (ask-71f0b4a3);
+  - Stripe Managed Payments (answered "Later"): unblocks step 3 (checkout, webhook, polling
+    after checkout, rebuild script) and step 7 (price D1, `'live'`, test purchase, remove
+    the tester link first).
+- Not in the paywall plan's web steps: Cloudflare Pages (D7), the Android TWA, the iPhone app
+  (own plans; Play needs the Console).
 - **Go-live blocker for the paywall:** remove the tester link (`tester.html`,
   `src/betaalmuur/tester.js`, `/tester` in `server/serve.mjs`) before `BETAALMUUR` goes to
   `'live'` (Guus, 2026-11-20, "uit vóór live"). `check:betaalmuur` refuses `'live'` while
