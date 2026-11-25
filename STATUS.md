@@ -9,16 +9,12 @@ project standard was adopted; the original is in git history. The parts of it th
 standing guidance rather than state moved to `CLAUDE.md`.
 
 ## Now
-- 2026-11-25: **paywall step 4 built** (read access): after each successful sync round, at
-  most every ten minutes, the client reads its own `toegang` rows and caches access for 30
-  days (`verwerkToegang` in `src/betaalmuur/toegang.js`, `vernieuwToegang` in
-  `src/sync/sessie.js`); a refund clears it, sign-out forgets it, any error keeps the cache.
-  A paywall on screen gives way to the puzzle as soon as access is read. Until the table is
-  applied the read fails quietly. Not built: polling right after checkout (needs step 3's
-  return URL) and locking printing (asked: does a free puzzle still print?).
-- 2026-11-25: **hand-off (context limit).** Level path merged and live as PR #50. Free
-  boundary (steps 1–18 free, sign at 18/19, path paywall copy) open as PR #51, branch
-  `claude/pad-gratis-grens`, head 0036616, CI running, Auto-fix on. Next: merge #51 when green.
+- 2026-11-25: **paywall build resumed** (new build session after the hand-off). Level path
+  (#50, `309f8bc`) and the free path boundary (#51, `38fce3a`: steps 1–18 free, sign at 18/19,
+  path paywall copy) are merged and live. Next: the paywall plan steps that need neither Stripe
+  nor the Play Console — step 2 (entitlement table), step 4 (read access in the client),
+  step 5 (ping and backup), step 6 (drafts of terms and withdrawal waiver). Step 3 and 7 wait
+  on Stripe (Guus: "Later").
 - 2026-11-25: **level path built** (`specs/level-path.md`), merged as PR #50 (309f8bc). Difficulty measure
   `src/engine/zwaarte.js` (calibrated with `tools/meet-zwaarte.mjs`: level medians 6, 9,
   12, 15, 27, 84); in-between sizes 8, 10, 11, 13, 14 in `padParams`; `tools/pad.mjs` builds
@@ -185,7 +181,8 @@ standing guidance rather than state moved to `CLAUDE.md`.
   giveaways 71s, library 33s, the other three a tenth of a second each.
 
 ## Next
-- Merge PR #51 (free path steps) once CI is green; then nothing open from the level path.
+- Paywall plan steps 2, 4, 5 and 6 (`specs/paywall-and-android.md` Plan), one PR each; step 3
+  and 7 wait on Stripe Managed Payments (Guus).
 - **Go-live blocker for the paywall:** remove the tester link (`tester.html`,
   `src/betaalmuur/tester.js`, `/tester` in `server/serve.mjs`) before `BETAALMUUR` goes to
   `'live'` (Guus, 2026-11-20, "uit vóór live"). `check:betaalmuur` refuses `'live'` while
