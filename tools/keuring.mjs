@@ -30,6 +30,7 @@ const TOETSEN = [
   ['de sync', 'check-sync.mjs', []],
   ['de betaalmuur', 'check-betaalmuur.mjs', []],
   ['de voorraad', 'check-voorraad.mjs', []],
+  ['het pad', 'check-pad.mjs', []],
 ];
 
 // `--snel` slaat de zeven toetsen over die puzzels bouwen; die kosten samen
@@ -59,7 +60,7 @@ const KORT = process.argv.includes('--kort');
 const KORT_BAAR = new Set(['de spreiding', 'de redenering', 'de voorraad']);
 // Het ritme start een browser; die is er niet in de sandbox van een sessie
 // en kost een paar minuten, dus hoort hij niet bij --snel.
-const ZWAAR = new Set(['het ritme', 'de motor', 'de bibliotheek', 'de aanwijzingen', 'de spreiding', 'de veegronde', 'de weggevers', 'de redenering', 'de voorraad']);
+const ZWAAR = new Set(['het ritme', 'de motor', 'de bibliotheek', 'de aanwijzingen', 'de spreiding', 'de veegronde', 'de weggevers', 'de redenering', 'de voorraad', 'het pad']);
 
 const uitslag = [];
 
