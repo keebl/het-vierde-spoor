@@ -7,6 +7,7 @@
 import { SUPABASE_URL, SUPABASE_KEY, accountAan } from './config.js';
 import { META, SESSIE, leesMeta, schrijfMeta, heeftSessie, bijWijziging } from './melding.js';
 import { synchroniseer, isSessieFout } from './sync.js';
+import { heeftToegang, verwerkToegang, vergeetToegang } from '../betaalmuur/toegang.js';
 
 // 'uit' | 'bezig' | 'bijgewerkt' | 'mislukt' | 'verlopen' | 'opslag' | 'inlogfout'
 let status = 'uit';
@@ -118,6 +119,32 @@ function backendVan(sb) {
 function vergeetSync() {
   const m = leesMeta();
   schrijfMeta({ tijden: m.tijden ?? {} });
+  vergeetToegang();
+  laatsteToegangsVraag = 0;
+}
+
+// ------------------------------------------------------ volledige toegang
+// De eigen rijen van reconstructie.toegang lezen (specs/paywall-and-android.md,
+// plan stap 4). Na elke geslaagde sync-ronde, maar hooguit eens per tien
+// minuten: een terugbetaling werkt zo binnen het uur door (criterium 6)
+// zonder bij elke zet een verzoek. Elke fout (offline, de tabel bestaat nog
+// niet) laat de bewaarde uitslag staan: zonder cache geldt dan het gratis
+// tegoed, met cache de aankoop, tot dertig dagen (criterium 8).
+const TOEGANG_ELKE_MS = 10 * 60 * 1000;
+let laatsteToegangsVraag = 0;
+
+async function vernieuwToegang(sb, { nu = Date.now(), altijd = false } = {}) {
+  if (!altijd && nu - laatsteToegangsVraag < TOEGANG_ELKE_MS) return;
+  laatsteToegangsVraag = nu;
+  try {
+    const { data, error } = await sb.from('toegang').select('toegekend,ingetrokken');
+    if (error) throw error;
+    const voor = heeftToegang();
+    verwerkToegang(data);
+    if (heeftToegang() !== voor) meld({ toegang: true });
+  } catch (fout) {
+    console.warn('toegang lezen mislukt:', fout?.code || fout?.name || 'onbekend');
+  }
 }
 
 // -------------------------------------------------------------- een ronde
@@ -146,6 +173,7 @@ export async function synchroniseerNu() {
       }
       const { veranderd } = await synchroniseer(backendVan(sb));
       zetStatus('bijgewerkt', { veranderd });
+      await vernieuwToegang(sb);
     } catch (fout) {
       // Alleen de soort fout, nooit een token, e-mailadres of bord.
       console.warn('sync mislukt:', fout?.code || fout?.name || 'onbekend');

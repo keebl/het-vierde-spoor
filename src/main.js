@@ -71,6 +71,9 @@ export function zetWereldThema(wereldId) {
 // geen, review fase B).
 let routeNr = 0;
 let lopendeBouw = null;
+// Staat de betaalmuur nu in beeld? Dan tekent een net gelezen toegang
+// (na inloggen, of later na afrekenen) de puzzel erachter meteen.
+let opMuur = false;
 
 // Een puzzel bouwen en spelen: uit de bibliotheek, een gedeelde link of een
 // stap op het pad (`pad`, zie renderPlayer).
@@ -82,6 +85,7 @@ function openPuzzel(id, settings, nr, pad = null) {
     ? magPadStap(pad.k, id, { voortgang })
     : magOpenen(id, settings.niveau, { voortgang, ingelogd: accountAan() && !!ingelogdAls() });
   if (!mag) {
+    opMuur = true;
     renderBetaalmuur(app, settings.niveau, { padStap: pad?.k ?? null });
     return;
   }
@@ -187,6 +191,7 @@ function route() {
   const nr = ++routeNr;
   lopendeBouw?.();
   lopendeBouw = null;
+  opMuur = false;
   const hash = location.hash || '#/';
   const path = hash.slice(2);
   window.scrollTo(0, 0);
@@ -260,6 +265,7 @@ if (accountAan()) {
   // speelt iemand, en een bord dat onder je handen verspringt is erger dan
   // een vinkje dat pas bij de volgende keer verschijnt.
   addEventListener(GEBEURTENIS, (e) => {
+    if (e.detail?.toegang && (opMuur || location.hash === '#/pad')) { route(); return; }
     if (e.detail?.veranderd && !location.hash.startsWith('#/puzzel/') && !location.hash.startsWith('#/pad/') && location.hash !== '#/account') route();
   });
 }
