@@ -28,9 +28,8 @@ bottom (macOS Terminal or the Terminal panel of the Claude app).
 | 5 | Guus | Test-decrypts the backup, then deletes the key file (one command) |
 
 ## Step 0 — Claude, before Guus starts
-- Applies `supabase/migrations/20261125130000_reconstructie_backup_rol.sql` with the
-  Supabase connector (needs the connector on in Claude's session). Without it step 3 fails
-  with `role "reconstructie_backup" does not exist`.
+- Done 2026-11-26: applied `supabase/migrations/20261125130000_reconstructie_backup_rol.sql`
+  (the role exists, without login until step 3).
 - Done 2026-11-26: read the **session pooler host** from the Connect dialog of `claudeDB`
   (Connect → Direct → Session pooler): `aws-1-eu-west-3.pooler.supabase.com`. Supabase's
   docs say the host cannot be derived from the region; the earlier `aws-0` was a guess.
