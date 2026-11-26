@@ -161,6 +161,10 @@ Then:
   at the start or end). Paste the key again (1d, then edit the secret's Value and **Save**)
   and rerun 5b.
 
+Done 2026-11-26 (ask-2f6c9e14): the Bitwarden web vault refused the sign-in, so 5b ran as
+one `secrets-run` command in Guus's own Terminal, comparing the secret with the key file without
+printing either; it matched and deleted the file.
+
 ## Afterwards
 The workflow runs every night at 03:41 UTC. Restoring is in `supabase/README.md`, "Backup and
 ping": take the key from Bitwarden into a file, `age -d -i <file> reconstructie.sql.age`.

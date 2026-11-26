@@ -198,16 +198,16 @@ standing guidance rather than state moved to `CLAUDE.md`.
 ## Next
 - 2026-11-26: migrations `toegang` and `backup_rol` applied to `claudeDB`; RLS test 36/36,
   advisors nothing new (`supabase/README.md`, Applied).
+- 2026-11-26: **backup set up** (ask-e3a5c7d8, `docs/backup-setup.md`): nightly encrypted
+  backup of `reconstructie` from `main`, first run 45854122636 green and decrypted; the age
+  private key is only in Bitwarden (`reconstructie.BACKUP_AGE_KEY`, checked against the key
+  file with `secrets-run` before the file was deleted).
 - 2026-11-26, Guus's answers (via mission control):
   - ask-9b2d61f0 (D6): free puzzles may be printed without full access. Building that
     (print lock only on paid puzzles, its copy in `docs/UX.md`) is a separate small UI step.
   - ask-71f0b4a3: the legal drafts in `docs/legal/` wait until later, together with Stripe.
 - Merge #53, #54, #55 (after #53) and #56 when green (mission control).
 - **Waits on Guus** (asks sent to mission control 2026-11-25):
-  - backup step 5b of `docs/backup-setup.md`: check the Bitwarden copy of the age key, then
-    delete `~/reconstructie-backup.key` (ask-e3a5c7d8). The backup itself works since
-    2026-11-26: run 45854122636 green, artifact decrypts; the nightly run needs this branch
-    (public key `supabase/backup-ontvanger.txt`) on `main`;
   - Stripe Managed Payments (answered "Later"): unblocks step 3 (checkout, webhook, polling
     after checkout, rebuild script) and step 7 (price D1, `'live'`, test purchase, remove
     the tester link first).
