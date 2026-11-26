@@ -62,7 +62,8 @@ four tables through a select policy of its own and can write nothing. **A new ta
 
 Setting it up (Guus, once; the values never go into chat or this repository): follow
 `docs/backup-setup.md` step by step. The pooler host is copied from the Connect dialog, not
-derived from the region (Supabase: the `aws-<n>` index is a cluster number).
+derived from the region (Supabase: the `aws-<n>` index is a cluster number); for `claudeDB` it
+is `aws-1-eu-west-3.pooler.supabase.com` (checked 2026-11-26).
 
 Restoring: download the artifact, `age -d -i <key file> reconstructie.sql.age > reconstructie.sql`,
 check it, then load it into a scratch schema or a new project with `psql -f`. Rows reference

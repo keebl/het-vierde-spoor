@@ -31,11 +31,10 @@ bottom (macOS Terminal or the Terminal panel of the Claude app).
 - Applies `supabase/migrations/20261125130000_reconstructie_backup_rol.sql` with the
   Supabase connector (needs the connector on in Claude's session). Without it step 3 fails
   with `role "reconstructie_backup" does not exist`.
-- Reads the **session pooler host** from the Connect dialog of `claudeDB` (Supabase's docs:
-  the host cannot be derived from the region, so it is copied, not guessed) and writes it
-  into the command of step 2 below. Until then that command says `POOLER-HOST` and must not
-  be run.
-- Checks the labels of the SQL editor with a harmless `select 1`.
+- Done 2026-11-26: read the **session pooler host** from the Connect dialog of `claudeDB`
+  (Connect → Direct → Session pooler): `aws-1-eu-west-3.pooler.supabase.com`. Supabase's
+  docs say the host cannot be derived from the region; the earlier `aws-0` was a guess.
+- Done 2026-11-26: checked the SQL editor with a no-op statement (labels in step 3).
 
 ## Step 1 — Key pair (Guus, Terminal and Bitwarden, about 8 minutes)
 
@@ -90,22 +89,24 @@ clipboard. The password is never shown and is forgotten when the command ends; i
 kept anywhere else, and if it is ever lost, step 2 and 3 are simply run again.
 
 ```bash
-PW=$(openssl rand -hex 32) && printf 'postgresql://reconstructie_backup.kteiwsvhynuktjarhksm:%s@POOLER-HOST:5432/postgres' "$PW" | gh secret set CLAUDEDB_BACKUP_URL --repo keebl/het-vierde-spoor && printf "alter role reconstructie_backup with login password '%s';" "$PW" | pbcopy && unset PW && echo "OK: secret set, SQL on the clipboard"
+PW=$(openssl rand -hex 32) && printf 'postgresql://reconstructie_backup.kteiwsvhynuktjarhksm:%s@aws-1-eu-west-3.pooler.supabase.com:5432/postgres' "$PW" | gh secret set CLAUDEDB_BACKUP_URL --repo keebl/het-vierde-spoor && printf "alter role reconstructie_backup with login password '%s';" "$PW" | pbcopy && unset PW && echo "OK: secret set, SQL on the clipboard"
 ```
 - Success: `✓ Set Actions secret CLAUDEDB_BACKUP_URL for keebl/het-vierde-spoor`, then
   `OK: secret set, SQL on the clipboard`. Go straight on to step 3 (the clipboard holds the
   password until then).
 - `gh: To get started with GitHub CLI, please run: gh auth login`: run `gh auth login`, choose
   GitHub.com and the browser, then run the command again.
-- The command still contains `POOLER-HOST`: do not run it; Claude has not finished step 0.
 
 ## Step 3 — Give the role its password (Guus, browser, 2 minutes)
 1. Open https://supabase.com/dashboard/project/kteiwsvhynuktjarhksm/sql/new (signed in to
    Supabase).
-2. Click in the empty editor and press ⌘V. You see one line
+2. If a window **Snippets no longer save automatically** appears, click **Understood**.
+3. Click in the empty editor (it says `Hit CMD+SHIFT+K to generate query or just start
+   typing`) and press ⌘V. You see one line
    `alter role reconstructie_backup with login password '…';`.
-3. Click **Run** (or ⌘↵).
-- Success: the result pane says `Success. No rows returned`.
+4. Click the green **Run** button at the top right of the editor (or ⌘↵). Do **not** click
+   **Save** next to it: a saved query would keep the password.
+- Success: under **Results** it says `Success. No rows returned`.
 - `role "reconstructie_backup" does not exist`: step 0 is not done; tell Claude.
 - A warning about a destructive query: there is none for this statement; if one appears,
   cancel and tell Claude what it says.
@@ -114,9 +115,12 @@ Then remove the password from the clipboard and from Supabase:
 ```bash
 pbcopy < /dev/null && echo "Clipboard cleared"
 ```
-The SQL editor keeps every query as a snippet in the left column under **PRIVATE**. Delete
-this one: hover over it, open its **…** menu, choose **Delete query** and confirm.
-- Success: the snippet is gone from the list.
+The editor keeps the query only until you close its tab. Close it: hover over the tab
+**Untitled query** above the editor, click its **×**, and in the window **Unsaved changes**
+click **Discard changes**.
+- Success: **Untitled query** is gone from the tab bar and from the list under **PRIVATE**.
+- No **Unsaved changes** window appeared: the query was saved. Then hover over it under
+  **PRIVATE** in the left column, open its **…** menu, delete it, and tell Claude.
 
 Tell Claude "step 3 done".
 
