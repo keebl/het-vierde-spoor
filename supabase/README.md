@@ -48,6 +48,36 @@ Prerequisite 1, which should also stop seeding for non-members.
 Resolved 2026-11-18 (keebl/personal-assistant#13): sign-up no longer seeds `areas`. Checked
 with a rolled-back test login: no clearhead rows, and account deletion removes the login.
 
+## Backup and ping (`.github/workflows/claudedb.yml`, paywall plan step 5)
+A free project pauses after seven days without traffic and keeps no backups (D4 = A). Every
+night at 03:41 UTC the workflow connects as `reconstructie_backup`, runs one query (the
+ping) and dumps schema `reconstructie`, encrypted with the public age key in
+`backup-ontvanger.txt`, kept 30 days as a workflow artifact. The repository and its
+artifacts are public, so the dump is never stored unencrypted. Until the secret and the key
+exist, the job skips with a warning.
+
+The role (`migrations/20261125130000_reconstructie_backup_rol.sql`) reads every row of the
+four tables through a select policy of its own and can write nothing. **A new table needs a
+`grant select` and a `_backup` policy for it in its own migration**, or the backup misses it.
+
+Setting it up (Guus, once; the values never go into chat or this repository):
+1. Key pair, in your own Terminal: `brew install age`, then `age-keygen -o ~/reconstructie-backup.key`.
+   Store the file's contents in Bitwarden ("reconstructie backup key") and delete the file. The
+   line `# public key: age1…` it printed goes into `supabase/backup-ontvanger.txt` (public,
+   committed).
+2. In the Supabase SQL editor of `claudeDB`, with a long generated password:
+   `alter role reconstructie_backup with login password '<password>';`
+3. GitHub → repository → Settings → Secrets and variables → Actions → secret
+   `CLAUDEDB_BACKUP_URL` =
+   `postgresql://reconstructie_backup.kteiwsvhynuktjarhksm:<password>@aws-0-eu-west-3.pooler.supabase.com:5432/postgres`
+   (the session pooler: the direct host is IPv6-only and GitHub's runners are not).
+4. Actions → claudeDB → Run workflow; the run must end green with an artifact.
+
+Restoring: download the artifact, `age -d -i <key file> reconstructie.sql.age > reconstructie.sql`,
+check it, then load it into a scratch schema or a new project with `psql -f`. Rows reference
+`auth.users`, so a new project needs its users first; purchases can also be rebuilt from the
+stores (Stripe, later Play), which keep every order.
+
 ## Dashboard settings (the connector cannot set these)
 - Integrations → Data API → **Exposed schemas**: add `reconstructie` (keep `public` and
   `crossroads`).

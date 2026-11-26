@@ -1,0 +1,73 @@
+# Keeps the shared free Supabase project claudeDB awake and backed up (specs/paywall-and-
+# android.md, plan step 5, D4 = A). A free project pauses after seven days without traffic
+# and keeps no backups. Once a day this job connects as the read-only role
+# reconstructie_backup, runs a real query (the ping), and dumps schema reconstructie. The
+# dump is encrypted with the public age key in supabase/backup-ontvanger.txt before it is
+# stored: the repository is public, and so are its workflow artifacts. Only Guus holds the
+# private key (Bitwarden). Kept 30 days. How to restore: supabase/README.md, "Backup".
+#
+# Until Guus has set the secret CLAUDEDB_BACKUP_URL (and the key file exists) the steps
+# are skipped with a warning instead of failing every night.
+name: claudeDB
+
+on:
+  schedule:
+    - cron: '41 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: claudedb
+  cancel-in-progress: false
+
+jobs:
+  ping-en-backup:
+    name: ping and encrypted backup
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # The session pooler address (IPv4); the direct database host is IPv6-only and
+      # GitHub's runners have no IPv6.
+      DB_URL: ${{ secrets.CLAUDEDB_BACKUP_URL }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: what is set up
+        id: klaar
+        run: |
+          if [ -z "$DB_URL" ]; then
+            echo "::warning::CLAUDEDB_BACKUP_URL is not set: no ping and no backup (supabase/README.md, Backup)"
+            echo "db=0" >> "$GITHUB_OUTPUT"
+          else
+            echo "db=1" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -s supabase/backup-ontvanger.txt ]; then
+            echo "sleutel=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::supabase/backup-ontvanger.txt is missing: ping only, no backup"
+            echo "sleutel=0" >> "$GITHUB_OUTPUT"
+          fi
+      # pg_dump must be at least the server's version; the postgres:17 image covers 15 and 17.
+      - name: ping
+        if: steps.klaar.outputs.db == '1'
+        run: |
+          docker run --rm -e DB_URL postgres:17 \
+            sh -c 'psql "$DB_URL" -v ON_ERROR_STOP=1 -tAc "select count(*) from reconstructie.voorkeuren"' > /dev/null
+      - name: backup, encrypted
+        if: steps.klaar.outputs.db == '1' && steps.klaar.outputs.sleutel == '1'
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y -qq age > /dev/null
+          docker run --rm -e DB_URL postgres:17 \
+            sh -c 'pg_dump "$DB_URL" --schema=reconstructie --enable-row-security --no-owner --no-privileges' \
+            | age -R supabase/backup-ontvanger.txt > reconstructie.sql.age
+          # An empty or tiny file means the dump failed quietly; a real dump holds the schema.
+          test "$(stat -c %s reconstructie.sql.age)" -gt 1000
+      - uses: actions/upload-artifact@v4
+        if: steps.klaar.outputs.db == '1' && steps.klaar.outputs.sleutel == '1'
+        with:
+          name: reconstructie-${{ github.run_id }}
+          path: reconstructie.sql.age
+          retention-days: 30
+          if-no-files-found: error
