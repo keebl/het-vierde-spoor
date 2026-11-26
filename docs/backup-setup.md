@@ -121,7 +121,8 @@ click **Discard changes**.
 - No **Unsaved changes** window appeared: the query was saved. Then hover over it under
   **PRIVATE** in the left column, open its **…** menu, delete it, and tell Claude.
 
-Tell Claude "step 3 done".
+Tell Claude "step 3 done". Claude first checks that the role can now log in (above); if not,
+steps 2 and 3 are run again.
 
 ## Step 4 — Claude
 - Commits `supabase/backup-ontvanger.txt` (the public key).
@@ -130,14 +131,19 @@ Tell Claude "step 3 done".
 - If it fails: `Tenant or user not found` means a wrong host or user name (Claude fixes the
   command and Guus reruns step 2); `password authentication failed` means steps 2 and 3 used
   different passwords (rerun step 2, then step 3).
-- Fills in `<RUN-ID>` in step 5 below.
+- Done 2026-11-26: run 45854122636 green, ping ran, artifact `reconstructie-45854122636` of
+  17,813 bytes; step 5a decrypted it to `-- PostgreSQL database dump` (Claude ran it in Guus's
+  Terminal panel, only the first lines shown).
+- The first attempt failed with `(EAUTHQUERY) user not found in the database`: the role still
+  had no login, so the `alter role` of step 3 had not run. Check before rerunning the workflow:
+  `select rolcanlogin from pg_roles where rolname = 'reconstructie_backup'` must be true.
 
 ## Step 5 — Test the backup, then delete the key file (Guus, Terminal, 2 minutes)
 
 **5a. Decrypt the first backup** (only its first lines are shown; nothing decrypted is
 written to disk).
 ```bash
-rm -rf ~/Downloads/reconstructie-backup-test && gh run download <RUN-ID> --repo keebl/het-vierde-spoor -n reconstructie-<RUN-ID> -D ~/Downloads/reconstructie-backup-test && age -d -i ~/reconstructie-backup.key ~/Downloads/reconstructie-backup-test/reconstructie.sql.age | head -5
+rm -rf ~/Downloads/reconstructie-backup-test && gh run download 45854122636 --repo keebl/het-vierde-spoor -n reconstructie-45854122636 -D ~/Downloads/reconstructie-backup-test && age -d -i ~/reconstructie-backup.key ~/Downloads/reconstructie-backup-test/reconstructie.sql.age | head -5
 ```
 - Success: lines with `-- PostgreSQL database dump`.
 - `no valid identities` or `no identity matched`: the public key in the repository is not this

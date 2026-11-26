@@ -204,8 +204,10 @@ standing guidance rather than state moved to `CLAUDE.md`.
   - ask-71f0b4a3: the legal drafts in `docs/legal/` wait until later, together with Stripe.
 - Merge #53, #54, #55 (after #53) and #56 when green (mission control).
 - **Waits on Guus** (asks sent to mission control 2026-11-25):
-  - set up the backup, steps 1–3 of `docs/backup-setup.md` (age key pair, the role's
-    password, secret `CLAUDEDB_BACKUP_URL`; ask-e3a5c7d8); then Claude runs the workflow;
+  - backup step 5b of `docs/backup-setup.md`: check the Bitwarden copy of the age key, then
+    delete `~/reconstructie-backup.key` (ask-e3a5c7d8). The backup itself works since
+    2026-11-26: run 45854122636 green, artifact decrypts; the nightly run needs this branch
+    (public key `supabase/backup-ontvanger.txt`) on `main`;
   - Stripe Managed Payments (answered "Later"): unblocks step 3 (checkout, webhook, polling
     after checkout, rebuild script) and step 7 (price D1, `'live'`, test purchase, remove
     the tester link first).
