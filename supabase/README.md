@@ -30,11 +30,14 @@ from this repo.
   toepassen"); `tests/reconstructie_rls.sql` 30/30; security advisors: nothing for
   `reconstructie` (one existing Auth warning, leaked-password protection, belongs to the
   shared project).
-- Not applied yet: `20261125120000_reconstructie_toegang.sql` (entitlement table, and
-  `verwijder_mijn_account()` also deletes `toegang`). Waits on Guus's yes. Checked on
-  2026-11-25 in PGlite (Postgres in WASM, `auth` stubbed): `tests/reconstructie_rls.sql`
-  36/36, and 35/36 with a deliberate insert policy on `toegang`. Run the test file on
-  `claudeDB` after applying it; before that it fails, since it needs the table.
+- 2026-11-26: `20261125120000_reconstructie_toegang.sql` and
+  `20261125130000_reconstructie_backup_rol.sql` applied to `claudeDB` (Guus, ask-4c1e7a92;
+  history names `reconstructie_toegang`, `reconstructie_backup_rol`; sent without most of the
+  file comments, statements unchanged). `tests/reconstructie_rls.sql` 36/36. Security advisors:
+  nothing new; the two known warnings remain (`verwijder_mijn_account` callable by
+  `authenticated`, by design; leaked-password protection, shared Auth). Role
+  `reconstructie_backup`: no login yet (Guus sets the password, `docs/backup-setup.md`), no
+  bypass of RLS, four select policies, no write grant.
 
 ## Found while testing: clearhead seeds every new login
 A trigger in clearhead fills `public.areas` for every new row in `auth.users`. So every
