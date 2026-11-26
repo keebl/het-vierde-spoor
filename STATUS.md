@@ -196,16 +196,16 @@ standing guidance rather than state moved to `CLAUDE.md`.
   giveaways 71s, library 33s, the other three a tenth of a second each.
 
 ## Next
+- 2026-11-26: migrations `toegang` and `backup_rol` applied to `claudeDB`; RLS test 36/36,
+  advisors nothing new (`supabase/README.md`, Applied).
+- 2026-11-26, Guus's answers (via mission control):
+  - ask-9b2d61f0 (D6): free puzzles may be printed without full access. Building that
+    (print lock only on paid puzzles, its copy in `docs/UX.md`) is a separate small UI step.
+  - ask-71f0b4a3: the legal drafts in `docs/legal/` wait until later, together with Stripe.
 - Merge #53, #54, #55 (after #53) and #56 when green (mission control).
 - **Waits on Guus** (asks sent to mission control 2026-11-25):
-  - apply migrations `20261125120000_reconstructie_toegang.sql` and
-    `20261125130000_reconstructie_backup_rol.sql` to `claudeDB` (ask-4c1e7a92), then run
-    `supabase/tests/reconstructie_rls.sql` and the security advisors;
-  - set up the backup: age key pair, the role's password, secret `CLAUDEDB_BACKUP_URL`
-    (`supabase/README.md`, "Backup and ping"; ask-e3a5c7d8);
-  - does a free puzzle still print without full access (D6)? (ask-9b2d61f0) — if not, the
-    print lock and its copy in `docs/UX.md` are a small UI PR;
-  - read and answer `docs/legal/README.md` (ask-71f0b4a3);
+  - set up the backup, steps 1–3 of `docs/backup-setup.md` (age key pair, the role's
+    password, secret `CLAUDEDB_BACKUP_URL`; ask-e3a5c7d8); then Claude runs the workflow;
   - Stripe Managed Payments (answered "Later"): unblocks step 3 (checkout, webhook, polling
     after checkout, rebuild script) and step 7 (price D1, `'live'`, test purchase, remove
     the tester link first).

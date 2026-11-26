@@ -30,11 +30,14 @@ from this repo.
   toepassen"); `tests/reconstructie_rls.sql` 30/30; security advisors: nothing for
   `reconstructie` (one existing Auth warning, leaked-password protection, belongs to the
   shared project).
-- Not applied yet: `20261125120000_reconstructie_toegang.sql` (entitlement table, and
-  `verwijder_mijn_account()` also deletes `toegang`). Waits on Guus's yes. Checked on
-  2026-11-25 in PGlite (Postgres in WASM, `auth` stubbed): `tests/reconstructie_rls.sql`
-  36/36, and 35/36 with a deliberate insert policy on `toegang`. Run the test file on
-  `claudeDB` after applying it; before that it fails, since it needs the table.
+- 2026-11-26: `20261125120000_reconstructie_toegang.sql` and
+  `20261125130000_reconstructie_backup_rol.sql` applied to `claudeDB` (Guus, ask-4c1e7a92;
+  history names `reconstructie_toegang`, `reconstructie_backup_rol`; sent without most of the
+  file comments, statements unchanged). `tests/reconstructie_rls.sql` 36/36. Security advisors:
+  nothing new; the two known warnings remain (`verwijder_mijn_account` callable by
+  `authenticated`, by design; leaked-password protection, shared Auth). Role
+  `reconstructie_backup`: no login yet (Guus sets the password, `docs/backup-setup.md`), no
+  bypass of RLS, four select policies, no write grant.
 
 ## Found while testing: clearhead seeds every new login
 A trigger in clearhead fills `public.areas` for every new row in `auth.users`. So every
@@ -60,18 +63,10 @@ The role (`migrations/20261125130000_reconstructie_backup_rol.sql`) reads every 
 four tables through a select policy of its own and can write nothing. **A new table needs a
 `grant select` and a `_backup` policy for it in its own migration**, or the backup misses it.
 
-Setting it up (Guus, once; the values never go into chat or this repository):
-1. Key pair, in your own Terminal: `brew install age`, then `age-keygen -o ~/reconstructie-backup.key`.
-   Store the file's contents in Bitwarden ("reconstructie backup key") and delete the file. The
-   line `# public key: age1…` it printed goes into `supabase/backup-ontvanger.txt` (public,
-   committed).
-2. In the Supabase SQL editor of `claudeDB`, with a long generated password:
-   `alter role reconstructie_backup with login password '<password>';`
-3. GitHub → repository → Settings → Secrets and variables → Actions → secret
-   `CLAUDEDB_BACKUP_URL` =
-   `postgresql://reconstructie_backup.kteiwsvhynuktjarhksm:<password>@aws-0-eu-west-3.pooler.supabase.com:5432/postgres`
-   (the session pooler: the direct host is IPv6-only and GitHub's runners are not).
-4. Actions → claudeDB → Run workflow; the run must end green with an artifact.
+Setting it up (Guus, once; the values never go into chat or this repository): follow
+`docs/backup-setup.md` step by step. The pooler host is copied from the Connect dialog, not
+derived from the region (Supabase: the `aws-<n>` index is a cluster number); for `claudeDB` it
+is `aws-1-eu-west-3.pooler.supabase.com` (checked 2026-11-26).
 
 Restoring: download the artifact, `age -d -i <key file> reconstructie.sql.age > reconstructie.sql`,
 check it, then load it into a scratch schema or a new project with `psql -f`. Rows reference
