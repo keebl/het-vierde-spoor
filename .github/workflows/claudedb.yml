@@ -64,7 +64,7 @@ jobs:
             | age -R supabase/backup-ontvanger.txt > reconstructie.sql.age
           # An empty or tiny file means the dump failed quietly; a real dump holds the schema.
           test "$(stat -c %s reconstructie.sql.age)" -gt 1000
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: steps.klaar.outputs.db == '1' && steps.klaar.outputs.sleutel == '1'
         with:
           name: reconstructie-${{ github.run_id }}
