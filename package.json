@@ -30,6 +30,6 @@
     "ai:online": "node tools/ai-online.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^1.10.0"
+    "@anthropic-ai/sdk": "^1.14.0"
   }
 }
